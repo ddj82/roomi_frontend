@@ -1,0 +1,108 @@
+.authModal.auth-modal-container {
+    width: 100%;
+    max-width: 500px;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.authModal.1);
+    margin: 0 auto;
+}
+
+.authModal.auth-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.authModal.5);
+}
+
+.authModal.modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.authModal.input-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+input {
+    padding: 12px;
+    margin-bottom: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #E5E7EB;
+}
+
+.authModal.button-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.authModal.submit-button, .authModal.cancel-button {
+    padding: 16px;
+    font-size: 16px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.authModal.submit-button {
+    background-color: #9370DB;
+    color: white;
+    font-weight: 600;
+}
+
+.authModal.cancel-button {
+    background-color: #F5F5F5;
+    color: #4B5563;
+    border: none;
+}
+
+.authModal.social-login-container {
+    margin-top: 16px;
+}
+
+.authModal.social-login-container h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.authModal.social-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.authModal.social-button {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    width: 48%;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.authModal.social-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}

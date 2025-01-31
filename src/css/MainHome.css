@@ -1,0 +1,57 @@
+/* 전체 컨테이너 */
+.mainHome.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* 콘텐츠 래퍼 */
+.mainHome.content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* 지도 컨테이너 */
+.mainHome.map-container {
+    width: 100%;
+    height: calc(100vh - 150px); /* 상단 필터바와 버튼을 제외한 높이 */
+    background-color: #f5f5f5;
+}
+
+/* 리스트 컨테이너 */
+.mainHome.list-container {
+    width: 100%;
+    background-color: #fff;
+    padding: 20px;
+    overflow-y: auto;
+    height: calc(100vh - 150px); /* 상단 필터바와 버튼을 제외한 높이 */
+}
+
+/* 버튼 스타일 */
+.mainHome.toggle-button {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #9370db;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 2px 3.84px rgba(0, 0, 0, 0.25);
+}
+
+.mainHome.toggle-button:hover {
+    background-color: #815bc1;
+}

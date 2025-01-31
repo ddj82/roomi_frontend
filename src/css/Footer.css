@@ -1,0 +1,18 @@
+.footer.footer-container {
+    background-color: #FFF; /* 푸터 배경 색상 */
+    border-top: 1px solid #E5E7EB; /* 상단 경계선 */
+    width: 100%;
+    margin: 0 auto; /* 가운데 정렬 */
+}
+
+.footer.footer-text {
+    color: #6B7280; /* 텍스트 색상 (회색) */
+    font-size: 14px; /* 텍스트 크기 */
+    line-height: 20px; /* 줄 간격 */
+}
+
+.footer.footer-copyright {
+    color: #9CA3AF; /* 약간 더 밝은 회색 */
+    font-size: 12px; /* 작은 텍스트 크기 */
+    margin-top: 10px; /* 위에 여백 추가 */
+}

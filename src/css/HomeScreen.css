@@ -1,0 +1,80 @@
+.homeScreen.container {
+    width: 100%;
+}
+
+.homeScreen.room-content-container {
+    margin-top: 16px;
+    padding: 0 24px;
+}
+
+.homeScreen.accommodation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.homeScreen.card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease, 0.2s ease;
+    cursor: pointer;
+}
+
+.homeScreen.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.homeScreen.card-header {
+    position: relative;
+}
+
+.homeScreen.card-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.homeScreen.card-content {
+    padding: 16px;
+}
+
+.homeScreen.price-container {
+    margin-bottom: 8px;
+}
+
+.homeScreen.price {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.homeScreen.title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f2937;
+    margin-bottom: 8px;
+    line-height: 22px;
+}
+
+.homeScreen.location {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.homeScreen.loading {
+    text-align: center;
+    color: #6b7280;
+    font-size: 16px;
+}
+
+.homeScreen.error {
+    text-align: center;
+    color: #ef4444;
+    font-size: 16px;
+}

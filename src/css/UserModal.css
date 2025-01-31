@@ -1,0 +1,74 @@
+.userModal.overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+}
+
+.userModal.modal-container {
+    background-color: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    z-index: 2000;
+}
+
+.userModal.modal-content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.userModal.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.userModal.title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1F2937;
+}
+
+.userModal.close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.userModal.content {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.userModal.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    width: 100%;
+    font-size: 16px;
+    border: none;
+    background: none;
+    margin-bottom: 12px;
+    color: #333;
+    cursor: pointer;
+}
+
+.userModal.menu-item:hover {
+    background-color: #f3f4f6;
+}
+
+.userModal.menu-item svg {
+    margin-right: 12px;
+}
