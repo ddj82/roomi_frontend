@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { logout } from "src/api/api";
 import { HostModeContext } from "src/components/auth/HostModeContext";
 import { useNavigate } from "react-router-dom"; // 웹에서는 react-router-dom 사용
+import '../../css/Modal.css';
 
 interface UserModalProps {
     visible: boolean;

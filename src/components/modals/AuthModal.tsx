@@ -4,6 +4,7 @@ import { AuthContext } from 'src/components/auth/AuthContext';
 import { login } from 'src/api/api';
 import { SocialAuth } from "src/api/SocialAuth";
 import '../../css/AuthModal.css'; // CSS 파일 import
+import '../../css/Modal.css';
 
 const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () => void; type: 'login' | 'signup' }) => {
     const [email, setEmail] = useState('');
@@ -72,7 +73,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
             onRequestClose={onClose}
             contentLabel="Authentication Modal"
             className="authModal auth-modal-container"
-            overlayClassName="authModal auth-modal-overlay" // 오버레이 스타일
+            overlayClassName="authModal overlay" // 오버레이 스타일
         >
             <div className="authModal modal-content">
                 <h2>{type === 'login' ? '로그인' : '회원가입'}</h2>

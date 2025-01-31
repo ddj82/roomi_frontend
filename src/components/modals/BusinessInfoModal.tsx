@@ -2,6 +2,7 @@ import React from 'react';
 import Modal from 'react-modal'; // react-modal로 바꿔줍니다.
 import { FaTimes } from 'react-icons/fa'; // MaterialIcons 대신 react-icons 사용
 import '../../css/BusinessInfoModal.css'; // 기존 CSS 파일 그대로 사용
+import '../../css/Modal.css';
 
 interface BusinessInfoModalProps {
     visible: boolean;

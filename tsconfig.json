@@ -26,7 +26,8 @@
   "include": [
     "src/**/*",                       // src 디렉토리의 모든 파일 포함
     "**/*.ts",                        // TypeScript 파일 포함
-    "**/*.tsx"                        // TypeScript JSX 파일 포함
+    "**/*.tsx",                       // TypeScript JSX 파일 포함
+    "src/types/*.d.ts" // 타입 정의 파일 포함
   ],
   "exclude": ["node_modules", "build"] // 제외 디렉토리 설정
 }

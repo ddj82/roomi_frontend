@@ -4,17 +4,8 @@
     background-color: #fff;
     border-radius: 12px;
     padding: 24px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.authModal.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
-}
-
-.authModal.auth-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.authModal.5);
 }
 
 .authModal.modal-content {

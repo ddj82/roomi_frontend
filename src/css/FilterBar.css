@@ -37,7 +37,6 @@
     border-radius: 50%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    z-index: 10; /* 필터 아이템 위에 위치 */
     width: 36px;
     height: 36px;
     display: flex;

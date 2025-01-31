@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
-// import KakaoWebMap from "src/components/map/KakaoMap";
+import KakaoWebMap from "src/components/map/KakaoMap";
 import {RoomData} from "src/types/rooms"; // 스타일을 별도 CSS 파일로 관리
 import 'src/css/MainHome.css';
-import FilterBar from "src/components/header/FilterBar"; // 스타일을 별도 CSS 파일로 관리
+import FilterBar from "src/components/header/FilterBar";
 
 export default function MainHome() {
     const [homeVisible, setHomeVisible] = useState(true);
@@ -26,7 +26,7 @@ export default function MainHome() {
             <div className="mainHome content-wrapper">
                 {homeVisible ? (
                     <div className="mainHome map-container">
-                        {/*<KakaoWebMap onRoomsUpdate={handleRoomsUpdate} />*/}
+                        <KakaoWebMap onRoomsUpdate={handleRoomsUpdate} />
                     </div>
                 ) : (
                     <div className="mainHome list-container">
