@@ -5,18 +5,24 @@ import Header from "./components/header/Header";
 import MainHome from "./components/screens/MainHome";
 import './App.css';
 import RoomDetailScreen from "./components/screens/RoomDetailScreen";
+import AuthProvider from "./components/auth/AuthContext";
+import {HostModeProvider} from "./components/auth/HostModeContext";
 
 export default function App() {
     return (
         <Router>
-            <Header/>
-            <div className="app container">
-                <Routes>
-                    <Route path="/" element={<MainHome/>}/>
-                    <Route path="/detail" element={<RoomDetailScreen/>}/>
-                </Routes>
-            </div>
-            <Footer/>
+            <AuthProvider>
+            <HostModeProvider>
+                <Header/>
+                <div className="app container">
+                    <Routes>
+                        <Route path="/" element={<MainHome/>}/>
+                        <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
+                    </Routes>
+                </div>
+                <Footer/>
+            </HostModeProvider>
+            </AuthProvider>
         </Router>
     );
 }

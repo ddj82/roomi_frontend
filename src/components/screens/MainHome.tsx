@@ -12,7 +12,6 @@ export default function MainHome() {
     const handleRoomsUpdate = useCallback((newRooms: RoomData[]) => {
         console.log('Rooms updated in App:', newRooms);
         setRooms(newRooms);
-        console.log('메인홈 룸즈 : ', rooms);
     }, []);
 
     const toggleView = () => {

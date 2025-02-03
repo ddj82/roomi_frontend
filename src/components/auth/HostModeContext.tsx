@@ -3,12 +3,16 @@ import React, { createContext, useEffect, useState } from 'react';
 // Context 타입 정의
 interface HostModeContextType {
     hostMode: boolean;
+    setHostMode: (status: boolean) => void;
     toggleUserMode: () => void;
+    resetUserMode: () => void;
 }
 
 export const HostModeContext = createContext<HostModeContextType>({
     hostMode: false,
+    setHostMode: () => {},
     toggleUserMode: () => {},
+    resetUserMode: () => {},
 });
 
 export const HostModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -43,8 +47,18 @@ export const HostModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
     };
 
+    // 호스트 모드를 초기화하는 함수
+    const resetUserMode = () => {
+        try {
+            localStorage.removeItem('hostMode'); // 로컬 스토리지에서 제거
+            setHostMode(false); // 상태 초기화
+        } catch (error) {
+            console.error('호스트 모드 초기화 실패:', error);
+        }
+    };
+
     return (
-        <HostModeContext.Provider value={{ hostMode, toggleUserMode }}>
+        <HostModeContext.Provider value={{ hostMode, setHostMode, toggleUserMode, resetUserMode }}>
             {children}
         </HostModeContext.Provider>
     );

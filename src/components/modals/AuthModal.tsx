@@ -5,19 +5,23 @@ import { login } from 'src/api/api';
 import { SocialAuth } from "src/api/SocialAuth";
 import '../../css/AuthModal.css'; // CSS 파일 import
 import '../../css/Modal.css';
+import {HostModeContext} from "src/components/auth/HostModeContext";
 
 const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () => void; type: 'login' | 'signup' }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
     const { setAuthToken } = useContext(AuthContext);
+    const { setHostMode } = useContext(HostModeContext);
 
     const handleSubmit = async () => {
         try {
             console.log('로그인 버튼(모달):', { email, password });
             // 로그인 요청
-            await login(email, password);
-            console.log('로그인 성공(모달)');
+            await login(email, password, setAuthToken);
+            const hostStatus = localStorage.getItem('userIsHost') === 'true';
+            setHostMode(hostStatus);
+            console.log('로그인 성공, AuthToken 업데이트 완료'); // 로그 추가
             onClose();
         } catch (error) {
             console.error('로그인 실패(모달):', error);

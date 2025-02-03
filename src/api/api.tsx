@@ -4,8 +4,7 @@ const BASE_URL = 'https://roomi.co.kr/api';
 // 로컬 스토리지에서 인증 토큰 가져오기
 const getAuthToken = () => {
     try {
-        const token = localStorage.getItem('authToken');
-        return token;
+        return localStorage.getItem('authToken');
     } catch (error) {
         console.error('토큰을 가져오는 중 오류 발생(api.tsx):', error);
         return null;
@@ -22,7 +21,7 @@ const request = async (endpoint: string, requireAuth: boolean = true, method: st
         if (requireAuth) {
             const token = getAuthToken();
             if (token) {
-                headers['Authorization'] = `Bearer ${token}`; // Bearer token 추가
+                headers['Authorization'] = `${token}`; // Bearer token 추가
             } else {
                 throw new Error('인증 토큰이 필요합니다.');
             }
@@ -36,7 +35,7 @@ const request = async (endpoint: string, requireAuth: boolean = true, method: st
 
         if (response.ok) {
             console.log('API 요청 성공');
-            return response.json(); // 응답을 JSON으로 반환
+            return response; // 응답을 JSON으로 반환
         } else {
             const errorData = await response.json();
             throw new Error(errorData.message || 'API 요청 실패');
@@ -48,19 +47,30 @@ const request = async (endpoint: string, requireAuth: boolean = true, method: st
 };
 
 // 로그인 API
-export const login = async (email: string, password: string) => {
+export const login = async (email: string, password: string, setAuthToken: (token: string | null) => void) => {
     try {
         const response = await request('/users/login', false, 'POST', {
             "email": email,
             "password": password,
         });
-        const token = response.token; // 서버에서 반환한 토큰을 추출 (서버 응답 구조에 맞게 수정)
+        const token = response.headers.get('Authorization'); // 응답에서 토큰 추출
         console.log('토큰:', token);
-
         if (token) {
             localStorage.setItem('authToken', token); // 토큰 저장
+            setAuthToken(token); // 전역 상태 업데이트
         } else {
             throw new Error('토큰을 찾을 수 없습니다.');
+        }
+
+        const data = await response.json();
+        console.log('정보:', data);
+        if (data.success) {
+            console.log('사용자 정보:', data.data);
+            localStorage.setItem('userId', data.data.id);
+            localStorage.setItem('userName', data.data.name);
+            localStorage.setItem('userIsHost', data.data.isHost);
+        } else {
+            console.error('로그인 실패:', data.message);
         }
 
         return response; // 로그인 응답 데이터를 반환
@@ -74,6 +84,10 @@ export const login = async (email: string, password: string) => {
 export const logout = async () => {
     try {
         localStorage.removeItem('authToken'); // 토큰 제거
+        localStorage.removeItem('userId'); // 유저 정보 제거
+        localStorage.removeItem('userName'); // 유저 정보 제거
+        localStorage.removeItem('userIsHost'); // 유저 정보 제거
+        localStorage.removeItem('hostMode');
         return '로그아웃 성공';
     } catch (error) {
         console.error('로그아웃 실패:', error);
@@ -86,3 +100,16 @@ export const fetchRoomData = async (id: number, locale: string) => {
     return request(`/rooms/${id}?locale=${locale}`, false);
 };
 
+// host 등록 API
+export const be_host = async () => {
+    try {
+        const response = await request(`/users/be_host`, true, 'POST');
+        if (response.ok) {
+            localStorage.setItem('userIsHost', 'true');
+            return '호스트 등록 성공';
+        }
+    } catch (error) {
+        console.error('호스트 등록 실패:', error);
+        return '호스트 등록 실패';
+    }
+};

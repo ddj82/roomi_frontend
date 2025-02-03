@@ -67,7 +67,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
 
     const handleCardClick = (roomId: number) => {
         const currentLocale = i18n.language; // 현재 언어 감지
-        navigate('/detail');
+        navigate(`/detail/${roomId}/${currentLocale}`); // URL 파라미터로 전달
     };
 
     const renderMap = useCallback(
@@ -83,9 +83,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
         if (rooms.length === 0) {
             return <div className="homeScreen error">표시할 숙소가 없습니다.</div>;
         }
-
-        console.log('홈스크린 룸 데이터 : ', rooms);
-        console.log('룸데이터 랭스 : ', rooms.length);
 
         return (
             <div className="homeScreen accommodation-grid">

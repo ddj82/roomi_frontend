@@ -1,5 +1,4 @@
 
-
 .userModal.modal-container {
     background-color: white;
     border-radius: 12px;
@@ -36,22 +35,26 @@
 }
 
 .userModal.content {
+    display: flex;
+    flex-direction: column; /* 세로 정렬 */
+    align-items: flex-start; /* 왼쪽 정렬 */
     width: 100%;
     margin-top: 20px;
 }
 
-.userModal.menu-item {
+button.userModal.menu-item {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-start; /* 왼쪽 정렬 */
     padding: 10px;
-    width: 100%;
+    width: 100%; /* 전체 너비 사용 */
     font-size: 16px;
     border: none;
     background: none;
     margin-bottom: 12px;
     color: #333;
     cursor: pointer;
+    border-radius: 8px; /* 클릭 시 강조 효과 */
 }
 
 .userModal.menu-item:hover {
