@@ -4,6 +4,7 @@ import Footer from "./components/footer/Footer";
 import Header from "./components/header/Header";
 import MainHome from "./components/screens/MainHome";
 import './App.css';
+import RoomDetailScreen from "./components/screens/RoomDetailScreen";
 
 export default function App() {
     return (
@@ -12,6 +13,7 @@ export default function App() {
             <div className="app container">
                 <Routes>
                     <Route path="/" element={<MainHome/>}/>
+                    <Route path="/detail" element={<RoomDetailScreen/>}/>
                 </Routes>
             </div>
             <Footer/>

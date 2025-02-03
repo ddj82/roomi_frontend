@@ -11,7 +11,8 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({ initialState = false, o
     const [isLiked, setIsLiked] = useState(initialState);
 
     // 찜 상태를 토글하는 함수
-    const toggleWishlist = () => {
+    const toggleWishlist = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation(); // 이벤트 전파 방지
         const newState = !isLiked;
         setIsLiked(newState);
         if (onToggle) {
