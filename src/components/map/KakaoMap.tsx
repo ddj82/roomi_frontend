@@ -46,11 +46,9 @@ export default function KakaoWebMap({ onRoomsUpdate }: KakaoMapViewProps) {
         const ne = bounds.getNorthEast();
 
         try {
-            console.log('요청 : ', `https://roomi.co.kr/api/rooms?swLat=${sw.getLat()}&swLng=${sw.getLng()}&neLat=${ne.getLat()}&neLng=${ne.getLng()}`);
             const response = await fetch(
                 `https://roomi.co.kr/api/rooms?swLat=${sw.getLat()}&swLng=${sw.getLng()}&neLat=${ne.getLat()}&neLng=${ne.getLng()}`
             );
-            console.log('리스폰스 : ', response);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

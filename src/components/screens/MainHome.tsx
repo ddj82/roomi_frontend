@@ -3,6 +3,7 @@ import KakaoWebMap from "src/components/map/KakaoMap";
 import {RoomData} from "src/types/rooms"; // 스타일을 별도 CSS 파일로 관리
 import 'src/css/MainHome.css';
 import FilterBar from "src/components/header/FilterBar";
+import HomeScreen from "src/components/screens/HomeScreen";
 
 export default function MainHome() {
     const [homeVisible, setHomeVisible] = useState(true);
@@ -11,6 +12,7 @@ export default function MainHome() {
     const handleRoomsUpdate = useCallback((newRooms: RoomData[]) => {
         console.log('Rooms updated in App:', newRooms);
         setRooms(newRooms);
+        console.log('메인홈 룸즈 : ', rooms);
     }, []);
 
     const toggleView = () => {
@@ -22,26 +24,21 @@ export default function MainHome() {
             {/* 상단 필터바 */}
             <FilterBar />
 
-            {/* 지도와 콘텐츠 영역 */}
+            {/* KakaoMap을 항상 유지하고, display로 컨트롤 */}
             <div className="mainHome content-wrapper">
-                {homeVisible ? (
-                    <div className="mainHome map-container">
-                        <KakaoWebMap onRoomsUpdate={handleRoomsUpdate} />
-                    </div>
-                ) : (
-                    <div className="mainHome list-container">
-                        {/*<HomeScreen rooms={rooms} />*/}
-                    </div>
-                )}
+                <div className="mainHome map-container" style={{ display: homeVisible ? 'block' : 'none' }}>
+                    <KakaoWebMap onRoomsUpdate={handleRoomsUpdate} />
+                </div>
+
+                <div className="mainHome list-container" style={{ display: homeVisible ? 'none' : 'block' }}>
+                    <HomeScreen rooms={rooms} />
+                </div>
             </div>
 
             {/* 하단 버튼 */}
             <button className="mainHome toggle-button" onClick={toggleView}>
                 {homeVisible ? '목록 보기' : '지도 보기'}
             </button>
-
-            {/* 푸터 */}
-            {/*<Footer />*/}
         </div>
     );
 }

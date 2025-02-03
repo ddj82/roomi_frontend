@@ -1,7 +1,7 @@
 import React, { useState, useEffect, memo, useCallback, useMemo } from 'react';
 import 'src/css/HomeScreen.css'; // 별도의 CSS 파일로 스타일 관리 (웹에 적합)
 import { RoomData } from "src/types/rooms";
-// import KakaoWebMap from "src/components/map/KakaoMap";
+import KakaoWebMap from "src/components/map/KakaoMap";
 import { useNavigate } from 'react-router-dom'; // React Router 사용
 import WishlistButton from "src/components/modals/WishlistButton";
 import i18n from "src/i18n";
@@ -70,10 +70,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
         navigate(`/room-detail/${roomId}?locale=${currentLocale}`);
     };
 
-    // const renderMap = useCallback(
-    //     () => <KakaoWebMap onRoomsUpdate={handleRoomsUpdate} />,
-    //     [handleRoomsUpdate]
-    // );
+    const renderMap = useCallback(
+        () => <KakaoWebMap onRoomsUpdate={handleRoomsUpdate} />,
+        [handleRoomsUpdate]
+    );
 
     const renderAccommodations = useMemo(() => {
         if (loading) {
@@ -83,6 +83,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
         if (rooms.length === 0) {
             return <div className="homeScreen error">표시할 숙소가 없습니다.</div>;
         }
+
+        console.log('홈스크린 룸 데이터 : ', rooms);
+        console.log('룸데이터 랭스 : ', rooms.length);
 
         return (
             <div className="homeScreen accommodation-grid">
@@ -99,7 +102,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
 
     return (
         <div className="homeScreen container">
-            {/*{renderMap()}*/}
+            {renderMap()}
             <div className="homeScreen room-content-container">{renderAccommodations}</div>
         </div>
     );
