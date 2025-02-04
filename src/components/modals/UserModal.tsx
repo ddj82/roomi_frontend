@@ -1,12 +1,13 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext} from "react";
 import Modal from "react-modal"; // react-modal 사용
 import { FaUser, FaSignOutAlt, FaRegHeart, FaCogs, FaRegEnvelope } from "react-icons/fa"; // react-icons 사용
 import { useTranslation } from "react-i18next";
-import {be_host, logout} from "src/api/api";
+import {logout} from "src/api/api";
 import { HostModeContext } from "src/components/auth/HostModeContext";
 import { useNavigate } from "react-router-dom"; // 웹에서는 react-router-dom 사용
 import '../../css/Modal.css';
 import '../../css/UserModal.css';
+import { useIsHost } from "src/components/auth/IsHostContext";
 
 interface UserModalProps {
     visible: boolean;
@@ -17,6 +18,7 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
     const { t } = useTranslation();
     const { hostMode, toggleUserMode, resetUserMode } = useContext(HostModeContext);
     const navigate = useNavigate();
+    const { isHost } = useIsHost();
 
     const handleLogout = async () => {
         try {
@@ -32,6 +34,7 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
 
     const handleMessage = () => {
         console.log("메시지 메뉴");
+        console.log("ishost값 :", isHost);
     };
 
     const handleFavorite = () => {
@@ -40,7 +43,8 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
 
     const handleHostManage = () => {
         console.log("호스트 관리 메뉴");
-        // navigate("/host-screen"); // 리액트 웹에서는 react-router-dom을 사용하여 화면 이동
+        navigate("/host");
+        onClose();
     };
 
     const handleSettings = () => {
@@ -56,13 +60,8 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
         if (isHost) {
             toggleUserMode();
         } else {
-            try {
-                const response = await be_host();
-                console.log(response);
-                toggleUserMode();
-            } catch (error) {
-                console.error("호스트등록 실패:", error);
-            }
+            navigate('/hostAgree');
+            onClose();
         }
     };
 
@@ -104,7 +103,7 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
                             )}
                         </>
                     ) : (
-                        <button className="userModal menu-item">
+                        <button onClick={handleUserHostMode} className="userModal menu-item">
                             <FaUser size={30}/>
                             {t("호스트 등록")}
                         </button>

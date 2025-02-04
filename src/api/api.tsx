@@ -63,7 +63,6 @@ export const login = async (email: string, password: string, setAuthToken: (toke
         }
 
         const data = await response.json();
-        console.log('정보:', data);
         if (data.success) {
             console.log('사용자 정보:', data.data);
             localStorage.setItem('userId', data.data.id);
@@ -100,16 +99,21 @@ export const fetchRoomData = async (id: number, locale: string) => {
     return request(`/rooms/${id}?locale=${locale}`, false);
 };
 
+// host 등록 동의 API
+export const termsOfUse = async () => {
+    return request(`/policies/terms-of-use`, true);
+};
+
 // host 등록 API
 export const be_host = async () => {
     try {
         const response = await request(`/users/be_host`, true, 'POST');
         if (response.ok) {
             localStorage.setItem('userIsHost', 'true');
-            return '호스트 등록 성공';
+            return response.ok;
         }
     } catch (error) {
         console.error('호스트 등록 실패:', error);
-        return '호스트 등록 실패';
+        return false;
     }
 };

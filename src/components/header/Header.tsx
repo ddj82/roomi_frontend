@@ -9,7 +9,8 @@ import { BusinessInfoModal } from "src/components/modals/BusinessInfoModal";
 import { UserModal } from "src/components/modals/UserModal";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faInfo, faCalendarDay, faLocationDot, faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import '../../css/Header.css'; // 스타일을 별도 CSS 파일로 import
+import '../../css/Header.css';
+import {useHeaderBtnContext} from "src/components/auth/HeaderBtnContext"; // 스타일을 별도 CSS 파일로 import
 
 type ModalSection = 'date' | 'location' | 'guests';
 type ModalPosition = { x: number; y: number };
@@ -26,6 +27,7 @@ const Header = () => {
     const [guestCount, setGuestCount] = useState<number>(0);
     const [businessInfoVisible, setBusinessInfoVisible] = useState(false);
     const { authToken } = useContext(AuthContext); // AuthContext에서 가져오기
+    const { isVisible } = useHeaderBtnContext();
 
     const dateRef = useRef(null);
     const locationRef = useRef(null);
@@ -83,31 +85,32 @@ const Header = () => {
                     )}
                 </div>
             </div>
+            {isVisible &&
+                <div className="h search-bar-container">
+                    <div className="h search-bar-row">
+                        <button ref={dateRef} className="h search-item" onClick={() => openModal('date', dateRef)}>
+                            <FontAwesomeIcon icon={faCalendarDay} style={{ fontSize: 24, color: '#9370DB' }} />
+                            <span className="h search-text">{formatDateRange()}</span>
+                        </button>
 
-            <div className="h search-bar-container">
-                <div className="h search-bar-row">
-                    <button ref={dateRef} className="h search-item" onClick={() => openModal('date', dateRef)}>
-                        <FontAwesomeIcon icon={faCalendarDay} style={{ fontSize: 24, color: '#9370DB' }} />
-                        <span className="h search-text">{formatDateRange()}</span>
-                    </button>
+                        <button ref={locationRef} className="h search-item" onClick={() => openModal('location', locationRef)}>
+                            <FontAwesomeIcon icon={faLocationDot} style={{ fontSize: 24, color: '#9370DB' }} />
+                            <span className="h search-text">{selectedLocation || '위치 검색'}</span>
+                        </button>
 
-                    <button ref={locationRef} className="h search-item" onClick={() => openModal('location', locationRef)}>
-                        <FontAwesomeIcon icon={faLocationDot} style={{ fontSize: 24, color: '#9370DB' }} />
-                        <span className="h search-text">{selectedLocation || '위치 검색'}</span>
-                    </button>
+                        <button ref={guestsRef} className="h search-item" onClick={() => openModal('guests', guestsRef)}>
+                            <FontAwesomeIcon icon={faUserPlus} style={{ fontSize: 24, color: '#9370DB' }} />
+                            <span className="h search-text">
+                                {guestCount > 0 ? `게스트 ${guestCount}명` : '인원 추가'}
+                            </span>
+                        </button>
 
-                    <button ref={guestsRef} className="h search-item" onClick={() => openModal('guests', guestsRef)}>
-                        <FontAwesomeIcon icon={faUserPlus} style={{ fontSize: 24, color: '#9370DB' }} />
-                        <span className="h search-text">
-                            {guestCount > 0 ? `게스트 ${guestCount}명` : '인원 추가'}
-                        </span>
-                    </button>
-
-                    <button className="h search-button">
-                        <FontAwesomeIcon icon={faSearch} style={{ fontSize: 24, color: '#FFF' }} />
-                    </button>
+                        <button className="h search-button">
+                            <FontAwesomeIcon icon={faSearch} style={{ fontSize: 24, color: '#FFF' }} />
+                        </button>
+                    </div>
                 </div>
-            </div>
+            }
 
             {modalVisible && (
                 <div className="h modal-container">
