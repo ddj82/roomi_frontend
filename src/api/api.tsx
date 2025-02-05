@@ -1,4 +1,6 @@
 // api.tsx
+import i18n from "src/i18n";
+
 const BASE_URL = 'https://roomi.co.kr/api';
 
 // 로컬 스토리지에서 인증 토큰 가져오기
@@ -12,7 +14,15 @@ const getAuthToken = () => {
 };
 
 // 요청 메소드
-const request = async (endpoint: string, requireAuth: boolean = true, method: string = 'GET', data?: any) => {
+/*
+* 공용 request 메소드 매개 변수
+* 1. url 패턴
+* 2. 로그인 확인
+* 3. 언어 감지 확인
+* 4. 데이터 전송 방식
+* 5. 데이터
+* */
+const request = async (endpoint: string, requireAuth: boolean = true, method: string = 'GET', data?: any, requireLocale: boolean = false) => {
     try {
         const headers: Record<string, string> = {
             'Content-Type': 'application/json',
@@ -27,7 +37,13 @@ const request = async (endpoint: string, requireAuth: boolean = true, method: st
             }
         }
 
-        const response = await fetch(`${BASE_URL}${endpoint}`, {
+        let API_URL = BASE_URL + `${endpoint}`;
+        if (requireLocale) {
+            const locale = i18n.language; // 현재 언어 감지
+            API_URL = API_URL + `?locale=${locale}`;
+        }
+
+        const response = await fetch(`${API_URL}`, {
             method: method,
             headers: headers,
             body: data ? JSON.stringify(data) : undefined,
@@ -96,7 +112,7 @@ export const logout = async () => {
 
 // 방 조회 API
 export const fetchRoomData = async (id: number, locale: string) => {
-    return request(`/rooms/${id}?locale=${locale}`, false);
+    return request(`/rooms/${id}`, false, 'GET', undefined, true);
 };
 
 // host 등록 동의 API
@@ -116,4 +132,9 @@ export const be_host = async () => {
         console.error('호스트 등록 실패:', error);
         return false;
     }
+};
+
+// 나의 방 API
+export const myRoomList = async () => {
+    return request(`/rooms/my/list`, true, 'GET', undefined, true);
 };

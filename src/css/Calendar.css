@@ -1,0 +1,36 @@
+/*캘린더 기본*/
+.react-calendar {
+    border: none;
+    box-shadow: none;
+    background-color: white;
+}
+
+/* 지난 날짜 (비활성화) */
+.react-calendar .react-calendar__tile:disabled {
+    color: #d3d3d3;
+    cursor: default;
+    background-color: white;
+}
+.react-calendar .react-calendar__navigation button:disabled {
+    background-color: transparent;
+}
+
+/*오늘*/
+.react-calendar .react-calendar__tile--now {
+    background: transparent;
+    color: #9370db;
+}
+.react-calendar__tile--now:enabled:hover,
+.react-calendar__tile--now:enabled:focus {
+    background-color: #e6e6e6;
+}
+
+/*선택한 날짜*/
+.react-calendar .react-calendar__tile.start-date,
+.react-calendar .react-calendar__tile.in-range,
+.react-calendar .react-calendar__tile--active,
+.react-calendar .react-calendar__tile--active:enabled:hover,
+.react-calendar .react-calendar__tile--active:enabled:focus {
+    background: #9370db;
+    color: white;
+}

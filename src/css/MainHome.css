@@ -32,8 +32,16 @@
     width: 100%;
     background-color: #fff;
     padding: 20px;
-    overflow-y: auto;
+    overflow-y: scroll;
     height: calc(100vh - 150px); /* 상단 필터바와 버튼을 제외한 높이 */
+
+    /* 스크롤바 숨기기 */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE, Edge */
+}
+/* 스크롤바 숨기기 */
+.mainHome.list-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
 }
 
 /* 버튼 스타일 */

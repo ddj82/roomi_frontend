@@ -119,12 +119,18 @@
   "지도보기" : "View Map",
   "목록보기" : "View List",
   "호스트로 전환": "To Host",
-  "메시지": "Messages",
+  "message": "Messages",
   "찜 목록": "Favorites",
   "예약 내역": "History",
   "호스트 등록": "Host",
   "게스트로 전환": "To Guest",
   "호스트 관리": "Manage",
   "계정 설정": "Account",
-  "로그아웃": "Logout"
+  "로그아웃": "Logout",
+  "my_room": "My Room",
+  "contract_management": "Contract Management",
+  "room_status": "Room Status",
+  "settlement": "Settlement",
+  "room_status_set": "Status",
+  "room_config": "Config"
 }

@@ -4,7 +4,6 @@ import { AuthContext } from 'src/components/auth/AuthContext';
 import { login } from 'src/api/api';
 import { SocialAuth } from "src/api/SocialAuth";
 import '../../css/AuthModal.css'; // CSS 파일 import
-import '../../css/Modal.css';
 import { useIsHost } from "src/components/auth/IsHostContext";
 
 const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () => void; type: 'login' | 'signup' }) => {

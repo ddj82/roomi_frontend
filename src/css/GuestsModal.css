@@ -1,3 +1,7 @@
+.overlay {
+    background-color: transparent;
+}
+
 .guestsModal.modal-container {
     width: 100%;
     background-color: #fff;

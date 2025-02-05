@@ -1,3 +1,7 @@
+.overlay {
+    background-color: transparent;
+}
+
 .dateModal.modal-container {
     width: 350px;
     background-color: white;
@@ -5,6 +9,7 @@
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
+    z-index: 2000;
 }
 
 .dateModal.header-text {
@@ -13,16 +18,6 @@
     text-align: center;
     margin-bottom: 10px;
     font-weight: 500;
-}
-
-.dateModal.react-calendar {
-    border: none;
-    box-shadow: none;
-}
-
-.dateModal.react-calendar__tile--active {
-    background-color: #9370DB;
-    color: white;
 }
 
 .dateModal.confirm-button {

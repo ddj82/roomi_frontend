@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
 import '../../css/GuestsModal.css'; // CSS 파일 import
 
@@ -20,10 +20,22 @@ const GuestsModal = ({ visible, onClose, position }: GuestsModalProps) => {
         }
     };
 
+    useEffect(() => {
+        if (visible) {
+            document.body.style.overflow = 'hidden'; // 스크롤 방지
+        } else {
+            document.body.style.overflow = 'auto'; // 스크롤 복원
+        }
+        return () => {
+            document.body.style.overflow = 'auto'; // 컴포넌트 언마운트 시 복원
+        };
+    }, [visible]);
+
     return (
         <Modal
             isOpen={visible}
             onRequestClose={onClose}
+            overlayClassName="overlay"
             style={{
                 content: {
                     position: 'absolute',
@@ -32,10 +44,10 @@ const GuestsModal = ({ visible, onClose, position }: GuestsModalProps) => {
                     width: '360px',
                     backgroundColor: '#FFF',
                     borderRadius: '12px',
-                    padding: '20px',
                     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
                 },
             }}
+            className="guestsModal"
         >
             <div className="guestsModal modal-container">
                 <div className="guestsModal guest-type-container">

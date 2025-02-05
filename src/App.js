@@ -11,6 +11,9 @@ import {IsHostProvider} from "./components/auth/IsHostContext";
 import HostModeAgreeScreen from "./components/screens/HostModeAgreeScreen";
 import HostScreen from "./components/screens/HostScreen";
 import {HeaderBtnProvider} from "./components/auth/HeaderBtnContext";
+import 'src/css/Modal.css';
+import 'src/css/Calendar.css';
+
 
 export default function App() {
     return (

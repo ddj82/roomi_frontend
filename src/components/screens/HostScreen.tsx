@@ -1,98 +1,62 @@
-// import React, { useState } from 'react';
-//
-// const HostScreen = () => {
-//     const [activeTab, setActiveTab] = useState('나의 방');
-//
-//     const renderContent = () => {
-//         switch (activeTab) {
-//             case '나의 방':
-//                 return <div>나의 방 내용</div>;
-//             case '계약 관리':
-//                 return <div>계약 관리 내용</div>;
-//             case '방 현황':
-//                 return <div>방 현황 내용</div>;
-//             case '메시지':
-//                 return <div>메시지 내용</div>;
-//             case '정산':
-//                 return <div>정산 내용</div>;
-//             default:
-//                 return <div>탭을 선택해주세요.</div>;
-//         }
-//     };
-//
-//     return (
-//         <div>
-//             <h1>호스트 관리 페이지</h1>
-//             <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-//                 {['나의 방', '계약 관리', '방 현황', '메시지', '정산'].map((tab) => (
-//                     <button
-//                         key={tab}
-//                         onClick={() => setActiveTab(tab)}
-//                         style={{
-//                             padding: '10px',
-//                             backgroundColor: activeTab === tab ? '#6200ea' : '#f0f0f0',
-//                             color: activeTab === tab ? '#ffffff' : '#000000',
-//                             border: 'none',
-//                             cursor: 'pointer',
-//                         }}
-//                     >
-//                         {tab}
-//                     </button>
-//                 ))}
-//             </div>
-//             <div>{renderContent()}</div>
-//         </div>
-//     );
-// };
-//
-// export default HostScreen;
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import MyRoom from "src/components/hostMenu/my_room";
+import ContractManagement from "src/components/hostMenu/contract_management";
+import RoomStatus from "src/components/hostMenu/room_status";
+import Message from "src/components/hostMenu/message";
+import Settlement from "src/components/hostMenu/settlement";
 
 function HostScreen() {
-    const [isOpen, setIsOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState("my_room");
+    const { t } = useTranslation();
 
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
+    // 탭 ID와 컴포넌트 매핑
+    const components: Record<string, JSX.Element> = {
+        my_room: <MyRoom />,
+        contract_management: <ContractManagement />,
+        room_status: <RoomStatus />,
+        message: <Message />,
+        settlement: <Settlement />,
     };
 
-    return (
-        <div className="h-screen flex items-center justify-center bg-gray-100">
-            {/* Menu Button */}
-            <button
-                onClick={toggleMenu}
-                className="px-4 py-2 text-white bg-blue-500 rounded"
-            >
-                {isOpen ? "Close Menu" : "Open Menu"}
-            </button>
+    const tabs = ["my_room", "contract_management", "room_status", "message", "settlement"] as const;
 
-            {/* Sliding Menu */}
-            <div
-                className={`fixed top-0 left-0 h-full w-64 bg-gray-800 text-white transform ${
-                    isOpen ? "translate-x-0" : "-translate-x-full"
-                } transition-transform duration-300`}
-            >
-                <ul className="mt-10 space-y-4 px-6">
-                    <li>
-                        <a href="#" className="block hover:text-blue-400">
-                            Home
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" className="block hover:text-blue-400">
-                            About
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" className="block hover:text-blue-400">
-                            Services
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" className="block hover:text-blue-400">
-                            Contact
-                        </a>
-                    </li>
+    return (
+        <div>
+            <div className="mb-4">
+                <ul className="flex flex-wrap -mb-px text-sm font-medium text-center" role="tablist">
+                    {tabs.map((tab) => (
+                        <li key={tab} className="me-2" role="presentation">
+                            <button
+                                className={`inline-block p-4 border-b-2 rounded-t-lg ${
+                                    activeTab === tab
+                                        ? "text-roomi border-roomi"
+                                        : "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                                }`}
+                                onClick={() => setActiveTab(tab)}
+                                type="button"
+                                role="tab"
+                                aria-controls={tab}
+                                aria-selected={activeTab === tab}
+                            >
+                                {t(tab)}
+                            </button>
+                        </li>
+                    ))}
                 </ul>
+            </div>
+            <div>
+                {tabs.map((tab) => (
+                    <div
+                        key={tab}
+                        className={`p-4 ${activeTab === tab ? "" : "hidden"}`}
+                        id={tab}
+                        role="tabpanel"
+                        aria-labelledby={`${tab}-tab`}
+                    >
+                        <div>{components[tab]}</div>
+                    </div>
+                ))}
             </div>
         </div>
     );

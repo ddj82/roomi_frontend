@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
 import '../../css/LocationModal.css';
 
@@ -16,10 +16,22 @@ const LocationModal = ({ visible, onClose, position }: LocationModalProps) => {
         '경기', '인천', '대구', '대전'
     ];
 
+    useEffect(() => {
+        if (visible) {
+            document.body.style.overflow = 'hidden'; // 스크롤 방지
+        } else {
+            document.body.style.overflow = 'auto'; // 스크롤 복원
+        }
+        return () => {
+            document.body.style.overflow = 'auto'; // 컴포넌트 언마운트 시 복원
+        };
+    }, [visible]);
+
     return (
         <Modal
             isOpen={visible}
             onRequestClose={onClose}
+            overlayClassName="overlay"
             style={{
                 content: {
                     position: 'absolute',
@@ -30,9 +42,9 @@ const LocationModal = ({ visible, onClose, position }: LocationModalProps) => {
                     backgroundColor: '#FFF',
                     borderRadius: '12px',
                     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-                    padding: '16px',
                 },
             }}
+            className="locationModal"
         >
             <div className="locationModal modal-container">
                 <div className="locationModal search-container">
