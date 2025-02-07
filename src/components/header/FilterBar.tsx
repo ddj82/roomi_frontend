@@ -6,27 +6,7 @@ import { faChevronLeft, faChevronRight, faCalendarDay, faCalendarWeek, faCalenda
 
 const FilterBar: React.FC = () => {
     const scrollRef = useRef<HTMLDivElement>(null);
-    const [currentOffset, setCurrentOffset] = useState(0);
-    const scrollAmount = 300;
 
-    // // 왼쪽 화살표 클릭: 왼쪽으로 스크롤
-    // const scrollToLeft = () => {
-    //     if (scrollRef.current) {
-    //         const newOffset = Math.max(currentOffset - scrollAmount, 0);
-    //         scrollRef.current.scrollLeft = newOffset;
-    //         setCurrentOffset(newOffset);
-    //     }
-    // };
-    //
-    // // 오른쪽 화살표 클릭: 오른쪽으로 스크롤
-    // const scrollToRight = () => {
-    //     if (scrollRef.current) {
-    //         const newOffset = currentOffset + scrollAmount;
-    //         scrollRef.current.scrollLeft = newOffset;
-    //         setCurrentOffset(newOffset);
-    //     }
-    // };
-    //
     // 필터 버튼 렌더링 함수
     const renderFilterButton = (label: string, iconName: any) => (
         <div className="filterBar filterBar-item" key={label}>
@@ -88,23 +68,18 @@ const FilterBar: React.FC = () => {
     return (
         <div className="filterBar container">
             {/* 왼쪽 화살표 버튼 */}
-            {/*<button className="filterBar arrow-button left" onClick={scrollToLeft}>*/}
-            {/*    <FontAwesomeIcon icon={faChevronLeft} style={{ fontSize: 20, color: '#333' }} />*/}
-            {/*</button>*/}
-            {/* 왼쪽 화살표 버튼 */}
             <button
                 className={`filterBar arrow-button left ${isLeftEnabled ? "" : "disabled"}`}
                 onClick={() => scrollByAmount(-300)}
                 disabled={!isLeftEnabled} // 버튼 비활성화 조건
             >
-                {"<"}
+                <FontAwesomeIcon icon={faChevronLeft} style={{ fontSize: 20, color: '#333' }} />
             </button>
 
             {/* 스크롤 가능한 필터바 */}
             <div
                 ref={scrollRef}
                 className="filterBar scroll-container"
-                onScroll={(event) => setCurrentOffset(event.currentTarget.scrollLeft)}
             >
                 {filters.map((filter) => renderFilterButton(filter.label, filter.icon))}
                 <div>
@@ -112,16 +87,12 @@ const FilterBar: React.FC = () => {
             </div>
 
             {/* 오른쪽 화살표 버튼 */}
-            {/*<button className="filterBar arrow-button right" onClick={scrollToRight}>*/}
-            {/*    <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: 20, color: '#333' }} />*/}
-            {/*</button>*/}
-            {/* 오른쪽 화살표 버튼 */}
             <button
                 className={`filterBar arrow-button right ${isRightEnabled ? "" : "disabled"}`}
                 onClick={() => scrollByAmount(300)}
                 disabled={!isRightEnabled} // 버튼 비활성화 조건
             >
-                {">"}
+                <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: 20, color: '#333' }} />
             </button>
         </div>
     );

@@ -13,14 +13,14 @@
     "isolatedModules": true,          // 개별 모듈 컴파일 활성화
     "baseUrl": ".",                   // 기본 경로 설정
     "paths": {
-      "@/*": ["src/*"],                 // 경로 별칭
-      "@/components/*": ["src/components/*"],
-      "@/app/*": ["src/app/*"],
-      "@/assets/*": ["src/assets/*"],
-      "@/constants/*": ["src/constants/*"],
-      "@/api/*": ["src/api/*"],
-      "@/types/*": ["src/types/*"],
-      "@/locales/*": ["src/locales/*"],
+//      "@/*": ["src/*"],                 // 경로 별칭
+//      "@/components/*": ["src/components/*"],
+//      "@/app/*": ["src/app/*"],
+//      "@/assets/*": ["src/assets/*"],
+//      "@/constants/*": ["src/constants/*"],
+//      "@/api/*": ["src/api/*"],
+//      "@/types/*": ["src/types/*"],
+//      "@/locales/*": ["src/locales/*"],
     }
   },
   "include": [

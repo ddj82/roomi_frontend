@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {myRoomList} from "src/api/api";
 import { RoomData } from "src/types/rooms";
 
-const MyComponent = () => {
+const MyRooms = () => {
     const [data, setData] = useState<RoomData[]>([]);
 
     useEffect(() => {
@@ -40,30 +40,10 @@ const MyComponent = () => {
                             </p>
                         </div>
                     </div>
-                    // <div
-                    //     key={index}
-                    //     className="bg-white border border-gray-200 rounded-xl shadow-md p-4"
-                    // >
-                    //     {/* 방 제목 */}
-                    //     <h2 className="text-lg font-semibold mt-2">{room.title}</h2>
-                    //
-                    //     {/* 방 주소 */}
-                    //     <p className="text-gray-500 mt-1">{room.address}</p>
-                    //
-                    //     {/* 수정/삭제 버튼 */}
-                    //     <div className="flex justify-end space-x-2 mt-4">
-                    //         <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                    //             수정
-                    //         </button>
-                    //         <button className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
-                    //             삭제
-                    //         </button>
-                    //     </div>
-                    // </div>
                 ))}
             </div>
         </div>
     );
 };
 
-export default MyComponent;
+export default MyRooms;

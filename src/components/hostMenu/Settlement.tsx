@@ -1,13 +1,13 @@
 import React from 'react';
 import {useTranslation} from "react-i18next";
 
-const MyComponent = () => {
+const Settlement = () => {
     const { t } = useTranslation();
     return (
         <div>
-            {t('message')} 탭 컨포넌트
+            {t('settlement')} 탭 컨포넌트
         </div>
     );
 };
 
-export default MyComponent;
+export default Settlement;

@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ApiResponse, RoomData } from "@/types/rooms";
+import React, { useCallback, useEffect, useRef } from 'react';
+import { ApiResponse, RoomData } from "src/types/rooms";
 
 interface KakaoMapViewProps {
     onRoomsUpdate: (rooms: RoomData[]) => void;
@@ -11,8 +11,6 @@ export default function KakaoWebMap({ onRoomsUpdate }: KakaoMapViewProps) {
     const resizeObserver = useRef<ResizeObserver | null>(null);
     const markers = useRef<any[]>([]);
     const debounceTimer = useRef<NodeJS.Timeout | null>(null);
-
-    const [rooms, setRooms] = useState<RoomData[]>([]);
 
     // 디바운스 데이터 로드 함수
     const debouncedLoadRooms = useCallback((map: any) => {

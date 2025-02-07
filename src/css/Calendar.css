@@ -6,17 +6,17 @@
 }
 
 /* 지난 날짜 (비활성화) */
-.react-calendar .react-calendar__tile:disabled {
+.react-calendar__tile:disabled {
     color: #d3d3d3;
     cursor: default;
     background-color: white;
 }
-.react-calendar .react-calendar__navigation button:disabled {
+.react-calendar__navigation button:disabled {
     background-color: transparent;
 }
 
 /*오늘*/
-.react-calendar .react-calendar__tile--now {
+.react-calendar__tile--now {
     background: transparent;
     color: #9370db;
 }
@@ -26,11 +26,34 @@
 }
 
 /*선택한 날짜*/
-.react-calendar .react-calendar__tile.start-date,
-.react-calendar .react-calendar__tile.in-range,
-.react-calendar .react-calendar__tile--active,
-.react-calendar .react-calendar__tile--active:enabled:hover,
-.react-calendar .react-calendar__tile--active:enabled:focus {
+.react-calendar__tile.start-date,
+.react-calendar__tile.in-range,
+.react-calendar__tile--active, /*액티스*/
+.react-calendar__tile--active:enabled:hover, /*액티브 호버*/
+.react-calendar__tile--active:enabled:focus /*액티브 클릭*/{
     background: #9370db;
     color: white;
 }
+
+.custom-block-date abbr {
+    text-decoration: line-through;
+    color: red;
+}
+.reservation-date abbr {
+    text-decoration: line-through;
+    color: #9370db;
+}
+
+/* start-dateRCS end-dateRCS range-dateRCS */
+.react-calendar .react-calendar__tile--active, /*액티스*/
+.react-calendar .react-calendar__tile--active:enabled:hover, /*액티브 호버*/
+.react-calendar .react-calendar__tile--active:enabled:focus, /*액티브 클릭*/
+.react-calendar .range-dateRCS,
+.react-calendar .start-dateRCS,
+.react-calendar .end-dateRCS
+{
+    background-color: white;
+    color: black;
+    border: 1px solid #9370db;
+}
+

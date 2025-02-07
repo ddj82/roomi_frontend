@@ -1,7 +1,7 @@
 import React from 'react';
 import {useTranslation} from "react-i18next";
 
-const MyComponent = () => {
+const ContractManagement = () => {
     const { t } = useTranslation();
     return (
         <div>
@@ -10,4 +10,4 @@ const MyComponent = () => {
     );
 };
 
-export default MyComponent;
+export default ContractManagement;

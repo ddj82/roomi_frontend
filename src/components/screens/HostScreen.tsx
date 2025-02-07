@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import MyRoom from "src/components/hostMenu/my_room";
-import ContractManagement from "src/components/hostMenu/contract_management";
-import RoomStatus from "src/components/hostMenu/room_status";
-import Message from "src/components/hostMenu/message";
-import Settlement from "src/components/hostMenu/settlement";
+import MyRoom from "src/components/hostMenu/MyRooms";
+import ContractManagement from "src/components/hostMenu/ContractManagement";
+import RoomStatus from "src/components/hostMenu/RoomStatus";
+import Message from "src/components/hostMenu/Message";
+import Settlement from "src/components/hostMenu/Settlement";
 
 function HostScreen() {
     const [activeTab, setActiveTab] = useState("my_room");

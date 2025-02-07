@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css'; // 스타일 파일도 import
 import dayjs from 'dayjs';
-import '../../css/DateModal.css';
+import 'src/css/DateModal.css';
 
 interface DateModalProps {
     visible: boolean;
@@ -17,7 +17,6 @@ const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps
     const [endDate, setEndDate] = useState<string | null>(null);
 
     const handleDayClick = (date: Date) => {
-        // const dateString = date.toISOString().split('T')[0];
         const dateString = formatDate(date);
         if (!startDate || (startDate && endDate)) {
             setStartDate(dateString);
@@ -37,7 +36,6 @@ const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps
     };
 
     const getTileClassName = ({ date }: { date: Date }) => {
-        // const dateString = date.toISOString().split('T')[0];
         const dateString = formatDate(date);
         if (dateString === startDate) {
             return 'start-date';
@@ -95,9 +93,7 @@ const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps
             }}
             className="dateModal"
         >
-            <div
-                className="dateModal modal-container"
-            >
+            <div className="dateModal modal-container">
                 <h3 className="dateModal header-text">
                     {!startDate ? '체크인 날짜를 선택하세요' :
                         !endDate ? '체크아웃 날짜를 선택하세요' :
