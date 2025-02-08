@@ -17,6 +17,16 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
 
     const handleDayClick = (date: Date) => {
         const dateStringRSC = dayjs(date).format('YYYY-MM-DD')
+
+        // 'BLOCKED' 상태이거나 손님이 예약한 날짜인 경우 클릭 비활성화
+        if (customBlockDatesRSC.includes(dateStringRSC) || reservationDatesRSC.includes(dateStringRSC)) {
+            const res = window.confirm('수정할껴?');
+            setStartDateRSC(null);
+            setEndDateRSC(null);
+            setDateRangeRSC([]);
+            return;
+        }
+
         if (!startDateRSC || (startDateRSC && endDateRSC)) {
             setStartDateRSC(dateStringRSC);
             setEndDateRSC(null);
@@ -43,36 +53,10 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
 
                 let currentDate = startDate;
 
-                // while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
-                //     dates.push(currentDate.format('YYYY-MM-DD'));
-                //     currentDate = currentDate.add(1, 'day'); // 하루씩 증가
-                // }
-
                 // 현재 선택된 방의 데이터를 가져옵니다.
                 const selectedRoomData = data.find((room) => room.title === selectedRoom);
-
                 // 예약 데이터 가져오기
                 const reservations = selectedRoomData?.unavailable_dates?.reservations || [];
-
-                // 시작 날짜와 종료 날짜가 예약된 날짜인지 확인
-                const isStartUnavailable = reservations.some(
-                    (reservation) =>
-                        reservation.status &&
-                        dayjs(reservation.check_in_date).isSameOrBefore(startDate, 'day') &&
-                        dayjs(reservation.check_out_date).isSameOrAfter(startDate, 'day')
-                );
-
-                const isEndUnavailable = reservations.some(
-                    (reservation) =>
-                        reservation.status &&
-                        dayjs(reservation.check_in_date).isSameOrBefore(endDate, 'day') &&
-                        dayjs(reservation.check_out_date).isSameOrAfter(endDate, 'day')
-                );
-
-                // 시작 또는 종료 날짜가 예약된 날짜라면 빈 배열 반환
-                if (isStartUnavailable || isEndUnavailable) {
-                    return [];
-                }
 
                 // 날짜 범위 생성
                 while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
@@ -138,14 +122,14 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
         setReservationDatesRSC(reservationArrRSC);
     }, [selectedRoom, data]);
 
-    const tileContent = ({ date }: { date: Date }) => {
+    const tileContent = () => {
         // 기본적으로 모든 날짜에 공통 콘텐츠 추가
         return <div className="add-content text-gray-500 text-xs">
             {data.filter((room) => room.title === selectedRoom) // 조건에 맞는 데이터 필터링
                 .map((room, index) => (
                     <div key={index}>
                         {room.day_price !== undefined ? (
-                            `${(room.day_price / 10000)}`
+                            `${(room.day_price / 10000).toFixed(2)}`
                         ) : (
                             '없음'
                         )}
@@ -188,6 +172,19 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                     prev2Label={null} // 이전으로 돌아가는 버튼 제거
                 />
             </div>
+            <div>
+                {startDateRSC !== null ? (
+                    <span>{startDateRSC}</span>
+                ) : (
+                    <span>날짜를 선택하세요</span>
+                )}
+                ~
+                {endDateRSC !== null ? (
+                    <span>{endDateRSC}</span>
+                ) : (
+                    <span>날짜를 선택하세요</span>
+                )}
+            </div>
             {startDateRSC && endDateRSC && (
                 <div>
                     <div>선택된 날짜</div>
@@ -199,24 +196,16 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                         </ul>
                     </div>
                     <div>
-                        { startDateRSC === endDateRSC ? (
-                            <div>{startDateRSC}</div>
-                        ) : (
-                            <div>{startDateRSC} ~ {endDateRSC}</div>
-                        )}
+                        객실 사용 불가 설정 {'>'} 이유받기
+                    </div>
+                    <div>
+                        가격 설정
                     </div>
                 </div>
             )}
-            {/*
-            <div>
-                객실 사용 불가 설정 {'>'} 이유받기
-            </div>
-            <div>
-                가격 설정
-            </div>
-            */}
-            <div>손님예약(보라색) 안눌리게</div>
-            <div>빨간날(호스트막기) 누르면 블락해제?</div>
+            <br/><br/>
+            <div>손님예약(보라색) 안눌리게 - 클리어</div>
+            <div>빨간날(호스트막기) 누르면 블락해제? - 클리어</div>
         </div>
     );
 };

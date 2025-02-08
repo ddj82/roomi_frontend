@@ -38,10 +38,16 @@
 .custom-block-date abbr {
     text-decoration: line-through;
     color: red;
+    font-weight: bold;
 }
+
 .reservation-date abbr {
     text-decoration: line-through;
     color: #9370db;
+    font-weight: bold;
+}
+.reservation-date {
+    pointer-events: none;
 }
 
 /* start-dateRCS end-dateRCS range-dateRCS */
@@ -55,5 +61,6 @@
     background-color: white;
     color: black;
     border: 1px solid #9370db;
+    border-radius: 10px;
 }
 

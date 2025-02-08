@@ -43,21 +43,19 @@ const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: 
         setReservationDatesRSS(reservationArrRSS);
     }, [selectedRoom, data]);
 
-    const tileContent = ({ date }: { date: Date }) => {        // 기본적으로 모든 날짜에 공통 콘텐츠 추가
-        let contentRSS =
-            <div className="add-content text-gray-500 text-xs">
-                {data.filter((room) => room.title === selectedRoom) // 조건에 맞는 데이터 필터링
-                    .map((room, index) => (
-                        <div key={index}>
-                            {room.day_price !== undefined ? (
-                                `${(room.day_price / 10000)}`
-                            ) : (
-                                '없음'
-                            )}
-                        </div>
-                    ))}
-            </div>;
-        return contentRSS;
+    const tileContent = () => {
+        return <div className="add-content text-gray-500 text-xs">
+            {data.filter((room) => room.title === selectedRoom) // 조건에 맞는 데이터 필터링
+                .map((room, index) => (
+                    <div key={index}>
+                        {room.day_price !== undefined ? (
+                            `${(room.day_price / 10000).toFixed(2)}`
+                        ) : (
+                            '없음'
+                        )}
+                    </div>
+                ))}
+        </div>;
     };
 
     return (
@@ -80,23 +78,6 @@ const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: 
                     next2Label={null} // 추가로 넘어가는 버튼 제거
                     prev2Label={null} // 이전으로 돌아가는 버튼 제거
                 />
-            </div>
-            
-            {/* 데이터 로그 */}
-            <div>
-                {data.filter((room) => room.title === selectedRoom) // 조건에 맞는 데이터 필터링
-                    .map((room, index) => (
-                        <div key={index}>
-                            <div>Room: {room.title}</div>
-                            {room.unavailable_dates?.reservations?.map((reservation, resIndex) => (
-                                <div key={resIndex}>
-                                    <p>status: {reservation.status}</p>
-                                    <p>check_in_date: {reservation.check_in_date}</p>
-                                    <p>check_out_date: {reservation.check_out_date}</p>
-                                </div>
-                            ))}
-                        </div>
-                    ))}
             </div>
 
             {/* 캘린더 포인트 비활성화 */}
