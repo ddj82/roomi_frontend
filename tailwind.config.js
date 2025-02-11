@@ -6,6 +6,7 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                "roomi-00": '#DFC2FB', // 더더더 연하게
                 "roomi-0": '#C8A7F8', // 더더 연하게
                 "roomi-1": '#B08DF0', // 더 연하게
                 "roomi-2": '#A07EE4', // 연하게
@@ -17,5 +18,27 @@ module.exports = {
         },
     },
     plugins: [
+        function ({ addUtilities }) {
+            addUtilities({
+                '.scrollbar-hidden': {
+                    /* 크로스 브라우저 스크롤바 숨기기 */
+                    'scrollbar-width': 'none', /* Firefox */
+                    '&::-webkit-scrollbar': {
+                        display: 'none', /* Chrome, Safari */
+                    },
+                },
+            });
+        },
+        function ({ addComponents }) {
+            addComponents({
+                '.no-spinner': {
+                    '-moz-appearance': 'textfield',
+                    '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': {
+                        '-webkit-appearance': 'none',
+                        'margin': '0',
+                    },
+                },
+            });
+        },
     ],
 };

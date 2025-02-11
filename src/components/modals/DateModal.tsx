@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
 import Calendar from 'react-calendar';
+import 'src/css/DateModal.css';
 import 'react-calendar/dist/Calendar.css'; // 스타일 파일도 import
 import dayjs from 'dayjs';
-import 'src/css/DateModal.css';
 
 interface DateModalProps {
     visible: boolean;

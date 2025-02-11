@@ -256,7 +256,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                         <div>
                             <label htmlFor="price">가격 변경</label>
                         </div>
-                        <input id="price" type="text"/>
+                        <input id="price" type="number" className="no-spinner"/>
                         <button type="button">확인</button>
                     </div>
                     <div>

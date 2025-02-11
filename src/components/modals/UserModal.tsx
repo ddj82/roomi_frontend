@@ -1,12 +1,14 @@
 import React, {useContext} from "react";
 import Modal from "react-modal"; // react-modal 사용
-import { FaUser, FaSignOutAlt, FaRegHeart, FaCogs, FaRegEnvelope } from "react-icons/fa"; // react-icons 사용
+import { FaSignOutAlt, FaRegHeart, FaCogs, FaRegEnvelope } from "react-icons/fa"; // react-icons 사용
 import { useTranslation } from "react-i18next";
-import {logout} from "src/api/api";
+import { logout } from "src/api/api";
 import { HostModeContext } from "src/components/auth/HostModeContext";
 import { useNavigate } from "react-router-dom"; // 웹에서는 react-router-dom 사용
-import '../../css/UserModal.css';
+import 'src/css/UserModal.css';
 import { useIsHost } from "src/components/auth/IsHostContext";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faUser} from "@fortawesome/free-solid-svg-icons";
 
 interface UserModalProps {
     visible: boolean;
@@ -74,57 +76,57 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
         >
             <div className="userModal modal-content">
                 <div className="userModal header">
-                    <h2 className="userModal title">{localStorage.getItem('userName')}</h2>
-                    <button onClick={onClose} className="userModal close-button">
-                        <FaUser size={24} color="#666" />
-                    </button>
+                    <div className="flex items-center justify-center w-20 h-20 m-4 bg-roomi rounded-full">
+                        <FontAwesomeIcon icon={faUser} className="text-white text-3xl" />
+                    </div>
+                    <div className="text-lg font-bold">{localStorage.getItem('userName')}</div>
                 </div>
 
-                <div className="userModal content">
+                <div className="userModal content text-lg">
                     {isHost ? (
                         <>
                             {hostMode ? (
                                 <>
                                     <button onClick={handleUserMode} className="userModal menu-item">
-                                        <FaUser size={30}/>
+                                        <FontAwesomeIcon icon={faUser} className="text-2xl" />
                                         {t("게스트 전환")}
                                     </button>
                                     <button onClick={handleHostManage} className="userModal menu-item">
-                                        <FaCogs size={30}/>
+                                        <FaCogs className="text-2xl"/>
                                         {t("호스트 관리")}
                                     </button>
                                 </>
                             ) : (
                                 <button onClick={handleUserHostMode} className="userModal menu-item">
-                                    <FaUser size={30}/>
+                                    <FontAwesomeIcon icon={faUser} className="text-2xl" />
                                     {t("호스트 전환")}
                                 </button>
                             )}
                         </>
                     ) : (
                         <button onClick={handleUserHostMode} className="userModal menu-item">
-                            <FaUser size={30}/>
+                            <FontAwesomeIcon icon={faUser} className="text-2xl" />
                             {t("호스트 등록")}
                         </button>
                     )}
 
                     <button onClick={handleMessage} className="userModal menu-item">
-                        <FaRegEnvelope size={30}/>
+                        <FaRegEnvelope className="text-2xl"/>
                         {t("메시지")}
                     </button>
 
                     <button onClick={handleFavorite} className="userModal menu-item">
-                        <FaRegHeart size={30}/>
+                        <FaRegHeart className="text-2xl"/>
                         {t("찜 목록")}
                     </button>
 
                     <button onClick={handleSettings} className="userModal menu-item">
-                        <FaCogs size={30}/>
+                        <FaCogs className="text-2xl"/>
                         {t("계정 설정")}
                     </button>
 
                     <button onClick={handleLogout} className="userModal menu-item">
-                        <FaSignOutAlt size={30}/>
+                        <FaSignOutAlt className="text-2xl"/>
                         {t("로그아웃")}
                     </button>
                 </div>

@@ -4,6 +4,10 @@
     width: 100%;
     margin: 0 auto; /* 가운데 정렬 */
 }
+.footer.f-add {
+    max-width: 1200px;
+    margin: 0 auto; /* 가운데 정렬 */
+}
 
 .footer.footer-text {
     color: #6B7280; /* 텍스트 색상 (회색) */

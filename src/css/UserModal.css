@@ -17,15 +17,10 @@
 
 .userModal.header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    flex-direction: column;
     width: 100%;
-}
-
-.userModal.title {
-    font-size: 24px;
-    font-weight: 600;
-    color: #1F2937;
 }
 
 .userModal.close-button {
@@ -46,21 +41,13 @@ button.userModal.menu-item {
     display: flex;
     align-items: center;
     justify-content: flex-start; /* 왼쪽 정렬 */
-    padding: 10px;
     width: 100%; /* 전체 너비 사용 */
-    font-size: 16px;
     border: none;
     background: none;
-    margin-bottom: 12px;
-    color: #333;
     cursor: pointer;
-    border-radius: 8px; /* 클릭 시 강조 효과 */
-}
-
-.userModal.menu-item:hover {
-    background-color: #f3f4f6;
+    margin: 15px 10px;
 }
 
 .userModal.menu-item svg {
-    margin-right: 12px;
+    margin-right: 20px;
 }
