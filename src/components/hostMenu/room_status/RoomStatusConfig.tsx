@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import Calendar from "react-calendar";
 import dayjs from "dayjs";
 import {RoomData} from "src/types/rooms";
@@ -8,19 +8,68 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
+interface ModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+// 블락 해제 모달
+const Modal: FC<ModalProps> = ({ isOpen, onClose }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+            <div className="relative p-4 w-full max-w-md bg-white rounded-lg shadow-lg">
+                <button
+                    className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8"
+                    onClick={onClose}
+                >
+                    <svg className="mx-auto w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1l6 6m0 0l6 6M7 7l6-6M7 7L1 13" />
+                    </svg>
+                </button>
+                <div className="p-4 text-center">
+                    <svg className="mx-auto mb-4 text-gray-400 w-12 h-12" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <h3 className="mb-5 text-lg font-normal text-gray-500">
+                        블락을 해제 하시겠습니까?
+                    </h3>
+                    <button
+                        className="text-white bg-roomi hover:bg-roomi-5 focus:ring-4 focus:outline-none focus:ring-roomi-0 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5"
+                        onClick={onClose}
+                    >
+                        확인 api호출
+                    </button>
+                    <button
+                        className="py-2.5 px-5 ml-3 text-sm font-medium text-roomi bg-white border border-roomi rounded-lg hover:bg-gray-100 hover:border-roomi focus:ring-4 focus:ring-roomi-0"
+                        onClick={onClose}
+                    >
+                        취소
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: string }) => {
     const [customBlockDatesRSC, setCustomBlockDatesRSC] = useState<string[]>([]);
     const [reservationDatesRSC, setReservationDatesRSC] = useState<string[]>([]);
     const [startDateRSC, setStartDateRSC] = useState<string | null>(null);
     const [endDateRSC, setEndDateRSC] = useState<string | null>(null);
     const [dateRangeRSC, setDateRangeRSC] = useState<string[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isReasonChk, setIsReasonChk] = useState(false);
 
     const handleDayClick = (date: Date) => {
         const dateStringRSC = dayjs(date).format('YYYY-MM-DD')
 
         // 'BLOCKED' 상태이거나 손님이 예약한 날짜인 경우 클릭 비활성화
         if (customBlockDatesRSC.includes(dateStringRSC) || reservationDatesRSC.includes(dateStringRSC)) {
-            const res = window.confirm('수정할껴?');
+            // const res = window.confirm('수정할껴?');
+            // 블락 해제 모달 오픈
+            setIsModalOpen(true);
             setStartDateRSC(null);
             setEndDateRSC(null);
             setDateRangeRSC([]);
@@ -31,6 +80,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
             setStartDateRSC(dateStringRSC);
             setEndDateRSC(null);
             setDateRangeRSC([]);
+            setIsReasonChk(false);
         } else {
             if (new Date(dateStringRSC) >= new Date(startDateRSC)) {
                 setEndDateRSC(dateStringRSC);
@@ -38,6 +88,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                 setStartDateRSC(dateStringRSC);
                 setEndDateRSC(null);
                 setDateRangeRSC([]);
+                setIsReasonChk(false);
             }
         }
     };
@@ -159,8 +210,13 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
         return null; // 기본 스타일
     };
 
+    const handlereasonChk = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setIsReasonChk(event.target.checked);
+    };
+
     return (
         <div>
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
             <div>
                 <Calendar
                     minDate={new Date()}
@@ -195,17 +251,30 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                             ))}
                         </ul>
                     </div>
+                    <br/>
                     <div>
-                        객실 사용 불가 설정 {'>'} 이유받기
+                        <div>
+                            <label htmlFor="price">가격 변경</label>
+                        </div>
+                        <input id="price" type="text"/>
+                        <button type="button">확인</button>
                     </div>
                     <div>
-                        가격 설정
+                        <input id="reasonChk" type="checkbox" checked={isReasonChk} onChange={handlereasonChk}/>
+                        <label htmlFor="reasonChk">사용 불가 처리</label>
                     </div>
+                    {isReasonChk && (
+                        <div>
+                            <div>
+                                <label htmlFor="reason">사용 불가 사유</label>
+                            </div>
+                            <input id="reason" type="text"/>
+                            <button type="button">확인</button>
+                        </div>
+                    )}
+
                 </div>
             )}
-            <br/><br/>
-            <div>손님예약(보라색) 안눌리게 - 클리어</div>
-            <div>빨간날(호스트막기) 누르면 블락해제? - 클리어</div>
         </div>
     );
 };
