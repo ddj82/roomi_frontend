@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from 'react';
-import KakaoWebMap from "src/components/map/KakaoMap";
+// import KakaoWebMap from "src/components/map/KakaoMap";
 import {RoomData} from "src/types/rooms"; // 스타일을 별도 CSS 파일로 관리
 import 'src/css/MainHome.css';
 import FilterBar from "src/components/header/FilterBar";
 import HomeScreen from "src/components/screens/HomeScreen";
+import NaverMap from "src/components/map/NaverMap";
 
 export default function MainHome() {
     const [homeVisible, setHomeVisible] = useState(true);
@@ -23,10 +24,9 @@ export default function MainHome() {
             {/* 상단 필터바 */}
             <FilterBar />
 
-            {/* KakaoMap을 항상 유지하고, display로 컨트롤 */}
             <div className="mainHome content-wrapper">
                 <div className="mainHome map-container" style={{ display: homeVisible ? 'block' : 'none' }}>
-                    <KakaoWebMap onRoomsUpdate={handleRoomsUpdate} />
+                    <NaverMap onRoomsUpdate={handleRoomsUpdate} />
                 </div>
 
                 <div className="mainHome list-container" style={{ display: homeVisible ? 'none' : 'block' }}>

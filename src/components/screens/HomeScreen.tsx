@@ -1,10 +1,10 @@
 import React, { useState, useEffect, memo, useCallback, useMemo } from 'react';
 import 'src/css/HomeScreen.css'; // 별도의 CSS 파일로 스타일 관리 (웹에 적합)
 import { RoomData } from "src/types/rooms";
-import KakaoWebMap from "src/components/map/KakaoMap";
 import { useNavigate } from 'react-router-dom'; // React Router 사용
 import WishlistButton from "src/components/modals/WishlistButton";
 import i18n from "src/i18n";
+import NaverMap from "../map/NaverMap";
 
 // Accommodation Card Component
 const AccommodationCard = memo(
@@ -71,7 +71,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
     };
 
     const renderMap = useCallback(
-        () => <KakaoWebMap onRoomsUpdate={handleRoomsUpdate} />,
+        () => <NaverMap onRoomsUpdate={handleRoomsUpdate} />,
         [handleRoomsUpdate]
     );
 

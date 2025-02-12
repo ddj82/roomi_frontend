@@ -13,6 +13,7 @@ import HostScreen from "./components/screens/HostScreen";
 import {HeaderBtnProvider} from "./components/auth/HeaderBtnContext";
 import 'src/css/Modal.css';
 import 'src/css/Calendar.css';
+import NaverMap from "./components/map/NaverMap";
 
 
 export default function App() {
@@ -25,10 +26,11 @@ export default function App() {
                 <Header/>
                 <div className="app container xl:max-w-[1200px]">
                     <Routes>
-                        <Route path="/" element={<MainHome/>}/>
-                        <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
-                        <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
-                        <Route path="/host" element={<HostScreen/>}/>
+                        <Route path="/" element={<MainHome/>} />
+                        <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>} />
+                        <Route path="/hostAgree" element={<HostModeAgreeScreen/>} />
+                        <Route path="/host" element={<HostScreen/>} />
+                        <Route path="/naver" element={<NaverMap/>} />
                     </Routes>
                 </div>
                 <Footer/>

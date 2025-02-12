@@ -40,6 +40,7 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
 
     const handleFavorite = () => {
         console.log("찜 목록 메뉴");
+        onClose();
     };
 
     const handleHostManage = () => {
