@@ -15,6 +15,16 @@ interface DateModalProps {
 const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps) => {
     const [startDate, setStartDate] = useState<string | null>(null);
     const [endDate, setEndDate] = useState<string | null>(null);
+    const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 875);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const handleDayClick = (date: Date) => {
         const dateString = formatDate(date);
@@ -82,11 +92,11 @@ const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps
             overlayClassName="overlay"
             style={{
                 content: {
-                    width: '350px',
                     backgroundColor: '#FFF',
                     borderRadius: '12px',
                     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-                    position: 'absolute',
+                    position: isMobile ? 'initial' : 'absolute',
+                    width: '350px',
                     top: `${position.y}px`,
                     left: `${position.x}px`,
                 }

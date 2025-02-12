@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-// import KakaoWebMap from "src/components/map/KakaoMap";
 import {RoomData} from "src/types/rooms"; // 스타일을 별도 CSS 파일로 관리
 import 'src/css/MainHome.css';
 import FilterBar from "src/components/header/FilterBar";
@@ -7,7 +6,7 @@ import HomeScreen from "src/components/screens/HomeScreen";
 import NaverMap from "src/components/map/NaverMap";
 
 export default function MainHome() {
-    const [homeVisible, setHomeVisible] = useState(true);
+    const [homeVisible, setHomeVisible] = useState(false);
     const [rooms, setRooms] = useState<RoomData[]>([]);
 
     const handleRoomsUpdate = useCallback((newRooms: RoomData[]) => {
@@ -22,15 +21,15 @@ export default function MainHome() {
     return (
         <div className="mainHome main-container">
             {/* 상단 필터바 */}
-            <FilterBar />
+            <FilterBar/>
 
-            <div className="mainHome content-wrapper">
-                <div className="mainHome map-container" style={{ display: homeVisible ? 'block' : 'none' }}>
-                    <NaverMap onRoomsUpdate={handleRoomsUpdate} />
+            <div className={`mainHome content-wrapper ${homeVisible ? 'show-map' : 'show-list'}`}>
+                <div className="mainHome map-container">
+                    <NaverMap onRoomsUpdate={handleRoomsUpdate}/>
                 </div>
 
-                <div className="mainHome list-container" style={{ display: homeVisible ? 'none' : 'block' }}>
-                    <HomeScreen rooms={rooms} />
+                <div className="mainHome list-container">
+                    <HomeScreen rooms={rooms}/>
                 </div>
             </div>
 

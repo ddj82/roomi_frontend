@@ -11,6 +11,16 @@ interface GuestsModalProps {
 const GuestsModal = ({ visible, onClose, position }: GuestsModalProps) => {
     const [adults, setAdults] = useState(0);
     const [children, setChildren] = useState(0);
+    const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 875);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const handleCount = (type: 'adults' | 'children', action: 'increase' | 'decrease') => {
         if (type === 'adults') {
@@ -38,7 +48,7 @@ const GuestsModal = ({ visible, onClose, position }: GuestsModalProps) => {
             overlayClassName="overlay"
             style={{
                 content: {
-                    position: 'absolute',
+                    position: isMobile ? 'initial' : 'absolute',
                     top: `${position.y}px`,
                     left: `${position.x}px`,
                     width: '360px',

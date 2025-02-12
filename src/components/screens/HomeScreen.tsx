@@ -19,7 +19,7 @@ const AccommodationCard = memo(
                 <div className="homeScreen card-header">
                     <WishlistButton />
                     <img
-                        src={item.thumbnail_url || 'https://placehold.co/600x400'}
+                        src={item.detail_urls?.[0]}
                         alt="thumbnail"
                         className="homeScreen card-image"
                     />

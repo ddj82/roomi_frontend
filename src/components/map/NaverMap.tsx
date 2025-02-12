@@ -122,7 +122,9 @@ const NaverMap = ({ onRoomsUpdate }: NaverMapViewProps) => {
             if (!window.naver || !window.naver.maps) return;
 
             const mapOptions = {
-                center: new  window.naver.maps.LatLng(37.498095, 127.027610),
+                // 강남역
+                // center: new  window.naver.maps.LatLng(37.498095, 127.027610),
+                center: new  window.naver.maps.LatLng(37.5558634, 126.9317907),
                 zoom: 15,
                 minZoom: 9,
                 maxZoom: 18,

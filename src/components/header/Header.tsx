@@ -59,10 +59,17 @@ const Header = () => {
 
     const formatDateRange = () => {
         if (selectedDates) {
-            return `${selectedDates.startDate} ~ ${selectedDates.endDate}`;
+            // 날짜를 "yyyy-mm-dd" → "mm-dd" 형식으로 변환
+            const formatToMMDD = (dateString: string) => {
+                const [, month, day] = dateString.split('-'); // 연도 제외
+                return `${month}-${day}`;
+            };
+
+            return `${formatToMMDD(selectedDates.startDate)} ~ ${formatToMMDD(selectedDates.endDate)}`;
         }
         return '날짜 지정';
     };
+
 
     const handleLogo = () => {
         navigate('/');
@@ -87,7 +94,7 @@ const Header = () => {
                                 <div>
                                     <button
                                         className="w-8 h-8 md:w-10 md:h-10
-                                         flex items-center justify-center bg-roomi-00 text-roomi-3 rounded-full"
+                                         flex items-center justify-center bg-roomi-000 text-roomi rounded-full"
                                         onClick={() => setUserVisible(true)}>
                                         <FontAwesomeIcon icon={faUser}/>
                                     </button>

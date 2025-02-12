@@ -4,6 +4,8 @@
     position: relative; /* 버튼 고정을 위한 상대 위치 */
     width: 100%;
     padding: 10px 0;
+    z-index: 10;
+    background-color: white;
 }
 
 .filterBar.scroll-container {

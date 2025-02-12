@@ -10,6 +10,16 @@ interface LocationModalProps {
 
 const LocationModal = ({ visible, onClose, position }: LocationModalProps) => {
     const [searchText, setSearchText] = useState('');
+    const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 875);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const popularLocations = [
         '서울', '부산', '제주', '강원',
@@ -34,7 +44,7 @@ const LocationModal = ({ visible, onClose, position }: LocationModalProps) => {
             overlayClassName="overlay"
             style={{
                 content: {
-                    position: 'absolute',
+                    position: isMobile ? 'initial' : 'absolute',
                     top: `${position.y}px`,
                     left: `${position.x}px`,
                     width: '360px',
