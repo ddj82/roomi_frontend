@@ -103,10 +103,12 @@ const Header = () => {
                 </div>
                 {isVisible &&
                     <div className="h search-bar-container my-2 mx-3">
-                        <div className="h search-bar-row md:h-14 h-12 xl:max-w-4xl lg:max-w-3xl md:max-w-2xl w-full md:text-base text-xs md:mb-4">
+                        <div className="h search-bar-row md:mb-4 md:h-14 h-12
+                        w-full md:max-w-2xl lg:max-w-3xl xl:max-w-4xl
+                        text-[11px] md:text-sm lg:text-base">
                             <button ref={dateRef} className="h search-item"
                                     onClick={() => openModal('date', dateRef)}>
-                                <FontAwesomeIcon icon={faCalendarDay} className="text-roomi md:text-lg"/>
+                                <FontAwesomeIcon icon={faCalendarDay} className="text-roomi md:text-base lg:text-lg"/>
                                 <span className="ml-2 text-gray-500">{formatDateRange()}</span>
                             </button>
 
@@ -116,7 +118,7 @@ const Header = () => {
 
                             <button ref={locationRef} className="h search-item"
                                     onClick={() => openModal('location', locationRef)}>
-                                <FontAwesomeIcon icon={faLocationDot} className="text-roomi md:text-lg"/>
+                                <FontAwesomeIcon icon={faLocationDot} className="text-roomi md:text-base lg:text-lg"/>
                                 <span className="ml-2 text-gray-500">{selectedLocation || '위치 검색'}</span>
                             </button>
 
@@ -126,7 +128,7 @@ const Header = () => {
 
                             <button ref={guestsRef} className="h search-item"
                                     onClick={() => openModal('guests', guestsRef)}>
-                                <FontAwesomeIcon icon={faUserPlus} className="text-roomi md:text-lg"/>
+                                <FontAwesomeIcon icon={faUserPlus} className="text-roomi md:text-base lg:text-lg"/>
                                 <span className="ml-2 text-gray-500">
                                     {guestCount > 0 ? `게스트 ${guestCount}명` : '인원 추가'}
                                 </span>
