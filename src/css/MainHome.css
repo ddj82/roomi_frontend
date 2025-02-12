@@ -56,11 +56,13 @@
 
 .mainHome.show-list .mainHome.map-container {
     transform: translateY(100%);
+    z-index: -1;
 }
 
 /* 지도 보기 상태 - 목록이 위로 사라지고 지도가 올라옴 */
 .mainHome.show-map .mainHome.list-container {
     transform: translateY(-100%);
+    z-index: -1;
 }
 
 .mainHome.show-map .mainHome.map-container {

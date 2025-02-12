@@ -33,6 +33,16 @@ export default function MainHome() {
                 </div>
             </div>
 
+            {/*<div className="mainHome content-wrapper">*/}
+            {/*    <div className="mainHome map-container" style={{visibility: homeVisible ? 'visible' : 'hidden'}}>*/}
+            {/*        <NaverMap onRoomsUpdate={handleRoomsUpdate}/>*/}
+            {/*    </div>*/}
+
+            {/*    <div className="mainHome list-container" style={{visibility: homeVisible ? 'hidden' : 'visible'}}>*/}
+            {/*        <HomeScreen rooms={rooms}/>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+
             {/* 하단 버튼 */}
             <button className="mainHome toggle-button text-base bg-roomi" onClick={toggleView}>
                 {homeVisible ? '목록 보기' : '지도 보기'}
