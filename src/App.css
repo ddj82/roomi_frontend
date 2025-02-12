@@ -17,14 +17,12 @@ body::-webkit-scrollbar {
     display: none; /* Chrome, Safari */
 }
 
+.no-select {
+    user-select: none; /* 텍스트 드래그 방지 */
+}
 
 div.app.container {
-    max-width: 1200px;
     width: 100%;
     margin: 0 auto;
     flex: 1;
-}
-
-.no-select {
-    user-select: none; /* 텍스트 드래그 방지 */
 }

@@ -23,7 +23,7 @@ export default function App() {
             <HostModeProvider>
             <HeaderBtnProvider>
                 <Header/>
-                <div className="app container">
+                <div className="app container xl:max-w-[1200px]">
                     <Routes>
                         <Route path="/" element={<MainHome/>}/>
                         <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>

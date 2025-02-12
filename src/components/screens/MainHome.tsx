@@ -35,7 +35,7 @@ export default function MainHome() {
             </div>
 
             {/* 하단 버튼 */}
-            <button className="mainHome toggle-button" onClick={toggleView}>
+            <button className="mainHome toggle-button text-base bg-roomi" onClick={toggleView}>
                 {homeVisible ? '목록 보기' : '지도 보기'}
             </button>
         </div>

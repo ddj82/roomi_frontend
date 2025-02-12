@@ -69,91 +69,95 @@ const Header = () => {
     };
 
     return (
-        <div className="h header mt-12">
-            <div className="h h-add">
-                <div className="h top-row mb-12">
-                    <div className="h logo-container">
-                        <button onClick={handleLogo}>
-                            <img src="/assets/images/roomi_word.png" alt="Logo" className="h logo"/>
-                        </button>
-                        <button onClick={() => setBusinessInfoVisible(true)}
-                                className="h info-button flex items-center">
-                            <FontAwesomeIcon icon={faCircleInfo} className="text-roomi text-sm"/>
-                        </button>
-                    </div>
-                    <div>
-                        {authToken ? (
-                            <div>
-                                <button
-                                    className="w-10 h-10 flex items-center justify-center bg-roomi-00 text-roomi-3 rounded-full"
-                                    onClick={() => setUserVisible(true)}>
-                                    <FontAwesomeIcon icon={faUser}/>
-                                </button>
-                            </div>
-                        ) : (
-                            <button className="p-2 bg-roomi hover:bg-roomi-4 text-white text-sm rounded-md"
-                                    onClick={() => setAuthModalVisible(true)}>
-                                로그인
+        <div className="border-b-[1px] border-gray-200">
+            <div className="h header container mx-auto md:mt-12 mt-6">
+                <div className="md:mx-auto mx-3 xl:max-w-[1200px] lg:max-w-[1024px] md:max-w-3xl">
+                    <div className="h top-row md:mb-12 mb-6">
+                        <div className="h logo-container">
+                            <button onClick={handleLogo}>
+                                <img src="/assets/images/roomi_word.png" alt="Logo" className="md:h-8 h-6 mr-2"/>
                             </button>
+                            <button onClick={() => setBusinessInfoVisible(true)}
+                                    className="h info-button flex items-center">
+                                <FontAwesomeIcon icon={faCircleInfo} className="text-roomi text-sm"/>
+                            </button>
+                        </div>
+                        <div>
+                            {authToken ? (
+                                <div>
+                                    <button
+                                        className="w-8 h-8 md:w-10 md:h-10
+                                         flex items-center justify-center bg-roomi-00 text-roomi-3 rounded-full"
+                                        onClick={() => setUserVisible(true)}>
+                                        <FontAwesomeIcon icon={faUser}/>
+                                    </button>
+                                </div>
+                            ) : (
+                                <button className="p-2 bg-roomi hover:bg-roomi-4 text-white text-sm rounded-md"
+                                        onClick={() => setAuthModalVisible(true)}>
+                                    로그인
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+                {isVisible &&
+                    <div className="h search-bar-container my-2 mx-3">
+                        <div className="h search-bar-row md:h-14 h-12 xl:max-w-4xl lg:max-w-3xl md:max-w-2xl w-full md:text-base text-xs md:mb-4">
+                            <button ref={dateRef} className="h search-item"
+                                    onClick={() => openModal('date', dateRef)}>
+                                <FontAwesomeIcon icon={faCalendarDay} className="text-roomi md:text-lg"/>
+                                <span className="ml-2 text-gray-500">{formatDateRange()}</span>
+                            </button>
+
+                            <div className="flex items-center">
+                                <span className="w-px h-10 bg-gray-200 mx-1"></span>
+                            </div>
+
+                            <button ref={locationRef} className="h search-item"
+                                    onClick={() => openModal('location', locationRef)}>
+                                <FontAwesomeIcon icon={faLocationDot} className="text-roomi md:text-lg"/>
+                                <span className="ml-2 text-gray-500">{selectedLocation || '위치 검색'}</span>
+                            </button>
+
+                            <div className="flex items-center">
+                                <span className="w-px h-10 bg-gray-200 mx-1"></span>
+                            </div>
+
+                            <button ref={guestsRef} className="h search-item"
+                                    onClick={() => openModal('guests', guestsRef)}>
+                                <FontAwesomeIcon icon={faUserPlus} className="text-roomi md:text-lg"/>
+                                <span className="ml-2 text-gray-500">
+                                    {guestCount > 0 ? `게스트 ${guestCount}명` : '인원 추가'}
+                                </span>
+                            </button>
+
+                            <button
+                                className="h search-button md:w-10 md:h-10 w-8 h-8
+                                m-2 flex items-center justify-center bg-roomi rounded">
+                                <FontAwesomeIcon icon={faSearch} className="text-white"/>
+                            </button>
+                        </div>
+                    </div>
+                }
+                {modalVisible && (
+                    <div className="h modal-container">
+                        {activeSection === 'date' && (
+                            <DateModal visible={true} onClose={closeModal} onSelectDates={setSelectedDates}
+                                       position={modalPosition}/>
+                        )}
+                        {activeSection === 'location' && (
+                            <LocationModal visible={true} onClose={closeModal} position={modalPosition}/>
+                        )}
+                        {activeSection === 'guests' && (
+                            <GuestsModal visible={true} onClose={closeModal} position={modalPosition}/>
                         )}
                     </div>
-                </div>
+                )}
+                <BusinessInfoModal visible={businessInfoVisible} onClose={() => setBusinessInfoVisible(false)}/>
+                <AuthModal visible={authModalVisible} onClose={() => setAuthModalVisible(false)} type="login"/>
+                <UserModal visible={userVisible} onClose={() => setUserVisible(false)}/>
             </div>
-            {isVisible &&
-                <div className="h search-bar-container">
-                    <div className="h search-bar-row h-14">
-                        <button ref={dateRef} className="h search-item"
-                                onClick={() => openModal('date', dateRef)}>
-                            <FontAwesomeIcon icon={faCalendarDay} className="text-roomi text-lg"/>
-                            <span className="h search-text text-base">{formatDateRange()}</span>
-                        </button>
-
-                        <div className="flex items-center">
-                            <span className="w-px h-10 bg-gray-200 mx-1"></span>
-                        </div>
-
-                        <button ref={locationRef} className="h search-item"
-                                onClick={() => openModal('location', locationRef)}>
-                            <FontAwesomeIcon icon={faLocationDot} className="text-roomi text-lg"/>
-                            <span className="h search-text">{selectedLocation || '위치 검색'}</span>
-                        </button>
-
-                        <div className="flex items-center">
-                            <span className="w-px h-10 bg-gray-200 mx-1"></span>
-                        </div>
-
-                        <button ref={guestsRef} className="h search-item"
-                                onClick={() => openModal('guests', guestsRef)}>
-                            <FontAwesomeIcon icon={faUserPlus} className="text-roomi text-lg"/>
-                            <span className="h search-text">
-                                {guestCount > 0 ? `게스트 ${guestCount}명` : '인원 추가'}
-                            </span>
-                        </button>
-
-                        <button
-                            className="h search-button w-10 h-10 m-2 flex items-center justify-center bg-roomi rounded">
-                            <FontAwesomeIcon icon={faSearch} className="text-white"/>
-                        </button>
-                    </div>
-                </div>
-            }
-            {modalVisible && (
-                <div className="h modal-container">
-                    {activeSection === 'date' && (
-                        <DateModal visible={true} onClose={closeModal} onSelectDates={setSelectedDates}
-                                   position={modalPosition}/>
-                    )}
-                    {activeSection === 'location' && (
-                        <LocationModal visible={true} onClose={closeModal} position={modalPosition}/>
-                    )}
-                    {activeSection === 'guests' && (
-                        <GuestsModal visible={true} onClose={closeModal} position={modalPosition}/>
-                    )}
-                </div>
-            )}
-            <BusinessInfoModal visible={businessInfoVisible} onClose={() => setBusinessInfoVisible(false)}/>
-            <AuthModal visible={authModalVisible} onClose={() => setAuthModalVisible(false)} type="login"/>
-            <UserModal visible={userVisible} onClose={() => setUserVisible(false)}/>
         </div>
     );
 };

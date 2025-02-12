@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import '../../css/FilterBar.css'; // CSS 파일을 import
+import 'src/css/FilterBar.css'; // CSS 파일을 import
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight, faCalendarDay, faCalendarWeek, faCalendarAlt, faHospital, faLocationArrow, faPlane, faUniversity, faTrain } from '@fortawesome/free-solid-svg-icons';
@@ -9,11 +9,16 @@ const FilterBar: React.FC = () => {
 
     // 필터 버튼 렌더링 함수
     const renderFilterButton = (label: string, iconName: any) => (
-        <div className="filterBar filterBar-item" key={label}>
-            <FontAwesomeIcon icon={iconName} size="lg" />
-            <span className="filterBar button-text">{label}</span>
+        <div className="filterBar filterBar-item
+        text-xs rounded-2xl px-4 py-2
+        " key={label}>
+            <FontAwesomeIcon className="text-roomi" icon={iconName} />
+            <span className="
+            ml-1 text-gray-500
+            ">{label}</span>
         </div>
     );
+
     const [isLeftEnabled, setIsLeftEnabled] = useState(false);
     const [isRightEnabled, setIsRightEnabled] = useState(true);
 
@@ -69,11 +74,13 @@ const FilterBar: React.FC = () => {
         <div className="filterBar container">
             {/* 왼쪽 화살표 버튼 */}
             <button
-                className={`filterBar arrow-button left ${isLeftEnabled ? "" : "disabled"}`}
+                className={`
+                p-0 h-8 w-8 rounded-full text-gray-500
+                filterBar arrow-button left ${isLeftEnabled ? "" : "disabled"}`}
                 onClick={() => scrollByAmount(-300)}
                 disabled={!isLeftEnabled} // 버튼 비활성화 조건
             >
-                <FontAwesomeIcon icon={faChevronLeft} style={{ fontSize: 20, color: '#333' }} />
+                <FontAwesomeIcon icon={faChevronLeft} />
             </button>
 
             {/* 스크롤 가능한 필터바 */}
@@ -88,11 +95,13 @@ const FilterBar: React.FC = () => {
 
             {/* 오른쪽 화살표 버튼 */}
             <button
-                className={`filterBar arrow-button right ${isRightEnabled ? "" : "disabled"}`}
+                className={`
+                p-0 h-8 w-8 rounded-full text-gray-500
+                filterBar arrow-button right ${isRightEnabled ? "" : "disabled"}`}
                 onClick={() => scrollByAmount(300)}
                 disabled={!isRightEnabled} // 버튼 비활성화 조건
             >
-                <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: 20, color: '#333' }} />
+                <FontAwesomeIcon icon={faChevronRight} />
             </button>
         </div>
     );
