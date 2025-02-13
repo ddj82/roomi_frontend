@@ -6,9 +6,6 @@ import { faChevronLeft, faChevronRight, faCalendarDay, faCalendarWeek, faCalenda
 
 const FilterBar: React.FC = () => {
     const scrollRef = useRef<HTMLDivElement>(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [startX, setStartX] = useState(0);
-    const [scrollLeft, setScrollLeft] = useState(0);
 
     // 필터 버튼 렌더링 함수
     const renderFilterButton = (label: string, iconName: any) => (
@@ -41,6 +38,24 @@ const FilterBar: React.FC = () => {
         }
     };
 
+    const touchStartX = useRef<number>(0);
+    const scrollStartX = useRef<number>(0);
+    // 터치 이벤트 핸들러
+    const handleTouchStart = (event: React.TouchEvent) => {
+        if (scrollRef.current) {
+            touchStartX.current = event.touches[0].clientX;
+            scrollStartX.current = scrollRef.current.scrollLeft;
+        }
+    };
+
+    const handleTouchMove = (event: React.TouchEvent) => {
+        if (scrollRef.current) {
+            const touchX = event.touches[0].clientX;
+            const moveDistance = touchStartX.current - touchX;
+            scrollRef.current.scrollLeft = scrollStartX.current + moveDistance;
+        }
+    };
+
     // 마우스 휠 스크롤 (PC)
     const SCROLL_SPEED = 2; // 이동 속도 조절 (기본값보다 2배 빠르게)
     const handleWheelScroll = (event: WheelEvent) => {
@@ -50,37 +65,12 @@ const FilterBar: React.FC = () => {
         }
     };
 
-    // 터치 드래그 스크롤 (모바일)
-    const handleTouchStart = (event: TouchEvent) => {
-        if (!scrollRef.current) return;
-
-        setIsDragging(true);
-        setStartX(event.touches[0].pageX);
-        setScrollLeft(scrollRef.current.scrollLeft);
-    };
-
-    const handleTouchMove = (event: TouchEvent) => {
-        if (!isDragging || !scrollRef.current) return;
-
-        const x = event.touches[0].pageX;
-        const walk = (startX - x) * 1.5; // 드래그 민감도 조절 (기본값보다 1.5배)
-
-        scrollRef.current.scrollLeft = scrollLeft + walk;
-    };
-
-    const handleTouchEnd = () => {
-        setIsDragging(false);
-    };
-
     // 스크롤 이벤트 핸들러 등록
     useEffect(() => {
         const container = scrollRef.current;
         if (container) {
             container.addEventListener("scroll", updateScrollState);
             container.addEventListener("wheel", handleWheelScroll);
-            container.addEventListener("touchstart", handleTouchStart);
-            container.addEventListener("touchmove", handleTouchMove);
-            container.addEventListener("touchend", handleTouchEnd);
         }
 
         // 클린업
@@ -88,9 +78,6 @@ const FilterBar: React.FC = () => {
             if (container) {
                 container.removeEventListener("scroll", updateScrollState);
                 container.removeEventListener("wheel", handleWheelScroll);
-                container.removeEventListener("touchstart", handleTouchStart);
-                container.removeEventListener("touchmove", handleTouchMove);
-                container.removeEventListener("touchend", handleTouchEnd);
             }
         };
     }, []);
@@ -114,37 +101,45 @@ const FilterBar: React.FC = () => {
 
     return (
         <div className="filterBar container">
-            {/* 왼쪽 화살표 버튼 */}
-            <button
-                className={`
-                p-0 h-8 w-8 rounded-full text-gray-500
-                filterBar arrow-button left ${isLeftEnabled ? "" : "disabled"}`}
-                onClick={() => scrollByAmount(-300)}
-                disabled={!isLeftEnabled} // 버튼 비활성화 조건
-            >
-                <FontAwesomeIcon icon={faChevronLeft} />
-            </button>
+            <div className={`${window.innerWidth < 786 && "hidden"}`}>
+                {/* 왼쪽 화살표 버튼 */}
+                <button
+                    className={`
+                    p-0 h-8 w-8 rounded-full text-gray-500
+                    filterBar arrow-button left ${isLeftEnabled ? "" : "disabled"}`}
+                    onClick={() => scrollByAmount(-300)}
+                    disabled={!isLeftEnabled} // 버튼 비활성화 조건
+                >
+                    <FontAwesomeIcon icon={faChevronLeft}/>
+                </button>
+            </div>
 
             {/* 스크롤 가능한 필터바 */}
             <div
                 ref={scrollRef}
-                className="filterBar scroll-container"
+                className="filterBar scroll-container
+                mx-3 gap-2
+                md:mx-[50px] md:gap-4"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
             >
                 {filters.map((filter) => renderFilterButton(filter.label, filter.icon))}
                 <div>
                 </div>
             </div>
 
-            {/* 오른쪽 화살표 버튼 */}
-            <button
-                className={`
-                p-0 h-8 w-8 rounded-full text-gray-500
-                filterBar arrow-button right ${isRightEnabled ? "" : "disabled"}`}
-                onClick={() => scrollByAmount(300)}
-                disabled={!isRightEnabled} // 버튼 비활성화 조건
-            >
-                <FontAwesomeIcon icon={faChevronRight} />
-            </button>
+            <div className={`${window.innerWidth < 786 && "hidden"}`}>
+                {/* 오른쪽 화살표 버튼 */}
+                <button
+                    className={`
+                    p-0 h-8 w-8 rounded-full text-gray-500
+                    filterBar arrow-button right ${isRightEnabled ? "" : "disabled"}`}
+                    onClick={() => scrollByAmount(300)}
+                    disabled={!isRightEnabled} // 버튼 비활성화 조건
+                >
+                    <FontAwesomeIcon icon={faChevronRight}/>
+                </button>
+            </div>
         </div>
     );
 };
