@@ -11,6 +11,12 @@ html, body {
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE, Edge */
     background-color: white;
+    overscroll-behavior: none; /* 스크롤 튕김 방지 */
+    min-height: 100vh; /* 화면 최소 높이 100% */
+}
+#root {
+    background-color: white;
+    min-height: 100vh; /* 화면 최소 높이 100% */
 }
 
 html::-webkit-scrollbar,
