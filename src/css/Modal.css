@@ -10,3 +10,7 @@
     bottom: 0;
     z-index: 1000;
 }
+
+.modal-container:focus {
+    outline: none;
+}
