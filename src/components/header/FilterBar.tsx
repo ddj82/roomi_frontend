@@ -28,31 +28,12 @@ const FilterBar: React.FC = () => {
         }
     };
 
-    // 스크롤 상태 업데이트
     const updateScrollState = () => {
         if (scrollRef.current) {
             const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
 
             setIsLeftEnabled(scrollLeft > 0); // 왼쪽으로 스크롤 가능 여부
             setIsRightEnabled(scrollLeft < scrollWidth - clientWidth); // 오른쪽으로 스크롤 가능 여부
-        }
-    };
-
-    const touchStartX = useRef<number>(0);
-    const scrollStartX = useRef<number>(0);
-    // 터치 이벤트 핸들러
-    const handleTouchStart = (event: React.TouchEvent) => {
-        if (scrollRef.current) {
-            touchStartX.current = event.touches[0].clientX;
-            scrollStartX.current = scrollRef.current.scrollLeft;
-        }
-    };
-
-    const handleTouchMove = (event: React.TouchEvent) => {
-        if (scrollRef.current) {
-            const touchX = event.touches[0].clientX;
-            const moveDistance = touchStartX.current - touchX;
-            scrollRef.current.scrollLeft = scrollStartX.current + moveDistance;
         }
     };
 
@@ -117,15 +98,12 @@ const FilterBar: React.FC = () => {
             {/* 스크롤 가능한 필터바 */}
             <div
                 ref={scrollRef}
-                className="filterBar scroll-container
+                className="filterBar scroll-container scrollbar-hidden
                 mx-3 gap-2
                 md:mx-[50px] md:gap-4"
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
             >
                 {filters.map((filter) => renderFilterButton(filter.label, filter.icon))}
-                <div>
-                </div>
+                <div></div>
             </div>
 
             <div className={`${window.innerWidth < 786 && "hidden"}`}>

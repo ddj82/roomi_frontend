@@ -11,7 +11,7 @@
 .filterBar.scroll-container {
     width: 100%;
     display: flex;
-    overflow-x: hidden; /* 가로 스크롤 활성화 */
+    overflow-x: auto; /* 가로 스크롤 활성화 */
     scroll-behavior: smooth; /* 부드러운 스크롤 */
 }
 
