@@ -59,9 +59,12 @@ input {
 
 .authModal.social-login-container {
     margin-top: 16px;
+    margin-bottom: 32px;
+    width: 100%;
 }
 
 .authModal.social-login-container h4 {
+    text-align: center;
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 12px;
@@ -74,15 +77,19 @@ input {
 }
 
 .authModal.social-button {
+    flex: 1 1 calc(50% - 6px); /* 50% 너비에서 gap의 절반을 뺀 크기 */
+    max-width: calc(50% - 6px); /* 버튼이 한 줄에 2개씩 배치 */
     display: flex;
     align-items: center;
     padding: 12px;
     font-size: 14px;
     border: 1px solid #E5E7EB;
     border-radius: 8px;
-    width: 48%;
     justify-content: center;
     cursor: pointer;
+    @media screen and (max-width: 768px) {
+        font-size: 10px;
+    }
 }
 
 .authModal.social-icon {

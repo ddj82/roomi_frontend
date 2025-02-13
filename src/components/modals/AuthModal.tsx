@@ -31,6 +31,13 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
         }
     };
 
+    // 엔터 로그인
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter') {
+            handleSubmit();
+        }
+    };
+
     const handleSocialLogin = async (channel: string) => {
         console.log(`${channel} 로그인 시도`);
 
@@ -82,7 +89,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
             className="authModal auth-modal-container"
             overlayClassName="authModal overlay" // 오버레이 스타일
         >
-            <div className="authModal modal-content">
+            <div className="authModal modal-content" onKeyDown={handleKeyDown} tabIndex={0}>
                 <div className="text-lg font-bold mb-4">{type === 'login' ? '로그인' : '회원가입'}</div>
                 <div className="authModal input-container">
                     <input
@@ -121,7 +128,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                     <div className="authModal social-login-container">
                         <h4>소셜 로그인</h4>
                         <div className="authModal social-buttons">
-                            {['Kakao', 'Line'].map((channel) => (
+                            {['Kakao', 'Line', '3','4','5','6'].map((channel) => (
                                 <button
                                     key={channel}
                                     className="authModal social-button"
@@ -136,15 +143,13 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                 )}
 
                 {type === 'login' && (
-                    <div className="authModal footer">
-                        <p className="authModal footer-text">
-                            계정이 없으신가요?
-                        </p>
+                    <div className="flex_center">
+                        <div className="text-sm">계정이 없으신가요?</div>
                         <button onClick={() => {
                             onClose();
                             // TODO: 회원가입 모달로 전환하는 로직 추가
                         }}>
-                            <span className="authModal footer-link">회원가입</span>
+                            <span className="text-sm text-roomi ml-1">회원가입</span>
                         </button>
                     </div>
                 )}
