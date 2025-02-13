@@ -127,8 +127,6 @@
 
 /* 버튼 스타일 */
 .mainHome.toggle-button {
-    position: fixed;
-    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
     color: #fff;
