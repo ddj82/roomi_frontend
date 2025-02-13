@@ -77,57 +77,57 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
         >
             <div className="userModal modal-content">
                 <div className="userModal header">
-                    <div className="flex items-center justify-center w-20 h-20 m-4 bg-roomi rounded-full">
+                    <div className="flex_center w-20 h-20 m-4 bg-roomi rounded-full">
                         <FontAwesomeIcon icon={faUser} className="text-white text-3xl" />
                     </div>
                     <div className="text-lg font-bold">{localStorage.getItem('userName')}</div>
                 </div>
 
-                <div className="userModal content text-lg">
+                <div className="userModal content text-sm md:text-lg">
                     {isHost ? (
                         <>
                             {hostMode ? (
                                 <>
                                     <button onClick={handleUserMode} className="userModal menu-item">
-                                        <FontAwesomeIcon icon={faUser} className="text-2xl" />
+                                        <FontAwesomeIcon icon={faUser} className="text-xl md:text-2xl" />
                                         {t("게스트 전환")}
                                     </button>
                                     <button onClick={handleHostManage} className="userModal menu-item">
-                                        <FaCogs className="text-2xl"/>
+                                        <FaCogs className="text-xl md:text-2xl"/>
                                         {t("호스트 관리")}
                                     </button>
                                 </>
                             ) : (
                                 <button onClick={handleUserHostMode} className="userModal menu-item">
-                                    <FontAwesomeIcon icon={faUser} className="text-2xl" />
+                                    <FontAwesomeIcon icon={faUser} className="text-xl md:text-2xl" />
                                     {t("호스트 전환")}
                                 </button>
                             )}
                         </>
                     ) : (
                         <button onClick={handleUserHostMode} className="userModal menu-item">
-                            <FontAwesomeIcon icon={faUser} className="text-2xl" />
+                            <FontAwesomeIcon icon={faUser} className="text-xl md:text-2xl" />
                             {t("호스트 등록")}
                         </button>
                     )}
 
                     <button onClick={handleMessage} className="userModal menu-item">
-                        <FaRegEnvelope className="text-2xl"/>
+                        <FaRegEnvelope className="text-xl md:text-2xl"/>
                         {t("메시지")}
                     </button>
 
                     <button onClick={handleFavorite} className="userModal menu-item">
-                        <FaRegHeart className="text-2xl"/>
+                        <FaRegHeart className="text-xl md:text-2xl"/>
                         {t("찜 목록")}
                     </button>
 
                     <button onClick={handleSettings} className="userModal menu-item">
-                        <FaCogs className="text-2xl"/>
+                        <FaCogs className="text-xl md:text-2xl"/>
                         {t("계정 설정")}
                     </button>
 
                     <button onClick={handleLogout} className="userModal menu-item">
-                        <FaSignOutAlt className="text-2xl"/>
+                        <FaSignOutAlt className="text-xl md:text-2xl"/>
                         {t("로그아웃")}
                     </button>
                 </div>

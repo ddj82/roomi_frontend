@@ -15,30 +15,34 @@ import 'src/css/Modal.css';
 import 'src/css/Calendar.css';
 import NaverMap from "./components/map/NaverMap";
 import MyRoomInsert from "./components/hostMenu/MyRoomInsert";
+import {HostTabProvider} from "./components/auth/HostTabContext";
 
 
 export default function App() {
     return (
         <Router>
             <AuthProvider>
-            <IsHostProvider>
-            <HostModeProvider>
-            <HeaderBtnProvider>
-                <Header/>
-                <div className="app container xl:max-w-[1200px]">
-                    <Routes>
-                        <Route path="/" element={<MainHome/>} />
-                        <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>} />
-                        <Route path="/hostAgree" element={<HostModeAgreeScreen/>} />
-                        <Route path="/host" element={<HostScreen/>} />
-                        <Route path="/naver" element={<NaverMap/>} />
-                        <Route path="/host/insert" element={<MyRoomInsert/>} />
-                    </Routes>
-                </div>
-                <Footer/>
-            </HeaderBtnProvider>
-            </HostModeProvider>
-            </IsHostProvider>
+                <IsHostProvider>
+                    <HostModeProvider>
+                        <HeaderBtnProvider>
+                            <HostTabProvider>
+                                <Header/>
+                                <div className="app container xl:max-w-[1200px]"
+                                     style={{minHeight: window.innerHeight,}}>
+                                    <Routes>
+                                        <Route path="/" element={<MainHome/>}/>
+                                        <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
+                                        <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
+                                        <Route path="/host" element={<HostScreen/>}/>
+                                        <Route path="/naver" element={<NaverMap/>}/>
+                                        <Route path="/host/insert" element={<MyRoomInsert/>}/>
+                                    </Routes>
+                                </div>
+                                <Footer/>
+                            </HostTabProvider>
+                        </HeaderBtnProvider>
+                    </HostModeProvider>
+                </IsHostProvider>
             </AuthProvider>
         </Router>
     );

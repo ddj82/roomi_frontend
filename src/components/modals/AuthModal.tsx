@@ -3,7 +3,7 @@ import Modal from 'react-modal'; // react-modal을 사용
 import { AuthContext } from 'src/components/auth/AuthContext';
 import { login } from 'src/api/api';
 import { SocialAuth } from "src/api/SocialAuth";
-import '../../css/AuthModal.css'; // CSS 파일 import
+import 'src/css/AuthModal.css'; // CSS 파일 import
 import { useIsHost } from "src/components/auth/IsHostContext";
 
 const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () => void; type: 'login' | 'signup' }) => {
@@ -83,19 +83,21 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
             overlayClassName="authModal overlay" // 오버레이 스타일
         >
             <div className="authModal modal-content">
-                <h2>{type === 'login' ? '로그인' : '회원가입'}</h2>
+                <div className="text-lg font-bold mb-4">{type === 'login' ? '로그인' : '회원가입'}</div>
                 <div className="authModal input-container">
                     <input
                         type="email"
                         placeholder="이메일"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        className="mb-2 h-10 pl-2 text-sm md:text-base"
                     />
                     <input
                         type="password"
                         placeholder="비밀번호"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        className="mb-2 h-10 pl-2 text-sm md:text-base"
                     />
                     {type === 'signup' && (
                         <input
@@ -103,6 +105,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                             placeholder="비밀번호 확인"
                             value={passwordConfirm}
                             onChange={(e) => setPasswordConfirm(e.target.value)}
+                            className="mb-2 h-10 pl-2 text-sm md:text-base"
                         />
                     )}
                 </div>
@@ -124,7 +127,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                                     className="authModal social-button"
                                     onClick={() => handleSocialLogin(channel)}
                                 >
-                                    <img src={`/${channel.toLowerCase()}.png`} alt={channel} className="authModal social-icon" />
+                                    <img src={`/assets/images/${channel.toLowerCase()}.png`} alt={channel} className="authModal social-icon" />
                                     {`Sign in with ${channel}`}
                                 </button>
                             ))}

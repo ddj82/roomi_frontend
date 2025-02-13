@@ -16,7 +16,8 @@ import {
     faCircleInfo, faUser
 } from '@fortawesome/free-solid-svg-icons';
 import '../../css/Header.css';
-import {useHeaderBtnContext} from "src/components/auth/HeaderBtnContext"; // 스타일을 별도 CSS 파일로 import
+import {useHeaderBtnContext} from "src/components/auth/HeaderBtnContext";
+import HostHeader from "src/components/header/HostHeader";
 
 type ModalSection = 'date' | 'location' | 'guests';
 type ModalPosition = { x: number; y: number };
@@ -78,9 +79,9 @@ const Header = () => {
 
     return (
         <div className="border-b-[1px] border-gray-200">
-            <div className="h header container mx-auto md:mt-12 mt-6">
+            <div className="h header container mx-auto md:mt-8 mt-6">
                 <div className="md:mx-auto mx-3 xl:max-w-[1200px] lg:max-w-[1024px] md:max-w-3xl">
-                    <div className="h top-row md:mb-12 mb-6">
+                    <div className="h top-row md:mb-8 mb-6">
                         <div className="h logo-container">
                             <button onClick={handleLogo}>
                                 <img src="/assets/images/roomi_word.png" alt="Logo" className="md:h-8 h-6 mr-2"/>
@@ -95,13 +96,13 @@ const Header = () => {
                                 <div>
                                     <button
                                         className="w-8 h-8 md:w-10 md:h-10
-                                         flex items-center justify-center bg-roomi-000 text-roomi rounded-full"
+                                         flex_center bg-roomi-000 text-roomi rounded-full"
                                         onClick={() => setUserVisible(true)}>
                                         <FontAwesomeIcon icon={faUser}/>
                                     </button>
                                 </div>
                             ) : (
-                                <button className="p-2 bg-roomi hover:bg-roomi-4 text-white text-sm rounded-md"
+                                <button className="p-2 bg-roomi hover:bg-roomi-4 text-white text-xs md:text-sm rounded-md"
                                         onClick={() => setAuthModalVisible(true)}>
                                     로그인
                                 </button>
@@ -109,7 +110,8 @@ const Header = () => {
                         </div>
                     </div>
                 </div>
-                {isVisible &&
+                {/*{isVisible && (*/}
+                {isVisible ? (
                     <div className="h search-bar-container my-2 mx-3">
                         <div className="h search-bar-row md:mb-4 md:h-14 h-12
                         w-full md:max-w-2xl lg:max-w-3xl xl:max-w-4xl
@@ -144,12 +146,13 @@ const Header = () => {
 
                             <button
                                 className="h search-button md:w-10 md:h-10 w-8 h-8
-                                m-2 flex items-center justify-center bg-roomi rounded">
+                                m-2 flex_center bg-roomi rounded">
                                 <FontAwesomeIcon icon={faSearch} className="text-white"/>
                             </button>
                         </div>
                     </div>
-                }
+                ) : (<HostHeader/>)}
+                {/*)}*/}
                 {modalVisible && (
                     <div className="h modal-container">
                         {activeSection === 'date' && (

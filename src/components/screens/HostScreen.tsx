@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
 import MyRoom from "src/components/hostMenu/MyRooms";
 import ContractManagement from "src/components/hostMenu/ContractManagement";
 import RoomStatus from "src/components/hostMenu/RoomStatus";
 import Message from "src/components/hostMenu/Message";
 import Settlement from "src/components/hostMenu/Settlement";
+import {useHostTab} from "../auth/HostTabContext";
 
-function HostScreen() {
-    const [activeTab, setActiveTab] = useState("my_room");
-    const { t } = useTranslation();
+const HostScreen: React.FC = () => {
+    const { activeTab } = useHostTab(); // 전역 상태에서 activeTab 가져오기
 
     // 탭 ID와 컴포넌트 매핑
     const components: Record<string, JSX.Element> = {
@@ -19,45 +18,9 @@ function HostScreen() {
         settlement: <Settlement />,
     };
 
-    const tabs = ["my_room", "contract_management", "room_status", "message", "settlement"] as const;
-
     return (
-        <div>
-            <div className="mb-4">
-                <ul className="flex flex-wrap -mb-px text-sm font-medium text-center" role="tablist">
-                    {tabs.map((tab) => (
-                        <li key={tab} className="me-2" role="presentation">
-                            <button
-                                className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                                    activeTab === tab
-                                        ? "text-roomi border-roomi"
-                                        : "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-                                }`}
-                                onClick={() => setActiveTab(tab)}
-                                type="button"
-                                role="tab"
-                                aria-controls={tab}
-                                aria-selected={activeTab === tab}
-                            >
-                                {t(tab)}
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <div>
-                {tabs.map((tab) => (
-                    <div
-                        key={tab}
-                        className={`p-4 ${activeTab === tab ? "" : "hidden"}`}
-                        id={tab}
-                        role="tabpanel"
-                        aria-labelledby={`${tab}-tab`}
-                    >
-                        <div>{components[tab]}</div>
-                    </div>
-                ))}
-            </div>
+        <div className="my-4 px-8">
+            {components[activeTab] || <div>선택된 탭이 없습니다.</div>}
         </div>
     );
 }

@@ -50,11 +50,10 @@ const RoomStatus = () => {
                 {tabs.map((tab) => (
                     <li key={tab} className="me-2">
                         <button
-                            className={`inline-block px-4 py-3 rounded-lg hover:text-white hover:bg-roomi ${
-                                activeTab === tab
-                                    ? "text-white bg-roomi"
-                                    : "text-black"
-                            }`}
+                            className={`
+                            inline-block px-4 py-3 rounded-lg hover:text-white hover:bg-roomi 
+                            ${activeTab === tab ? "text-white bg-roomi" : "text-black"}
+                            `}
                             onClick={() => setActiveTab(tab)}
                             type="button"
                             role="tab"
@@ -66,15 +65,14 @@ const RoomStatus = () => {
                     </li>
                 ))}
             </ul>
-            {activeTab === 'room_status_set' ? (
-                <div>
+            {/*<div className="flex_center">*/}
+            <div>
+                {activeTab === 'room_status_set' ? (
                     <RoomSet data={data} selectedRoom={selectedRoom}/>
-                </div>
-            ) : (
-                <div>
+                ) : (
                     <RoomConfig data={data} selectedRoom={selectedRoom}/>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 };

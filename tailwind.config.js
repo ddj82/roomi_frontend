@@ -28,6 +28,11 @@ module.exports = {
                         display: 'none', /* Chrome, Safari */
                     },
                 },
+                '.flex_center': {
+                    display: 'flex',
+                    'align-items': 'center',
+                    'justify-content': 'center',
+                },
             });
         },
         function ({ addComponents }) {

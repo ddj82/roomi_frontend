@@ -64,7 +64,7 @@ export default function MainHome() {
             </button>
             {showTopButton && (
                 <button onClick={scrollToTop}
-                    className="flex items-center justify-center
+                    className="flex_center
                     fixed bottom-[141px] right-[20px] md:bottom-[171px] md:right-[30px]
                     text-white text-sm md:text-base
                     bg-roomi rounded-full hover:ring-4 hover:ring-roomi-00

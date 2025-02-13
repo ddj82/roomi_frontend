@@ -13,9 +13,8 @@ const HeaderBtnContext = createContext<HeaderBtnContextType>({ isVisible: true }
 export const HeaderBtnProvider = ({ children }: { children: ReactNode }) => {
     const location = useLocation();
 
-    // 특정 URL에서 버튼 숨기기
-    const hiddenPaths = ["/host"]; // 숨기고 싶은 경로 추가
-    const isVisible = !hiddenPaths.includes(location.pathname);
+    // `/host`로 시작하는 모든 경로 차단
+    const isVisible = !location.pathname.startsWith("/host");
 
     return (
         <HeaderBtnContext.Provider value={{ isVisible }}>
