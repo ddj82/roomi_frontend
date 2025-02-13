@@ -6,6 +6,9 @@ import { faChevronLeft, faChevronRight, faCalendarDay, faCalendarWeek, faCalenda
 
 const FilterBar: React.FC = () => {
     const scrollRef = useRef<HTMLDivElement>(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
 
     // 필터 버튼 렌더링 함수
     const renderFilterButton = (label: string, iconName: any) => (
@@ -38,17 +41,56 @@ const FilterBar: React.FC = () => {
         }
     };
 
+    // 마우스 휠 스크롤 (PC)
+    const SCROLL_SPEED = 2; // 이동 속도 조절 (기본값보다 2배 빠르게)
+    const handleWheelScroll = (event: WheelEvent) => {
+        if (scrollRef.current) {
+            event.preventDefault();
+            scrollRef.current.scrollLeft += event.deltaY * SCROLL_SPEED; // 마우스 휠 이동량 반영
+        }
+    };
+
+    // 터치 드래그 스크롤 (모바일)
+    const handleTouchStart = (event: TouchEvent) => {
+        if (!scrollRef.current) return;
+
+        setIsDragging(true);
+        setStartX(event.touches[0].pageX);
+        setScrollLeft(scrollRef.current.scrollLeft);
+    };
+
+    const handleTouchMove = (event: TouchEvent) => {
+        if (!isDragging || !scrollRef.current) return;
+
+        const x = event.touches[0].pageX;
+        const walk = (startX - x) * 1.5; // 드래그 민감도 조절 (기본값보다 1.5배)
+
+        scrollRef.current.scrollLeft = scrollLeft + walk;
+    };
+
+    const handleTouchEnd = () => {
+        setIsDragging(false);
+    };
+
     // 스크롤 이벤트 핸들러 등록
     useEffect(() => {
         const container = scrollRef.current;
         if (container) {
             container.addEventListener("scroll", updateScrollState);
+            container.addEventListener("wheel", handleWheelScroll);
+            container.addEventListener("touchstart", handleTouchStart);
+            container.addEventListener("touchmove", handleTouchMove);
+            container.addEventListener("touchend", handleTouchEnd);
         }
 
         // 클린업
         return () => {
             if (container) {
                 container.removeEventListener("scroll", updateScrollState);
+                container.removeEventListener("wheel", handleWheelScroll);
+                container.removeEventListener("touchstart", handleTouchStart);
+                container.removeEventListener("touchmove", handleTouchMove);
+                container.removeEventListener("touchend", handleTouchEnd);
             }
         };
     }, []);

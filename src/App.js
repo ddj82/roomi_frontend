@@ -14,6 +14,7 @@ import {HeaderBtnProvider} from "./components/auth/HeaderBtnContext";
 import 'src/css/Modal.css';
 import 'src/css/Calendar.css';
 import NaverMap from "./components/map/NaverMap";
+import MyRoomInsert from "./components/hostMenu/MyRoomInsert";
 
 
 export default function App() {
@@ -31,6 +32,7 @@ export default function App() {
                         <Route path="/hostAgree" element={<HostModeAgreeScreen/>} />
                         <Route path="/host" element={<HostScreen/>} />
                         <Route path="/naver" element={<NaverMap/>} />
+                        <Route path="/host/insert" element={<MyRoomInsert/>} />
                     </Routes>
                 </div>
                 <Footer/>

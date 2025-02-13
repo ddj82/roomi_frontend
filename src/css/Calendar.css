@@ -3,6 +3,7 @@
     border: none;
     box-shadow: none;
     background-color: white;
+    box-sizing: border-box;
 }
 
 /* 지난 날짜 (비활성화) */

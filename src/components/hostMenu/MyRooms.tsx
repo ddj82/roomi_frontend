@@ -3,8 +3,10 @@ import {myRoomList} from "src/api/api";
 import { RoomData } from "src/types/rooms";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {useNavigate} from "react-router-dom";
 
 const MyRooms = () => {
+    const navigate = useNavigate();
     const [data, setData] = useState<RoomData[]>([]);
 
     useEffect(() => {
@@ -21,6 +23,11 @@ const MyRooms = () => {
         };
         myRoomAPI();
     }, []);
+    
+    const handleInsertBtn = () => {
+        console.log('방 등록 클릭');
+        navigate("/host/insert");
+    };
 
     return (
         <div className="w-full p-4">
@@ -35,17 +42,19 @@ const MyRooms = () => {
                 </div>
                 <button type="button"
                         className="w-full px-6 py-3.5 text-base font-medium text-white bg-roomi border-2 border-roomi
-                        hover:border-2 hover:text-roomi hover:bg-white focus:ring-4 focus:outline-none focus:ring-roomi-0 rounded-lg">
-                    방 등록
+                        hover:border-2 hover:text-roomi hover:bg-white focus:ring-4 focus:outline-none focus:ring-roomi-0 rounded-lg"
+                        onClick={handleInsertBtn}>
+                    + 방 등록하기
                 </button>
             </div>
             <div>
                 {data.map((room, index) => (
                     <div key={index}
                          className="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row hover:bg-gray-100 dark:border-gray-700">
+                        <div>승인상태</div>
                         <img
                             className="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
-                            src={room.thumbnail_url || 'https://placehold.co/600x400'}
+                            src={room.detail_urls?.[0]}
                             alt="thumbnail"
                         />
                         <div className="flex flex-col justify-between p-4 leading-normal">
@@ -55,6 +64,10 @@ const MyRooms = () => {
                             <p className="mb-3 font-normal text-gray-700">
                                 {room.address}
                             </p>
+                        </div>
+                        <div>
+                            <button>삭제</button>
+                            <button>수정</button>
                         </div>
                     </div>
                 ))}

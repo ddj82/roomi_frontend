@@ -73,6 +73,7 @@ const Header = () => {
 
     const handleLogo = () => {
         navigate('/');
+        window.location.reload();
     };
 
     return (
