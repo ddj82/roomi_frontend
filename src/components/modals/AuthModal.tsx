@@ -97,14 +97,14 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                         placeholder="이메일"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="mb-2 h-10 pl-2 text-sm md:text-base"
+                        className="mb-2 h-10 pl-2 text-base"
                     />
                     <input
                         type="password"
                         placeholder="비밀번호"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="mb-2 h-10 pl-2 text-sm md:text-base"
+                        className="mb-2 h-10 pl-2 text-base"
                     />
                     {type === 'signup' && (
                         <input
@@ -112,7 +112,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                             placeholder="비밀번호 확인"
                             value={passwordConfirm}
                             onChange={(e) => setPasswordConfirm(e.target.value)}
-                            className="mb-2 h-10 pl-2 text-sm md:text-base"
+                            className="mb-2 h-10 pl-2 text-base"
                         />
                     )}
                 </div>
