@@ -101,3 +101,12 @@ export interface RoomData {
     // Availability
     unavailable_dates?: UnavailableDates;
 }
+
+export interface schedules {
+    date: Date;
+    dayPrice: number | null;
+    isAvailable: boolean;
+    description: string;
+    reason: string;
+    isBlocked: string;
+}

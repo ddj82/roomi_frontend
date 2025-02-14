@@ -1,57 +1,15 @@
 import React, {FC, useEffect, useState} from 'react';
 import Calendar from "react-calendar";
 import dayjs from "dayjs";
-import {RoomData} from "src/types/rooms";
+import {RoomData, schedules} from "src/types/rooms";
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import {createBulkBlocks, unblockDate} from "src/api/api";
+import {useDataUpdate} from "src/components/auth/DataUpdateContext";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
-interface ModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-}
-
-// 블락 해제 모달
-const Modal: FC<ModalProps> = ({ isOpen, onClose }) => {
-    if (!isOpen) return null;
-
-    return (
-        <div className="fixed inset-0 z-50 flex_center w-full h-full bg-black bg-opacity-50">
-            <div className="relative p-4 w-full max-w-md bg-white rounded-lg shadow-lg">
-                <button
-                    className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8"
-                    onClick={onClose}
-                >
-                    <svg className="mx-auto w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1l6 6m0 0l6 6M7 7l6-6M7 7L1 13" />
-                    </svg>
-                </button>
-                <div className="p-4 text-center">
-                    <svg className="mx-auto mb-4 text-gray-400 w-12 h-12" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                    <h3 className="mb-5 text-lg font-normal text-gray-500">
-                        블락을 해제 하시겠습니까?
-                    </h3>
-                    <button
-                        className="text-white bg-roomi hover:bg-roomi-5 focus:ring-4 focus:outline-none focus:ring-roomi-0 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5"
-                        onClick={onClose}
-                    >
-                        확인 api호출
-                    </button>
-                    <button
-                        className="py-2.5 px-5 ml-3 text-sm font-medium text-roomi bg-white border border-roomi rounded-lg hover:bg-gray-100 hover:border-roomi focus:ring-4 focus:ring-roomi-0"
-                        onClick={onClose}
-                    >
-                        취소
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
 
 const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: string }) => {
     const [customBlockDatesRSC, setCustomBlockDatesRSC] = useState<string[]>([]);
@@ -59,17 +17,21 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
     const [startDateRSC, setStartDateRSC] = useState<string | null>(null);
     const [endDateRSC, setEndDateRSC] = useState<string | null>(null);
     const [dateRangeRSC, setDateRangeRSC] = useState<string[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [isReasonChk, setIsReasonChk] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [isBlockDate, setIsBlockDate] = useState('');
+    const { dataUpdate, toggleDataUpdate } = useDataUpdate();
 
     const handleDayClick = (date: Date) => {
-        const dateStringRSC = dayjs(date).format('YYYY-MM-DD')
+        const dateStringRSC = dayjs(date).format('YYYY-MM-DD');
 
         // 'BLOCKED' 상태이거나 손님이 예약한 날짜인 경우 클릭 비활성화
         if (customBlockDatesRSC.includes(dateStringRSC) || reservationDatesRSC.includes(dateStringRSC)) {
-            // const res = window.confirm('수정할껴?');
             // 블락 해제 모달 오픈
-            setIsModalOpen(true);
+            setShowModal(true);
+            // 블락 일자 업데이트
+            setIsBlockDate(dateStringRSC);
             setStartDateRSC(null);
             setEndDateRSC(null);
             setDateRangeRSC([]);
@@ -139,6 +101,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
 
     // selectedRoom 값이 바뀔 때마다 관련된 날짜 업데이트
     useEffect(() => {
+
         if (!selectedRoom) return;
 
         const selectedRoomData = data.find((room) => room.title === selectedRoom);
@@ -155,13 +118,16 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
         selectedRoomData.unavailable_dates?.reservations?.forEach((reservation) => {
             const startDate = dayjs(reservation.check_in_date);
             const endDate = dayjs(reservation.check_out_date);
+            const today = dayjs().format('YYYY-MM-DD');
 
             // 날짜 범위 생성
             let currentDate = startDate;
             while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
                 const formattedDate = currentDate.format('YYYY-MM-DD');
                 if (reservation.status === 'BLOCKED') {
-                    customBlockArrRSC.push(formattedDate);
+                    if (formattedDate >= today) {
+                        customBlockArrRSC.push(formattedDate);
+                    }
                 } else {
                     reservationArrRSC.push(formattedDate);
                 }
@@ -171,7 +137,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
 
         setCustomBlockDatesRSC(customBlockArrRSC);
         setReservationDatesRSC(reservationArrRSC);
-    }, [selectedRoom, data]);
+    }, [selectedRoom, data, dataUpdate]);
 
     const tileContent = () => {
         // 기본적으로 모든 날짜에 공통 콘텐츠 추가
@@ -214,65 +180,196 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
         setIsReasonChk(event.target.checked);
     };
 
-    return (
-        <div>
-            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-            <div>
-                <Calendar
-                    minDate={new Date()}
-                    formatDay={(locale, date) => dayjs(date).format('D')}
-                    tileContent={tileContent} // 날짜별 커스텀 콘텐츠 추가
-                    tileClassName={tileClassName}
-                    onClickDay={handleDayClick}
-                    next2Label={null} // 추가로 넘어가는 버튼 제거
-                    prev2Label={null} // 이전으로 돌아가는 버튼 제거
-                />
-            </div>
-            <div>
-                {startDateRSC !== null ? (
-                    <span>{startDateRSC}</span>
-                ) : (
-                    <span>날짜를 선택하세요</span>
-                )}
-                ~
-                {endDateRSC !== null ? (
-                    <span>{endDateRSC}</span>
-                ) : (
-                    <span>날짜를 선택하세요</span>
-                )}
-            </div>
-            {startDateRSC && endDateRSC && (
-                <div>
-                    <div>선택된 날짜</div>
-                    <div>
-                        <ul>
-                            {dateRangeRSC.map((date) => (
-                                <li key={date}>{date}</li>
-                            ))}
-                        </ul>
-                    </div>
-                    <br/>
-                    <div>
-                        <div>
-                            <label htmlFor="price">가격 변경</label>
-                        </div>
-                        <input id="price" type="number" className="no-spinner"/>
-                        <button type="button">확인</button>
-                    </div>
-                    <div>
-                        <input id="reasonChk" type="checkbox" checked={isReasonChk} onChange={handlereasonChk}/>
-                        <label htmlFor="reasonChk">사용 불가 처리</label>
-                    </div>
-                    {isReasonChk && (
-                        <div>
-                            <div>
-                                <label htmlFor="reason">사용 불가 사유</label>
-                            </div>
-                            <input id="reason" type="text"/>
-                            <button type="button">확인</button>
-                        </div>
-                    )}
+    // 블락 처리 함수
+    const handleSubmitBtn = async () => {
+        // 사용 불가 처리 라디오가 체크면 실행
+        try {
+            // 현재 선택된 방의 데이터를 가져옵니다.
+            const selectedRoomData = data.find((room) => room.title === selectedRoom);
+            if (selectedRoomData) {
+                const roomId = selectedRoomData.id;
+                const dayPrice: number | null = selectedRoomData.day_price ?? null;
+                const schedulesData: schedules[] = [];
+                dateRangeRSC.map((date, index) => (
+                    schedulesData.push({
+                        "date": new Date(date),
+                        "dayPrice": dayPrice,
+                        "isAvailable": false,
+                        "description": "객실 사용 불가",
+                        "reason": "사용불가 사유",
+                        "isBlocked": "true"
+                    })
+                ));
+                const response = await createBulkBlocks(roomId, schedulesData);
+                console.log(response);
+                toggleDataUpdate();
+            }
+            setShowUpdateModal(false);
+        } catch (error) {
+            console.error("실패:", error);
+        }
+    };
 
+    // 블락 해제 함수
+    const handleUnblockBtn = async () => {
+        try {
+            // 현재 선택된 방의 데이터를 가져옵니다.
+            const selectedRoomData = data.find((room) => room.title === selectedRoom);
+            if (selectedRoomData) {
+                const roomId = selectedRoomData.id;
+                const date = new Date(isBlockDate);
+                const response = await unblockDate(roomId, date.toISOString());
+                console.log(response);
+                toggleDataUpdate();
+            }
+            setShowModal(false);
+        } catch (error) {
+            console.error("실패:", error);
+        }
+    };
+
+    // 모달 취소, 블락 일자 업뎃
+    const hanbleCencelBtn = () => {
+        setIsBlockDate('');
+        setShowModal(false);
+        setShowUpdateModal(false);
+    };
+
+
+    return (
+        <div className="flex">
+            <Calendar
+                minDate={new Date()}
+                formatDay={(locale, date) => dayjs(date).format('D')}
+                tileContent={tileContent} // 날짜별 커스텀 콘텐츠 추가
+                tileClassName={tileClassName}
+                onClickDay={handleDayClick}
+                next2Label={null} // 추가로 넘어가는 버튼 제거
+                prev2Label={null} // 이전으로 돌아가는 버튼 제거
+            />
+            <div className="w-[50%] flex flex-col mx-4">
+                <div className="m-2">
+                    {startDateRSC !== null || endDateRSC !== null ? (
+                        <div>{startDateRSC} - {endDateRSC || ('?')}</div>
+                    ) : (
+                        <div className="text-red-600 font-bold">날짜를 선택해주세요.</div>
+                    )}
+                </div>
+
+                <div className="m-2">
+                    <div className="w-full flex-1 my-2 px-4 py-2 border-[1px] border-gray-300 rounded">
+                        <div className="flex items-center me-4">
+                            <input id="useRadio" type="radio" value="" name="useBlockRadio"
+                                   className="w-4 h-4 focus:border-none"
+                                   disabled={startDateRSC === null || endDateRSC === null}/>
+                            <label htmlFor="useRadio" className="ms-2 text-sm text-gray-900">
+                                사용가능
+                            </label>
+                        </div>
+                        <div className="flex items-center me-4">
+                            <input id="blockRadio" type="radio" value="" name="useBlockRadio"
+                                   className="w-4 h-4 focus:border-none"
+                                   disabled={startDateRSC === null || endDateRSC === null}/>
+                            <label htmlFor="blockRadio" className="ms-2 text-sm text-gray-900">
+                                사용불가 처리
+                            </label>
+                        </div>
+                        {isReasonChk && (
+                            <div>
+                                <div className="text-xs">
+                                    <label htmlFor="reason">사용불가 사유를 입력해주세요.</label>
+                                </div>
+                                <input id="reason" type="text"/>
+                            </div>
+                        )}
+                    </div>
+                    <div className="w-full flex-1 my-2 px-4 py-2 border-[1px] border-gray-300 rounded">
+                        <div className="font-bold">가격 변경</div>
+                        <div>
+                            <input type="number" className="no-spinner pl-2 text-sm focus:outline-none"/>원
+                        </div>
+                    </div>
+                    <div className="flex justify-end">
+                        <button className="text-white text-sm bg-roomi rounded px-4 py-1" onClick={()=>setShowUpdateModal(true)}>
+                            완료
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {showModal && (
+                <div className="fixed inset-0 z-50 flex_center w-full h-full bg-black bg-opacity-50">
+                    <div className="relative p-4 w-full max-w-md bg-white rounded-lg shadow-lg">
+                        <button
+                            className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8"
+                            onClick={() => setShowModal(false)}
+                        >
+                            <svg className="mx-auto w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 14 14">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                      d="M1 1l6 6m0 0l6 6M7 7l6-6M7 7L1 13"/>
+                            </svg>
+                        </button>
+                        <div className="p-4 text-center">
+                            <svg className="mx-auto mb-4 text-gray-400 w-12 h-12" xmlns="http://www.w3.org/2000/svg"
+                                 fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                      d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                            </svg>
+                            <h3 className="mb-5 text-lg font-normal text-gray-500">
+                                블락을 해제 하시겠습니까?
+                            </h3>
+                            <button
+                                className="text-white bg-roomi hover:bg-roomi-5 focus:ring-4 focus:outline-none focus:ring-roomi-0 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5"
+                                onClick={handleUnblockBtn}
+                            >
+                                확인
+                            </button>
+                            <button
+                                className="py-2.5 px-5 ml-3 text-sm font-medium text-roomi bg-white border border-roomi rounded-lg hover:bg-gray-100 hover:border-roomi focus:ring-4 focus:ring-roomi-0"
+                                onClick={hanbleCencelBtn}
+                            >
+                                취소
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showUpdateModal && (
+                <div className="fixed inset-0 z-50 flex_center w-full h-full bg-black bg-opacity-50">
+                    <div className="relative p-4 w-full max-w-md bg-white rounded-lg shadow-lg">
+                        <button
+                            className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8"
+                            onClick={() => setShowModal(false)}
+                        >
+                            <svg className="mx-auto w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 14 14">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                      d="M1 1l6 6m0 0l6 6M7 7l6-6M7 7L1 13"/>
+                            </svg>
+                        </button>
+                        <div className="p-4 text-center">
+                            <svg className="mx-auto mb-4 text-gray-400 w-12 h-12" xmlns="http://www.w3.org/2000/svg"
+                                 fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                      d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                            </svg>
+                            <h3 className="mb-5 text-lg font-normal text-gray-500">
+                                수정 하시겠습니까?
+                            </h3>
+                            <button
+                                className="text-white bg-roomi hover:bg-roomi-5 focus:ring-4 focus:outline-none focus:ring-roomi-0 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5"
+                                onClick={handleSubmitBtn}
+                            >
+                                확인
+                            </button>
+                            <button
+                                className="py-2.5 px-5 ml-3 text-sm font-medium text-roomi bg-white border border-roomi rounded-lg hover:bg-gray-100 hover:border-roomi focus:ring-4 focus:ring-roomi-0"
+                                onClick={hanbleCencelBtn}
+                            >
+                                취소
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

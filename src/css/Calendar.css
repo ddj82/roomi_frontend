@@ -4,6 +4,7 @@
     box-shadow: none;
     background-color: white;
     box-sizing: border-box;
+    width: 50%;
 }
 
 /* 지난 날짜 (비활성화) */

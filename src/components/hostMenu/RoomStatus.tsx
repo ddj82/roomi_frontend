@@ -5,6 +5,7 @@ import RoomSet from 'src/components/hostMenu/room_status/RoomStatusSet';
 import RoomConfig from 'src/components/hostMenu/room_status/RoomStatusConfig';
 import {RoomData} from "src/types/rooms";
 import {myRoomList} from "src/api/api";
+import {useDataUpdate} from "../auth/DataUpdateContext";
 
 const RoomStatus = () => {
     const { t } = useTranslation();
@@ -12,6 +13,7 @@ const RoomStatus = () => {
     const tabs = ["room_status_set", "room_config"] as const;
     const [data, setData] = useState<RoomData[]>([]);
     const [selectedRoom, setSelectedRoom] = useState('');
+    const { dataUpdate } = useDataUpdate();
 
     // 화면 로드시
     useEffect(() => {
@@ -29,43 +31,46 @@ const RoomStatus = () => {
             }
         };
         myRoomAPI();
-    }, []);
+    }, [dataUpdate]);
 
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedRoom(event.target.value);
     };
 
     return (
-        <div>
-            <div>
-                <select id="select-room" value={selectedRoom} onChange={handleChange}>
-                    {data.map((room, index) => (
-                        <option key={room.id} value={room.title}>
-                            {room.title}
-                        </option>
+        <div className="min-h-[60vh]">
+            <div className="flex justify-between my-12">
+                <div className="flex flex-wrap gap-4">
+                    {tabs.map((tab) => (
+                        <div key={tab} className="text-sm text-center text-black">
+                            <button
+                                className={`
+                                inline-block px-4 py-3 hover:text-roomi
+                                ${activeTab === tab ? "text-roomi border-b-2 border-roomi" : "text-black"}
+                                `}
+                                onClick={() => setActiveTab(tab)}
+                                type="button"
+                                role="tab"
+                                aria-controls={tab}
+                                aria-selected={activeTab === tab}
+                            >
+                                {t(tab)}
+                            </button>
+                        </div>
                     ))}
-                </select>
+                </div>
+                <div className="w-1/2">
+                    <select value={selectedRoom} onChange={handleChange}
+                            className="border-[1px] border-gray-300 rounded p-2 w-full focus:outline-none"
+                    >
+                        {data.map((room, index) => (
+                            <option key={room.id} value={room.title}>
+                                {room.title} {room.id}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
-            <ul className="flex flex-wrap text-sm font-medium text-center text-black">
-                {tabs.map((tab) => (
-                    <li key={tab} className="me-2">
-                        <button
-                            className={`
-                            inline-block px-4 py-3 rounded-lg hover:text-white hover:bg-roomi 
-                            ${activeTab === tab ? "text-white bg-roomi" : "text-black"}
-                            `}
-                            onClick={() => setActiveTab(tab)}
-                            type="button"
-                            role="tab"
-                            aria-controls={tab}
-                            aria-selected={activeTab === tab}
-                        >
-                            {t(tab)}
-                        </button>
-                    </li>
-                ))}
-            </ul>
-            {/*<div className="flex_center">*/}
             <div>
                 {activeTab === 'room_status_set' ? (
                     <RoomSet data={data} selectedRoom={selectedRoom}/>

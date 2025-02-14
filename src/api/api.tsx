@@ -1,5 +1,6 @@
 // api.tsx
 import i18n from "src/i18n";
+import {schedules} from "../types/rooms";
 
 const BASE_URL = 'https://roomi.co.kr/api';
 
@@ -137,4 +138,20 @@ export const be_host = async () => {
 // 나의 방 API
 export const myRoomList = async () => {
     return request(`/rooms/my/list`, true, 'GET', undefined, true);
+};
+
+// 방 사용 불가 처리 API
+export const createBulkBlocks = async (id: number, schedulesData: schedules[]) => {
+    return request(`/rooms/schedule/bulk`, true, 'POST', {
+        'roomId': id,
+        'schedules': schedulesData,
+    });
+};
+
+// 방 언블락 처리 API
+export const unblockDate = async (id: number, date: string) => {
+    return request(`/rooms/schedule/unblock`, true, 'POST', {
+        'roomId': id,
+        'date': date,
+    });
 };
