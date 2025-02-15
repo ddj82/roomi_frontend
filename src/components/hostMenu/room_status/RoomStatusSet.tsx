@@ -63,56 +63,58 @@ const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: 
     };
 
     return (
-        <div className="flex">
-            <Calendar
-                minDate={new Date()}
-                formatDay={(locale, date) => dayjs(date).format('D')}
-                tileContent={tileContent} // 날짜별 커스텀 콘텐츠 추가
-                tileClassName={({ date }) => {
-                    const formattedDate = dayjs(date).format('YYYY-MM-DD');
-                    if (customBlockDatesRSS.includes(formattedDate)) {
-                        return 'custom-block-date';
-                    }
-                    if (reservationDatesRSS.includes(formattedDate)) {
-                        return 'reservation-date';
-                    }
-                    return null; // 기본 스타일
-                }}
-                next2Label={null} // 추가로 넘어가는 버튼 제거
-                prev2Label={null} // 이전으로 돌아가는 버튼 제거
-            />
+        <div className="flex md:flex-row flex-col">
+            <div className="md:w-[50%]">
+                <Calendar
+                    minDate={new Date()}
+                    formatDay={(locale, date) => dayjs(date).format('D')}
+                    tileContent={tileContent} // 날짜별 커스텀 콘텐츠 추가
+                    tileClassName={({ date }) => {
+                        const formattedDate = dayjs(date).format('YYYY-MM-DD');
+                        if (customBlockDatesRSS.includes(formattedDate)) {
+                            return 'custom-block-date';
+                        }
+                        if (reservationDatesRSS.includes(formattedDate)) {
+                            return 'reservation-date';
+                        }
+                        return null; // 기본 스타일
+                    }}
+                    next2Label={null} // 추가로 넘어가는 버튼 제거
+                    prev2Label={null} // 이전으로 돌아가는 버튼 제거
+                />
+            </div>
             {/* 캘린더 포인트 비활성화 */}
             <style>{`.react-calendar__viewContainer { pointer-events: none; }`}</style>
 
-            <div className="w-[50%]">
+            <div className="md:w-[50%] m-4 md:my-0">
                 <div className="relative overflow-x-auto sm:rounded-lg">
-                    <table className="w-full text-sm text-center text-gray-500" role="table">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                    <table className="w-full text-xs md:text-sm text-center text-gray-500" role="table">
+                        <thead className="md:text-xs text-gray-700 uppercase bg-gray-50">
                             <tr>
-                                <th scope="col" className="px-6 py-3">상태</th>
-                                <th scope="col" className="px-6 py-3">계약자</th>
-                                <th scope="col" className="px-6 py-3">입실</th>
-                                <th scope="col" className="px-6 py-3">퇴실</th>
+                                <th scope="col" className="md:px-6 py-3">상태</th>
+                                <th scope="col" className="md:px-6 py-3">계약자</th>
+                                <th scope="col" className="md:px-6 py-3">입실</th>
+                                <th scope="col" className="md:px-6 py-3">퇴실</th>
                             </tr>
                         </thead>
                         <tbody>
                         <tr className="bg-white border-b border-gray-200">
-                            <td className="px-6 py-4">상태1</td>
-                            <td className="px-6 py-4">계약자1</td>
-                            <td className="px-6 py-4">입실1</td>
-                            <td className="px-6 py-4">퇴실1</td>
+                            <td className="md:px-6 py-4">승인대기</td>
+                            <td className="md:px-6 py-4">계약자1</td>
+                            <td className="md:px-6 py-4">입실1</td>
+                            <td className="md:px-6 py-4">퇴실1</td>
                         </tr>
                         <tr className="bg-white border-b border-gray-200">
-                            <td className="px-6 py-4">상태2</td>
-                            <td className="px-6 py-4">계약자2</td>
-                            <td className="px-6 py-4">입실2</td>
-                            <td className="px-6 py-4">퇴실2</td>
+                            <td className="md:px-6 py-4">승인</td>
+                            <td className="md:px-6 py-4">계약자2</td>
+                            <td className="md:px-6 py-4">입실2</td>
+                            <td className="md:px-6 py-4">퇴실2</td>
                         </tr>
                         <tr className="bg-white border-b border-gray-200">
-                            <td className="px-6 py-4">상태3</td>
-                            <td className="px-6 py-4">계약자3</td>
-                            <td className="px-6 py-4">입실3</td>
-                            <td className="px-6 py-4">퇴실3</td>
+                            <td className="md:px-6 py-4">승인</td>
+                            <td className="md:px-6 py-4">계약자3</td>
+                            <td className="md:px-6 py-4">입실3</td>
+                            <td className="md:px-6 py-4">퇴실3</td>
                         </tr>
                         </tbody>
 

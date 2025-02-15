@@ -31,8 +31,8 @@ const MyRooms = () => {
 
     return (
         <div className="w-full p-4">
-            <div className="mx-auto my-5 flex justify-between">
-                <div className="relative w-1/2">
+            <div className="mx-auto my-5 flex md:justify-between flex-col md:flex-row">
+                <div className="relative md:w-1/2">
                     <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                         <FontAwesomeIcon icon={faSearch} className="w-4 h-4 text-gray-700"/>
                     </div>
@@ -41,7 +41,7 @@ const MyRooms = () => {
                            focus:ring-2 focus:ring-roomi-0 focus:border-roomi focus:outline-none"
                            placeholder="방 제목 또는 내용으로 검색해주세요." />
                 </div>
-                <div className="flex_center w-64">
+                <div className="flex_center md:w-1/4">
                     <button type="button"
                             className="p-3.5 text-base text-white bg-roomi border-[1px] border-roomi rounded w-full
                             hover:text-roomi hover:bg-white focus:ring-4 focus:ring-roomi-0 focus:outline-none"

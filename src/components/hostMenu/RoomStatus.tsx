@@ -39,7 +39,7 @@ const RoomStatus = () => {
 
     return (
         <div className="min-h-[60vh]">
-            <div className="flex justify-between my-12">
+            <div className="flex justify-between my-12 md:flex-row flex-col">
                 <div className="flex flex-wrap gap-4">
                     {tabs.map((tab) => (
                         <div key={tab} className="text-sm text-center text-black">
@@ -59,7 +59,7 @@ const RoomStatus = () => {
                         </div>
                     ))}
                 </div>
-                <div className="w-1/2">
+                <div className="md:w-1/2 md:m-0 mt-4">
                     <select value={selectedRoom} onChange={handleChange}
                             className="border-[1px] border-gray-300 rounded p-2 w-full focus:outline-none"
                     >

@@ -6,6 +6,7 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import {createBulkBlocks, unblockDate} from "src/api/api";
 import {useDataUpdate} from "src/components/auth/DataUpdateContext";
+import {useHostTab} from "../../auth/HostTabContext";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
@@ -22,6 +23,8 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [isBlockDate, setIsBlockDate] = useState('');
     const { dataUpdate, toggleDataUpdate } = useDataUpdate();
+    const { setActiveTab } = useHostTab(); // 전역 상태에서 activeTab 가져오기
+    const [calendarKey, setCalendarKey] = useState(0);
 
     const handleDayClick = (date: Date) => {
         const dateStringRSC = dayjs(date).format('YYYY-MM-DD');
@@ -137,6 +140,8 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
 
         setCustomBlockDatesRSC(customBlockArrRSC);
         setReservationDatesRSC(reservationArrRSC);
+        // 페이지가 새로고침되거나 컴포넌트가 처음 마운트될 때 key를 0으로 설정
+        setCalendarKey(0);
     }, [selectedRoom, data, dataUpdate]);
 
     const tileContent = () => {
@@ -205,6 +210,13 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                 toggleDataUpdate();
             }
             setShowUpdateModal(false);
+            setStartDateRSC(null);
+            setEndDateRSC(null);
+            setDateRangeRSC([]);
+            setIsBlockDate('');
+            setIsReasonChk(false);
+            // 캘린더 리렌더링 (포커스 해제)
+            setCalendarKey(prevKey => prevKey + 1);
         } catch (error) {
             console.error("실패:", error);
         }
@@ -223,6 +235,12 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                 toggleDataUpdate();
             }
             setShowModal(false);
+            setStartDateRSC(null);
+            setEndDateRSC(null);
+            setDateRangeRSC([]);
+            setIsBlockDate('');
+            // 캘린더 리렌더링 (포커스 해제)
+            setCalendarKey(prevKey => prevKey + 1);
         } catch (error) {
             console.error("실패:", error);
         }
@@ -237,17 +255,20 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
 
 
     return (
-        <div className="flex">
-            <Calendar
-                minDate={new Date()}
-                formatDay={(locale, date) => dayjs(date).format('D')}
-                tileContent={tileContent} // 날짜별 커스텀 콘텐츠 추가
-                tileClassName={tileClassName}
-                onClickDay={handleDayClick}
-                next2Label={null} // 추가로 넘어가는 버튼 제거
-                prev2Label={null} // 이전으로 돌아가는 버튼 제거
-            />
-            <div className="w-[50%] flex flex-col mx-4">
+        <div className="flex md:flex-row flex-col">
+            <div className="md:w-[50%]">
+                <Calendar
+                    minDate={new Date()}
+                    formatDay={(locale, date) => dayjs(date).format('D')}
+                    tileContent={tileContent} // 날짜별 커스텀 콘텐츠 추가
+                    tileClassName={tileClassName}
+                    onClickDay={handleDayClick}
+                    next2Label={null} // 추가로 넘어가는 버튼 제거
+                    prev2Label={null} // 이전으로 돌아가는 버튼 제거
+                    key={calendarKey}
+                />
+            </div>
+            <div className="md:w-[50%] flex flex-col m-4 md:my-0">
                 <div className="m-2">
                     {startDateRSC !== null || endDateRSC !== null ? (
                         <div>{startDateRSC} - {endDateRSC || ('?')}</div>
@@ -258,17 +279,19 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
 
                 <div className="m-2">
                     <div className="w-full flex-1 my-2 px-4 py-2 border-[1px] border-gray-300 rounded">
+                        {/*<div className="flex items-center me-4">*/}
+                        {/*    <input id="useRadio" type="radio" value="" name="useBlockRadio"*/}
+                        {/*           className="w-4 h-4 focus:border-none"*/}
+                        {/*           disabled={startDateRSC === null || endDateRSC === null}/>*/}
+                        {/*    <label htmlFor="useRadio" className="ms-2 text-sm text-gray-900">*/}
+                        {/*        사용가능*/}
+                        {/*    </label>*/}
+                        {/*</div>*/}
                         <div className="flex items-center me-4">
-                            <input id="useRadio" type="radio" value="" name="useBlockRadio"
+                            <input id="blockRadio" type="checkbox" value=""
                                    className="w-4 h-4 focus:border-none"
-                                   disabled={startDateRSC === null || endDateRSC === null}/>
-                            <label htmlFor="useRadio" className="ms-2 text-sm text-gray-900">
-                                사용가능
-                            </label>
-                        </div>
-                        <div className="flex items-center me-4">
-                            <input id="blockRadio" type="radio" value="" name="useBlockRadio"
-                                   className="w-4 h-4 focus:border-none"
+                                   checked={isReasonChk}
+                                   onChange={(e) => setIsReasonChk(e.target.checked)}
                                    disabled={startDateRSC === null || endDateRSC === null}/>
                             <label htmlFor="blockRadio" className="ms-2 text-sm text-gray-900">
                                 사용불가 처리
@@ -290,7 +313,8 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                         </div>
                     </div>
                     <div className="flex justify-end">
-                        <button className="text-white text-sm bg-roomi rounded px-4 py-1" onClick={()=>setShowUpdateModal(true)}>
+                        <button className="text-white text-sm bg-roomi rounded px-4 py-1"
+                                onClick={() => setShowUpdateModal(true)}>
                             완료
                         </button>
                     </div>
@@ -354,7 +378,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                                       d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                             </svg>
                             <h3 className="mb-5 text-lg font-normal text-gray-500">
-                                수정 하시겠습니까?
+                                사용불가 처리 하시겠습니까?
                             </h3>
                             <button
                                 className="text-white bg-roomi hover:bg-roomi-5 focus:ring-4 focus:outline-none focus:ring-roomi-0 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5"
