@@ -9,19 +9,6 @@ export interface ApiResponse {
         size?: number;
     };
 }
-export interface Season {
-    name: string;
-    description?: string;
-}
-
-export interface SeasonalPrice {
-    start_date: string;
-    end_date: string;
-    hour_price?: number;
-    day_price?: number;
-    week_price?: number;
-    season: Season;
-}
 
 export interface RoomOperationHour {
     day_of_week: number;
@@ -47,49 +34,59 @@ export interface UnavailableDates {
     blocked_dates: BlockedDate[];
     reservations: Reservation[];
     operation_hours: RoomOperationHour[];
-    seasonal_prices: SeasonalPrice[];
 }
 
 export interface RoomData {
     id: number;
     title: string;
     address?: string;
-    addressDetail?: string;
+    address_detail?: string;
     coordinate_long: number;
     coordinate_lat: number;
     thumbnail_url?: string;
     detail_urls?: string[];
-    created_at?: string;
-    updated_at?: string;
+    created_at?: Date;
+    updated_at?: Date;
 
-    // Booking unit prices
+    // 숙소 기본 정보 추가
+    accommodation_type?: string;
+    short_description?: string;
+
+    // 건물 정보 추가
+    building_type?: string;
+    floor_area?: number;
+    floor?: number;
+    has_elevator: boolean;
+    has_parking: boolean;
+
+    // 예약 관련 추가
+    is_auto_accepted: boolean;
+    refund_policy?: string;
+
+    // 기존 가격 정보
     hour_enabled: boolean;
     hour_price?: number;
     min_hours?: number;
-
     day_enabled: boolean;
     day_price?: number;
     min_days?: number;
-
     week_enabled: boolean;
     week_price?: number;
     min_weeks?: number;
-
-    // Additional fees
     maintenance_fee?: number;
-    cleaning_fee?: number;
-    deposit?: number;
-
     maintenance_fee_week?: number;
+    cleaning_fee?: number;
     cleaning_fee_week?: number;
+    deposit?: number;
     deposit_week?: number;
-
     cleaning_time: number;
-    is_active?: boolean;
-    host_id?: number;
 
-    // Room details
+    // 상세 정보
     description?: string;
+    transportation_info?: string;
+    room_structure?: string;
+    room_count?: number;
+    bathroom_count?: number;
     max_guests?: number;
     check_in_time?: string;
     check_out_time?: string;
@@ -97,17 +94,31 @@ export interface RoomData {
     room_size?: number;
     bed_configs?: Record<string, any>;
     amenities?: Record<string, any>;
+    features?: Record<string, any>;
+    tags?: string[];
+    prohibitions?: string[];
     house_rules?: string;
+    additional_facilities?: Record<string, any>;
 
-    // Availability
-    unavailable_dates?: UnavailableDates;
+    // 인증 관련 추가
+    business_license_url?: string;
+    is_verified: boolean;
+    verified_at?: Date;
+
+    is_confirmed?: boolean;
+    is_active?: boolean;
+    is_deleted: boolean;
+    host_id?: number;
+    unavailable_dates: UnavailableDates;
+    discounts?: any[];
+    reviews?: any[];
 }
 
-export interface schedules {
+export interface Schedules {
     date: Date;
-    dayPrice: number | null;
-    isAvailable: boolean;
+    day_price: number | null;
+    is_available: boolean;
     description: string;
     reason: string;
-    isBlocked: string;
+    is_blocked: string;
 }

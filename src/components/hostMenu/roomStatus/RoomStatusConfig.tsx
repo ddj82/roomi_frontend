@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useState} from 'react';
 import Calendar from "react-calendar";
 import dayjs from "dayjs";
-import {RoomData, schedules} from "src/types/rooms";
+import {RoomData, Schedules} from "src/types/rooms";
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import {createBulkBlocks, unblockDate} from "src/api/api";
@@ -193,16 +193,16 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
             const selectedRoomData = data.find((room) => room.id === selectedRoom);
             if (selectedRoomData) {
                 const roomId = selectedRoomData.id;
-                const dayPrice: number | null = selectedRoomData.day_price ?? null;
-                const schedulesData: schedules[] = [];
+                const day_price: number | null = selectedRoomData.day_price ?? null;
+                const schedulesData: Schedules[] = [];
                 dateRangeRSC.map((date, index) => (
                     schedulesData.push({
                         "date": new Date(date),
-                        "dayPrice": dayPrice,
-                        "isAvailable": false,
+                        "day_price": day_price,
+                        "is_available": false,
                         "description": "객실 사용 불가",
                         "reason": "사용불가 사유",
-                        "isBlocked": "true"
+                        "is_blocked": "true"
                     })
                 ));
                 const response = await createBulkBlocks(roomId, schedulesData);

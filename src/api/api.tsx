@@ -1,6 +1,6 @@
 // api.tsx
 import i18n from "src/i18n";
-import {schedules} from "../types/rooms";
+import {Schedules} from "../types/rooms";
 
 const BASE_URL = 'https://roomi.co.kr/api';
 
@@ -141,7 +141,7 @@ export const myRoomList = async () => {
 };
 
 // 방 사용 불가 처리 API
-export const createBulkBlocks = async (id: number, schedulesData: schedules[]) => {
+export const createBulkBlocks = async (id: number, schedulesData: Schedules[]) => {
     return request(`/rooms/schedule/bulk`, true, 'POST', {
         'roomId': id,
         'schedules': schedulesData,
