@@ -12,7 +12,7 @@ dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
 
-const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: string }) => {
+const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: number }) => {
     const [customBlockDatesRSC, setCustomBlockDatesRSC] = useState<string[]>([]);
     const [reservationDatesRSC, setReservationDatesRSC] = useState<string[]>([]);
     const [startDateRSC, setStartDateRSC] = useState<string | null>(null);
@@ -70,7 +70,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                 let currentDate = startDate;
 
                 // 현재 선택된 방의 데이터를 가져옵니다.
-                const selectedRoomData = data.find((room) => room.title === selectedRoom);
+                const selectedRoomData = data.find((room) => room.id === selectedRoom);
                 // 예약 데이터 가져오기
                 const reservations = selectedRoomData?.unavailable_dates?.reservations || [];
 
@@ -107,7 +107,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
 
         if (!selectedRoom) return;
 
-        const selectedRoomData = data.find((room) => room.title === selectedRoom);
+        const selectedRoomData = data.find((room) => room.id === selectedRoom);
 
         if (!selectedRoomData) {
             setCustomBlockDatesRSC([]);
@@ -147,11 +147,11 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
     const tileContent = () => {
         // 기본적으로 모든 날짜에 공통 콘텐츠 추가
         return <div className="add-content text-gray-500 text-xs">
-            {data.filter((room) => room.title === selectedRoom) // 조건에 맞는 데이터 필터링
+            {data.filter((room) => room.id === selectedRoom) // 조건에 맞는 데이터 필터링
                 .map((room, index) => (
                     <div key={index}>
                         {room.day_price !== undefined ? (
-                            `${(room.day_price / 10000).toFixed(2)}`
+                            <>{(room.day_price / 10000).toFixed(2)}만</>
                         ) : (
                             '없음'
                         )}
@@ -190,7 +190,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
         // 사용 불가 처리 라디오가 체크면 실행
         try {
             // 현재 선택된 방의 데이터를 가져옵니다.
-            const selectedRoomData = data.find((room) => room.title === selectedRoom);
+            const selectedRoomData = data.find((room) => room.id === selectedRoom);
             if (selectedRoomData) {
                 const roomId = selectedRoomData.id;
                 const dayPrice: number | null = selectedRoomData.day_price ?? null;
@@ -226,7 +226,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
     const handleUnblockBtn = async () => {
         try {
             // 현재 선택된 방의 데이터를 가져옵니다.
-            const selectedRoomData = data.find((room) => room.title === selectedRoom);
+            const selectedRoomData = data.find((room) => room.id === selectedRoom);
             if (selectedRoomData) {
                 const roomId = selectedRoomData.id;
                 const date = new Date(isBlockDate);
@@ -279,14 +279,6 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
 
                 <div className="m-2">
                     <div className="w-full flex-1 my-2 px-4 py-2 border-[1px] border-gray-300 rounded">
-                        {/*<div className="flex items-center me-4">*/}
-                        {/*    <input id="useRadio" type="radio" value="" name="useBlockRadio"*/}
-                        {/*           className="w-4 h-4 focus:border-none"*/}
-                        {/*           disabled={startDateRSC === null || endDateRSC === null}/>*/}
-                        {/*    <label htmlFor="useRadio" className="ms-2 text-sm text-gray-900">*/}
-                        {/*        사용가능*/}
-                        {/*    </label>*/}
-                        {/*</div>*/}
                         <div className="flex items-center me-4">
                             <input id="blockRadio" type="checkbox" value=""
                                    className="w-4 h-4 focus:border-none"

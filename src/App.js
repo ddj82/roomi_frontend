@@ -14,7 +14,7 @@ import {HeaderBtnProvider} from "./components/auth/HeaderBtnContext";
 import 'src/css/Modal.css';
 import 'src/css/Calendar.css';
 import NaverMap from "./components/map/NaverMap";
-import MyRoomInsert from "./components/hostMenu/MyRoomInsert";
+import MyRoomInsert from "./components/hostMenu/myRooms/MyRoomInsert";
 import {HostTabProvider} from "./components/auth/HostTabContext";
 
 

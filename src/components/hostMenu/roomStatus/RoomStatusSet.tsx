@@ -3,7 +3,7 @@ import Calendar from "react-calendar";
 import dayjs from "dayjs";
 import {RoomData} from "src/types/rooms";
 
-const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: string }) => {
+const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: number }) => {
     const [customBlockDatesRSS, setCustomBlockDatesRSS] = useState<string[]>([]);
     const [reservationDatesRSS, setReservationDatesRSS] = useState<string[]>([]);
 
@@ -11,7 +11,7 @@ const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: 
     useEffect(() => {
         if (!selectedRoom) return;
 
-        const selectedRoomData = data.find((room) => room.title === selectedRoom);
+        const selectedRoomData = data.find((room) => room.id === selectedRoom);
 
         if (!selectedRoomData) {
             setCustomBlockDatesRSS([]);
@@ -48,11 +48,11 @@ const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: 
 
     const tileContent = () => {
         return <div className="add-content text-gray-500 text-xs">
-                    {data.filter((room) => room.title === selectedRoom) // 조건에 맞는 데이터 필터링
+                    {data.filter((room) => room.id === selectedRoom) // 조건에 맞는 데이터 필터링
                         .map((room, index) => (
                             <div key={index}>
                                 {room.day_price !== undefined ? (
-                                    `${(room.day_price / 10000).toFixed(2)}`
+                                    <>{(room.day_price / 10000).toFixed(2)}만</>
                                 ) : (
                                     '없음'
                                 )}

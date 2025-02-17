@@ -54,6 +54,7 @@ export interface RoomData {
     id: number;
     title: string;
     address?: string;
+    addressDetail?: string;
     coordinate_long: number;
     coordinate_lat: number;
     thumbnail_url?: string;

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'; // React Router 사용
 import WishlistButton from "src/components/modals/WishlistButton";
 import i18n from "src/i18n";
 import NaverMap from "../map/NaverMap";
+import ImgCarousel from "src/components/modals/ImgCarousel";
 
 // Accommodation Card Component
 const AccommodationCard = memo(
@@ -18,11 +19,16 @@ const AccommodationCard = memo(
             <div className="homeScreen card" onClick={onClick}>
                 <div className="homeScreen card-header">
                     <WishlistButton />
-                    <img
-                        src={item.detail_urls?.[0]}
-                        alt="thumbnail"
-                        className="homeScreen card-image"
-                    />
+                    {item.detail_urls && item.detail_urls.length > 0 ? (
+                        <ImgCarousel images={item.detail_urls}
+                                     customClass="h-64 md:h-72"/>
+                    ) : (
+                        <img
+                            src="/default-image.jpg" // 이미지 없을 경우 기본 이미지
+                            alt="thumbnail"
+                            className="homeScreen card-image"
+                        />
+                    )}
                 </div>
                 <div className="homeScreen card-content">
                     <div className="homeScreen price-container">

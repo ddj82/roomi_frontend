@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 import 'react-calendar/dist/Calendar.css'; // 스타일 파일도 import
-import RoomSet from 'src/components/hostMenu/room_status/RoomStatusSet';
-import RoomConfig from 'src/components/hostMenu/room_status/RoomStatusConfig';
+import RoomSet from 'src/components/hostMenu/roomStatus/RoomStatusSet';
+import RoomConfig from 'src/components/hostMenu/roomStatus/RoomStatusConfig';
 import {RoomData} from "src/types/rooms";
 import {myRoomList} from "src/api/api";
 import {useDataUpdate} from "../auth/DataUpdateContext";
@@ -12,7 +12,7 @@ const RoomStatus = () => {
     const [activeTab, setActiveTab] = useState("room_status_set");
     const tabs = ["room_status_set", "room_config"] as const;
     const [data, setData] = useState<RoomData[]>([]);
-    const [selectedRoom, setSelectedRoom] = useState('');
+    const [selectedRoom, setSelectedRoom] = useState(0);
     const { dataUpdate } = useDataUpdate();
 
     // 화면 로드시
@@ -24,7 +24,7 @@ const RoomStatus = () => {
                 const items: RoomData[] = responseJson.data.items; // API 데이터 가져오기
                 setData(items); // 상태 업데이트
                 if (items.length > 0) {
-                    setSelectedRoom(items[0].title); // 첫 번째 Room의 title로 초기화
+                    setSelectedRoom(items[0].id); // 첫 번째 Room의 title로 초기화
                 }
             } catch (error) {
                 console.error('API 호출 중 에러 발생:', error);
@@ -34,7 +34,7 @@ const RoomStatus = () => {
     }, [dataUpdate]);
 
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedRoom(event.target.value);
+        setSelectedRoom(Number(event.target.value));
     };
 
     return (
@@ -64,7 +64,7 @@ const RoomStatus = () => {
                             className="border-[1px] border-gray-300 rounded p-2 w-full focus:outline-none"
                     >
                         {data.map((room, index) => (
-                            <option key={room.id} value={room.title}>
+                            <option key={room.id} value={room.id}>
                                 {room.title} {room.id}
                             </option>
                         ))}

@@ -22,7 +22,7 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({ initialState = false, o
 
     return (
         <button
-            className="wishListBtn"
+            className="wishListBtn z-40"
             onClick={toggleWishlist} // `onClick` 사용
         >
             {isLiked ? (
