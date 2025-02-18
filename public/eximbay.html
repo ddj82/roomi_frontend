@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eximbay Payment</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://api-test.eximbay.com/v1/javascriptSDK.js"></script>
+</head>
+<body>
+<div style="text-align: center; padding: 20px;">
+    <h2>결제 진행 중...</h2>
+</div>
+
+<script>
+    // URL 파라미터에서 결제 정보 추출
+    const urlParams = new URLSearchParams(window.location.search);
+    const fgkey = urlParams.get('fgkey');
+    const orderId = urlParams.get('orderId');
+    const amount = urlParams.get('amount');
+    const currency = urlParams.get('currency');
+    const mid = urlParams.get('mid');
+
+    function initPayment() {
+        if (!window.EXIMBAY) {
+            setTimeout(initPayment, 1000);
+            return;
+        }
+
+        EXIMBAY.request_pay({
+            "fgkey": fgkey,
+            "payment": {
+                "transaction_type": "PAYMENT",
+                "order_id": orderId,
+                "currency": currency,
+                "amount": amount,
+                "lang": "KR"
+            },
+            "merchant": {
+                "mid": mid
+            },
+            "buyer": {
+                "name": "테스트 구매자",
+                "email": "test@example.com"
+            },
+            "url": {
+                "return_url": "example://success",
+                "status_url": "example://status"
+            }
+        }, function(response) {
+            // 앱으로 결과 전달
+            if (window.flutter_inappwebview) {
+                window.flutter_inappwebview.callHandler('paymentResult', JSON.stringify(response));
+            }
+        });
+    }
+
+    window.onload = function() {
+        setTimeout(initPayment, 1000);
+    }
+</script>
+</body>
+</html>
