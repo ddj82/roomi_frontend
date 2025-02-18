@@ -82,89 +82,91 @@ export default function RoomDetailScreen() {
         <div className="mt-8 relative overflow-visible">
             {room ? (
                 <div>
-                    <div className="flex">
+                    <div className="flex md:flex-row flex-col">
                         {room.detail_urls && room.detail_urls.length > 0 ? (
-                            <div className="w-3/5">
+                            <div className="md:w-3/5">
                                 <ImgCarousel images={room.detail_urls} customClass="rounded-lg h-64 md:h-[30rem]"/>
-                                <div className="my-2">{room.title}</div>
-                                <div className="my-2">{room.short_description}</div>
-                                <div className="my-2">
-                                    <div>{t("room_info")}</div>
-                                    {/*{buildRoomInfoRow(faHome, t("숙소유형"), room.accommodation_type ?? "0")}*/}
-                                    {/*{buildRoomInfoRow(faBuilding, t("건물유형"), room.building_type ?? "0")}*/}
-                                    {/*{buildRoomInfoRow(faVectorSquare, t("방구조"), room.room_structure ?? "0")}*/}
-                                    {room.accommodation_type && buildRoomInfoRow(faHome, t("숙소유형"), room.accommodation_type)}
-                                    {room.building_type && buildRoomInfoRow(faBuilding, t("건물유형"), room.building_type)}
-                                    {room.room_structure && buildRoomInfoRow(faVectorSquare, t("방구조"), room.room_structure)}
-                                    {buildRoomInfoRow(faVectorSquare, t("면적"), `${room.floor_area ?? 0}m²`)}
-                                    {buildRoomInfoRow(faLayerGroup, t("층수"), `${room.floor ?? 0}층`)}
-                                    {buildRoomInfoRow(faDoorOpen, t("방개수"), `${room.room_count ?? 0}개`)}
-                                    {buildRoomInfoRow(faBath, t("욕실개수"), `${room.bathroom_count ?? 0}개`)}
-                                    {buildRoomInfoRow(faElevator, t("엘리베이터"), room.has_elevator ? "✔️" : "❌")}
-                                    {buildRoomInfoRow(faSquareParking, t("주차가능"), room.has_parking ? "✔️" : "❌")}
-                                    {buildRoomInfoRow(faUsers, t("최대이용인원"), `${room.max_guests ?? 0}명`)}
-                                    {buildRoomInfoRow(faClock, t("check_in"), `${room.check_in_time ?? "0"} / ${t("check_out")}: ${room.check_out_time ?? "0"}`)}
-                                </div>
-                                <div className="my-2">
-                                    <div>{t("amenities")}</div>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                        {room?.facilities &&
-                                            Object.entries(room.facilities)
-                                                .filter(([_, value]) => value)
-                                                .map(([key], index) => (
-                                                    <div key={index} className="flex flex-col items-center text-center">
-                                                        <FontAwesomeIcon icon={facilityIcons[key]}
-                                                                         className="text-gray-500 text-xl"/>
-                                                        <div className="">{key}</div>
-                                                    </div>
-                                                ))}
+                                <div className="mx-4">
+                                    <div className="my-2">{room.title}</div>
+                                    <div className="my-2">{room.short_description}</div>
+                                    <div className="my-2">
+                                        <div>{t("room_info")}</div>
+                                        {/*{buildRoomInfoRow(faHome, t("숙소유형"), room.accommodation_type ?? "0")}*/}
+                                        {/*{buildRoomInfoRow(faBuilding, t("건물유형"), room.building_type ?? "0")}*/}
+                                        {/*{buildRoomInfoRow(faVectorSquare, t("방구조"), room.room_structure ?? "0")}*/}
+                                        {room.accommodation_type && buildRoomInfoRow(faHome, t("숙소유형"), room.accommodation_type)}
+                                        {room.building_type && buildRoomInfoRow(faBuilding, t("건물유형"), room.building_type)}
+                                        {room.room_structure && buildRoomInfoRow(faVectorSquare, t("방구조"), room.room_structure)}
+                                        {buildRoomInfoRow(faVectorSquare, t("면적"), `${room.floor_area ?? 0}m²`)}
+                                        {buildRoomInfoRow(faLayerGroup, t("층수"), `${room.floor ?? 0}층`)}
+                                        {buildRoomInfoRow(faDoorOpen, t("방개수"), `${room.room_count ?? 0}개`)}
+                                        {buildRoomInfoRow(faBath, t("욕실개수"), `${room.bathroom_count ?? 0}개`)}
+                                        {buildRoomInfoRow(faElevator, t("엘리베이터"), room.has_elevator ? "✔️" : "❌")}
+                                        {buildRoomInfoRow(faSquareParking, t("주차가능"), room.has_parking ? "✔️" : "❌")}
+                                        {buildRoomInfoRow(faUsers, t("최대이용인원"), `${room.max_guests ?? 0}명`)}
+                                        {buildRoomInfoRow(faClock, t("check_in"), `${room.check_in_time ?? "0"} / ${t("check_out")}: ${room.check_out_time ?? "0"}`)}
                                     </div>
-                                </div>
-                                <div className="my-2">
-                                    <div>{t("additional_facilities")}</div>
-                                    <div className="grid grid-cols-3 md:grid-cols-8 gap-2">
-                                        {room?.additional_facilities &&
-                                            Object.entries(room.additional_facilities)
-                                                .filter(([_, value]) => value)
-                                                .map(([key], index) => (
-                                                    <div key={index} className="flex flex-col items-center text-center">
-                                                        <FontAwesomeIcon icon={addFacilityIcons[key]}
-                                                                         className="text-gray-500 text-xl"/>
-                                                        <div className="">{key}</div>
-                                                    </div>
-                                                ))}
+                                    <div className="my-2">
+                                        <div>{t("amenities")}</div>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                            {room?.facilities &&
+                                                Object.entries(room.facilities)
+                                                    .filter(([_, value]) => value)
+                                                    .map(([key], index) => (
+                                                        <div key={index} className="flex flex-col items-center text-center m-2">
+                                                            <FontAwesomeIcon icon={facilityIcons[key]}
+                                                                             className="text-gray-500 text-xl"/>
+                                                            {/*<div className="">{key}</div>*/}
+                                                        </div>
+                                                    ))}
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="my-2">
-                                    <div>{t("location_information")}</div>
-                                    <div className="flex items-center space-x-2">
-                                        <FontAwesomeIcon icon={faMapLocationDot} className="text-gray-500 text-xl"/>
-                                        <div>{room.transportation_info}</div>
+                                    <div className="my-2">
+                                        <div>{t("additional_facilities")}</div>
+                                        <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
+                                            {room?.additional_facilities &&
+                                                Object.entries(room.additional_facilities)
+                                                    .filter(([_, value]) => value)
+                                                    .map(([key], index) => (
+                                                        <div key={index} className="flex flex-col items-center text-center">
+                                                            <FontAwesomeIcon icon={addFacilityIcons[key]}
+                                                                             className="text-gray-500 text-xl"/>
+                                                            <div className="">{key}</div>
+                                                        </div>
+                                                    ))}
+                                        </div>
                                     </div>
-                                    <div className="h-60">
-                                        <NaverMapRoom room={room}/>
+                                    <div className="my-2">
+                                        <div>{t("location_information")}</div>
+                                        <div className="flex items-center space-x-2">
+                                            <FontAwesomeIcon icon={faMapLocationDot} className="text-gray-500 text-xl"/>
+                                            <div>{room.transportation_info}</div>
+                                        </div>
+                                        <div className="h-72">
+                                            <NaverMapRoom room={room}/>
+                                        </div>
                                     </div>
+                                    <div className="my-2">
+                                    </div>
+                                    <div className="my-2">
+                                    </div>
+                                    <div className="my-2">
+                                    </div>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
                                 </div>
-                                <div className="my-2">
-                                </div>
-                                <div className="my-2">
-                                </div>
-                                <div className="my-2">
-                                </div>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
-                                <br/>
                             </div>
                         ) : (
                             <img
@@ -175,9 +177,13 @@ export default function RoomDetailScreen() {
                         )}
                         
                         {/*리모컨 영역*/}
-                        <div className="w-1/3 ml-auto md:h-[30rem] border-[1px] border-gray-300 rounded-lg p-4 sticky top-10 break-words">
+                        <div className="w-full fixed bottom-0 bg-white z-[100]
+                        md:w-1/3 md:ml-auto md:h-[30rem] md:sticky md:top-10 md:rounded-lg
+                        border-[1px] border-gray-300 p-4 break-words">
                             <div>Room ID: {room.id}</div>
                             <div>Locale: {room.address}</div>
+                            <div>날짜선택</div>
+                            <div>예약하기</div>
                         </div>
                     </div>
                 </div>

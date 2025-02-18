@@ -14,14 +14,14 @@ const NaverMapRoom = ({ room }: { room: RoomData }) => {
 
             const mapOptions = {
                 center: new window.naver.maps.LatLng(room.coordinate_lat, room.coordinate_long),
-                zoom: 16,
-                minZoom: 16,
-                maxZoom: 18,
-                // draggable: false,               // 드래그 비활성화 (사용자가 이동 못함)
-                // pinchZoom: false,               // 모바일 핀치 줌 비활성화
-                // scrollWheel: false,             // 스크롤 휠 줌 비활성화
-                // disableDoubleClickZoom: true,   // 더블 클릭 줌 비활성화
-                // keyboardShortcuts: false,       // 키보드 이동(방향키) 비활성화
+                zoom: 17,
+                // minZoom: 16,
+                // maxZoom: 18,
+                draggable: false,               // 드래그 비활성화 (사용자가 이동 못함)
+                pinchZoom: false,               // 모바일 핀치 줌 비활성화
+                scrollWheel: false,             // 스크롤 휠 줌 비활성화
+                disableDoubleClickZoom: true,   // 더블 클릭 줌 비활성화
+                keyboardShortcuts: false,       // 키보드 이동(방향키) 비활성화
             };
 
             const map = new window.naver.maps.Map('map', mapOptions);
@@ -45,7 +45,7 @@ const NaverMapRoom = ({ room }: { room: RoomData }) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "25px",
+                    fontSize: "2rem",
                     color: "#9370db",
                     cursor: "default",
                     pointerEvents: "none",
