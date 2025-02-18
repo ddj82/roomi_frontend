@@ -198,11 +198,11 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                 dateRangeRSC.map((date, index) => (
                     schedulesData.push({
                         "date": new Date(date),
-                        "day_price": day_price,
-                        "is_available": false,
+                        "dayPrice": day_price,
+                        "isAvailable": false,
                         "description": "객실 사용 불가",
                         "reason": "사용불가 사유",
-                        "is_blocked": "true"
+                        "isBlocked": "true"
                     })
                 ));
                 const response = await createBulkBlocks(roomId, schedulesData);

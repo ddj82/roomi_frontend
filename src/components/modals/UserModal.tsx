@@ -90,7 +90,7 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
                                 <>
                                     <button onClick={handleUserMode} className="userModal menu-item">
                                         <FontAwesomeIcon icon={faUser} className="text-xl md:text-2xl" />
-                                        {t("게스트 전환")}
+                                        {t("게스트로 전환")}
                                     </button>
                                     <button onClick={handleHostManage} className="userModal menu-item">
                                         <FaCogs className="text-xl md:text-2xl"/>
@@ -100,7 +100,7 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
                             ) : (
                                 <button onClick={handleUserHostMode} className="userModal menu-item">
                                     <FontAwesomeIcon icon={faUser} className="text-xl md:text-2xl" />
-                                    {t("호스트 전환")}
+                                    {t("호스트로 전환")}
                                 </button>
                             )}
                         </>
@@ -113,7 +113,7 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
 
                     <button onClick={handleMessage} className="userModal menu-item">
                         <FaRegEnvelope className="text-xl md:text-2xl"/>
-                        {t("메시지")}
+                        {t("message")}
                     </button>
 
                     <button onClick={handleFavorite} className="userModal menu-item">

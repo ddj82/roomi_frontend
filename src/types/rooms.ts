@@ -116,9 +116,9 @@ export interface RoomData {
 
 export interface Schedules {
     date: Date;
-    day_price: number | null;
-    is_available: boolean;
+    dayPrice: number | null;
+    isAvailable: boolean;
     description: string;
     reason: string;
-    is_blocked: string;
+    isBlocked: string;
 }
