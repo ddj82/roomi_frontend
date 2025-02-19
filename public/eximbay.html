@@ -10,14 +10,21 @@
 <body>
 <div style="text-align: center; padding: 20px;">
     <h2>결제 진행 중...</h2>
+    <div id="debug-info" style="text-align: left; padding: 10px; font-size: 12px; color: #666;"></div>
     <div id="error-message" style="color: red; display: none;"></div>
 </div>
 
 <script>
+    function addDebugInfo(message) {
+        const debugDiv = document.getElementById('debug-info');
+        const timestamp = new Date().toLocaleTimeString();
+        debugDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+        console.log(`[${timestamp}] ${message}`);
+    }
+
     // URL 파라미터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const params = {
-        fgkey: urlParams.get('fgkey'),
         orderId: urlParams.get('orderId'),
         amount: urlParams.get('amount'),
         currency: urlParams.get('currency'),
@@ -25,10 +32,9 @@
         product: urlParams.get('product')
     };
 
-    // 팝업 처리
     const originalOpen = window.open;
     window.open = function(url, name, features) {
-        console.log('팝업 URL 감지:', url);
+        addDebugInfo('팝업 URL 감지: ' + url);
 
         if (window.flutter_inappwebview) {
             window.flutter_inappwebview.callHandler('popupUrl', url);
@@ -37,18 +43,11 @@
         return null;
     };
 
-    function initPayment() {
-        if (!window.EXIMBAY) {
-            console.log('EXIMBAY SDK 로딩 대기 중...');
-            setTimeout(initPayment, 1000);
-            return;
-        }
-
+    // Ready API 호출하여 새로운 fgkey 발급
+    async function getFgkey() {
         try {
             const productData = JSON.parse(params.product);
-
-            const requestData = {
-                fgkey: params.fgkey,
+            const requestBody = {
                 payment: {
                     transaction_type: "PAYMENT",
                     order_id: params.orderId,
@@ -67,35 +66,96 @@
                     return_url: "example://success",
                     status_url: "example://status"
                 },
-                product: productData
+                product: [{
+                    name: productData.name,
+                    quantity: productData.quantity,
+                    unit_price: productData.unit_price,
+                    link: productData.link
+                }]
             };
 
-            // Eximbay로 보내기 전에 요청 데이터 형식 확인
-            const requestDataString = `payment: ${JSON.stringify(requestData.payment)}, ` +
-                `merchant: ${JSON.stringify(requestData.merchant)}, ` +
-                `buyer: ${JSON.stringify(requestData.buyer)}, ` +
-                `url: ${JSON.stringify(requestData.url)}, ` +
-                `product: ${JSON.stringify(requestData.product)}`;
+            addDebugInfo('Ready API 요청: ' + JSON.stringify(requestBody));
 
-            console.log('Eximbay 요청 데이터 형식:', requestDataString);
+            const response = await fetch('https://api-test.eximbay.com/v1/payments/ready', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Basic dGVzdF8xODQ5NzA1QzY0MkMyMTdFMEIyRDo=',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            const data = await response.json();
+            addDebugInfo('Ready API 응답: ' + JSON.stringify(data));
+
+            return data.fgkey;
+        } catch (error) {
+            addDebugInfo('Ready API 오류: ' + error.message);
+            throw error;
+        }
+    }
+
+    async function initPayment() {
+        if (!window.EXIMBAY) {
+            addDebugInfo('EXIMBAY SDK 로딩 대기 중...');
+            setTimeout(initPayment, 1000);
+            return;
+        }
+
+        try {
+            // 새로운 fgkey 발급
+            const fgkey = await getFgkey();
+            addDebugInfo('새로 발급받은 fgkey: ' + fgkey);
+
+            const productData = JSON.parse(params.product);
+
+            const requestData = {
+                fgkey: fgkey,  // 새로 발급받은 fgkey 사용
+                payment: {
+                    transaction_type: "PAYMENT",
+                    order_id: params.orderId,
+                    currency: params.currency,
+                    amount: params.amount,
+                    lang: "KR"
+                },
+                merchant: {
+                    mid: params.mid
+                },
+                buyer: {
+                    name: "테스트 구매자",
+                    email: "test@example.com"
+                },
+                url: {
+                    return_url: "example://success",
+                    status_url: "example://status"
+                },
+                product: [{
+                    name: productData.name,
+                    quantity: productData.quantity,
+                    unit_price: productData.unit_price,
+                    link: productData.link
+                }]
+            };
+
+            addDebugInfo('EXIMBAY 요청 데이터: ' + JSON.stringify(requestData));
 
             EXIMBAY.request_pay({
                 ...requestData,
                 success: function(response) {
-                    console.log('EXIMBAY 성공 응답:', response);
+                    addDebugInfo('결제 성공: ' + JSON.stringify(response));
                 },
                 error: function(error) {
-                    console.error('EXIMBAY 오류 응답:', error);
+                    addDebugInfo('결제 오류: ' + JSON.stringify(error));
                     document.getElementById('error-message').textContent =
                         `결제 처리 중 오류가 발생했습니다: ${error?.message || 'Unknown error'}`;
                     document.getElementById('error-message').style.display = 'block';
                 },
                 complete: function(result) {
-                    console.log('EXIMBAY 완료:', result);
+                    addDebugInfo('결제 완료: ' + JSON.stringify(result));
                 }
             });
         } catch (error) {
-            console.error('EXIMBAY 초기화 오류:', error);
+            addDebugInfo('오류 발생: ' + error.message);
             document.getElementById('error-message').textContent =
                 'SDK 초기화 중 오류가 발생했습니다. 페이지를 새로고침해 주세요.';
             document.getElementById('error-message').style.display = 'block';
@@ -103,8 +163,8 @@
     }
 
     window.onload = function() {
-        console.log('URL 파라미터:', window.location.search);
-        console.log('파싱된 파라미터:', params);
+        addDebugInfo('페이지 로드 완료');
+        addDebugInfo('전달받은 파라미터: ' + JSON.stringify(params));
 
         setTimeout(initPayment, 1000);
     };
