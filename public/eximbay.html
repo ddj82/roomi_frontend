@@ -14,32 +14,7 @@
 </div>
 
 <script>
-    // Intercept jQuery AJAX calls to debug responses
-    (function($) {
-        var originalAjax = $.ajax;
-        $.ajax = function() {
-            var jqXHR = originalAjax.apply(this, arguments);
-
-            // Add response interceptor
-            jqXHR.then(function(response, textStatus, jqXHR) {
-                console.log('AJAX Response:', {
-                    response: response,
-                    status: textStatus,
-                    headers: jqXHR.getAllResponseHeaders()
-                });
-            }, function(jqXHR, textStatus, errorThrown) {
-                console.error('AJAX Error:', {
-                    error: errorThrown,
-                    status: textStatus,
-                    response: jqXHR.responseText
-                });
-            });
-
-            return jqXHR;
-        };
-    })(jQuery);
-
-    // Get URL parameters
+    // URL 파라미터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const params = {
         fgkey: urlParams.get('fgkey'),
@@ -50,10 +25,10 @@
         product: urlParams.get('product')
     };
 
-    // Handle window.open interception
+    // 팝업 처리
     const originalOpen = window.open;
     window.open = function(url, name, features) {
-        console.log('Popup URL detected:', url);
+        console.log('팝업 URL 감지:', url);
 
         if (window.flutter_inappwebview) {
             window.flutter_inappwebview.callHandler('popupUrl', url);
@@ -64,15 +39,22 @@
 
     function initPayment() {
         if (!window.EXIMBAY) {
-            console.log('Waiting for EXIMBAY SDK to load...');
+            console.log('EXIMBAY SDK 로딩 대기 중...');
             setTimeout(initPayment, 1000);
             return;
         }
 
-        // Log parameters for debugging
-        console.log('Payment Parameters:', params);
-
         try {
+            // product JSON 문자열을 객체로 파싱
+            let productData;
+            try {
+                productData = JSON.parse(params.product);
+                console.log('파싱된 상품 데이터:', productData);
+            } catch (e) {
+                console.error('상품 데이터 파싱 오류:', e);
+                productData = [];
+            }
+
             EXIMBAY.request_pay({
                 fgkey: params.fgkey,
                 payment: {
@@ -93,23 +75,22 @@
                     return_url: "example://success",
                     status_url: "example://status"
                 },
-                product: params.product,
+                product: productData, // 파싱된 객체 배열 사용
                 success: function(response) {
-                    console.log('Payment Success:', response);
-                    // Handle success case
+                    console.log('결제 성공:', response);
                 },
                 error: function(error) {
-                    console.error('Payment Error:', error);
+                    console.error('결제 오류:', error);
                     document.getElementById('error-message').textContent =
                         '결제 처리 중 오류가 발생했습니다. 다시 시도해 주세요.';
                     document.getElementById('error-message').style.display = 'block';
                 },
                 complete: function(response) {
-                    console.log('Payment Complete:', response);
+                    console.log('결제 완료:', response);
                 }
             });
         } catch (error) {
-            console.error('EXIMBAY SDK Error:', error);
+            console.error('EXIMBAY 초기화 오류:', error);
             document.getElementById('error-message').textContent =
                 'SDK 초기화 중 오류가 발생했습니다. 페이지를 새로고침해 주세요.';
             document.getElementById('error-message').style.display = 'block';
@@ -117,9 +98,9 @@
     }
 
     window.onload = function() {
-        // Add version logging
-        console.log('jQuery version:', $.fn.jquery);
-        console.log('EXIMBAY SDK loaded:', !!window.EXIMBAY);
+        console.log('jQuery 버전:', $.fn.jquery);
+        console.log('EXIMBAY SDK 로드됨:', !!window.EXIMBAY);
+        console.log('결제 파라미터:', params);
 
         setTimeout(initPayment, 1000);
     };
