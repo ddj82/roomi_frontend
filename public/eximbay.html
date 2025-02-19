@@ -4,42 +4,73 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eximbay Payment</title>
+    <!-- SDK 로딩 상태 확인을 위해 defer 속성 제거 -->
     <script src="https://pay-test.eximbay.com/js/v1/payment.js"></script>
 </head>
 <body>
 <div style="text-align: center; padding: 20px;">
     <h2>결제 진행 중...</h2>
+    <p id="status">SDK 로딩 중...</p>
 </div>
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const fgkey = urlParams.get('fgkey');
+    let retryCount = 0;
+    const MAX_RETRIES = 5;
+
+    function updateStatus(message) {
+        console.log(message);
+        document.getElementById('status').innerText = message;
+    }
+
+    function checkSDKLoaded() {
+        return typeof window.EximbayPayment !== 'undefined';
+    }
 
     function initPayment() {
+        if (!checkSDKLoaded()) {
+            retryCount++;
+            updateStatus(`SDK 로딩 재시도 중... (${retryCount}/${MAX_RETRIES})`);
+
+            if (retryCount < MAX_RETRIES) {
+                setTimeout(initPayment, 1000);
+                return;
+            } else {
+                updateStatus('SDK 로딩 실패. 페이지를 새로고침해주세요.');
+                return;
+            }
+        }
+
         try {
-            console.log('Payment initialization started');
+            updateStatus('결제 초기화 중...');
             console.log('fgkey:', fgkey);
 
             const eximbay = new Object();
             eximbay.fgkey = fgkey;
             eximbay.payment_type = "PAY";
 
-            if (typeof window.EximbayPayment === 'undefined') {
-                console.error('EximbayPayment is not defined');
-                setTimeout(initPayment, 1000);
-                return;
-            }
-
             window.EximbayPayment(eximbay);
+            updateStatus('결제창 로딩 중...');
         } catch (e) {
             console.error('Payment initialization failed:', e);
+            updateStatus('결제 초기화 실패: ' + e.message);
         }
     }
 
-    window.onload = function() {
-        console.log('Window loaded');
-        setTimeout(initPayment, 1000);
-    }
+    // SDK 로딩 상태 확인
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded');
+        updateStatus('DOM 로딩 완료');
+
+        if (checkSDKLoaded()) {
+            console.log('SDK already loaded');
+            initPayment();
+        } else {
+            console.log('Waiting for SDK...');
+            setTimeout(initPayment, 1000);
+        }
+    });
 </script>
 </body>
 </html>
