@@ -28,12 +28,16 @@
     };
 
     // 나머지 코드는 동일
+    // URL에서 파라미터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const fgkey = urlParams.get('fgkey');
     const orderId = urlParams.get('orderId');
     const amount = urlParams.get('amount');
     const currency = urlParams.get('currency');
     const mid = urlParams.get('mid');
+
+    // 상품 정보 (JSON 형식으로 URL에서 전달)
+    const products = JSON.parse(decodeURIComponent(urlParams.get('products')) || '[]');
 
     function initPayment() {
         if (!window.EXIMBAY) {
@@ -60,7 +64,8 @@
             "url": {
                 "return_url": "example://success",
                 "status_url": "example://status"
-            }
+            },
+            "product": products // ✅ 상품 정보 추가
         });
     }
 
