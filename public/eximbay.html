@@ -10,67 +10,54 @@
 <body>
 <div style="text-align: center; padding: 20px;">
     <h2>결제 진행 중...</h2>
-    <p id="status">SDK 로딩 중...</p>
 </div>
 
 <script>
+    // URL 파라미터에서 결제 정보 추출
     const urlParams = new URLSearchParams(window.location.search);
     const fgkey = urlParams.get('fgkey');
-    let retryCount = 0;
-    const MAX_RETRIES = 5;
-
-    function updateStatus(message) {
-        console.log(message);
-        document.getElementById('status').innerText = message;
-    }
-
-    function checkSDKLoaded() {
-        return typeof window.EximbayPayment !== 'undefined';
-    }
+    const orderId = urlParams.get('orderId');
+    const amount = urlParams.get('amount');
+    const currency = urlParams.get('currency');
+    const mid = urlParams.get('mid');
 
     function initPayment() {
-        if (!checkSDKLoaded()) {
-            retryCount++;
-            updateStatus(`SDK 로딩 재시도 중... (${retryCount}/${MAX_RETRIES})`);
+        if (!window.EXIMBAY) {
+            setTimeout(initPayment, 1000);
+            return;
+        }
 
-            if (retryCount < MAX_RETRIES) {
-                setTimeout(initPayment, 1000);
-                return;
-            } else {
-                updateStatus('SDK 로딩 실패. 페이지를 새로고침해주세요.');
-                return;
+        EXIMBAY.request_pay({
+            "fgkey": fgkey,
+            "payment": {
+                "transaction_type": "PAYMENT",
+                "order_id": orderId,
+                "currency": currency,
+                "amount": amount,
+                "lang": "KR"
+            },
+            "merchant": {
+                "mid": mid
+            },
+            "buyer": {
+                "name": "테스트 구매자",
+                "email": "test@example.com"
+            },
+            "url": {
+                "return_url": "example://success",
+                "status_url": "example://status"
             }
-        }
-
-        try {
-            updateStatus('결제 초기화 중...');
-            console.log('fgkey:', fgkey);
-
-            const eximbay = new Object();
-            eximbay.fgkey = fgkey;
-            eximbay.payment_type = "PAY";
-
-            window.EximbayPayment(eximbay);
-            updateStatus('결제창 로딩 중...');
-        } catch (e) {
-            console.error('Payment initialization failed:', e);
-            updateStatus('결제 초기화 실패: ' + e.message);
-        }
+        }, function(response) {
+            // 앱으로 결과 전달
+            if (window.flutter_inappwebview) {
+                window.flutter_inappwebview.callHandler('paymentResult', JSON.stringify(response));
+            }
+        });
     }
 
-    // SDK 로딩 상태 확인
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded');
-        updateStatus('DOM 로딩 완료');
-
-        if (checkSDKLoaded()) {
-            console.log('SDK already loaded');
-            initPayment();
-        } else {
-            console.log('Waiting for SDK...');
-            setTimeout(initPayment, 1000);
-        }
-    });
+    window.onload = function() {
+        setTimeout(initPayment, 1000);
+    }
 </script>
 </body>
 </html>
