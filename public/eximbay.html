@@ -48,7 +48,10 @@
                 "status_url": "example://status"
             }
         }, function(response) {
-            // 앱으로 결과 전달
+            console.log('결제 응답 전체:', response);
+            console.log('응답 타입:', typeof response);
+            console.log('응답 키들:', Object.keys(response));
+
             if (window.flutter_inappwebview) {
                 window.flutter_inappwebview.callHandler('paymentResult', JSON.stringify(response));
             }
