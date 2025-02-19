@@ -14,10 +14,8 @@
 </div>
 
 <script>
-    // URL 파라미터 가져오기 및 검증
+    // URL 파라미터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
-    const expectedFgkey = '8BEB95ADE96F11BFC4C424956DDBD5724395647DE3F9D09803A168D3DE289B26';
-
     const params = {
         fgkey: urlParams.get('fgkey'),
         orderId: urlParams.get('orderId'),
@@ -27,27 +25,7 @@
         product: urlParams.get('product')
     };
 
-    // fgkey 검증 로깅
-    console.log('Expected fgkey:', expectedFgkey);
-    console.log('Received fgkey:', params.fgkey);
-    console.log('fgkey match:', expectedFgkey === params.fgkey);
-
-    if (params.fgkey !== expectedFgkey) {
-        console.log('fgkey 불일치 상세:');
-        console.log('Expected length:', expectedFgkey.length);
-        console.log('Received length:', params.fgkey ? params.fgkey.length : 0);
-        if (params.fgkey) {
-            for (let i = 0; i < Math.max(expectedFgkey.length, params.fgkey.length); i++) {
-                if (expectedFgkey[i] !== params.fgkey[i]) {
-                    console.log(`Mismatch at position ${i}:`, {
-                        expected: expectedFgkey[i],
-                        received: params.fgkey[i]
-                    });
-                }
-            }
-        }
-    }
-
+    // 팝업 처리
     const originalOpen = window.open;
     window.open = function(url, name, features) {
         console.log('팝업 URL 감지:', url);
@@ -67,17 +45,10 @@
         }
 
         try {
-            let productData;
-            try {
-                productData = JSON.parse(params.product);
-                console.log('파싱된 상품 데이터:', productData);
-            } catch (e) {
-                console.error('상품 데이터 파싱 오류:', e);
-                productData = [];
-            }
+            const productData = JSON.parse(params.product);
 
             const requestData = {
-                fgkey: expectedFgkey, // 여기서 검증된 fgkey 사용
+                fgkey: params.fgkey,
                 payment: {
                     transaction_type: "PAYMENT",
                     order_id: params.orderId,
@@ -99,9 +70,30 @@
                 product: productData
             };
 
-            console.log('EXIMBAY 요청 데이터:', requestData);
+            // Eximbay로 보내기 전에 요청 데이터 형식 확인
+            const requestDataString = `payment: ${JSON.stringify(requestData.payment)}, ` +
+                `merchant: ${JSON.stringify(requestData.merchant)}, ` +
+                `buyer: ${JSON.stringify(requestData.buyer)}, ` +
+                `url: ${JSON.stringify(requestData.url)}, ` +
+                `product: ${JSON.stringify(requestData.product)}`;
 
-            EXIMBAY.request_pay(requestData);
+            console.log('Eximbay 요청 데이터 형식:', requestDataString);
+
+            EXIMBAY.request_pay({
+                ...requestData,
+                success: function(response) {
+                    console.log('EXIMBAY 성공 응답:', response);
+                },
+                error: function(error) {
+                    console.error('EXIMBAY 오류 응답:', error);
+                    document.getElementById('error-message').textContent =
+                        `결제 처리 중 오류가 발생했습니다: ${error?.message || 'Unknown error'}`;
+                    document.getElementById('error-message').style.display = 'block';
+                },
+                complete: function(result) {
+                    console.log('EXIMBAY 완료:', result);
+                }
+            });
         } catch (error) {
             console.error('EXIMBAY 초기화 오류:', error);
             document.getElementById('error-message').textContent =
@@ -111,7 +103,9 @@
     }
 
     window.onload = function() {
-        console.log('전체 파라미터:', params);
+        console.log('URL 파라미터:', window.location.search);
+        console.log('파싱된 파라미터:', params);
+
         setTimeout(initPayment, 1000);
     };
 </script>
