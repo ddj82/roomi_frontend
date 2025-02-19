@@ -35,6 +35,7 @@
   "service_charge" : "service charge",
   "cleaning_fee" : "cleaning fee",
   "price_info" : "Price Information",
+  "payment_info" : "Payment information",
   "room_info" : "Room Information",
   "amenities" : "Amenities",
   "additional_facilities" : "Additional Facilities",

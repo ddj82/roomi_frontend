@@ -5,6 +5,8 @@ interface DateContextType {
     setStartDate: (date: string | null) => void;
     endDate: string | null;
     setEndDate: (date: string | null) => void;
+    calUnit: boolean;
+    setCalUnit: (value: boolean) => void;
 }
 
 const DateContext = createContext<DateContextType | undefined>(undefined);
@@ -12,9 +14,10 @@ const DateContext = createContext<DateContextType | undefined>(undefined);
 export const DateProvider = ({ children }: { children: ReactNode }) => {
     const [startDate, setStartDate] = useState<string | null>(null);
     const [endDate, setEndDate] = useState<string | null>(null);
+    const [calUnit, setCalUnit] = useState(true);
 
     return (
-        <DateContext.Provider value={{ startDate, setStartDate, endDate, setEndDate }}>
+        <DateContext.Provider value={{ startDate, setStartDate, endDate, setEndDate, calUnit, setCalUnit }}>
             {children}
         </DateContext.Provider>
     );

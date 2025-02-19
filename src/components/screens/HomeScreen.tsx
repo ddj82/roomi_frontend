@@ -73,8 +73,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
 
     const handleCardClick = (roomId: number) => {
         const currentLocale = i18n.language; // 현재 언어 감지
-        // navigate(`/detail/${roomId}/${currentLocale}`); // URL 파라미터로 전달
-        window.open(`/detail/${roomId}/${currentLocale}`, '_blank');
+        navigate(`/detail/${roomId}/${currentLocale}`); // URL 파라미터로 전달
+        // window.open(`/detail/${roomId}/${currentLocale}`, '_blank');
     };
 
     const renderMap = useCallback(

@@ -17,6 +17,8 @@ import NaverMap from "./components/map/NaverMap";
 import MyRoomInsert from "./components/hostMenu/myRooms/MyRoomInsert";
 import {HostTabProvider} from "./components/auth/HostTabContext";
 import {DateProvider} from "./components/auth/DateContext";
+import UserReservationSetScreen from "./components/screens/UserReservationSetScreen";
+import {HostHeaderBtnProvider} from "./components/auth/HostHeaderBtnContext";
 
 
 export default function App() {
@@ -27,21 +29,24 @@ export default function App() {
                     <IsHostProvider>
                         <HostModeProvider>
                             <HeaderBtnProvider>
-                                <HostTabProvider>
-                                    <Header/>
-                                    <div className="app container xl:max-w-[1200px]"
-                                         style={{minHeight: window.innerHeight,}}>
-                                        <Routes>
-                                            <Route path="/" element={<MainHome/>}/>
-                                            <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
-                                            <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
-                                            <Route path="/host" element={<HostScreen/>}/>
-                                            <Route path="/naver" element={<NaverMap/>}/>
-                                            <Route path="/host/insert" element={<MyRoomInsert/>}/>
-                                        </Routes>
-                                    </div>
-                                    <Footer/>
-                                </HostTabProvider>
+                                <HostHeaderBtnProvider>
+                                    <HostTabProvider>
+                                        <Header/>
+                                        <div className="app container xl:max-w-[1200px]"
+                                             style={{minHeight: window.innerHeight,}}>
+                                            <Routes>
+                                                <Route path="/" element={<MainHome/>}/>
+                                                <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
+                                                <Route path="/detail/:roomId/:locale/reservation" element={<UserReservationSetScreen/>}/>
+                                                <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
+                                                <Route path="/host" element={<HostScreen/>}/>
+                                                <Route path="/naver" element={<NaverMap/>}/>
+                                                <Route path="/host/insert" element={<MyRoomInsert/>}/>
+                                            </Routes>
+                                        </div>
+                                        <Footer/>
+                                    </HostTabProvider>
+                                </HostHeaderBtnProvider>
                             </HeaderBtnProvider>
                         </HostModeProvider>
                     </IsHostProvider>

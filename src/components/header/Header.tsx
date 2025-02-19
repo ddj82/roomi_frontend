@@ -18,6 +18,8 @@ import {
 import '../../css/Header.css';
 import {useHeaderBtnContext} from "src/components/auth/HeaderBtnContext";
 import HostHeader from "src/components/header/HostHeader";
+import {useIsHost} from "../auth/IsHostContext";
+import {useHostHeaderBtnContext} from "../auth/HostHeaderBtnContext";
 
 type ModalSection = 'date' | 'location' | 'guests';
 type ModalPosition = { x: number; y: number };
@@ -35,7 +37,7 @@ const Header = () => {
     const [businessInfoVisible, setBusinessInfoVisible] = useState(false);
     const { authToken } = useContext(AuthContext); // AuthContext에서 가져오기
     const { isVisible } = useHeaderBtnContext();
-
+    const { isVisibleHostScreen } = useHostHeaderBtnContext();
     const dateRef = useRef(null);
     const locationRef = useRef(null);
     const guestsRef = useRef(null);
@@ -110,8 +112,7 @@ const Header = () => {
                         </div>
                     </div>
                 </div>
-                {/*{isVisible && (*/}
-                {isVisible ? (
+                {isVisible && (
                     <div className="h search-bar-container my-2 mx-3">
                         <div className="h search-bar-row md:mb-4 md:h-14 h-12
                         w-full md:max-w-2xl lg:max-w-3xl xl:max-w-4xl
@@ -151,8 +152,10 @@ const Header = () => {
                             </button>
                         </div>
                     </div>
-                ) : (<HostHeader/>)}
-                {/*)}*/}
+                )}
+                {isVisibleHostScreen && (
+                    <HostHeader/>
+                )}
                 {modalVisible && (
                     <div className="h modal-container">
                         {activeSection === 'date' && (

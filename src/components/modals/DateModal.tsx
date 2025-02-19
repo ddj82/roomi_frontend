@@ -5,6 +5,10 @@ import 'src/css/DateModal.css';
 import 'react-calendar/dist/Calendar.css'; // 스타일 파일도 import
 import dayjs from 'dayjs';
 import {useDateContext} from "src/components/auth/DateContext";
+import {useTranslation} from "react-i18next";
+import {faCalendarDay} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { LuCirclePlus, LuCircleMinus } from "react-icons/lu";
 
 interface DateModalProps {
     visible: boolean;
@@ -14,35 +18,53 @@ interface DateModalProps {
 }
 
 const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps) => {
-    const { startDate, setStartDate, endDate, setEndDate } = useDateContext();
+    const { startDate, setStartDate, endDate, setEndDate, calUnit, setCalUnit } = useDateContext();
     const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
+    const {t} = useTranslation();
+    const [weekValue, setWeekValue] = useState(1);
 
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 875);
         };
-
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     const handleDayClick = (date: Date) => {
         const dateString = formatDate(date);
-        if (!startDate || (startDate && endDate)) {
-            setStartDate(dateString);
-            setEndDate(null);
-        } else {
-            if (new Date(dateString) >= new Date(startDate)) {
-                setEndDate(dateString);
-                onSelectDates({
-                    startDate: startDate,
-                    endDate: dateString,
-                });
-            } else {
+        if (calUnit) {
+            if (!startDate || (startDate && endDate)) {
                 setStartDate(dateString);
                 setEndDate(null);
+            } else {
+                if (new Date(dateString) >= new Date(startDate)) {
+                    setEndDate(dateString);
+                    onSelectDates({
+                        startDate: startDate,
+                        endDate: dateString,
+                    });
+                } else {
+                    setStartDate(dateString);
+                    setEndDate(null);
+                }
             }
+        } else {
+            weekDateSet(dateString);
         }
+    };
+
+    const weekDateSet = (dateString : string) => {
+        setStartDate(dateString);
+        const startDateObj = new Date(dateString);
+        const endDateObj = new Date(startDateObj);
+        endDateObj.setDate(startDateObj.getDate() + (weekValue * 7) - 1); // 주 단위 계산
+        const formattedEndDate = formatDate(endDateObj);
+        setEndDate(formattedEndDate);
+        onSelectDates({
+            startDate: dateString,
+            endDate: formattedEndDate,
+        });
     };
 
     const getTileClassName = ({ date }: { date: Date }) => {
@@ -85,6 +107,38 @@ const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps
         };
     }, [visible]);
 
+    const dayUnit = () => {
+        setCalUnit(true);
+        setWeekValue(1);
+        setStartDate(null);
+        setEndDate(null);
+    };
+
+    const weekUnit = () => {
+        setCalUnit(false);
+        setStartDate(null);
+        setEndDate(null);
+    };
+
+    const handleWeekValue = (value : boolean) => {
+        if (value) {
+            // 플러스 버튼 클릭 시
+            setWeekValue(prev => prev + 1);
+        } else {
+            // 마이너스 버튼 클릭 시
+            if (weekValue === 1) return;
+            setWeekValue(prev => prev - 1);
+        }
+    };
+
+    useEffect(() => {
+        console.log('너때문이냐?');
+        // startDate, endDate 설정이 되어 있으면 weekDateSet 다시
+        if (startDate && endDate && !calUnit) {
+            weekDateSet(startDate);
+        }
+    }, [weekValue]);
+
     return (
         <Modal
             isOpen={visible}
@@ -104,11 +158,33 @@ const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps
             className="dateModal"
         >
             <div className="dateModal modal-container">
-                <h3 className="dateModal header-text">
-                    {!startDate ? '체크인 날짜를 선택하세요' :
-                        !endDate ? '체크아웃 날짜를 선택하세요' :
-                            `${startDate} ~ ${endDate}`}
-                </h3>
+                <div className="dateModal header-text flex justify-end">
+                    <div className="flex text-xs rounded-lg bg-gray-200 px-1.5 p-0.5">
+                        <div className={`flex_center px-2.5 py-1 ${calUnit ? "bg-roomi rounded text-white" : ""}`}>
+                            <button onClick={dayUnit}>
+                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>
+                                {t("day_unit")}
+                            </button>
+                        </div>
+                        <div className={`flex_center px-2.5 py-1 ${calUnit ? "" : "bg-roomi rounded text-white"}`}>
+                            <button onClick={weekUnit}>
+                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>
+                                {t("week_unit")}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {!calUnit && (
+                    <div className="flex_center m-4">
+                        <button className="text-lg" onClick={() => handleWeekValue(false)}>
+                            <LuCircleMinus />
+                        </button>
+                        <div className="text-xs font-bold mx-3">{weekValue}{t("week_unit")}</div>
+                        <button className="text-lg" onClick={() => handleWeekValue(true)}>
+                            <LuCirclePlus />
+                        </button>
+                    </div>
+                )}
                 <Calendar
                     onClickDay={handleDayClick}
                     tileClassName={getTileClassName}
