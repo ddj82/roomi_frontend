@@ -14,31 +14,41 @@
 </div>
 
 <script>
-    // Utility function to validate required parameters
-    function validateParams(params) {
-        const required = ['fgkey', 'orderId', 'amount', 'currency', 'mid', 'product'];
-        const missing = required.filter(param => !params[param]);
+    // Intercept jQuery AJAX calls to debug responses
+    (function($) {
+        var originalAjax = $.ajax;
+        $.ajax = function() {
+            var jqXHR = originalAjax.apply(this, arguments);
 
-        if (missing.length > 0) {
-            throw new Error(`Missing required parameters: ${missing.join(', ')}`);
-        }
-    }
+            // Add response interceptor
+            jqXHR.then(function(response, textStatus, jqXHR) {
+                console.log('AJAX Response:', {
+                    response: response,
+                    status: textStatus,
+                    headers: jqXHR.getAllResponseHeaders()
+                });
+            }, function(jqXHR, textStatus, errorThrown) {
+                console.error('AJAX Error:', {
+                    error: errorThrown,
+                    status: textStatus,
+                    response: jqXHR.responseText
+                });
+            });
 
-    // Safely get URL parameters with validation
-    function getUrlParams() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const params = {
-            fgkey: urlParams.get('fgkey'),
-            orderId: urlParams.get('orderId'),
-            amount: urlParams.get('amount'),
-            currency: urlParams.get('currency'),
-            mid: urlParams.get('mid'),
-            product: urlParams.get('product')
+            return jqXHR;
         };
+    })(jQuery);
 
-        validateParams(params);
-        return params;
-    }
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const params = {
+        fgkey: urlParams.get('fgkey'),
+        orderId: urlParams.get('orderId'),
+        amount: urlParams.get('amount'),
+        currency: urlParams.get('currency'),
+        mid: urlParams.get('mid'),
+        product: urlParams.get('product')
+    };
 
     // Handle window.open interception
     const originalOpen = window.open;
@@ -46,44 +56,23 @@
         console.log('Popup URL detected:', url);
 
         if (window.flutter_inappwebview) {
-            try {
-                window.flutter_inappwebview.callHandler('popupUrl', url);
-            } catch (error) {
-                console.error('Error calling Flutter handler:', error);
-                showError('Error processing payment popup');
-            }
+            window.flutter_inappwebview.callHandler('popupUrl', url);
         }
 
         return null;
     };
 
-    // Show error message to user
-    function showError(message) {
-        const errorDiv = document.getElementById('error-message');
-        errorDiv.textContent = message;
-        errorDiv.style.display = 'block';
-    }
-
-    // Initialize Eximbay payment
     function initPayment() {
         if (!window.EXIMBAY) {
-            if (window.initRetries === undefined) {
-                window.initRetries = 0;
-            }
-
-            window.initRetries++;
-            if (window.initRetries > 10) {
-                showError('Payment system failed to load. Please refresh the page.');
-                return;
-            }
-
+            console.log('Waiting for EXIMBAY SDK to load...');
             setTimeout(initPayment, 1000);
             return;
         }
 
-        try {
-            const params = getUrlParams();
+        // Log parameters for debugging
+        console.log('Payment Parameters:', params);
 
+        try {
             EXIMBAY.request_pay({
                 fgkey: params.fgkey,
                 payment: {
@@ -105,26 +94,35 @@
                     status_url: "example://status"
                 },
                 product: params.product,
-                error_handler: function(error) {
-                    console.error('Eximbay payment error:', error);
-                    showError('Payment processing error. Please try again.');
+                success: function(response) {
+                    console.log('Payment Success:', response);
+                    // Handle success case
+                },
+                error: function(error) {
+                    console.error('Payment Error:', error);
+                    document.getElementById('error-message').textContent =
+                        '결제 처리 중 오류가 발생했습니다. 다시 시도해 주세요.';
+                    document.getElementById('error-message').style.display = 'block';
+                },
+                complete: function(response) {
+                    console.log('Payment Complete:', response);
                 }
             });
         } catch (error) {
-            console.error('Error initializing payment:', error);
-            showError(error.message || 'Error initializing payment');
+            console.error('EXIMBAY SDK Error:', error);
+            document.getElementById('error-message').textContent =
+                'SDK 초기화 중 오류가 발생했습니다. 페이지를 새로고침해 주세요.';
+            document.getElementById('error-message').style.display = 'block';
         }
     }
 
-    // Start payment process when page loads
     window.onload = function() {
-        try {
-            setTimeout(initPayment, 1000);
-        } catch (error) {
-            console.error('Error in onload:', error);
-            showError('Failed to start payment process');
-        }
-    }
+        // Add version logging
+        console.log('jQuery version:', $.fn.jquery);
+        console.log('EXIMBAY SDK loaded:', !!window.EXIMBAY);
+
+        setTimeout(initPayment, 1000);
+    };
 </script>
 </body>
 </html>
