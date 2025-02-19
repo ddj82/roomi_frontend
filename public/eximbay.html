@@ -35,9 +35,7 @@
     const amount = urlParams.get('amount');
     const currency = urlParams.get('currency');
     const mid = urlParams.get('mid');
-
-    // 상품 정보 (JSON 형식으로 URL에서 전달)
-    const products = JSON.parse(decodeURIComponent(urlParams.get('products')) || '[]');
+    const product = urlParams.get('product');
 
     function initPayment() {
         if (!window.EXIMBAY) {
@@ -65,7 +63,7 @@
                 "return_url": "example://success",
                 "status_url": "example://status"
             },
-            "product": products // ✅ 상품 정보 추가
+            "product": product // ✅ 상품 정보 추가
         });
     }
 
