@@ -10,65 +10,120 @@
 <body>
 <div style="text-align: center; padding: 20px;">
     <h2>결제 진행 중...</h2>
+    <div id="error-message" style="color: red; display: none;"></div>
 </div>
 
 <script>
-    // window.open 가로채기
+    // Utility function to validate required parameters
+    function validateParams(params) {
+        const required = ['fgkey', 'orderId', 'amount', 'currency', 'mid', 'product'];
+        const missing = required.filter(param => !params[param]);
+
+        if (missing.length > 0) {
+            throw new Error(`Missing required parameters: ${missing.join(', ')}`);
+        }
+    }
+
+    // Safely get URL parameters with validation
+    function getUrlParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const params = {
+            fgkey: urlParams.get('fgkey'),
+            orderId: urlParams.get('orderId'),
+            amount: urlParams.get('amount'),
+            currency: urlParams.get('currency'),
+            mid: urlParams.get('mid'),
+            product: urlParams.get('product')
+        };
+
+        validateParams(params);
+        return params;
+    }
+
+    // Handle window.open interception
     const originalOpen = window.open;
     window.open = function(url, name, features) {
-        console.log('팝업 URL 감지:', url);
+        console.log('Popup URL detected:', url);
 
-        // Flutter에 URL 전달
         if (window.flutter_inappwebview) {
-            window.flutter_inappwebview.callHandler('popupUrl', url);
+            try {
+                window.flutter_inappwebview.callHandler('popupUrl', url);
+            } catch (error) {
+                console.error('Error calling Flutter handler:', error);
+                showError('Error processing payment popup');
+            }
         }
 
-        // 원래 팝업은 막음
         return null;
     };
 
-    // 나머지 코드는 동일
-    // URL에서 파라미터 가져오기
-    const urlParams = new URLSearchParams(window.location.search);
-    const fgkey = urlParams.get('fgkey');
-    const orderId = urlParams.get('orderId');
-    const amount = urlParams.get('amount');
-    const currency = urlParams.get('currency');
-    const mid = urlParams.get('mid');
-    const product = urlParams.get('product');
+    // Show error message to user
+    function showError(message) {
+        const errorDiv = document.getElementById('error-message');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    }
 
+    // Initialize Eximbay payment
     function initPayment() {
         if (!window.EXIMBAY) {
+            if (window.initRetries === undefined) {
+                window.initRetries = 0;
+            }
+
+            window.initRetries++;
+            if (window.initRetries > 10) {
+                showError('Payment system failed to load. Please refresh the page.');
+                return;
+            }
+
             setTimeout(initPayment, 1000);
             return;
         }
 
-        EXIMBAY.request_pay({
-            "fgkey": fgkey,
-            "payment": {
-                "transaction_type": "PAYMENT",
-                "order_id": orderId,
-                "currency": currency,
-                "amount": amount,
-                "lang": "KR"
-            },
-            "merchant": {
-                "mid": mid
-            },
-            "buyer": {
-                "name": "테스트 구매자",
-                "email": "test@example.com"
-            },
-            "url": {
-                "return_url": "example://success",
-                "status_url": "example://status"
-            },
-            "product": product // ✅ 상품 정보 추가
-        });
+        try {
+            const params = getUrlParams();
+
+            EXIMBAY.request_pay({
+                fgkey: params.fgkey,
+                payment: {
+                    transaction_type: "PAYMENT",
+                    order_id: params.orderId,
+                    currency: params.currency,
+                    amount: params.amount,
+                    lang: "KR"
+                },
+                merchant: {
+                    mid: params.mid
+                },
+                buyer: {
+                    name: "테스트 구매자",
+                    email: "test@example.com"
+                },
+                url: {
+                    return_url: "example://success",
+                    status_url: "example://status"
+                },
+                product: params.product,
+                error_handler: function(error) {
+                    console.error('Eximbay payment error:', error);
+                    showError('Payment processing error. Please try again.');
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing payment:', error);
+            showError(error.message || 'Error initializing payment');
+        }
     }
 
+    // Start payment process when page loads
     window.onload = function() {
-        setTimeout(initPayment, 1000);
+        try {
+            setTimeout(initPayment, 1000);
+        } catch (error) {
+            console.error('Error in onload:', error);
+            showError('Failed to start payment process');
+        }
     }
 </script>
 </body>
