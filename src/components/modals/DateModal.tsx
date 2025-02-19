@@ -4,6 +4,7 @@ import Calendar from 'react-calendar';
 import 'src/css/DateModal.css';
 import 'react-calendar/dist/Calendar.css'; // 스타일 파일도 import
 import dayjs from 'dayjs';
+import {useDateContext} from "src/components/auth/DateContext";
 
 interface DateModalProps {
     visible: boolean;
@@ -13,8 +14,7 @@ interface DateModalProps {
 }
 
 const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps) => {
-    const [startDate, setStartDate] = useState<string | null>(null);
-    const [endDate, setEndDate] = useState<string | null>(null);
+    const { startDate, setStartDate, endDate, setEndDate } = useDateContext();
     const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
 
     useEffect(() => {

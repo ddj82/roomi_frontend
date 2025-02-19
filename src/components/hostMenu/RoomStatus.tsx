@@ -24,7 +24,18 @@ const RoomStatus = () => {
                 const items: RoomData[] = responseJson.data.items; // API 데이터 가져오기
                 setData(items); // 상태 업데이트
                 if (items.length > 0) {
-                    setSelectedRoom(items[0].id); // 첫 번째 Room의 title로 초기화
+                    if (selectedRoom > 0) {
+                        // 선택된 방이 있으면 그걸로 초기화
+                        items.map((room, index) => {
+                            const selectRoomId = room.id;
+                            if (selectRoomId === selectedRoom) {
+                                setSelectedRoom(room.id);
+                            }
+                        });
+                    } else {
+                        // 첫 번째 Room으로 초기화
+                        setSelectedRoom(items[0].id);
+                    }
                 }
             } catch (error) {
                 console.error('API 호출 중 에러 발생:', error);

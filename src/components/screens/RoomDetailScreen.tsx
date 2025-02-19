@@ -3,8 +3,8 @@ import {useParams} from 'react-router-dom';
 import {fetchRoomData} from "src/api/api";
 import {RoomData} from "../../types/rooms";
 import ImgCarousel from "../modals/ImgCarousel";
-import {FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {IconDefinition} from "@fortawesome/fontawesome-svg-core";
 import {
     faBath,
     faBuilding,
@@ -19,35 +19,42 @@ import {
     faCouch, faSwimmingPool, faHotTub, faMapLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 import {useTranslation} from "react-i18next";
-import NaverMap from "../map/NaverMap";
 import NaverMapRoom from "../map/NaverMapRoom";
+import Calendar from "react-calendar";
+import dayjs from "dayjs";
+import {useDateContext} from "src/components/auth/DateContext";
+import 'react-calendar/dist/Calendar.css'; // 스타일 파일도 import
+
+
+const facilityIcons: Record<string, IconDefinition> = {
+    "wi_fi": faWifi,
+    "tv": faTv,
+    "kitchen": faKitchenSet,
+    "washing_machine": faSoap,
+    "dryer_machine": faHandsWash,
+    "air_conditioner": faSnowflake,
+    "parking": faParking,
+    "aid_kit": faKitMedical,
+    "fire_extinguisher": faFireExtinguisher,
+};
+const addFacilityIcons: Record<string, IconDefinition> = {
+    "bbq": faUtensils, // 바비큐
+    "cafe": faCoffee, // 카페
+    "cctv": faVideo, // CCTV
+    "garden": faTree, // 정원
+    "gym": faDumbbell, // 헬스장
+    "lounge": faCouch, // 라운지
+    "pool": faSwimmingPool, // 수영장
+    "sauna": faHotTub, // 사우나
+};
 
 export default function RoomDetailScreen() {
     const {roomId, locale} = useParams(); // URL 파라미터 추출
     const [room, setRoom] = useState<RoomData | null>(null);
-    const { t } = useTranslation();
+    const {t} = useTranslation();
+    const {startDate, setStartDate, endDate, setEndDate} = useDateContext();
+    const [, set] = useState()
 
-    const facilityIcons: Record<string, IconDefinition> = {
-        "wi_fi": faWifi,
-        "tv": faTv,
-        "kitchen": faKitchenSet,
-        "washing_machine": faSoap,
-        "dryer_machine": faHandsWash,
-        "air_conditioner": faSnowflake,
-        "parking": faParking,
-        "aid_kit": faKitMedical,
-        "fire_extinguisher": faFireExtinguisher,
-    };
-    const addFacilityIcons: Record<string, IconDefinition> = {
-        "bbq": faUtensils, // 바비큐
-        "cafe": faCoffee, // 카페
-        "cctv": faVideo, // CCTV
-        "garden": faTree, // 정원
-        "gym": faDumbbell, // 헬스장
-        "lounge": faCouch, // 라운지
-        "pool": faSwimmingPool, // 수영장
-        "sauna": faHotTub, // 사우나
-    };
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -70,13 +77,54 @@ export default function RoomDetailScreen() {
         loadRoomData();
     }, [roomId, locale]); // roomId와 locale 변경 시 실행
 
-    const buildRoomInfoRow = (icon:IconDefinition, label: string, value: string | number | boolean) => (
+    const buildRoomInfoRow = (icon: IconDefinition, label: string, value: string | number | boolean) => (
         <div className="flex items-center space-x-2 text-gray-700">
-            <FontAwesomeIcon icon={icon} className="text-gray-500" />
+            <FontAwesomeIcon icon={icon} className="text-gray-500"/>
             <div className="font-medium">{label}:</div>
             <div>{value}</div>
         </div>
     );
+
+    const handleDayClick = (date: Date) => {
+        const dateString = formatDate(date);
+        if (!startDate || (startDate && endDate)) {
+            setStartDate(dateString);
+            setEndDate(null);
+        } else {
+            if (new Date(dateString) >= new Date(startDate)) {
+                setEndDate(dateString);
+            } else {
+                setStartDate(dateString);
+                setEndDate(null);
+            }
+        }
+    };
+
+    const getTileClassName = ({date}: { date: Date }) => {
+        const dateString = formatDate(date);
+        if (dateString === startDate) {
+            return 'start-date';
+        }
+        if (dateString === endDate) {
+            return 'end-date';
+        }
+        if (startDate && endDate && date > new Date(startDate) && date < new Date(endDate)) {
+            return 'in-range';
+        }
+        return null;
+    };
+
+    // 날짜 문자열 변환 함수
+    const formatDate = (date: Date): string => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1 필요
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const reservationBtn = () => {
+        console.log('예약하기 버튼');
+    };
 
     return (
         <div className="mt-8 relative overflow-visible">
@@ -113,7 +161,8 @@ export default function RoomDetailScreen() {
                                                 Object.entries(room.facilities)
                                                     .filter(([_, value]) => value)
                                                     .map(([key], index) => (
-                                                        <div key={index} className="flex flex-col items-center text-center m-2">
+                                                        <div key={index}
+                                                             className="flex flex-col items-center text-center m-2">
                                                             <FontAwesomeIcon icon={facilityIcons[key]}
                                                                              className="text-gray-500 text-xl"/>
                                                             {/*<div className="">{key}</div>*/}
@@ -128,7 +177,8 @@ export default function RoomDetailScreen() {
                                                 Object.entries(room.additional_facilities)
                                                     .filter(([_, value]) => value)
                                                     .map(([key], index) => (
-                                                        <div key={index} className="flex flex-col items-center text-center">
+                                                        <div key={index}
+                                                             className="flex flex-col items-center text-center">
                                                             <FontAwesomeIcon icon={addFacilityIcons[key]}
                                                                              className="text-gray-500 text-xl"/>
                                                             <div className="">{key}</div>
@@ -175,38 +225,75 @@ export default function RoomDetailScreen() {
                                 className="homeScreen card-image"
                             />
                         )}
-                        
+
                         {/*리모컨 영역*/}
-                        <div className="w-full fixed bottom-0 bg-white z-[100]
-                        md:w-1/3 md:ml-auto md:h-[30rem] md:sticky md:top-10 md:rounded-lg
+                        <div className="md:w-1/3 md:ml-auto md:h-fit md:sticky md:top-10 md:rounded-lg
+                        w-full fixed bottom-0 bg-white z-[100]
                         border-[1px] border-gray-300 p-4 break-words">
-                            <div>Room ID: {room.id}</div>
-                            <div>Locale: {room.address}</div>
-                            <div>날짜선택</div>
-                            <div>예약하기</div>
+                            <div className="flex justify-between">
+                                <div>{t("weekly_price")}</div>
+                                <div className="font-bold">{room.week_price}/{t("week_unit")}</div>
+                            </div>
+                            <div className="my-2 text-sm">
+                                4주 이상 계약 시 10% 할인
+                            </div>
+                            <div className="my-2 bg-gray-100 rounded p-2">
+                                <div className="flex justify-between">
+                                    <div>{t("deposit")}</div>
+                                    <div>{room.deposit_week}</div>
+                                </div>
+                                <div className="flex justify-between mt-1">
+                                    <div>{t("service_charge")}</div>
+                                    <div>0</div>
+                                </div>
+                                <div className="flex justify-between mt-1">
+                                    <div>{t("cleaning_fee")}</div>
+                                    <div>{room.cleaning_fee_week}</div>
+                                </div>
+                            </div>
+                            <div className="dateModal">
+                                <Calendar
+                                    onClickDay={handleDayClick}
+                                    tileClassName={getTileClassName}
+                                    minDate={new Date()}
+                                    next2Label={null} // 추가로 넘어가는 버튼 제거
+                                    prev2Label={null} // 이전으로 돌아가는 버튼 제거
+                                    className="custom-calendar"
+                                    formatDay={(locale, date) => dayjs(date).format('D')}
+                                />
+                            </div>
+                            <div className="text-sm">
+                                {!startDate ? (
+                                    <>
+                                        <div>{t("check_in")} - </div>
+                                        <div>{t("check_out")} - </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        {!endDate ? (
+                                            <>
+                                                <div>{t("check_in")} - {startDate}</div>
+                                                <div>{t("check_out")} - </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div>{t("check_in")} - {startDate}</div>
+                                                <div>{t("check_out")} - {endDate}</div>
+                                            </>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                            <div className="my-4">
+                                <button className="w-full py-2 bg-roomi rounded text-white"
+                                        onClick={reservationBtn}
+                                >
+                                    예약하기
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
             ) : (

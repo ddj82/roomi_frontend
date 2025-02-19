@@ -28,16 +28,23 @@
     background-color: #e6e6e6;
 }
 
+/*액티브, 액티브 호버, 액티브 포커스*/
+.react-calendar .react-calendar__tile--active,
+.react-calendar .react-calendar__tile--active:enabled:hover,
+.react-calendar .react-calendar__tile--active:enabled:focus {
+    background-color: inherit;
+    color: inherit;
+}
+
 /*선택한 날짜*/
 .dateModal .react-calendar__tile.start-date,
 .dateModal .react-calendar__tile.in-range,
-.dateModal .react-calendar .react-calendar__tile--active, /*액티스*/
-.dateModal .react-calendar .react-calendar__tile--active:enabled:hover, /*액티브 호버*/
-.dateModal .react-calendar .react-calendar__tile--active:enabled:focus /*액티브 클릭*/{
-    background: #9370db;
-    color: white;
-    border: 1px solid white;
-    border-radius: 5px;
+.dateModal .react-calendar__tile.end-date
+{
+    background: #9370db !important;
+    color: white !important;
+    border: 1px solid white !important;
+    border-radius: 5px !important;
 }
 
 .custom-block-date abbr {
@@ -55,12 +62,8 @@
     pointer-events: none;
 }
 
-/* start-dateRCS end-dateRCS range-dateRCS */
-.react-calendar .react-calendar__tile--active, /*액티스*/
-.react-calendar .react-calendar__tile--active:enabled:hover, /*액티브 호버*/
-.react-calendar .react-calendar__tile--active:enabled:focus, /*액티브 클릭*/
-.react-calendar .range-dateRCS,
 .react-calendar .start-dateRCS,
+.react-calendar .range-dateRCS,
 .react-calendar .end-dateRCS
 {
     background-color: white;
