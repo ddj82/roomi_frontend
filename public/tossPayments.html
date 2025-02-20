@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>토스페이먼츠 결제</title>
+    <script src="https://js.tosspayments.com/v1/payment-widget"></script>
+</head>
+<body>
+<div style="text-align: center; padding: 20px;">
+    <h2>결제 진행 중...</h2>
+    <div id="debug-info" style="text-align: left; padding: 10px; font-size: 12px; color: #666;"></div>
+    <div id="error-message" style="color: red; display: none;"></div>
+    <button id="pay-button" style="padding: 10px 20px; font-size: 16px;">결제하기</button>
+</div>
+
+<script>
+    function addDebugInfo(message) {
+        const debugDiv = document.getElementById('debug-info');
+        const timestamp = new Date().toLocaleTimeString();
+        debugDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+        console.log(`[${timestamp}] ${message}`);
+    }
+
+    // URL 파라미터 가져오기
+    const urlParams = new URLSearchParams(window.location.search);
+    const params = {
+        orderId: urlParams.get('orderId') || `order_${Date.now()}`,
+        amount: urlParams.get('amount') || "1000",
+        currency: urlParams.get('currency') || "KRW",
+        buyerName: urlParams.get('buyerName') || "홍길동",
+        buyerEmail: urlParams.get('buyerEmail') || "test@example.com",
+        buyerTel: urlParams.get('buyerTel') || "01012345678",
+        buyerAddr: urlParams.get('buyerAddr') || "서울특별시 강남구",
+        method: urlParams.get('method') || "카드"  // 카드, 계좌이체, 간편결제 등 선택 가능
+    };
+
+    document.getElementById("pay-button").addEventListener("click", function() {
+        const clientKey = "test_ck_OOxl97m0AbA1L5yWNxyZQz3NVdGM"; // ✅ 테스트용 클라이언트 키 (실제 결제 시 변경)
+        const tossPayments = TossPayments(clientKey);
+
+        addDebugInfo("✅ 토스페이먼츠 결제 요청 시작...");
+
+        tossPayments.requestPayment(params.method, {
+            amount: params.amount,
+            orderId: params.orderId,
+            orderName: "테스트 결제 상품",
+            customerName: params.buyerName,
+            customerEmail: params.buyerEmail,
+            customerMobilePhone: params.buyerTel,
+            successUrl: "example://payment-success", // ✅ 결제 성공 시 리디렉션 (Flutter WebView에서도 사용 가능)
+            failUrl: "example://payment-failure", // ✅ 결제 실패 시 리디렉션
+        }).catch(function (error) {
+            addDebugInfo(`❌ 결제 실패: ${error.message}`);
+            document.getElementById('error-message').textContent = `결제 실패: ${error.message}`;
+            document.getElementById('error-message').style.display = 'block';
+        });
+    });
+
+    window.onload = function() {
+        addDebugInfo('✅ 페이지 로드 완료');
+        addDebugInfo('🔹 전달받은 파라미터: ' + JSON.stringify(params));
+    };
+</script>
+</body>
+</html>
