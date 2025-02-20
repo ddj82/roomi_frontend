@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>아임포트 - 토스페이먼츠 결제</title>
+    <title>아임포트 - KCP 결제 테스트</title>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 </head>
@@ -22,7 +22,6 @@
         console.log(`[${timestamp}] ${message}`);
     }
 
-    // URL 파라미터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const params = {
         orderId: urlParams.get('orderId') || `order_${Date.now()}`,
@@ -32,9 +31,7 @@
         buyerEmail: urlParams.get('buyerEmail') || "test@example.com",
         buyerTel: urlParams.get('buyerTel') || "01012345678",
         buyerAddr: urlParams.get('buyerAddr') || "서울특별시 강남구",
-        customUid: urlParams.get('custom_uid') || `mid_${Date.now()}`,  // 추가
-        customerId: urlParams.get('customer_id') || '',  // 추가
-        pg: "tosspayments"  // ✅ 토스페이먼츠 PG 선택
+        pg: "kcp"  // KCP 설정
     };
 
     function initPayment() {
@@ -45,17 +42,15 @@
         }
 
         const IMP = window.IMP;
-        IMP.init("imp01154410");  // ✅ 아임포트 가맹점 식별 코드 (테스트용)
+        IMP.init("imp01154410");  // 아임포트 가맹점 식별코드
 
-        addDebugInfo('아임포트 결제 요청 시작...');
+        addDebugInfo('KCP 결제 요청 시작...');
 
         IMP.request_pay({
             pg: params.pg,
             pay_method: "card",
             merchant_uid: params.orderId,
-            custom_uid: params.customUid,  // 추가
-            customer_id: params.customerId,  // 추가
-            name: "테스트 결제 상품",
+            name: "KCP 테스트 결제",
             amount: params.amount,
             currency: params.currency,
             buyer_name: params.buyerName,
@@ -63,7 +58,10 @@
             buyer_tel: params.buyerTel,
             buyer_addr: params.buyerAddr,
             buyer_postcode: "06018",
-            m_redirect_url: "roomi://payment-success" // ✅ 결제 완료 후 Flutter WebView에서 감지할 URL
+            display: {
+                card_quota: [0,2,3]  // 일시불, 2개월, 3개월 할부 허용
+            },
+            m_redirect_url: "roomi://payment-success"
         }, function (rsp) {
             if (rsp.success) {
                 addDebugInfo('✅ 결제 성공: ' + JSON.stringify(rsp));
@@ -80,7 +78,6 @@
     window.onload = function() {
         addDebugInfo('✅ 페이지 로드 완료');
         addDebugInfo('🔹 전달받은 파라미터: ' + JSON.stringify(params));
-
         setTimeout(initPayment, 1000);
     };
 </script>
