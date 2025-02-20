@@ -32,7 +32,7 @@
         buyerEmail: "test@example.com",
         buyerTel: "01012345678",
         buyerAddr: "서울특별시 강남구",
-        pg: "bluewalnut", // 테스트 PG사
+        pg: "uplus", // 테스트 PG사
         testMode: true  // ✅ 실제 결제 없이 테스트 모드 활성화
     };
 
@@ -45,7 +45,7 @@
 
         const IMP = window.IMP;
         //IMP.init("imp19424728");  // ✅ 본인의 '가맹점 식별 코드(userCode)' 입력
-        IMP.init("imptest01m");
+        IMP.init("imp19424728");
         addDebugInfo('결제 요청 시작...');
         addDebugInfo('요청 데이터: ' + JSON.stringify(params));
 
