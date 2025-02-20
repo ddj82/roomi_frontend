@@ -32,7 +32,9 @@
         buyerEmail: urlParams.get('buyerEmail') || "test@example.com",
         buyerTel: urlParams.get('buyerTel') || "01012345678",
         buyerAddr: urlParams.get('buyerAddr') || "서울특별시 강남구",
-        pg: "uplus"  // ✅ 토스페이먼츠 PG 선택
+        customUid: urlParams.get('custom_uid') || `mid_${Date.now()}`,  // 추가
+        customerKey: urlParams.get('customer_key') || '',  // 추가
+        pg: "tosspayments"  // ✅ 토스페이먼츠 PG 선택
     };
 
     function initPayment() {
@@ -51,6 +53,8 @@
             pg: params.pg,
             pay_method: "card",
             merchant_uid: params.orderId,
+            custom_uid: params.customUid,  // 추가
+            customer_key: params.customerKey,  // 추가
             name: "테스트 결제 상품",
             amount: params.amount,
             currency: params.currency,
