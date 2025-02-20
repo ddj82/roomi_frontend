@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>토스페이먼츠 결제</title>
-    <script src="https://js.tosspayments.com/v1/payment-widget"></script>
+    <title>아임포트 - 토스페이먼츠 결제</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 </head>
 <body>
 <div style="text-align: center; padding: 20px;">
     <h2>결제 진행 중...</h2>
     <div id="debug-info" style="text-align: left; padding: 10px; font-size: 12px; color: #666;"></div>
     <div id="error-message" style="color: red; display: none;"></div>
-    <button id="pay-button" style="padding: 10px 20px; font-size: 16px;">결제하기</button>
 </div>
 
 <script>
@@ -32,34 +32,52 @@
         buyerEmail: urlParams.get('buyerEmail') || "test@example.com",
         buyerTel: urlParams.get('buyerTel') || "01012345678",
         buyerAddr: urlParams.get('buyerAddr') || "서울특별시 강남구",
-        method: urlParams.get('method') || "카드"  // 카드, 계좌이체, 간편결제 등 선택 가능
+        pg: "tosspay.tosspayments"  // ✅ 토스페이먼츠 PG 선택
     };
 
-    document.getElementById("pay-button").addEventListener("click", function() {
-        const clientKey = "test_ck_OOxl97m0AbA1L5yWNxyZQz3NVdGM"; // ✅ 테스트용 클라이언트 키 (실제 결제 시 변경)
-        const tossPayments = TossPayments(clientKey);
+    function initPayment() {
+        if (!window.IMP) {
+            addDebugInfo('아임포트 SDK 로딩 대기 중...');
+            setTimeout(initPayment, 1000);
+            return;
+        }
 
-        addDebugInfo("✅ 토스페이먼츠 결제 요청 시작...");
+        const IMP = window.IMP;
+        IMP.init("imp19424728");  // ✅ 아임포트 가맹점 식별 코드 (테스트용)
 
-        tossPayments.requestPayment(params.method, {
+        addDebugInfo('아임포트 결제 요청 시작...');
+
+        IMP.request_pay({
+            pg: params.pg,
+            pay_method: "card",
+            merchant_uid: params.orderId,
+            name: "테스트 결제 상품",
             amount: params.amount,
-            orderId: params.orderId,
-            orderName: "테스트 결제 상품",
-            customerName: params.buyerName,
-            customerEmail: params.buyerEmail,
-            customerMobilePhone: params.buyerTel,
-            successUrl: "example://payment-success", // ✅ 결제 성공 시 리디렉션 (Flutter WebView에서도 사용 가능)
-            failUrl: "example://payment-failure", // ✅ 결제 실패 시 리디렉션
-        }).catch(function (error) {
-            addDebugInfo(`❌ 결제 실패: ${error.message}`);
-            document.getElementById('error-message').textContent = `결제 실패: ${error.message}`;
-            document.getElementById('error-message').style.display = 'block';
+            currency: params.currency,
+            buyer_name: params.buyerName,
+            buyer_email: params.buyerEmail,
+            buyer_tel: params.buyerTel,
+            buyer_addr: params.buyerAddr,
+            buyer_postcode: "06018",
+            m_redirect_url: "roomi://payment-success" // ✅ 결제 완료 후 Flutter WebView에서 감지할 URL
+        }, function (rsp) {
+            if (rsp.success) {
+                addDebugInfo('✅ 결제 성공: ' + JSON.stringify(rsp));
+                alert("결제가 성공적으로 완료되었습니다!");
+            } else {
+                addDebugInfo('❌ 결제 실패: ' + JSON.stringify(rsp));
+                document.getElementById('error-message').textContent =
+                    `결제 실패: ${rsp.error_msg || 'Unknown error'}`;
+                document.getElementById('error-message').style.display = 'block';
+            }
         });
-    });
+    }
 
     window.onload = function() {
         addDebugInfo('✅ 페이지 로드 완료');
         addDebugInfo('🔹 전달받은 파라미터: ' + JSON.stringify(params));
+
+        setTimeout(initPayment, 1000);
     };
 </script>
 </body>
