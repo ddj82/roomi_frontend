@@ -59,7 +59,12 @@
             buyer_tel: params.buyerTel,
             buyer_addr: params.buyerAddr,
             buyer_postcode: "06018",
-            m_redirect_url: "example://payment-success" // ✅ 모바일 결제 후 리디렉션될 URL
+            m_redirect_url: "example://payment-success" // ✅ 모바일 결제 후 리디렉션될 URL,
+            // 특정 카드사만 노출 (display 옵션 활용)
+            display: {
+                card_quota: [2, 3, 6], // 할부 개월 수 제한
+                accept_card_corp: ["삼성", "현대", "KB국민"] // 허용할 카드사 지정
+            }
         }, function (rsp) {
             if (rsp.success) {
                 addDebugInfo('결제 성공 ✅: ' + JSON.stringify(rsp));
