@@ -52,7 +52,7 @@
                     currency: params.currency,
                     amount: params.amount,
                     lang: "KR",
-                    payment_method: ["CC", "DC", "HP", "VA", "WP", "NK", "KC", "SS", "SI", "AT", "CP"]  // 국내외 결제수단 추가
+                    //display_type: "DOMESTIC"  // 모든 결제수단 표시
                 },
                 merchant: {
                     mid: params.mid
@@ -70,7 +70,10 @@
                     quantity: productData.quantity,
                     unit_price: productData.unit_price,
                     link: productData.link
-                }]
+                }],
+                settings: {
+                    show_all_payment_methods: true  // 모든 결제수단 표시 설정
+                }
             };
 
             addDebugInfo('Ready API 요청: ' + JSON.stringify(requestBody));
@@ -107,6 +110,7 @@
 
             const productData = JSON.parse(params.product);
 
+
             const requestData = {
                 fgkey: fgkey,
                 payment: {
@@ -115,7 +119,7 @@
                     currency: params.currency,
                     amount: params.amount,
                     lang: "KR",
-                    payment_method: ["CC", "DC", "HP", "VA", "WP", "NK", "KC", "SS", "SI", "AT", "CP"]  // 국내외 결제수단 추가
+                    //display_type: "DOMESTIC"  // 모든 결제수단 표시
                 },
                 merchant: {
                     mid: params.mid
@@ -133,7 +137,11 @@
                     quantity: productData.quantity,
                     unit_price: productData.unit_price,
                     link: productData.link
-                }]
+                }],
+                // settings: {
+                //     show_all_payment_methods: true,  // 모든 결제수단 표시 설정
+                //     payment_method_category: "ALL"   // 모든 카테고리 표시
+                // }
             };
 
             addDebugInfo('EXIMBAY 요청 데이터: ' + JSON.stringify(requestData));
