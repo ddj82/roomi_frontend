@@ -22,7 +22,6 @@
         console.log(`[${timestamp}] ${message}`);
     }
 
-    // URL 파라미터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const params = {
         orderId: urlParams.get('orderId'),
@@ -43,7 +42,6 @@
         return null;
     };
 
-    // Ready API 호출하여 새로운 fgkey 발급
     async function getFgkey() {
         try {
             const productData = JSON.parse(params.product);
@@ -53,7 +51,8 @@
                     order_id: params.orderId,
                     currency: params.currency,
                     amount: params.amount,
-                    lang: "KR"
+                    lang: "KR",
+                    payment_method: ["CC", "DC", "HP", "VA", "WP", "NK", "KC", "SS", "SI", "AT", "CP"]  // 국내외 결제수단 추가
                 },
                 merchant: {
                     mid: params.mid
@@ -103,20 +102,20 @@
         }
 
         try {
-            // 새로운 fgkey 발급
             const fgkey = await getFgkey();
             addDebugInfo('새로 발급받은 fgkey: ' + fgkey);
 
             const productData = JSON.parse(params.product);
 
             const requestData = {
-                fgkey: fgkey,  // 새로 발급받은 fgkey 사용
+                fgkey: fgkey,
                 payment: {
                     transaction_type: "PAYMENT",
                     order_id: params.orderId,
                     currency: params.currency,
                     amount: params.amount,
-                    lang: "KR"
+                    lang: "KR",
+                    payment_method: ["CC", "DC", "HP", "VA", "WP", "NK", "KC", "SS", "SI", "AT", "CP"]  // 국내외 결제수단 추가
                 },
                 merchant: {
                     mid: params.mid
