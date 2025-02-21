@@ -16,14 +16,15 @@ import {
     faWifi, faTv, faKitchenSet, faSoap, faHandsWash,
     faSnowflake, faParking, faKitMedical, faFireExtinguisher,
     faUtensils, faCoffee, faVideo, faTree, faDumbbell,
-    faCouch, faSwimmingPool, faHotTub, faMapLocationDot,
+    faCouch, faSwimmingPool, faHotTub, faMapLocationDot, faCalendarDay,
 } from "@fortawesome/free-solid-svg-icons";
 import {useTranslation} from "react-i18next";
 import NaverMapRoom from "../map/NaverMapRoom";
 import Calendar from "react-calendar";
 import dayjs from "dayjs";
 import {useDateContext} from "src/components/auth/DateContext";
-import 'react-calendar/dist/Calendar.css'; // 스타일 파일도 import
+import 'react-calendar/dist/Calendar.css';
+import {LuCircleMinus, LuCirclePlus} from "react-icons/lu"; // 스타일 파일도 import
 
 
 const facilityIcons: Record<string, IconDefinition> = {
@@ -52,11 +53,12 @@ export default function RoomDetailScreen() {
     const {roomId, locale} = useParams(); // URL 파라미터 추출
     const [room, setRoom] = useState<RoomData | null>(null);
     const {t} = useTranslation();
-    const {startDate, setStartDate, endDate, setEndDate} = useDateContext();
-    const [, set] = useState();
     const navigate = useNavigate();
-
-
+    const {
+        startDate, setStartDate,
+        endDate, setEndDate,
+        calUnit, setCalUnit,
+        weekValue, setWeekValue } = useDateContext();
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -88,17 +90,30 @@ export default function RoomDetailScreen() {
 
     const handleDayClick = (date: Date) => {
         const dateString = formatDate(date);
-        if (!startDate || (startDate && endDate)) {
-            setStartDate(dateString);
-            setEndDate(null);
-        } else {
-            if (new Date(dateString) >= new Date(startDate)) {
-                setEndDate(dateString);
-            } else {
+        if (calUnit) {
+            if (!startDate || (startDate && endDate)) {
                 setStartDate(dateString);
                 setEndDate(null);
+            } else {
+                if (new Date(dateString) >= new Date(startDate)) {
+                    setEndDate(dateString);
+                } else {
+                    setStartDate(dateString);
+                    setEndDate(null);
+                }
             }
+        } else {
+            weekDateSet(dateString);
         }
+    };
+
+    const weekDateSet = (dateString : string) => {
+        setStartDate(dateString);
+        const startDateObj = new Date(dateString);
+        const endDateObj = new Date(startDateObj);
+        endDateObj.setDate(startDateObj.getDate() + (weekValue * 7)); // 주 단위 계산
+        const formattedEndDate = formatDate(endDateObj);
+        setEndDate(formattedEndDate);
     };
 
     const getTileClassName = ({date}: { date: Date }) => {
@@ -123,8 +138,61 @@ export default function RoomDetailScreen() {
         return `${year}-${month}-${day}`;
     };
 
+    const dayUnit = () => {
+        setCalUnit(true);
+        setWeekValue(1);
+        setStartDate(null);
+        setEndDate(null);
+    };
+
+    const weekUnit = () => {
+        setCalUnit(false);
+        setStartDate(null);
+        setEndDate(null);
+    };
+
+    const handleWeekValue = (value : boolean) => {
+        if (value) {
+            // 플러스 버튼 클릭 시
+            setWeekValue(prev => prev + 1);
+        } else {
+            // 마이너스 버튼 클릭 시
+            if (weekValue === 1) return;
+            setWeekValue(prev => prev - 1);
+        }
+    };
+
+    useEffect(() => {
+        // startDate, endDate 설정이 되어 있으면 weekDateSet 다시
+        if (startDate && endDate && !calUnit) {
+            weekDateSet(startDate);
+        }
+    }, [weekValue]);
+
     const reservationBtn = () => {
-        navigate(`/detail/${roomId}/${locale}/reservation`);
+        // 기본 일간 가격 저장
+        let price = (Number(room?.day_price) || 0);
+        let depositPrice = (Number(room?.deposit) || 0);
+        let maintenancePrice = (Number(room?.maintenance_fee) || 0);
+        let cleaningPrice = (Number(room?.cleaning_fee) || 0);
+
+        if (!calUnit) {
+            // 주간 가격 저장
+            price = (Number(room?.week_price) || 0);
+            depositPrice = (Number(room?.deposit_week) || 0);
+            maintenancePrice = (Number(room?.maintenance_fee_week) || 0);
+            cleaningPrice = (Number(room?.cleaning_fee_week) || 0);
+        }
+        const allOptionPrice = depositPrice + maintenancePrice + cleaningPrice;
+        navigate(`/detail/${roomId}/${locale}/reservation`, {
+            state: {
+                price,
+                depositPrice,
+                maintenancePrice,
+                cleaningPrice,
+                allOptionPrice,
+            },
+        });
     };
 
     return (
@@ -218,27 +286,64 @@ export default function RoomDetailScreen() {
                         <div className="md:w-1/3 md:ml-auto md:h-fit md:sticky md:top-10 md:rounded-lg
                                         w-full fixed bottom-0 bg-white z-[100]
                                         border-[1px] border-gray-300 p-4 break-words">
-                            <div className="flex justify-between">
-                                <div>{t("weekly_price")}</div>
-                                <div className="font-bold">{room.week_price}/{t("week_unit")}</div>
+                            <div className="flex_center text-sm m-2">
+                                <div className={`flex_center mx-1 ${calUnit ? "bg-roomi rounded text-white" : ""}`}>
+                                    <button onClick={dayUnit} className="px-4 py-1.5">
+                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}
+                                    </button>
+                                </div>
+                                <div className={`flex_center mx-1 ${calUnit ? "" : "bg-roomi rounded text-white"}`}>
+                                    <button onClick={weekUnit} className="px-4 py-1.5">
+                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}
+                                    </button>
+                                </div>
                             </div>
-                            <div className="my-2 text-sm">
-                                4주 이상 계약 시 10% 할인
-                            </div>
-                            <div className="my-2 bg-gray-100 rounded p-2">
+                            <div>
                                 <div className="flex justify-between">
-                                    <div>{t("deposit")}</div>
-                                    <div>{room.deposit_week}</div>
+                                    {calUnit ? (
+                                        <>
+                                            <div>{t("daily_price")}</div>
+                                            <div className="font-bold">{room.day_price}/{t("day_unit")}</div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div>{t("weekly_price")}</div>
+                                            <div className="font-bold">{room.week_price}/{t("week_unit")}</div>
+                                        </>
+                                    )}
                                 </div>
-                                <div className="flex justify-between mt-1">
-                                    <div>{t("service_charge")}</div>
-                                    <div>{room.maintenance_fee_week}</div>
+                                <div className="my-2 text-sm">
+                                    4주 이상 계약 시 10% 할인
                                 </div>
-                                <div className="flex justify-between mt-1">
-                                    <div>{t("cleaning_fee")}</div>
-                                    <div>{room.cleaning_fee_week}</div>
+                                <div className="my-2 bg-gray-100 rounded p-2">
+                                    <div className="flex justify-between">
+                                        <div>{t("deposit")}</div>
+                                        {calUnit ?
+                                            (<div>{room.deposit}</div>) : (<div>{room.deposit_week}</div>)}
+                                    </div>
+                                    <div className="flex justify-between mt-1">
+                                        <div>{t("service_charge")}</div>
+                                        {calUnit ?
+                                            (<div>{room.maintenance_fee}</div>) : (<div>{room.maintenance_fee_week}</div>)}
+                                    </div>
+                                    <div className="flex justify-between mt-1">
+                                        <div>{t("cleaning_fee")}</div>
+                                        {calUnit ?
+                                            (<div>{room.cleaning_fee}</div>) : (<div>{room.cleaning_fee_week}</div>)}
+                                    </div>
                                 </div>
                             </div>
+                            {!calUnit && (
+                                <div className="flex_center m-4">
+                                    <button className="text-lg" onClick={() => handleWeekValue(false)}>
+                                        <LuCircleMinus/>
+                                    </button>
+                                    <div className="text-xs font-bold mx-3">{weekValue}{t("week_unit")}</div>
+                                    <button className="text-lg" onClick={() => handleWeekValue(true)}>
+                                        <LuCirclePlus />
+                                    </button>
+                                </div>
+                            )}
                             <div className="dateModal">
                                 <Calendar
                                     onClickDay={handleDayClick}

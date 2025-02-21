@@ -1,17 +1,42 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {fetchRoomData} from "../../api/api";
 import {RoomData} from "../../types/rooms";
 import {useTranslation} from "react-i18next";
 import {useDateContext} from "../auth/DateContext";
 import ImgCarousel from "../modals/ImgCarousel";
+import {useGuestsContext} from "../auth/GuestsContext";
+import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCalendarDay, faEnvelope, faPhone, faUser} from "@fortawesome/free-solid-svg-icons";
+import dayjs from "dayjs";
 
 export default function UserReservationSetScreen() {
     const {roomId, locale} = useParams(); // URL 파라미터 추출
     const [room, setRoom] = useState<RoomData | null>(null);
     const {t} = useTranslation();
-    const {startDate, setStartDate, endDate, setEndDate} = useDateContext();
+    const {
+        startDate, setStartDate,
+        endDate, setEndDate,
+        calUnit, setCalUnit,
+        weekValue, setWeekValue } = useDateContext();
+    const {guestCount, setGuestCount} = useGuestsContext();
+    const [nightVal, setNightVal] = useState(0);
     const navigate = useNavigate();
+    const location = useLocation();
+    const {
+        price = 0,
+        depositPrice = 0,
+        maintenancePrice = 0,
+        cleaningPrice = 0,
+        allOptionPrice = 0,
+    } = location.state || {}; // state가 없는 경우 기본값 설정
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [formData, setFormData] = useState({
+        name: "",
+        phone: "",
+        email: "",
+    });
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -30,7 +55,62 @@ export default function UserReservationSetScreen() {
             }
         };
         loadRoomData();
+        handleNight();
     }, [roomId, locale]);
+
+    const handleguestValue = (value : boolean) => {
+        if (value) {
+            // 플러스 버튼 클릭 시
+            setGuestCount(prev => prev + 1);
+        } else {
+            // 마이너스 버튼 클릭 시
+            if (guestCount === 1) return;
+            setGuestCount(prev => prev - 1);
+        }
+    };
+
+    const handleNight = () => {
+        if (calUnit) {
+            if (startDate && endDate) {
+                const diffDays = dayjs(endDate).diff(dayjs(startDate), "day"); // 일(day) 단위 차이 계산
+                setNightVal(diffDays);
+                setTotalPrice((price * diffDays) + allOptionPrice);
+            } else {
+                setNightVal(0); // 날짜가 없을 경우 0박으로 설정
+            }
+        } else {
+            setTotalPrice((price * weekValue) + allOptionPrice);
+        }
+    };
+
+
+    // 입력값 변경 핸들러
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [id]: value, // id 속성을 key로 사용하여 동적으로 값 업데이트
+        }));
+    };
+
+    const paymentBtn = () => {
+        console.log('결제 할 금액 :', totalPrice);
+        let totalNight = nightVal; // 기본 일 단위로 초기화
+        if (!calUnit) {
+            totalNight = weekValue; // 주 단위면 초기화
+        }
+        navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
+            state: {
+                price,
+                depositPrice,
+                maintenancePrice,
+                cleaningPrice,
+                totalPrice,
+                totalNight,
+                formData,
+            },
+        });
+    };
 
     return (
         <div className="mt-8 relative overflow-visible">
@@ -68,32 +148,70 @@ export default function UserReservationSetScreen() {
                             </div>
                             <div className="flex justify-between">
                                 <div>{t("체크인날짜")}</div>
-                                <div>{startDate}</div>
+                                <div className="font-bold">{startDate}</div>
                             </div>
                             <div className="flex justify-between">
                                 <div>{t("체크아웃날짜")}</div>
-                                <div>{endDate}</div>
+                                <div className="font-bold">{endDate}</div>
                             </div>
                             <div className="flex justify-between">
                                 <div>{t("사용인원")}</div>
-                                <div>{t("guest_unit")}</div>
+                                <div className="flex">
+                                    <button className="text-lg" onClick={() => handleguestValue(false)}>
+                                        <LuCircleMinus/>
+                                    </button>
+                                    <div className="font-bold mx-2">{guestCount}{t("guest_unit")}</div>
+                                    <button className="text-lg" onClick={() => handleguestValue(true)}>
+                                        <LuCirclePlus/>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div className="p-4 border-[1px] border-gray-300">
-                            <div className="font-bold">
+                            <div className="font-bold mb-6">
                                 {t("예약자정보")}
                             </div>
-                            <div>
-                                <div>{t("예약자명")}</div>
-                                <input type="text" className="focus:outline-none pl-1"/>
+                            <div className="my-5">
+                                <div className="relative z-0">
+                                    <span className="absolute start-0 bottom-2 text-roomi">
+                                        <FontAwesomeIcon icon={faUser} />
+                                    </span>
+                                    <input type="text" id="name" value={formData.name} onChange={handleChange}
+                                           className="block py-2.5 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-roomi peer"
+                                           placeholder=""/>
+                                    <label htmlFor="name"
+                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-roomi peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                        {t("예약자명")}
+                                    </label>
+                                </div>
                             </div>
-                            <div>
-                                <div>{t("전화번호")}</div>
-                                <input type="tel" className="focus:outline-none pl-1"/>
+                            <div className="my-5">
+                                <div className="relative z-0">
+                                    <span className="absolute start-0 bottom-2 text-roomi">
+                                        <FontAwesomeIcon icon={faPhone} />
+                                    </span>
+                                    <input type="text" id="phone" value={formData.phone} onChange={handleChange}
+                                           className="block py-2.5 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-roomi peer"
+                                           pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" placeholder=""/>
+                                    <label htmlFor="phone"
+                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-roomi peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                        {t("전화번호")}
+                                    </label>
+                                </div>
                             </div>
-                            <div>
-                                <div>{t("이메일")}</div>
-                                <input type="email" className="focus:outline-none pl-1"/>
+                            <div className="my-5">
+                                <div className="relative z-0">
+                                    <span className="absolute start-0 bottom-2 text-roomi">
+                                        <FontAwesomeIcon icon={faEnvelope} />
+                                    </span>
+                                    <input type="text" id="email" value={formData.email} onChange={handleChange}
+                                           className="block py-2.5 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-roomi peer"
+                                           placeholder=""/>
+                                    <label htmlFor="email"
+                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-roomi peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                        {t("이메일")}
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -102,29 +220,43 @@ export default function UserReservationSetScreen() {
                     <div className="border-[1px] border-gray-300 p-4 break-words
                         md:w-1/3 md:ml-auto md:h-fit md:sticky md:top-10 md:rounded-lg
                         w-full fixed bottom-0 bg-white z-[100]">
-                        <div className="font-bold">
+                        <div className="flex_center text-sm m-2">
+                            <div
+                                className={`flex_center mx-1 px-4 py-1.5 ${calUnit ? "bg-roomi rounded text-white" : ""}`}>
+                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}
+                            </div>
+                            <div
+                                className={`flex_center mx-1 px-4 py-1.5 ${calUnit ? "" : "bg-roomi rounded text-white"}`}>
+                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}
+                            </div>
+                        </div>
+                        <div className="font-bold mb-2">
                             {t("payment_info")}
                         </div>
                         <div className="p-4 rounded-lg bg-gray-100">
+                            {/*숙박비*/}
                             <div className="flex justify-between">
-                                <div></div>
-                                <div>값</div>
+                                <div className="font-bold">{price} * {calUnit ? (`${nightVal}일`) : (`${weekValue}주`)}</div>
+                                <div className="font-bold">{calUnit ? (price * nightVal) : (price * weekValue)}</div>
                             </div>
+                            {/*보증금*/}
                             <div className="flex justify-between">
                                 <div>{t("deposit")}</div>
-                                <div>값</div>
+                                <div className="font-bold">{depositPrice}</div>
                             </div>
+                            {/*관리비*/}
                             <div className="flex justify-between">
                                 <div>{t("service_charge")}</div>
-                                <div>값</div>
+                                <div className="font-bold">{maintenancePrice}</div>
                             </div>
+                            {/*청소비*/}
                             <div className="flex justify-between">
                                 <div>{t("cleaning_fee")}</div>
-                                <div>값</div>
+                                <div className="font-bold">{cleaningPrice}</div>
                             </div>
-                            <div className="flex justify-between border-t border-white">
+                            <div className="flex justify-between border-t border-white mt-3">
                                 <div>{t("총결제금액")}</div>
-                                <div>값</div>
+                                <div className="font-bold">{totalPrice}{t("원")}</div>
                             </div>
                         </div>
                         <div>
@@ -134,8 +266,7 @@ export default function UserReservationSetScreen() {
                             ✔ [ ] 마케팅 이메일 수신에 동의합니다. (선택 사항)
                         </div>
                         <div className="mt-4">
-                            <button className="w-full py-2 bg-roomi rounded text-white"
-                            >
+                            <button className="w-full py-2 bg-roomi rounded text-white" onClick={paymentBtn}>
                                 계약 요청하기
                             </button>
                         </div>

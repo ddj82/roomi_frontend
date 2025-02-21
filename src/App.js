@@ -19,6 +19,9 @@ import {HostTabProvider} from "./components/auth/HostTabContext";
 import {DateProvider} from "./components/auth/DateContext";
 import UserReservationSetScreen from "./components/screens/UserReservationSetScreen";
 import {HostHeaderBtnProvider} from "./components/auth/HostHeaderBtnContext";
+import {GuestsProvider} from "./components/auth/GuestsContext";
+import {LocationProvider} from "./components/auth/LocationContext";
+import UserReservationScreen from "./components/screens/UserReservationScreen";
 
 
 export default function App() {
@@ -26,30 +29,35 @@ export default function App() {
         <Router>
             <AuthProvider>
                 <DateProvider>
-                    <IsHostProvider>
-                        <HostModeProvider>
-                            <HeaderBtnProvider>
-                                <HostHeaderBtnProvider>
-                                    <HostTabProvider>
-                                        <Header/>
-                                        <div className="app container xl:max-w-[1200px]"
-                                             style={{minHeight: window.innerHeight,}}>
-                                            <Routes>
-                                                <Route path="/" element={<MainHome/>}/>
-                                                <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
-                                                <Route path="/detail/:roomId/:locale/reservation" element={<UserReservationSetScreen/>}/>
-                                                <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
-                                                <Route path="/host" element={<HostScreen/>}/>
-                                                <Route path="/naver" element={<NaverMap/>}/>
-                                                <Route path="/host/insert" element={<MyRoomInsert/>}/>
-                                            </Routes>
-                                        </div>
-                                        <Footer/>
-                                    </HostTabProvider>
-                                </HostHeaderBtnProvider>
-                            </HeaderBtnProvider>
-                        </HostModeProvider>
-                    </IsHostProvider>
+                    <GuestsProvider>
+                        <LocationProvider>
+                            <IsHostProvider>
+                                <HostModeProvider>
+                                    <HeaderBtnProvider>
+                                        <HostHeaderBtnProvider>
+                                            <HostTabProvider>
+                                                <Header/>
+                                                <div className="app container xl:max-w-[1200px]"
+                                                     style={{minHeight: window.innerHeight,}}>
+                                                    <Routes>
+                                                        <Route path="/" element={<MainHome/>}/>
+                                                        <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
+                                                        <Route path="/detail/:roomId/:locale/reservation" element={<UserReservationSetScreen/>}/>
+                                                        <Route path="/detail/:roomId/:locale/reservation/payment" element={<UserReservationScreen/>}/>
+                                                        <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
+                                                        <Route path="/host" element={<HostScreen/>}/>
+                                                        <Route path="/naver" element={<NaverMap/>}/>
+                                                        <Route path="/host/insert" element={<MyRoomInsert/>}/>
+                                                    </Routes>
+                                                </div>
+                                                <Footer/>
+                                            </HostTabProvider>
+                                        </HostHeaderBtnProvider>
+                                    </HeaderBtnProvider>
+                                </HostModeProvider>
+                            </IsHostProvider>
+                        </LocationProvider>
+                    </GuestsProvider>
                 </DateProvider>
             </AuthProvider>
         </Router>

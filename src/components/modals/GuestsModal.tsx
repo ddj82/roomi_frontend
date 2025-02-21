@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
-import '../../css/GuestsModal.css'; // CSS 파일 import
+import '../../css/GuestsModal.css';
+import {useGuestsContext} from "../auth/GuestsContext"; // CSS 파일 import
 
 interface GuestsModalProps {
     visible: boolean;
@@ -9,9 +10,9 @@ interface GuestsModalProps {
 }
 
 const GuestsModal = ({ visible, onClose, position }: GuestsModalProps) => {
-    const [adults, setAdults] = useState(0);
-    const [children, setChildren] = useState(0);
+    // const [children, setChildren] = useState(0);
     const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
+    const {guestCount, setGuestCount} = useGuestsContext();
 
     useEffect(() => {
         const handleResize = () => {
@@ -24,10 +25,11 @@ const GuestsModal = ({ visible, onClose, position }: GuestsModalProps) => {
 
     const handleCount = (type: 'adults' | 'children', action: 'increase' | 'decrease') => {
         if (type === 'adults') {
-            setAdults(prev => action === 'increase' ? prev + 1 : Math.max(0, prev - 1));
-        } else {
-            setChildren(prev => action === 'increase' ? prev + 1 : Math.max(0, prev - 1));
+            setGuestCount(prev => action === 'increase' ? prev + 1 : Math.max(0, prev - 1));
         }
+        // else {
+        //     setChildren(prev => action === 'increase' ? prev + 1 : Math.max(0, prev - 1));
+        // }
     };
 
     useEffect(() => {
@@ -62,18 +64,18 @@ const GuestsModal = ({ visible, onClose, position }: GuestsModalProps) => {
             <div className="guestsModal modal-container">
                 <div className="guestsModal guest-type-container">
                     <div>
-                        <h3 className="guestsModal guest-type-title">성인</h3>
+                        <h3 className="guestsModal guest-type-title">게스트</h3>
                         <p className="guestsModal guest-type-subtitle">13세 이상</p>
                     </div>
                     <div className="guestsModal counter-container">
                         <button
-                            className={`guestsModal counter-button ${adults === 0 ? 'guestsModal disabled-button' : ''}`}
+                            className={`guestsModal counter-button ${guestCount === 0 ? 'guestsModal disabled-button' : ''}`}
                             onClick={() => handleCount('adults', 'decrease')}
-                            disabled={adults === 0}
+                            disabled={guestCount === 0}
                         >
                             <span className="guestsModal counter-button-text">-</span>
                         </button>
-                        <span className="guestsModal counter-text">{adults}</span>
+                        <span className="guestsModal counter-text">{guestCount}</span>
                         <button
                             className="guestsModal counter-button"
                             onClick={() => handleCount('adults', 'increase')}
@@ -82,7 +84,7 @@ const GuestsModal = ({ visible, onClose, position }: GuestsModalProps) => {
                         </button>
                     </div>
                 </div>
-
+{/*
                 <div className="guestsModal divider" />
 
                 <div className="guestsModal guest-type-container">
@@ -107,6 +109,7 @@ const GuestsModal = ({ visible, onClose, position }: GuestsModalProps) => {
                         </button>
                     </div>
                 </div>
+*/}
             </div>
         </Modal>
     );

@@ -7,6 +7,8 @@ interface DateContextType {
     setEndDate: (date: string | null) => void;
     calUnit: boolean;
     setCalUnit: (value: boolean) => void;
+    weekValue: number;
+    setWeekValue: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const DateContext = createContext<DateContextType | undefined>(undefined);
@@ -15,9 +17,10 @@ export const DateProvider = ({ children }: { children: ReactNode }) => {
     const [startDate, setStartDate] = useState<string | null>(null);
     const [endDate, setEndDate] = useState<string | null>(null);
     const [calUnit, setCalUnit] = useState(true);
+    const [weekValue, setWeekValue] = useState<number>(1);
 
     return (
-        <DateContext.Provider value={{ startDate, setStartDate, endDate, setEndDate, calUnit, setCalUnit }}>
+        <DateContext.Provider value={{ startDate, setStartDate, endDate, setEndDate, calUnit, setCalUnit, weekValue, setWeekValue }}>
             {children}
         </DateContext.Provider>
     );

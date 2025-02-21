@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
 import '../../css/LocationModal.css';
+import {useLocationContext} from "../auth/LocationContext";
 
 interface LocationModalProps {
     visible: boolean;
@@ -9,8 +10,9 @@ interface LocationModalProps {
 }
 
 const LocationModal = ({ visible, onClose, position }: LocationModalProps) => {
-    const [searchText, setSearchText] = useState('');
+    // const [searchText, setSearchText] = useState('');
     const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
+    const {selectedLocation, setSelectedLocation} = useLocationContext();
 
     useEffect(() => {
         const handleResize = () => {
@@ -62,8 +64,8 @@ const LocationModal = ({ visible, onClose, position }: LocationModalProps) => {
                         type="text"
                         className="locationModal search-input"
                         placeholder="어디로 여행가세요?"
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
+                        value={selectedLocation}
+                        onChange={(e) => setSelectedLocation(e.target.value)}
                     />
                 </div>
 
@@ -74,7 +76,7 @@ const LocationModal = ({ visible, onClose, position }: LocationModalProps) => {
                             <button
                                 key={location}
                                 className="locationModal location-item"
-                                onClick={() => setSearchText(location)}
+                                onClick={() => setSelectedLocation(location)}
                             >
                                 {location}
                             </button>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, {useState, useRef, useContext, useEffect} from "react";
 import { useNavigate } from "react-router-dom"; // react-router-dom의 useNavigate 사용
 import { AuthContext } from "src/components/auth/AuthContext";
 import DateModal from "src/components/modals/DateModal";
@@ -18,8 +18,11 @@ import {
 import '../../css/Header.css';
 import {useHeaderBtnContext} from "src/components/auth/HeaderBtnContext";
 import HostHeader from "src/components/header/HostHeader";
-import {useIsHost} from "../auth/IsHostContext";
 import {useHostHeaderBtnContext} from "../auth/HostHeaderBtnContext";
+import dayjs from "dayjs";
+import {useDateContext} from "../auth/DateContext";
+import {useGuestsContext} from "../auth/GuestsContext";
+import {useLocationContext} from "../auth/LocationContext";
 
 type ModalSection = 'date' | 'location' | 'guests';
 type ModalPosition = { x: number; y: number };
@@ -31,9 +34,6 @@ const Header = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [activeSection, setActiveSection] = useState<ModalSection | null>(null);
     const [modalPosition, setModalPosition] = useState<ModalPosition>({ x: 0, y: 0 });
-    const [selectedDates, setSelectedDates] = useState<{ startDate: string; endDate: string } | null>(null);
-    const [selectedLocation, setSelectedLocation] = useState<string>('');
-    const [guestCount, setGuestCount] = useState<number>(0);
     const [businessInfoVisible, setBusinessInfoVisible] = useState(false);
     const { authToken } = useContext(AuthContext); // AuthContext에서 가져오기
     const { isVisible } = useHeaderBtnContext();
@@ -41,6 +41,9 @@ const Header = () => {
     const dateRef = useRef(null);
     const locationRef = useRef(null);
     const guestsRef = useRef(null);
+    const {startDate, endDate, } = useDateContext();
+    const {guestCount, setGuestCount} = useGuestsContext();
+    const {selectedLocation, setSelectedLocation} = useLocationContext();
 
     const openModal = (section: ModalSection, ref: React.RefObject<any>) => {
         if (ref.current) {
@@ -61,17 +64,15 @@ const Header = () => {
     };
 
     const formatDateRange = () => {
-        if (selectedDates) {
-            // 날짜를 "yyyy-mm-dd" → "mm-dd" 형식으로 변환
-            const formatToMMDD = (dateString: string) => {
-                const [, month, day] = dateString.split('-'); // 연도 제외
-                return `${month}-${day}`;
-            };
-
-            return `${formatToMMDD(selectedDates.startDate)} ~ ${formatToMMDD(selectedDates.endDate)}`;
+        if (startDate && endDate) {
+            return `${dayjs(startDate).format('MM-DD')} ~ ${dayjs(endDate).format('MM-DD')}`;
         }
         return '날짜 지정';
     };
+
+    useEffect(() => {
+        formatDateRange();
+    }, [startDate, endDate]);
 
 
     const handleLogo = () => {
@@ -159,8 +160,7 @@ const Header = () => {
                 {modalVisible && (
                     <div className="h modal-container">
                         {activeSection === 'date' && (
-                            <DateModal visible={true} onClose={closeModal} onSelectDates={setSelectedDates}
-                                       position={modalPosition}/>
+                            <DateModal visible={true} onClose={closeModal} position={modalPosition}/>
                         )}
                         {activeSection === 'location' && (
                             <LocationModal visible={true} onClose={closeModal} position={modalPosition}/>

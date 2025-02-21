@@ -12,16 +12,18 @@ import { LuCirclePlus, LuCircleMinus } from "react-icons/lu";
 
 interface DateModalProps {
     visible: boolean;
-    onSelectDates: (dates: { startDate: string; endDate: string }) => void;
     onClose: () => void;
     position: { x: number; y: number };
 }
 
-const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps) => {
-    const { startDate, setStartDate, endDate, setEndDate, calUnit, setCalUnit } = useDateContext();
+const DateModal = ({ visible, onClose, position }: DateModalProps) => {
+    const {
+        startDate, setStartDate,
+        endDate, setEndDate,
+        calUnit, setCalUnit,
+        weekValue, setWeekValue } = useDateContext();
     const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
     const {t} = useTranslation();
-    const [weekValue, setWeekValue] = useState(1);
 
     useEffect(() => {
         const handleResize = () => {
@@ -40,10 +42,6 @@ const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps
             } else {
                 if (new Date(dateString) >= new Date(startDate)) {
                     setEndDate(dateString);
-                    onSelectDates({
-                        startDate: startDate,
-                        endDate: dateString,
-                    });
                 } else {
                     setStartDate(dateString);
                     setEndDate(null);
@@ -58,13 +56,9 @@ const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps
         setStartDate(dateString);
         const startDateObj = new Date(dateString);
         const endDateObj = new Date(startDateObj);
-        endDateObj.setDate(startDateObj.getDate() + (weekValue * 7) - 1); // 주 단위 계산
+        endDateObj.setDate(startDateObj.getDate() + (weekValue * 7)); // 주 단위 계산
         const formattedEndDate = formatDate(endDateObj);
         setEndDate(formattedEndDate);
-        onSelectDates({
-            startDate: dateString,
-            endDate: formattedEndDate,
-        });
     };
 
     const getTileClassName = ({ date }: { date: Date }) => {
@@ -83,7 +77,8 @@ const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps
 
     const handleConfirm = () => {
         if (startDate && endDate) {
-            onSelectDates({ startDate, endDate });
+            setStartDate(startDate);
+            setEndDate(endDate);
             onClose();
         }
     };
@@ -132,7 +127,6 @@ const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps
     };
 
     useEffect(() => {
-        console.log('너때문이냐?');
         // startDate, endDate 설정이 되어 있으면 weekDateSet 다시
         if (startDate && endDate && !calUnit) {
             weekDateSet(startDate);
@@ -160,16 +154,14 @@ const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps
             <div className="dateModal modal-container">
                 <div className="dateModal header-text flex justify-end">
                     <div className="flex text-xs rounded-lg bg-gray-200 px-1.5 p-0.5">
-                        <div className={`flex_center px-2.5 py-1 ${calUnit ? "bg-roomi rounded text-white" : ""}`}>
-                            <button onClick={dayUnit}>
-                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>
-                                {t("day_unit")}
+                        <div className={`flex_center ${calUnit ? "bg-roomi rounded text-white" : ""}`}>
+                            <button onClick={dayUnit} className="px-2.5 py-1">
+                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>{t("day_unit")}
                             </button>
                         </div>
-                        <div className={`flex_center px-2.5 py-1 ${calUnit ? "" : "bg-roomi rounded text-white"}`}>
-                            <button onClick={weekUnit}>
-                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>
-                                {t("week_unit")}
+                        <div className={`flex_center ${calUnit ? "" : "bg-roomi rounded text-white"}`}>
+                            <button onClick={weekUnit} className="px-2.5 py-1">
+                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>{t("week_unit")}
                             </button>
                         </div>
                     </div>
@@ -177,7 +169,7 @@ const DateModal = ({ visible, onSelectDates, onClose, position }: DateModalProps
                 {!calUnit && (
                     <div className="flex_center m-4">
                         <button className="text-lg" onClick={() => handleWeekValue(false)}>
-                            <LuCircleMinus />
+                            <LuCircleMinus/>
                         </button>
                         <div className="text-xs font-bold mx-3">{weekValue}{t("week_unit")}</div>
                         <button className="text-lg" onClick={() => handleWeekValue(true)}>

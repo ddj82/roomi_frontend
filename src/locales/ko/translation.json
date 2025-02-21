@@ -58,6 +58,7 @@
   "confirm_reservation" : "예약하기",
   "date_select_button" : "날짜선택",
   "결제하기" : "결제하기",
+  "결제수단" : "결제 수단",
   "room_size": "크기",
   "max_guests": "수용 가능 인원",
   "예약확인" : "예약 확인",
