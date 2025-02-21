@@ -204,7 +204,7 @@ export default function RoomDetailScreen() {
                             <div className="mb-8 text-lg font-bold">{room.title}</div>
                             <div>
                             {room.detail_urls && room.detail_urls.length > 0 ? (
-                                    <ImgCarousel images={room.detail_urls} customClass="rounded-lg h-64 md:h-[30rem]"/>
+                                    <ImgCarousel images={room.detail_urls} customClass="md:rounded-lg h-64 md:h-[30rem]"/>
                                 ) : (
                                     <img src="/default-image.jpg" alt="thumbnail"
                                          className="w-full md:h-[30rem] h-64 rounded-lg"/>

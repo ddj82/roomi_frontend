@@ -118,16 +118,16 @@ export default function UserReservationSetScreen() {
                 <div className="flex md:flex-row flex-col">
                     <div className="md:w-3/5">
                         <div className="mb-8 text-lg font-bold">{t("예약확인")}</div>
-                        <div className="flex p-4 border-[1px] border-gray-300 rounded mb-5">
-                            <div className="w-2/5">
+                        <div className="md:flex md:p-4 md:border-[1px] border-gray-300 md:rounded mb-5">
+                            <div className="md:w-2/5">
                                 {room.detail_urls && room.detail_urls.length > 0 ? (
-                                    <ImgCarousel images={room.detail_urls} customClass="rounded-lg h-64 md:h-[15rem]"/>
+                                    <ImgCarousel images={room.detail_urls} customClass="md:rounded-lg h-64 md:h-[15rem]"/>
                                 ) : (
                                     <img src="/default-image.jpg" alt="thumbnail"
                                          className="w-full md:h-[30rem] h-64 rounded"/>
                                 )}
                             </div>
-                            <div className="ml-6 my-auto">
+                            <div className="md:ml-2 md:my-auto p-4">
                                 <div className="my-2">{room.title}</div>
                                 <div className="my-2">{room.is_verified ? ('인증숙박업소 (아이콘으로변경)') : ('')}</div>
                                 <div className="my-2">{room.address}</div>

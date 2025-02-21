@@ -19,8 +19,7 @@ export default function App() {
     return (
         <Router>
             <Header/>
-            <div className="app container xl:max-w-[1200px]"
-                 style={{minHeight: window.innerHeight,}}>
+            <div className="app container xl:max-w-[1200px]" style={{minHeight: window.innerHeight,}}>
                 <Routes>
                     <Route path="/" element={<MainHome/>}/>
                     <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>

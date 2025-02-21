@@ -31,15 +31,15 @@ export declare namespace Eximbay {
         //     quantity?: string; // 추가된 항목의 수량 (0보다 큰 숫자)
         //     unit_price?: string; // 추가된 항목의 단가 (소수점 가능, 음수 가능)
         // }[]; // 추가 요금 항목 (최대 3개)
-        // settings?: {
-        //     display_type?: "P" | "R"; // P: 팝업형태, R: 가맹점 화면에서 결제창으로 이동
-        //     autoclose?: "Y" | "N"; // Y: 가맹점 화면으로 이동, N: 결제창이 완료 화면으로 이동(기본)
-        //     call_from_app?: "Y" | "N"; // Y: 앱 환경에서 호출, N: 웹 브라우저에서 호출
-        //     call_from_scheme?: string; // 앱 URL Scheme (외부 앱에서 가맹점으로 돌아올 때 필요)
-        //     issuer_country?: string; // 결제국가 (KR 추가 시 국내 결제창이 열립니다)
-        //     ostype?: "P" | "M"; // P: PC 환경, M: 모바일 환경
-        //     virtualaccount_expiry_date?: string; // 가상계좌 입금 만료기한 (YYYYMMDDHH24)
-        // };
+        settings?: {
+            // display_type?: "P" | "R"; // P: 팝업형태, R: 가맹점 화면에서 결제창으로 이동
+            // autoclose?: "Y" | "N"; // Y: 가맹점 화면으로 이동, N: 결제창이 완료 화면으로 이동(기본)
+            // call_from_app?: "Y" | "N"; // Y: 앱 환경에서 호출, N: 웹 브라우저에서 호출
+            // call_from_scheme?: string; // 앱 URL Scheme (외부 앱에서 가맹점으로 돌아올 때 필요)
+            issuer_country?: string; // 결제국가 (KR 추가 시 국내 결제창이 열립니다)
+            // ostype?: "P" | "M"; // P: PC 환경, M: 모바일 환경
+            // virtualaccount_expiry_date?: string; // 가상계좌 입금 만료기한 (YYYYMMDDHH24)
+        };
     }
 
     interface PaymentResponse {

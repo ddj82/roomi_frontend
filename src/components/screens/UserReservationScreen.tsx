@@ -54,7 +54,7 @@ export default function UserReservationScreen() {
             email: "",
         },
     } = location.state || {}; // state가 없는 경우 기본값 설정
-    const [selectedPayment, setSelectedPayment] = useState<string>(""); // 선택된 결제 방법 저장
+    const [selectedPayment, setSelectedPayment] = useState<string>("KR"); // 선택된 결제 방법 저장
     const [paymentData, setPaymentData] = useState({});
 
     useEffect(() => {
@@ -85,55 +85,11 @@ export default function UserReservationScreen() {
         console.log('paymentData :', paymentData);
     }, [paymentData]);
 
-    const handlePaymentBtn = () => {
-        console.log('결제하자~');
-        // 포트원 결제 라이브러리 로드 여부 확인
-        if (!window.IMP) {
-            alert("결제 모듈이 로드되지 않았습니다. 잠시 후 다시 시도해주세요.");
-            return;
-        }
-
-        setPaymentData([
-            price,
-            depositPrice,
-            maintenancePrice,
-            cleaningPrice,
-            totalPrice,
-            totalNight,
-            formData,
-            selectedPayment,
-        ]);
-
-        const IMP = window.IMP;
-        IMP.init('imp19424728');
-        IMP.request_pay(
-            {
-                pg: 'eximbay',
-                pay_method: selectedPayment,
-                merchant_uid: `order_${new Date().getTime()}`,
-                name: '숙박 예약 결제',
-                amount: totalPrice,
-                buyer_email: formData.email,
-                buyer_name: formData.name,
-                buyer_tel: formData.phone,
-                buyer_addr: '서울특별시 강남구',
-                buyer_postcode: '12345',
-            },
-            (response: any) => {
-                if (response.success) {
-                    alert('결제가 완료되었습니다.');
-                } else {
-                    alert(`결제 실패: ${response.error_msg}`);
-                }
-            }
-        );
-    };
-
     const getFgkey = async () => {
         const apiUrl = "https://api-test.eximbay.com/v1/payments/ready";
-        const merchantKey = "test_1849705C642C217E0B2D"; // 엑심베이에서 발급받은 키
         const mid = "1849705C64"; // 엑심베이에서 발급받은 상점ID
-        const encodedKey = btoa(merchantKey); // Base64 인코딩
+        // const merchantKey = "test_1849705C642C217E0B2D"; // 엑심베이에서 발급받은 키
+        // const encodedKey = btoa(merchantKey); // Base64 인코딩
         const params = {
             product: JSON.stringify({
                 name: room?.title,
@@ -141,6 +97,7 @@ export default function UserReservationScreen() {
                 unit_price: totalPrice,
                 link: `http://localhost:8081/detail/${roomId}/${locale}`,
             }),
+            issuer_country: selectedPayment,
         };
 
         try {
@@ -170,6 +127,9 @@ export default function UserReservationScreen() {
                     unit_price: productData.unit_price,
                     link: productData.link,
                 }],
+                settings: {
+                    issuer_country: params.issuer_country,
+                },
             };
 
             const response = await axios.post(
@@ -187,6 +147,7 @@ export default function UserReservationScreen() {
             return {
                 fgkey: data.fgkey,
                 params: productData,
+                issuer_country: params.issuer_country,
             };
         } catch (error: any) {
             throw error;
@@ -198,6 +159,7 @@ export default function UserReservationScreen() {
             const payment = await getFgkey();
             const fgkey = payment.fgkey;
             const params = payment.params;
+            const issuer_country = payment.issuer_country;
 
             const requestData: Eximbay.PaymentRequest = {
                 payment: {
@@ -224,6 +186,9 @@ export default function UserReservationScreen() {
                     unit_price: params.unit_price,
                     link: params.link,
                 }],
+                settings: {
+                    issuer_country: issuer_country,
+                },
             };
 
             if (window.EXIMBAY) {
@@ -301,37 +266,37 @@ return (
                             {t("결제수단")}
                         </div>
                         <div>
-                            <div className="grid w-full gap-6 md:grid-cols-3">
+                            <div className="grid w-full gap-6 md:grid-cols-2">
                                 <div>
-                                    <input type="radio" id="easy" name="paymentMethod" value="easy"
+                                    <input type="radio" id="easy" name="paymentMethod" value="KR"
                                            className="hidden peer"
-                                           checked={selectedPayment === "easy"}
+                                           checked={selectedPayment === "KR"}
                                            onChange={handlePaymentChange}/>
                                     <label htmlFor="easy"
                                            className="flex_center w-full p-4 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-roomi peer-checked:text-roomi hover:text-gray-600 hover:bg-gray-100">
-                                        간편결제
+                                        국내 결제
                                     </label>
                                 </div>
                                 <div>
-                                    <input type="radio" id="card" name="paymentMethod" value="card"
+                                    <input type="radio" id="card" name="paymentMethod" value=""
                                            className="hidden peer"
-                                           checked={selectedPayment === "card"}
+                                           checked={selectedPayment === ""}
                                            onChange={handlePaymentChange}/>
                                     <label htmlFor="card"
                                            className="flex_center w-full p-4 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-roomi peer-checked:text-roomi hover:text-gray-600 hover:bg-gray-100">
-                                        카드
+                                        해외 결제
                                     </label>
                                 </div>
-                                <div>
-                                    <input type="radio" id="cash" name="paymentMethod" value="cash"
-                                           className="hidden peer"
-                                           checked={selectedPayment === "cash"}
-                                           onChange={handlePaymentChange}/>
-                                    <label htmlFor="cash"
-                                           className="flex_center w-full p-4 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-roomi peer-checked:text-roomi hover:text-gray-600 hover:bg-gray-100">
-                                        현금
-                                    </label>
-                                </div>
+                                {/*<div>*/}
+                                {/*    <input type="radio" id="cash" name="paymentMethod" value="cash"*/}
+                                {/*           className="hidden peer"*/}
+                                {/*           checked={selectedPayment === "cash"}*/}
+                                {/*           onChange={handlePaymentChange}/>*/}
+                                {/*    <label htmlFor="cash"*/}
+                                {/*           className="flex_center w-full p-4 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-roomi peer-checked:text-roomi hover:text-gray-600 hover:bg-gray-100">*/}
+                                {/*        현금*/}
+                                {/*    </label>*/}
+                                {/*</div>*/}
                             </div>
                         </div>
                     </div>
@@ -382,11 +347,8 @@ return (
                         환불정책
                     </div>
                     <div className="mt-4">
-                        <button className="w-full py-2 bg-roomi rounded text-white" onClick={handlePaymentBtn}>
-                            {t("결제하기")}
-                        </button>
                         <button className="w-full py-2 bg-roomi rounded text-white" onClick={handlePayment}>
-                            {t("결제하기")}엑심베이
+                            {t("결제하기")}
                         </button>
                     </div>
                 </div>
