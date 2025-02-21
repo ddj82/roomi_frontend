@@ -16,7 +16,7 @@ import {
     faWifi, faTv, faKitchenSet, faSoap, faHandsWash,
     faSnowflake, faParking, faKitMedical, faFireExtinguisher,
     faUtensils, faCoffee, faVideo, faTree, faDumbbell,
-    faCouch, faSwimmingPool, faHotTub, faMapLocationDot, faCalendarDay,
+    faCouch, faSwimmingPool, faHotTub, faMapLocationDot, faCalendarDay, faChevronUp, faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 import {useTranslation} from "react-i18next";
 import NaverMapRoom from "../map/NaverMapRoom";
@@ -24,7 +24,8 @@ import Calendar from "react-calendar";
 import dayjs from "dayjs";
 import {useDateStore} from "src/components/stores/DateStore";
 import 'react-calendar/dist/Calendar.css';
-import {LuCircleMinus, LuCirclePlus} from "react-icons/lu"; // 스타일 파일도 import
+import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
+import {useReserSlideConStore} from "../stores/ReserSlideConStore"; // 스타일 파일도 import
 
 
 const facilityIcons: Record<string, IconDefinition> = {
@@ -59,6 +60,7 @@ export default function RoomDetailScreen() {
         endDate, setEndDate,
         calUnit, setCalUnit,
         weekValue, setWeekValue } = useDateStore();
+    const {slideIsOpen, setSlideIsOpen} = useReserSlideConStore();
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -284,105 +286,113 @@ export default function RoomDetailScreen() {
 
                         {/*리모컨 영역*/}
                         <div className="md:w-1/3 md:ml-auto md:h-fit md:sticky md:top-10 md:rounded-lg
-                                        w-full fixed bottom-0 bg-white z-[100]
-                                        border-[1px] border-gray-300 p-4 break-words">
-                            <div className="flex_center text-sm m-2">
-                                <div className={`flex_center mx-1 ${calUnit ? "bg-roomi rounded text-white" : ""}`}>
-                                    <button onClick={dayUnit} className="px-4 py-1.5">
-                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}
-                                    </button>
-                                </div>
-                                <div className={`flex_center mx-1 ${calUnit ? "" : "bg-roomi rounded text-white"}`}>
-                                    <button onClick={weekUnit} className="px-4 py-1.5">
-                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}
-                                    </button>
-                                </div>
+                            w-full fixed bottom-0 bg-white z-[100]
+                            border-[1px] border-gray-300 p-4 break-words">
+                            {/* 모바일 전용 아코디언 버튼 */}
+                            <div className="md:hidden flex justify-between items-center p-4 bg-gray-200 cursor-pointer" onClick={() => setSlideIsOpen(!slideIsOpen)}>
+                                <span className="font-bold">{t("payment_info")}</span>
+                                <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp} />
                             </div>
-                            <div>
-                                <div className="flex justify-between">
-                                    {calUnit ? (
-                                        <>
-                                            <div>{t("daily_price")}</div>
-                                            <div className="font-bold">{room.day_price}/{t("day_unit")}</div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <div>{t("weekly_price")}</div>
-                                            <div className="font-bold">{room.week_price}/{t("week_unit")}</div>
-                                        </>
-                                    )}
+                            <div className={`transition-all duration-300 ease-in-out 
+                            ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>
+                                <div className="flex_center text-sm m-2">
+                                    <div className={`flex_center mx-1 ${calUnit ? "bg-roomi rounded text-white" : ""}`}>
+                                        <button onClick={dayUnit} className="px-4 py-1.5">
+                                            <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}
+                                        </button>
+                                    </div>
+                                    <div className={`flex_center mx-1 ${calUnit ? "" : "bg-roomi rounded text-white"}`}>
+                                        <button onClick={weekUnit} className="px-4 py-1.5">
+                                            <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="my-2 text-sm">
-                                    4주 이상 계약 시 10% 할인
-                                </div>
-                                <div className="my-2 bg-gray-100 rounded p-2">
+                                <div>
                                     <div className="flex justify-between">
-                                        <div>{t("deposit")}</div>
-                                        {calUnit ?
-                                            (<div>{room.deposit}</div>) : (<div>{room.deposit_week}</div>)}
-                                    </div>
-                                    <div className="flex justify-between mt-1">
-                                        <div>{t("service_charge")}</div>
-                                        {calUnit ?
-                                            (<div>{room.maintenance_fee}</div>) : (<div>{room.maintenance_fee_week}</div>)}
-                                    </div>
-                                    <div className="flex justify-between mt-1">
-                                        <div>{t("cleaning_fee")}</div>
-                                        {calUnit ?
-                                            (<div>{room.cleaning_fee}</div>) : (<div>{room.cleaning_fee_week}</div>)}
-                                    </div>
-                                </div>
-                            </div>
-                            {!calUnit && (
-                                <div className="flex_center m-4">
-                                    <button className="text-lg" onClick={() => handleWeekValue(false)}>
-                                        <LuCircleMinus/>
-                                    </button>
-                                    <div className="text-xs font-bold mx-3">{weekValue}{t("week_unit")}</div>
-                                    <button className="text-lg" onClick={() => handleWeekValue(true)}>
-                                        <LuCirclePlus />
-                                    </button>
-                                </div>
-                            )}
-                            <div className="dateModal">
-                                <Calendar
-                                    onClickDay={handleDayClick}
-                                    tileClassName={getTileClassName}
-                                    minDate={new Date()}
-                                    next2Label={null} // 추가로 넘어가는 버튼 제거
-                                    prev2Label={null} // 이전으로 돌아가는 버튼 제거
-                                    className="custom-calendar"
-                                    formatDay={(locale, date) => dayjs(date).format('D')}
-                                />
-                            </div>
-                            <div className="text-sm">
-                                {!startDate ? (
-                                    <>
-                                        <div>{t("check_in")} -</div>
-                                        <div>{t("check_out")} -</div>
-                                    </>
-                                ) : (
-                                    <>
-                                        {!endDate ? (
+                                        {calUnit ? (
                                             <>
-                                                <div>{t("check_in")} - {startDate}</div>
-                                                <div>{t("check_out")} -</div>
+                                                <div>{t("daily_price")}</div>
+                                                <div className="font-bold">{room.day_price}/{t("day_unit")}</div>
                                             </>
                                         ) : (
                                             <>
-                                                <div>{t("check_in")} - {startDate}</div>
-                                                <div>{t("check_out")} - {endDate}</div>
+                                                <div>{t("weekly_price")}</div>
+                                                <div className="font-bold">{room.week_price}/{t("week_unit")}</div>
                                             </>
                                         )}
-                                    </>
+                                    </div>
+                                    <div className="my-2 text-sm">
+                                        4주 이상 계약 시 10% 할인
+                                    </div>
+                                    <div className="my-2 bg-gray-100 rounded p-2">
+                                        <div className="flex justify-between">
+                                            <div>{t("deposit")}</div>
+                                            {calUnit ?
+                                                (<div>{room.deposit}</div>) : (<div>{room.deposit_week}</div>)}
+                                        </div>
+                                        <div className="flex justify-between mt-1">
+                                            <div>{t("service_charge")}</div>
+                                            {calUnit ?
+                                                (<div>{room.maintenance_fee}</div>) : (<div>{room.maintenance_fee_week}</div>)}
+                                        </div>
+                                        <div className="flex justify-between mt-1">
+                                            <div>{t("cleaning_fee")}</div>
+                                            {calUnit ?
+                                                (<div>{room.cleaning_fee}</div>) : (<div>{room.cleaning_fee_week}</div>)}
+                                        </div>
+                                    </div>
+                                </div>
+                                {!calUnit && (
+                                    <div className="flex_center m-4">
+                                        <button className="text-lg" onClick={() => handleWeekValue(false)}>
+                                            <LuCircleMinus/>
+                                        </button>
+                                        <div className="text-xs font-bold mx-3">{weekValue}{t("week_unit")}</div>
+                                        <button className="text-lg" onClick={() => handleWeekValue(true)}>
+                                            <LuCirclePlus />
+                                        </button>
+                                    </div>
                                 )}
-                            </div>
-                            <div className="mt-4">
-                                <button className="w-full py-2 bg-roomi rounded text-white"
-                                        onClick={reservationBtn}
-                                >
-                                    예약하기
-                                </button>
+                                <div className="dateModal">
+                                    <Calendar
+                                        onClickDay={handleDayClick}
+                                        tileClassName={getTileClassName}
+                                        minDate={new Date()}
+                                        next2Label={null} // 추가로 넘어가는 버튼 제거
+                                        prev2Label={null} // 이전으로 돌아가는 버튼 제거
+                                        className="custom-calendar"
+                                        formatDay={(locale, date) => dayjs(date).format('D')}
+                                    />
+                                </div>
+                                <div className="text-sm">
+                                    {!startDate ? (
+                                        <>
+                                            <div>{t("check_in")} -</div>
+                                            <div>{t("check_out")} -</div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            {!endDate ? (
+                                                <>
+                                                    <div>{t("check_in")} - {startDate}</div>
+                                                    <div>{t("check_out")} -</div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div>{t("check_in")} - {startDate}</div>
+                                                    <div>{t("check_out")} - {endDate}</div>
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                                <div className="mt-4">
+                                    <button className="w-full py-2 bg-roomi rounded text-white"
+                                            onClick={reservationBtn}
+                                    >
+                                        예약하기
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

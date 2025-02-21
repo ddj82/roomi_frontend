@@ -8,8 +8,16 @@ import ImgCarousel from "../modals/ImgCarousel";
 import {useGuestsStore} from "../stores/GuestsStore";
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendarDay, faEnvelope, faPhone, faUser} from "@fortawesome/free-solid-svg-icons";
+import {
+    faCalendarDay,
+    faChevronDown,
+    faChevronUp,
+    faEnvelope,
+    faPhone,
+    faUser
+} from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
+import {useReserSlideConStore} from "../stores/ReserSlideConStore";
 
 export default function UserReservationSetScreen() {
     const {roomId, locale} = useParams(); // URL 파라미터 추출
@@ -37,6 +45,7 @@ export default function UserReservationSetScreen() {
         phone: "",
         email: "",
     });
+    const {slideIsOpen, setSlideIsOpen} = useReserSlideConStore();
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -217,60 +226,125 @@ export default function UserReservationSetScreen() {
                     </div>
 
                     {/*리모컨 영역*/}
-                    <div className="border-[1px] border-gray-300 p-4 break-words
-                        md:w-1/3 md:ml-auto md:h-fit md:sticky md:top-10 md:rounded-lg
+                    <div className="md:w-1/3 md:ml-auto md:h-fit md:sticky md:top-10 md:rounded-lg
+                        border-[1px] border-gray-300 p-4 break-words
                         w-full fixed bottom-0 bg-white z-[100]">
-                        <div className="flex_center text-sm m-2">
-                            <div
-                                className={`flex_center mx-1 px-4 py-1.5 ${calUnit ? "bg-roomi rounded text-white" : ""}`}>
-                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}
-                            </div>
-                            <div
-                                className={`flex_center mx-1 px-4 py-1.5 ${calUnit ? "" : "bg-roomi rounded text-white"}`}>
-                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}
-                            </div>
+                        {/* 모바일 전용 아코디언 버튼 */}
+                        <div className="md:hidden flex justify-between items-center p-4 bg-gray-200 cursor-pointer" onClick={() => setSlideIsOpen(!slideIsOpen)}>
+                            <span className="font-bold">{t("payment_info")}</span>
+                            <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp} />
                         </div>
-                        <div className="font-bold mb-2">
-                            {t("payment_info")}
-                        </div>
-                        <div className="p-4 rounded-lg bg-gray-100">
-                            {/*숙박비*/}
-                            <div className="flex justify-between">
-                                <div className="font-bold">{price} * {calUnit ? (`${nightVal}일`) : (`${weekValue}주`)}</div>
-                                <div className="font-bold">{calUnit ? (price * nightVal) : (price * weekValue)}</div>
+                        <div className={`transition-all duration-300 ease-in-out 
+                        ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>
+                            <div className="flex_center text-sm m-2">
+                                <div
+                                    className={`flex_center mx-1 px-4 py-1.5 ${calUnit ? "bg-roomi rounded text-white" : ""}`}>
+                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}
+                                </div>
+                                <div
+                                    className={`flex_center mx-1 px-4 py-1.5 ${calUnit ? "" : "bg-roomi rounded text-white"}`}>
+                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}
+                                </div>
                             </div>
-                            {/*보증금*/}
-                            <div className="flex justify-between">
-                                <div>{t("deposit")}</div>
-                                <div className="font-bold">{depositPrice}</div>
+                            <div className="font-bold mb-2">
+                                {t("payment_info")}
                             </div>
-                            {/*관리비*/}
-                            <div className="flex justify-between">
-                                <div>{t("service_charge")}</div>
-                                <div className="font-bold">{maintenancePrice}</div>
+                            <div className="p-4 rounded-lg bg-gray-100">
+                                {/*숙박비*/}
+                                <div className="flex justify-between">
+                                    <div
+                                        className="font-bold">{price} * {calUnit ? (`${nightVal}일`) : (`${weekValue}주`)}</div>
+                                    <div
+                                        className="font-bold">{calUnit ? (price * nightVal) : (price * weekValue)}</div>
+                                </div>
+                                {/*보증금*/}
+                                <div className="flex justify-between">
+                                    <div>{t("deposit")}</div>
+                                    <div className="font-bold">{depositPrice}</div>
+                                </div>
+                                {/*관리비*/}
+                                <div className="flex justify-between">
+                                    <div>{t("service_charge")}</div>
+                                    <div className="font-bold">{maintenancePrice}</div>
+                                </div>
+                                {/*청소비*/}
+                                <div className="flex justify-between">
+                                    <div>{t("cleaning_fee")}</div>
+                                    <div className="font-bold">{cleaningPrice}</div>
+                                </div>
+                                <div className="flex justify-between border-t border-white mt-3">
+                                    <div>{t("총결제금액")}</div>
+                                    <div className="font-bold">{totalPrice}{t("원")}</div>
+                                </div>
                             </div>
-                            {/*청소비*/}
-                            <div className="flex justify-between">
-                                <div>{t("cleaning_fee")}</div>
-                                <div className="font-bold">{cleaningPrice}</div>
+                            <div>
+                                계약 요청이 승인되기 전까지 요금이 결제 되지 않습니다.
+                                ✔ [ ] 방 예약 내용을 확인했습니다.
+                                ✔ [ ] 서비스 약관, 결제 서비스 약관, 개인정보 처리방침에 동의합니다.
+                                ✔ [ ] 마케팅 이메일 수신에 동의합니다. (선택 사항)
                             </div>
-                            <div className="flex justify-between border-t border-white mt-3">
-                                <div>{t("총결제금액")}</div>
-                                <div className="font-bold">{totalPrice}{t("원")}</div>
+                            <div className="mt-4">
+                                <button className="w-full py-2 bg-roomi rounded text-white" onClick={paymentBtn}>
+                                    계약 요청하기
+                                </button>
                             </div>
-                        </div>
-                        <div>
-                            계약 요청이 승인되기 전까지 요금이 결제 되지 않습니다.
-                            ✔ [ ] 방 예약 내용을 확인했습니다.
-                            ✔ [ ] 서비스 약관, 결제 서비스 약관, 개인정보 처리방침에 동의합니다.
-                            ✔ [ ] 마케팅 이메일 수신에 동의합니다. (선택 사항)
-                        </div>
-                        <div className="mt-4">
-                            <button className="w-full py-2 bg-roomi rounded text-white" onClick={paymentBtn}>
-                                계약 요청하기
-                            </button>
                         </div>
                     </div>
+                    {/*리모컨 영역*/}
+                    {/*<div className="border-[1px] border-gray-300 p-4 break-words*/}
+                    {/*    md:w-1/3 md:ml-auto md:h-fit md:sticky md:top-10 md:rounded-lg*/}
+                    {/*    w-full fixed bottom-0 bg-white z-[100]">*/}
+                    {/*    <div className="flex_center text-sm m-2">*/}
+                    {/*        <div*/}
+                    {/*            className={`flex_center mx-1 px-4 py-1.5 ${calUnit ? "bg-roomi rounded text-white" : ""}`}>*/}
+                    {/*            <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}*/}
+                    {/*        </div>*/}
+                    {/*        <div*/}
+                    {/*            className={`flex_center mx-1 px-4 py-1.5 ${calUnit ? "" : "bg-roomi rounded text-white"}`}>*/}
+                    {/*            <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}*/}
+                    {/*        </div>*/}
+                    {/*    </div>*/}
+                    {/*    <div className="font-bold mb-2">*/}
+                    {/*        {t("payment_info")}*/}
+                    {/*    </div>*/}
+                    {/*    <div className="p-4 rounded-lg bg-gray-100">*/}
+                    {/*        /!*숙박비*!/*/}
+                    {/*        <div className="flex justify-between">*/}
+                    {/*            <div className="font-bold">{price} * {calUnit ? (`${nightVal}일`) : (`${weekValue}주`)}</div>*/}
+                    {/*            <div className="font-bold">{calUnit ? (price * nightVal) : (price * weekValue)}</div>*/}
+                    {/*        </div>*/}
+                    {/*        /!*보증금*!/*/}
+                    {/*        <div className="flex justify-between">*/}
+                    {/*            <div>{t("deposit")}</div>*/}
+                    {/*            <div className="font-bold">{depositPrice}</div>*/}
+                    {/*        </div>*/}
+                    {/*        /!*관리비*!/*/}
+                    {/*        <div className="flex justify-between">*/}
+                    {/*            <div>{t("service_charge")}</div>*/}
+                    {/*            <div className="font-bold">{maintenancePrice}</div>*/}
+                    {/*        </div>*/}
+                    {/*        /!*청소비*!/*/}
+                    {/*        <div className="flex justify-between">*/}
+                    {/*            <div>{t("cleaning_fee")}</div>*/}
+                    {/*            <div className="font-bold">{cleaningPrice}</div>*/}
+                    {/*        </div>*/}
+                    {/*        <div className="flex justify-between border-t border-white mt-3">*/}
+                    {/*            <div>{t("총결제금액")}</div>*/}
+                    {/*            <div className="font-bold">{totalPrice}{t("원")}</div>*/}
+                    {/*        </div>*/}
+                    {/*    </div>*/}
+                    {/*    <div>*/}
+                    {/*        계약 요청이 승인되기 전까지 요금이 결제 되지 않습니다.*/}
+                    {/*        ✔ [ ] 방 예약 내용을 확인했습니다.*/}
+                    {/*        ✔ [ ] 서비스 약관, 결제 서비스 약관, 개인정보 처리방침에 동의합니다.*/}
+                    {/*        ✔ [ ] 마케팅 이메일 수신에 동의합니다. (선택 사항)*/}
+                    {/*    </div>*/}
+                    {/*    <div className="mt-4">*/}
+                    {/*        <button className="w-full py-2 bg-roomi rounded text-white" onClick={paymentBtn}>*/}
+                    {/*            계약 요청하기*/}
+                    {/*        </button>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
                 </div>
             ) : (
                 <div className="text-center">
