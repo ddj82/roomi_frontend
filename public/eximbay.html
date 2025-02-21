@@ -28,7 +28,8 @@
         amount: urlParams.get('amount'),
         currency: urlParams.get('currency'),
         mid: urlParams.get('mid'),
-        product: urlParams.get('product')
+        product: urlParams.get('product'),
+        settings: urlParams.get('settings')
     };
 
     const originalOpen = window.open;
@@ -45,6 +46,7 @@
     async function getFgkey() {
         try {
             const productData = JSON.parse(params.product);
+            const settings = JSON.parse(params.settings);
             const requestBody = {
                 payment: {
                     transaction_type: "PAYMENT",
@@ -72,7 +74,8 @@
                     link: productData.link
                 }],
                 settings: {
-                    display_type: 'R'  // 모든 결제수단 표시 설정
+                    display_type: 'R',  // 모든 결제수단 표시 설정
+                    issuer_country: settings.issuer_country
                 }
             };
 
@@ -109,7 +112,7 @@
             addDebugInfo('새로 발급받은 fgkey: ' + fgkey);
 
             const productData = JSON.parse(params.product);
-
+            const settings = JSON.parse(params.settings);
 
             const requestData = {
                 fgkey: fgkey,
@@ -139,8 +142,9 @@
                     link: productData.link
                 }],
                 settings: {
-                    display_type: 'R'  // 모든 결제수단 표시 설정
-                }
+                    display_type: 'R',  // 모든 결제수단 표시 설정
+                    issuer_country: settings.issuer_country
+                },
             };
 
             addDebugInfo('EXIMBAY 요청 데이터: ' + JSON.stringify(requestData));
