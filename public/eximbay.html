@@ -72,7 +72,7 @@
                     link: productData.link
                 }],
                 settings: {
-                    show_all_payment_methods: true  // 모든 결제수단 표시 설정
+                    display_type: 'R'  // 모든 결제수단 표시 설정
                 }
             };
 
@@ -138,10 +138,9 @@
                     unit_price: productData.unit_price,
                     link: productData.link
                 }],
-                // settings: {
-                //     show_all_payment_methods: true,  // 모든 결제수단 표시 설정
-                //     payment_method_category: "ALL"   // 모든 카테고리 표시
-                // }
+                settings: {
+                    display_type: 'R'  // 모든 결제수단 표시 설정
+                }
             };
 
             addDebugInfo('EXIMBAY 요청 데이터: ' + JSON.stringify(requestData));
