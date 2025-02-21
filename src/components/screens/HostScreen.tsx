@@ -4,11 +4,10 @@ import ContractManagement from "src/components/hostMenu/ContractManagement";
 import RoomStatus from "src/components/hostMenu/RoomStatus";
 import Message from "src/components/hostMenu/Message";
 import Settlement from "src/components/hostMenu/Settlement";
-import {useHostTab} from "../auth/HostTabContext";
-import {DataUpdateProvider} from "../auth/DataUpdateContext";
+import {useHostTabNavigation} from "../stores/HostTabStore";
 
 const HostScreen: React.FC = () => {
-    const { activeTab } = useHostTab(); // 전역 상태에서 activeTab 가져오기
+    const { activeTab } = useHostTabNavigation(); // 전역 상태에서 activeTab 가져오기
 
     // 탭 ID와 컴포넌트 매핑
     const components: Record<string, JSX.Element> = {
@@ -21,9 +20,7 @@ const HostScreen: React.FC = () => {
 
     return (
         <div className="my-4 px-8">
-            <DataUpdateProvider>
-                {components[activeTab] || <div>선택된 탭이 없습니다.</div>}
-            </DataUpdateProvider>
+            {components[activeTab] || <div>선택된 탭이 없습니다.</div>}
         </div>
     );
 }

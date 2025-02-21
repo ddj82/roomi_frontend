@@ -1,12 +1,12 @@
-import React, {useContext} from "react";
+import React from "react";
 import Modal from "react-modal"; // react-modal 사용
 import { FaSignOutAlt, FaRegHeart, FaCogs, FaRegEnvelope } from "react-icons/fa"; // react-icons 사용
 import { useTranslation } from "react-i18next";
 import { logout } from "src/api/api";
-import { HostModeContext } from "src/components/auth/HostModeContext";
+import { useHostModeStore } from "src/components/stores/HostModeStore";
 import { useNavigate } from "react-router-dom"; // 웹에서는 react-router-dom 사용
 import 'src/css/UserModal.css';
-import { useIsHost } from "src/components/auth/IsHostContext";
+import { useIsHostStore } from "src/components/stores/IsHostStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUser} from "@fortawesome/free-solid-svg-icons";
 
@@ -17,9 +17,9 @@ interface UserModalProps {
 
 export const UserModal = ({ visible, onClose }: UserModalProps) => {
     const { t } = useTranslation();
-    const { hostMode, toggleUserMode, resetUserMode } = useContext(HostModeContext);
+    const { hostMode, toggleUserMode, resetUserMode } = useHostModeStore();
     const navigate = useNavigate();
-    const { isHost } = useIsHost();
+    const { isHost } = useIsHostStore();
 
     const handleLogout = async () => {
         try {

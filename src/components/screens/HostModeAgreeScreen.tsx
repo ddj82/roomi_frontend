@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {be_host, termsOfUse} from "src/api/api";
-import {useIsHost} from "src/components/auth/IsHostContext";
+import {useIsHostStore} from "src/components/stores/IsHostStore";
 import {useNavigate} from "react-router-dom";
 
 const HostModeAgreeScreen = () => {
     const [isChecked, setIsChecked] = useState(false);
     const [termsContent, setTermsContent] = useState(""); // 약관 내용을 저장하는 상태
     const navigate = useNavigate();
-    const { setIsHost } = useIsHost();
+    const { setIsHost } = useIsHostStore();
 
     // 체크박스 상태 변경 핸들러
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {

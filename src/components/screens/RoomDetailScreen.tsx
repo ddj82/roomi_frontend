@@ -22,7 +22,7 @@ import {useTranslation} from "react-i18next";
 import NaverMapRoom from "../map/NaverMapRoom";
 import Calendar from "react-calendar";
 import dayjs from "dayjs";
-import {useDateContext} from "src/components/auth/DateContext";
+import {useDateStore} from "src/components/stores/DateStore";
 import 'react-calendar/dist/Calendar.css';
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu"; // 스타일 파일도 import
 
@@ -58,7 +58,7 @@ export default function RoomDetailScreen() {
         startDate, setStartDate,
         endDate, setEndDate,
         calUnit, setCalUnit,
-        weekValue, setWeekValue } = useDateContext();
+        weekValue, setWeekValue } = useDateStore();
 
     useEffect(() => {
         const loadRoomData = async () => {

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
-import {useHostTab} from "../auth/HostTabContext";
+import {useHostTabNavigation} from "../stores/HostTabStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendar, faComments, faDollarSign, faFileLines, faHouseChimney} from "@fortawesome/free-solid-svg-icons";
 
@@ -14,7 +14,7 @@ const tabIcons: Record<string, JSX.Element> = {
 
 const HostHeader: React.FC = () => {
     const { t } = useTranslation();
-    const { activeTab, setActiveTab } = useHostTab();
+    const { activeTab, setActiveTab } = useHostTabNavigation();
     const tabs = ["my_room", "contract_management", "room_status", "message", "settlement"] as const;
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 

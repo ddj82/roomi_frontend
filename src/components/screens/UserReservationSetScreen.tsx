@@ -3,9 +3,9 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {fetchRoomData} from "../../api/api";
 import {RoomData} from "../../types/rooms";
 import {useTranslation} from "react-i18next";
-import {useDateContext} from "../auth/DateContext";
+import {useDateStore} from "../stores/DateStore";
 import ImgCarousel from "../modals/ImgCarousel";
-import {useGuestsContext} from "../auth/GuestsContext";
+import {useGuestsStore} from "../stores/GuestsStore";
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendarDay, faEnvelope, faPhone, faUser} from "@fortawesome/free-solid-svg-icons";
@@ -16,11 +16,11 @@ export default function UserReservationSetScreen() {
     const [room, setRoom] = useState<RoomData | null>(null);
     const {t} = useTranslation();
     const {
-        startDate, setStartDate,
-        endDate, setEndDate,
-        calUnit, setCalUnit,
-        weekValue, setWeekValue } = useDateContext();
-    const {guestCount, setGuestCount} = useGuestsContext();
+        startDate,
+        endDate,
+        calUnit,
+        weekValue, } = useDateStore();
+    const {guestCount, setGuestCount} = useGuestsStore();
     const [nightVal, setNightVal] = useState(0);
     const navigate = useNavigate();
     const location = useLocation();

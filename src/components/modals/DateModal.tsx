@@ -4,7 +4,7 @@ import Calendar from 'react-calendar';
 import 'src/css/DateModal.css';
 import 'react-calendar/dist/Calendar.css'; // 스타일 파일도 import
 import dayjs from 'dayjs';
-import {useDateContext} from "src/components/auth/DateContext";
+import {useDateStore} from "src/components/stores/DateStore";
 import {useTranslation} from "react-i18next";
 import {faCalendarDay} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -21,7 +21,7 @@ const DateModal = ({ visible, onClose, position }: DateModalProps) => {
         startDate, setStartDate,
         endDate, setEndDate,
         calUnit, setCalUnit,
-        weekValue, setWeekValue } = useDateContext();
+        weekValue, setWeekValue } = useDateStore();
     const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
     const {t} = useTranslation();
 

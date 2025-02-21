@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
 import '../../css/GuestsModal.css';
-import {useGuestsContext} from "../auth/GuestsContext"; // CSS 파일 import
+import {useGuestsStore} from "../stores/GuestsStore"; // CSS 파일 import
 
 interface GuestsModalProps {
     visible: boolean;
@@ -12,7 +12,7 @@ interface GuestsModalProps {
 const GuestsModal = ({ visible, onClose, position }: GuestsModalProps) => {
     // const [children, setChildren] = useState(0);
     const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
-    const {guestCount, setGuestCount} = useGuestsContext();
+    const {guestCount, setGuestCount} = useGuestsStore();
 
     useEffect(() => {
         const handleResize = () => {

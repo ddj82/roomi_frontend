@@ -1,17 +1,17 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-modal'; // react-modal을 사용
-import { AuthContext } from 'src/components/auth/AuthContext';
+import { useAuthStore } from 'src/components/stores/AuthStore';
 import { login } from 'src/api/api';
 import { SocialAuth } from "src/api/SocialAuth";
 import 'src/css/AuthModal.css'; // CSS 파일 import
-import { useIsHost } from "src/components/auth/IsHostContext";
+import { useIsHostStore } from "src/components/stores/IsHostStore";
 
 const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () => void; type: 'login' | 'signup' }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
-    const { setAuthToken } = useContext(AuthContext);
-    const { setIsHost } = useIsHost();
+    const { setAuthToken } = useAuthStore();
+    const { setIsHost } = useIsHostStore();
 
     const handleSubmit = async () => {
         try {

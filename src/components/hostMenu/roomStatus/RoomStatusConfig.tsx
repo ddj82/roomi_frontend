@@ -1,12 +1,11 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Calendar from "react-calendar";
 import dayjs from "dayjs";
 import {RoomData, Schedules} from "src/types/rooms";
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import {createBulkBlocks, unblockDate} from "src/api/api";
-import {useDataUpdate} from "src/components/auth/DataUpdateContext";
-import {useHostTab} from "../../auth/HostTabContext";
+import {useDataUpdateStore} from "src/components/stores/DataUpdateStore";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
@@ -22,8 +21,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
     const [showModal, setShowModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [isBlockDate, setIsBlockDate] = useState('');
-    const { dataUpdate, toggleDataUpdate } = useDataUpdate();
-    const { setActiveTab } = useHostTab(); // 전역 상태에서 activeTab 가져오기
+    const { dataUpdate, toggleDataUpdate } = useDataUpdateStore();
     const [calendarKey, setCalendarKey] = useState(0);
 
     const handleDayClick = (date: Date) => {
@@ -179,10 +177,6 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
             return 'reservation-date';
         }
         return null; // 기본 스타일
-    };
-
-    const handlereasonChk = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setIsReasonChk(event.target.checked);
     };
 
     // 블락 처리 함수

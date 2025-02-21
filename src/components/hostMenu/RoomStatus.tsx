@@ -5,7 +5,7 @@ import RoomSet from 'src/components/hostMenu/roomStatus/RoomStatusSet';
 import RoomConfig from 'src/components/hostMenu/roomStatus/RoomStatusConfig';
 import {RoomData} from "src/types/rooms";
 import {myRoomList} from "src/api/api";
-import {useDataUpdate} from "../auth/DataUpdateContext";
+import {useDataUpdateStore} from "../stores/DataUpdateStore";
 
 const RoomStatus = () => {
     const { t } = useTranslation();
@@ -13,7 +13,7 @@ const RoomStatus = () => {
     const tabs = ["room_status_set", "room_config"] as const;
     const [data, setData] = useState<RoomData[]>([]);
     const [selectedRoom, setSelectedRoom] = useState(0);
-    const { dataUpdate } = useDataUpdate();
+    const { dataUpdate } = useDataUpdateStore();
 
     // 화면 로드시
     useEffect(() => {

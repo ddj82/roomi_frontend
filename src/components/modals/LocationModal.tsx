@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
 import '../../css/LocationModal.css';
-import {useLocationContext} from "../auth/LocationContext";
+import {useLocationStore} from "../stores/LocationStore";
 
 interface LocationModalProps {
     visible: boolean;
@@ -12,7 +12,7 @@ interface LocationModalProps {
 const LocationModal = ({ visible, onClose, position }: LocationModalProps) => {
     // const [searchText, setSearchText] = useState('');
     const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
-    const {selectedLocation, setSelectedLocation} = useLocationContext();
+    const {selectedLocation, setSelectedLocation} = useLocationStore();
 
     useEffect(() => {
         const handleResize = () => {

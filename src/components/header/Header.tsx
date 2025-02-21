@@ -1,6 +1,6 @@
-import React, {useState, useRef, useContext, useEffect} from "react";
+import React, {useState, useRef, useEffect} from "react";
 import { useNavigate } from "react-router-dom"; // react-router-dom의 useNavigate 사용
-import { AuthContext } from "src/components/auth/AuthContext";
+import { useAuthStore } from "src/components/stores/AuthStore";
 import DateModal from "src/components/modals/DateModal";
 import LocationModal from "src/components/modals/LocationModal";
 import GuestsModal from "src/components/modals/GuestsModal";
@@ -16,13 +16,13 @@ import {
     faCircleInfo, faUser
 } from '@fortawesome/free-solid-svg-icons';
 import '../../css/Header.css';
-import {useHeaderBtnContext} from "src/components/auth/HeaderBtnContext";
+import {useHeaderBtnVisibility} from "src/components/stores/HeaderBtnStore";
 import HostHeader from "src/components/header/HostHeader";
-import {useHostHeaderBtnContext} from "../auth/HostHeaderBtnContext";
+import {useHostHeaderBtnVisibility} from "../stores/HostHeaderBtnStore";
 import dayjs from "dayjs";
-import {useDateContext} from "../auth/DateContext";
-import {useGuestsContext} from "../auth/GuestsContext";
-import {useLocationContext} from "../auth/LocationContext";
+import {useDateStore} from "../stores/DateStore";
+import {useGuestsStore} from "../stores/GuestsStore";
+import {useLocationStore} from "../stores/LocationStore";
 
 type ModalSection = 'date' | 'location' | 'guests';
 type ModalPosition = { x: number; y: number };
@@ -35,15 +35,15 @@ const Header = () => {
     const [activeSection, setActiveSection] = useState<ModalSection | null>(null);
     const [modalPosition, setModalPosition] = useState<ModalPosition>({ x: 0, y: 0 });
     const [businessInfoVisible, setBusinessInfoVisible] = useState(false);
-    const { authToken } = useContext(AuthContext); // AuthContext에서 가져오기
-    const { isVisible } = useHeaderBtnContext();
-    const { isVisibleHostScreen } = useHostHeaderBtnContext();
+    const { authToken } = useAuthStore(); // AuthContext에서 가져오기
+    const isVisible = useHeaderBtnVisibility();
+    const isVisibleHostScreen = useHostHeaderBtnVisibility();
     const dateRef = useRef(null);
     const locationRef = useRef(null);
     const guestsRef = useRef(null);
-    const {startDate, endDate, } = useDateContext();
-    const {guestCount, setGuestCount} = useGuestsContext();
-    const {selectedLocation, setSelectedLocation} = useLocationContext();
+    const {startDate, endDate, } = useDateStore();
+    const {guestCount} = useGuestsStore();
+    const {selectedLocation} = useLocationStore();
 
     const openModal = (section: ModalSection, ref: React.RefObject<any>) => {
         if (ref.current) {

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {RoomData} from "src/types/rooms"; // 스타일을 별도 CSS 파일로 관리
 import 'src/css/MainHome.css';
 import FilterBar from "src/components/header/FilterBar";
