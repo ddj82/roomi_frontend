@@ -21,7 +21,8 @@ export const useHostHeaderBtnVisibility = () => {
     const { setVisibility } = useHostHeaderBtnStore();
 
     React.useEffect(() => {
-        const isVisibleHostScreen = location.pathname.startsWith(ALLOWED_PREFIX);
+        // const isVisibleHostScreen = location.pathname.startsWith(ALLOWED_PREFIX);
+        const isVisibleHostScreen = location.pathname === ALLOWED_PREFIX;
         setVisibility(isVisibleHostScreen);
     }, [location.pathname]); // URL 변경 감지하여 상태 업데이트
 
