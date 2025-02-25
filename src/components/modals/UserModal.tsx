@@ -9,6 +9,7 @@ import 'src/css/UserModal.css';
 import { useIsHostStore } from "src/components/stores/IsHostStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUser} from "@fortawesome/free-solid-svg-icons";
+import {useChatStore} from "../stores/ChatStore";
 
 interface UserModalProps {
     visible: boolean;
@@ -20,12 +21,14 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
     const { hostMode, toggleUserMode, resetUserMode } = useHostModeStore();
     const navigate = useNavigate();
     const { isHost } = useIsHostStore();
+    const disconnect = useChatStore((state) => state.disconnect);
 
     const handleLogout = async () => {
         try {
             const response = await logout();
             console.log(response);
             resetUserMode();// hostMode 초기화
+            disconnect(); // 소켓 서버 닫기
             onClose();
             window.location.reload();
         } catch (error) {

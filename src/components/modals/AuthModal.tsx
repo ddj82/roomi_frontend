@@ -5,6 +5,8 @@ import { login } from 'src/api/api';
 import { SocialAuth } from "src/api/SocialAuth";
 import 'src/css/AuthModal.css'; // CSS 파일 import
 import { useIsHostStore } from "src/components/stores/IsHostStore";
+import {useChatStore} from "../stores/ChatStore";
+import {useNavigate} from "react-router-dom";
 
 const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () => void; type: 'login' | 'signup' }) => {
     const [email, setEmail] = useState('');
@@ -12,6 +14,8 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
     const [passwordConfirm, setPasswordConfirm] = useState('');
     const { setAuthToken } = useAuthStore();
     const { setIsHost } = useIsHostStore();
+    const connect = useChatStore((state) => state.connect);
+    const navigate = useNavigate();
 
     const handleSubmit = async () => {
         try {
@@ -24,6 +28,15 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
             console.log('hostStatus값 :',hostStatus);
             // 로그인 유저의 isHost 값으로 전역 상태 관리
             setIsHost(hostStatus);
+
+            let token = localStorage.getItem('authToken');
+            if (token) {
+                token = token.replace(/^Bearer\s/, ""); // 🔥 "Bearer " 제거
+                connect(token); // ✅ WebSocket 연결
+            } else {
+                console.error('❌ Auth Token이 없습니다.');
+            }
+
             console.log('로그인 성공, AuthToken, isHost 업데이트 완료'); // 로그 추가
             onClose();
         } catch (error) {
@@ -80,6 +93,10 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
         }
     };
 
+    const handleJoin = () => {
+        navigate('/join');
+        onClose();
+    };
 
     return (
         <Modal
@@ -145,10 +162,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                 {type === 'login' && (
                     <div className="flex_center">
                         <div className="text-sm">계정이 없으신가요?</div>
-                        <button onClick={() => {
-                            onClose();
-                            // TODO: 회원가입 모달로 전환하는 로직 추가
-                        }}>
+                        <button onClick={handleJoin}>
                             <span className="text-sm text-roomi ml-1">회원가입</span>
                         </button>
                     </div>

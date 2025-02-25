@@ -2,7 +2,7 @@ import React from "react";
 import MyRoom from "src/components/hostMenu/MyRooms";
 import ContractManagement from "src/components/hostMenu/ContractManagement";
 import RoomStatus from "src/components/hostMenu/RoomStatus";
-import Message from "src/components/hostMenu/Message";
+import MessageList from "src/components/hostMenu/MessageList";
 import Settlement from "src/components/hostMenu/Settlement";
 import {useHostTabNavigation} from "../stores/HostTabStore";
 
@@ -14,7 +14,7 @@ const HostScreen: React.FC = () => {
         my_room: <MyRoom />,
         contract_management: <ContractManagement />,
         room_status: <RoomStatus />,
-        message: <Message />,
+        message: <MessageList />,
         settlement: <Settlement />,
     };
 

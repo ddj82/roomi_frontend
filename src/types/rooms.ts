@@ -107,6 +107,7 @@ export interface RoomData {
 
     is_confirmed?: boolean;
     is_active?: boolean;
+    is_rejected?: boolean;
     is_deleted: boolean;
     host_id?: number;
     unavailable_dates: UnavailableDates;
