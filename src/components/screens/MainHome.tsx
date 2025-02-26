@@ -6,6 +6,7 @@ import HomeScreen from "src/components/screens/HomeScreen";
 import NaverMap from "src/components/map/NaverMap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowUp} from "@fortawesome/free-solid-svg-icons";
+import MailTest from "./MailTest";
 
 export default function MainHome() {
     const [homeVisible, setHomeVisible] = useState(false);
@@ -45,7 +46,7 @@ export default function MainHome() {
         <div className="mainHome main-container">
             {/* 상단 필터바 */}
             <FilterBar/>
-
+            <MailTest/>
             <div className={`mainHome content-wrapper ${homeVisible ? 'show-map' : 'show-list'}`}>
                 <div className="mainHome map-container">
                     <NaverMap onRoomsUpdate={handleRoomsUpdate}/>

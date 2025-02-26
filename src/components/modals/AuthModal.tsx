@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal'; // react-modal을 사용
 import { useAuthStore } from 'src/components/stores/AuthStore';
 import { login } from 'src/api/api';
@@ -17,7 +17,8 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
     const connect = useChatStore((state) => state.connect);
     const navigate = useNavigate();
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
         try {
             console.log('로그인 버튼(모달):', { email, password });
             // 로그인 요청
@@ -41,13 +42,6 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
             onClose();
         } catch (error) {
             console.error('로그인 실패(모달):', error);
-        }
-    };
-
-    // 엔터 로그인
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (event.key === 'Enter') {
-            handleSubmit();
         }
     };
 
@@ -98,6 +92,17 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
         onClose();
     };
 
+    useEffect(() => {
+        if (visible) {
+            document.body.style.overflow = 'hidden'; // 스크롤 방지
+        } else {
+            document.body.style.overflow = 'auto'; // 스크롤 복원
+        }
+        return () => {
+            document.body.style.overflow = 'auto'; // 컴포넌트 언마운트 시 복원
+        };
+    }, [visible]);
+
     return (
         <Modal
             isOpen={visible}
@@ -106,40 +111,42 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
             className="authModal auth-modal-container"
             overlayClassName="authModal overlay" // 오버레이 스타일
         >
-            <div className="authModal modal-content" onKeyDown={handleKeyDown} tabIndex={0}>
+            <div className="authModal modal-content">
                 <div className="text-lg font-bold mb-4">{type === 'login' ? '로그인' : '회원가입'}</div>
-                <div className="authModal input-container">
-                    <input
-                        type="email"
-                        placeholder="이메일"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="authInput mb-2 h-10 pl-2 text-base"
-                    />
-                    <input
-                        type="password"
-                        placeholder="비밀번호"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="authInput mb-2 h-10 pl-2 text-base"
-                    />
-                    {type === 'signup' && (
+                <form onSubmit={handleSubmit} className="authModal input-container">
+                    <div className="authModal input-container">
                         <input
-                            type="password"
-                            placeholder="비밀번호 확인"
-                            value={passwordConfirm}
-                            onChange={(e) => setPasswordConfirm(e.target.value)}
+                            type="text"
+                            placeholder="이메일"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="authInput mb-2 h-10 pl-2 text-base"
                         />
-                    )}
-                </div>
+                        <input
+                            type="password"
+                            placeholder="비밀번호"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="authInput mb-2 h-10 pl-2 text-base"
+                        />
+                        {type === 'signup' && (
+                            <input
+                                type="password"
+                                placeholder="비밀번호 확인"
+                                value={passwordConfirm}
+                                onChange={(e) => setPasswordConfirm(e.target.value)}
+                                className="authInput mb-2 h-10 pl-2 text-base"
+                            />
+                        )}
+                    </div>
 
-                <div className="authModal button-container">
-                    <button className="authModal submit-button" onClick={handleSubmit}>
-                        {type === 'login' ? '로그인' : '회원가입'}
-                    </button>
-                    <button className="authModal cancel-button" onClick={onClose}>취소</button>
-                </div>
+                    <div className="authModal button-container">
+                        <button type="submit" className="authModal submit-button">
+                            {type === 'login' ? '로그인' : '회원가입'}
+                        </button>
+                        <button type="button" className="authModal cancel-button" onClick={onClose}>취소</button>
+                    </div>
+                </form>
 
                 {type === 'login' && (
                     <div className="authModal social-login-container">

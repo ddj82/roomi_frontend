@@ -20,7 +20,9 @@ export default function App() {
     return (
         <Router>
             <Header/>
-            <div className="app container xl:max-w-[1200px]" style={{minHeight: window.innerHeight,}}>
+            <div className="app container xl:max-w-[1200px]"
+                 // style={{minHeight: window.innerHeight - 130,}}
+            >
                 <Routes>
                     <Route path="/" element={<MainHome/>}/>
                     <Route path="/join" element={<UserJoinScreen/>}/>

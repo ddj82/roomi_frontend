@@ -11,22 +11,6 @@ import type {Eximbay} from "../../types/eximbay";
 import {useReserSlideConStore} from "../stores/ReserSlideConStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown, faChevronUp} from "@fortawesome/free-solid-svg-icons";
-import {useIsMobileStore} from "../stores/IsMobileStore";
-
-// interface PaymentResponse {
-//     success: boolean;
-//     error_msg?: string;
-//     imp_uid?: string;
-//     merchant_uid?: string;
-//     paid_amount?: number;
-//     pg_provider?: string;
-//     pg_tid?: string;
-//     buyer_name?: string;
-//     buyer_tel?: string;
-//     buyer_email?: string;
-//     buyer_addr?: string;
-//     buyer_postcode?: string;
-// }
 
 declare global {
     interface Window {
@@ -61,7 +45,6 @@ export default function UserReservationScreen() {
     const [selectedPayment, setSelectedPayment] = useState<string>("KR"); // 선택된 결제 방법 저장
     const [paymentData, setPaymentData] = useState({});
     const {slideIsOpen, setSlideIsOpen} = useReserSlideConStore();
-    const {isMobile, setIsMobile} = useIsMobileStore();
 
     useEffect(() => {
         const loadRoomData = async () => {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Modal from "react-modal"; // react-modal 사용
 import { FaSignOutAlt, FaRegHeart, FaCogs, FaRegEnvelope } from "react-icons/fa"; // react-icons 사용
 import { useTranslation } from "react-i18next";
@@ -10,6 +10,7 @@ import { useIsHostStore } from "src/components/stores/IsHostStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUser} from "@fortawesome/free-solid-svg-icons";
 import {useChatStore} from "../stores/ChatStore";
+import {useHostHeaderBtnVisibility} from "../stores/HostHeaderBtnStore";
 
 interface UserModalProps {
     visible: boolean;
@@ -18,10 +19,11 @@ interface UserModalProps {
 
 export const UserModal = ({ visible, onClose }: UserModalProps) => {
     const { t } = useTranslation();
-    const { hostMode, toggleUserMode, resetUserMode } = useHostModeStore();
+    const { setHostMode, toggleUserMode, resetUserMode } = useHostModeStore();
     const navigate = useNavigate();
     const { isHost } = useIsHostStore();
     const disconnect = useChatStore((state) => state.disconnect);
+    const isVisibleHostScreen = useHostHeaderBtnVisibility();
 
     const handleLogout = async () => {
         try {
@@ -48,6 +50,7 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
 
     const handleHostManage = () => {
         console.log("호스트 관리 메뉴");
+        setHostMode(true);
         navigate("/host");
         onClose();
     };
@@ -58,7 +61,9 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
     };
 
     const handleUserMode = () => {
-        toggleUserMode();
+        resetUserMode();
+        navigate('/');
+        onClose();
     };
 
     const handleUserHostMode = async () => {
@@ -69,6 +74,17 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
             onClose();
         }
     };
+
+    useEffect(() => {
+        if (visible) {
+            document.body.style.overflow = 'hidden'; // 스크롤 방지
+        } else {
+            document.body.style.overflow = 'auto'; // 스크롤 복원
+        }
+        return () => {
+            document.body.style.overflow = 'auto'; // 컴포넌트 언마운트 시 복원
+        };
+    }, [visible]);
 
     return (
         <Modal
@@ -89,20 +105,14 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
                 <div className="userModal content text-sm md:text-lg">
                     {isHost ? (
                         <>
-                            {hostMode ? (
-                                <>
-                                    <button onClick={handleUserMode} className="userModal menu-item">
-                                        <FontAwesomeIcon icon={faUser} className="text-xl md:text-2xl" />
-                                        {t("게스트로 전환")}
-                                    </button>
-                                    <button onClick={handleHostManage} className="userModal menu-item">
-                                        <FaCogs className="text-xl md:text-2xl"/>
-                                        {t("호스트 관리")}
-                                    </button>
-                                </>
-                            ) : (
-                                <button onClick={handleUserHostMode} className="userModal menu-item">
+                            {isVisibleHostScreen ? (
+                                <button onClick={handleUserMode} className="userModal menu-item">
                                     <FontAwesomeIcon icon={faUser} className="text-xl md:text-2xl" />
+                                    {t("게스트로 전환")}
+                                </button>
+                            ) : (
+                                <button onClick={handleHostManage} className="userModal menu-item">
+                                    <FontAwesomeIcon icon={faUser} className="text-xl md:text-2xl"/>
                                     {t("호스트로 전환")}
                                 </button>
                             )}
@@ -114,15 +124,18 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
                         </button>
                     )}
 
-                    <button onClick={handleMessage} className="userModal menu-item">
-                        <FaRegEnvelope className="text-xl md:text-2xl"/>
-                        {t("message")}
-                    </button>
-
-                    <button onClick={handleFavorite} className="userModal menu-item">
-                        <FaRegHeart className="text-xl md:text-2xl"/>
-                        {t("찜 목록")}
-                    </button>
+                    {!isVisibleHostScreen && (
+                        <>
+                            <button onClick={handleMessage} className="userModal menu-item">
+                                <FaRegEnvelope className="text-xl md:text-2xl"/>
+                                {t("message")}
+                            </button>
+                            <button onClick={handleFavorite} className="userModal menu-item">
+                                <FaRegHeart className="text-xl md:text-2xl"/>
+                                {t("찜 목록")}
+                            </button>
+                        </>
+                    )}
 
                     <button onClick={handleSettings} className="userModal menu-item">
                         <FaCogs className="text-xl md:text-2xl"/>
