@@ -12,16 +12,7 @@ import {useReserSlideConStore} from "../stores/ReserSlideConStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown, faChevronUp} from "@fortawesome/free-solid-svg-icons";
 
-declare global {
-    interface Window {
-        IMP?: {
-            init: (accountID: string) => void;
-            request_pay: (params: any, callback: (response: any) => void) => void;
-        };
-    }
-}
-
-export default function UserReservationScreen() {
+export default function GuestReservationScreen() {
     const {roomId, locale} = useParams();
     const [room, setRoom] = useState<RoomData | null>(null);
     const {t} = useTranslation();

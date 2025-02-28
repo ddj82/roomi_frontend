@@ -1,12 +1,11 @@
 import React, {useState, useRef, useEffect} from "react";
-import { useNavigate } from "react-router-dom"; // react-router-dom의 useNavigate 사용
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "src/components/stores/AuthStore";
 import DateModal from "src/components/modals/DateModal";
 import LocationModal from "src/components/modals/LocationModal";
 import GuestsModal from "src/components/modals/GuestsModal";
 import AuthModal from "src/components/modals/AuthModal";
 import { BusinessInfoModal } from "src/components/modals/BusinessInfoModal";
-import { UserModal } from "src/components/modals/UserModal";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faSearch,
@@ -23,14 +22,18 @@ import dayjs from "dayjs";
 import {useDateStore} from "../stores/DateStore";
 import {useGuestsStore} from "../stores/GuestsStore";
 import {useLocationStore} from "../stores/LocationStore";
-
+import {useHostModeStore} from "../stores/HostModeStore";
+import {useTranslation} from "react-i18next";
+import {logout} from "../../api/api";
+import {useChatStore} from "../stores/ChatStore";
+import {useIsHostStore} from "../stores/IsHostStore";
 type ModalSection = 'date' | 'location' | 'guests';
 type ModalPosition = { x: number; y: number };
 
 const Header = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate(); // react-router-dom에서 제공하는 useNavigate로 변경
     const [authModalVisible, setAuthModalVisible] = useState(false);
-    const [userVisible, setUserVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [activeSection, setActiveSection] = useState<ModalSection | null>(null);
     const [modalPosition, setModalPosition] = useState<ModalPosition>({ x: 0, y: 0 });
@@ -44,6 +47,11 @@ const Header = () => {
     const {startDate, endDate, } = useDateStore();
     const {guestCount} = useGuestsStore();
     const {selectedLocation} = useLocationStore();
+    const { hostMode, setHostMode, resetUserMode } = useHostModeStore();
+    const { isHost } = useIsHostStore();
+    const disconnect = useChatStore((state) => state.disconnect);
+    const [userVisible, setUserVisible] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     const openModal = (section: ModalSection, ref: React.RefObject<any>) => {
         if (ref.current) {
@@ -80,6 +88,48 @@ const Header = () => {
         window.location.reload();
     };
 
+    const handleSetHostMode = () => {
+        if (hostMode) {
+            resetUserMode();
+            window.location.href = '/';
+        } else {
+            setHostMode(true);
+            window.location.href = '/host';
+        }
+    };
+
+    const toggleDropdown = () => {
+        setUserVisible((prev) => !prev);
+    };
+    const handleClickOutside = (event: MouseEvent) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+            setUserVisible(false);
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            const response = await logout();
+            console.log(response);
+            resetUserMode();// hostMode 초기화
+            disconnect(); // 소켓 서버 닫기
+            window.location.reload();
+        } catch (error) {
+            console.error("로그아웃 실패:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (userVisible) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [userVisible]);
+
     return (
         <div className="border-b-[1px] border-gray-200">
             <div className="h header container mx-auto md:mt-8 mt-6">
@@ -96,17 +146,62 @@ const Header = () => {
                         </div>
                         <div>
                             {authToken ? (
-                                <div>
-                                    <button
-                                        className="w-8 h-8 md:w-10 md:h-10
-                                         flex_center bg-roomi-000 text-roomi rounded-full"
-                                        onClick={() => setUserVisible(true)}>
-                                        <FontAwesomeIcon icon={faUser}/>
-                                    </button>
+                                <div className="flex">
+                                    <div className="relative" ref={dropdownRef}>
+                                        <button
+                                            className="w-8 h-8 md:w-10 md:h-10
+                                             flex_center bg-roomi-000 text-roomi rounded-full"
+                                            // 드롭다운으로 변경
+                                            onClick={toggleDropdown}>
+                                            <FontAwesomeIcon icon={faUser}/>
+                                        </button>
+                                        {userVisible && (
+                                            <div className="absolute right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-40 z-[2000] border">
+                                                <ul className="py-2 text-sm text-gray-700">
+                                                    <li>
+                                                        {hostMode ? (
+                                                            <a href="/host/myPage" className="block px-4 py-2 hover:bg-gray-100">마이페이지</a>
+                                                        ) : (
+                                                            <a href="/myPage" className="block px-4 py-2 hover:bg-gray-100">마이페이지</a>
+                                                        )}
+                                                    </li>
+                                                    <li>
+                                                        {!hostMode && (<a href="/chat" className="block px-4 py-2 hover:bg-gray-100">메시지</a>)}
+                                                    </li>
+                                                    {isHost && (
+                                                        <>
+                                                        {hostMode ? (
+                                                            <li>
+                                                                <button onClick={handleSetHostMode}
+                                                                        className="w-full text-start block px-4 py-2 hover:bg-gray-100">
+                                                                    {t("게스트로 전환")}
+                                                                </button>
+                                                            </li>
+                                                            ) : (
+                                                            <li>
+                                                                <button onClick={handleSetHostMode}
+                                                                        className="w-full text-start block px-4 py-2 hover:bg-gray-100">
+                                                                    {t("호스트로 전환")}
+                                                                </button>
+                                                            </li>
+                                                        )}
+                                                        </>
+                                                    )}
+                                                </ul>
+                                                <div className="py-2">
+                                                    <button onClick={handleLogout}
+                                                            className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                        로그아웃
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             ) : (
-                                <button className="p-2 bg-roomi hover:bg-roomi-4 text-white text-xs md:text-sm rounded-md"
-                                        onClick={() => setAuthModalVisible(true)}>
+                                <button
+                                    className="p-2 bg-roomi hover:bg-roomi-4 text-white text-xs md:text-sm rounded-md"
+                                    onClick={() => setAuthModalVisible(true)}>
                                     로그인
                                 </button>
                             )}
@@ -172,7 +267,7 @@ const Header = () => {
                 )}
                 <BusinessInfoModal visible={businessInfoVisible} onClose={() => setBusinessInfoVisible(false)}/>
                 <AuthModal visible={authModalVisible} onClose={() => setAuthModalVisible(false)} type="login"/>
-                <UserModal visible={userVisible} onClose={() => setUserVisible(false)}/>
+                {/*<UserModal visible={userVisible} onClose={() => setUserVisible(false)}/>*/}
             </div>
         </div>
     );

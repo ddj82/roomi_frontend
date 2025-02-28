@@ -136,7 +136,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
                 chatRoomId,
                 createdAt: new Date().toISOString(),
                 senderId: myUserId, // ✅ 로그인한 사용자 ID
-                isRead: true,
+                isRead: false,
             };
 
             set((state) => {

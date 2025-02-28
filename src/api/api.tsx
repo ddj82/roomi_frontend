@@ -84,6 +84,7 @@ export const login = async (email: string, password: string, setAuthToken: (toke
         if (data.success) {
             console.log('사용자 정보:', data.data);
             localStorage.setItem('userId', data.data.id);
+            localStorage.setItem('userEmail', data.data.email);
             localStorage.setItem('userName', data.data.name);
             localStorage.setItem('userIsHost', data.data.isHost);
         } else {
@@ -103,6 +104,7 @@ export const logout = async () => {
         localStorage.removeItem('authToken'); // 토큰 제거
         localStorage.removeItem('userId'); // 유저 정보 제거
         localStorage.removeItem('userName'); // 유저 정보 제거
+        localStorage.removeItem('userEmail'); // 유저 정보 제거
         localStorage.removeItem('userIsHost'); // 유저 정보 제거
         localStorage.removeItem('hostMode');
         return '로그아웃 성공';

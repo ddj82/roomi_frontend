@@ -34,7 +34,7 @@ export default function MessageList() {
     };
 
     return (
-        <div className="flex h-full">
+        <div className="flex w-full h-[calc(75vh)] overflow-y-auto">
             {(!isMobile || !selectedChatRoomId) && (
                 <div className="flex flex-col border border-gray-300 overflow-y-auto w-full md:w-2/5 scrollbar-hidden">
                     <div className="m-2 border border-gray-300">

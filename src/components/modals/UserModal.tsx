@@ -57,8 +57,10 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
     };
 
     const handleSettings = () => {
-        console.log("계정 설정 메뉴");
-        console.log('유저 정보', localStorage.getItem('userName'));
+        console.log("계정설정메뉴");
+        console.log('유저 정보 :', localStorage.getItem('userName'));
+        navigate('/myPage');
+        onClose();
     };
 
     const handleUserMode = () => {

@@ -8,13 +8,18 @@ import HostModeAgreeScreen from "./components/screens/HostModeAgreeScreen";
 import HostScreen from "./components/screens/HostScreen";
 import NaverMap from "./components/map/NaverMap";
 import MyRoomInsert from "./components/hostMenu/myRooms/MyRoomInsert";
-import UserReservationSetScreen from "./components/screens/UserReservationSetScreen";
-import UserReservationScreen from "./components/screens/UserReservationScreen";
+import GuestReservationSetScreen from "./components/screens/GuestReservationSetScreen";
+import GuestReservationScreen from "./components/screens/GuestReservationScreen";
 import UserJoinScreen from "./components/screens/UserJoinScreen";
 import UserMessage from "./components/screens/UserMessage";
 import './App.css';
 import 'src/css/Modal.css';
 import 'src/css/Calendar.css';
+import ProtectedAuthRoute from "./api/ProtectedAuthRoute";
+import GuestMyPageMenu from "./components/screens/GuestMyPageMenu";
+import HostMyPageMenu from "./components/screens/HostMyPageMenu";
+import ProtectedHostRoute from "./api/ProtectedHostRoute";
+import ProtectedGuestRoute from "./api/ProtectedGuestRoute";
 
 
 export default function App() {
@@ -25,16 +30,28 @@ export default function App() {
                  // style={{minHeight: window.innerHeight - 130,}}
             >
                 <Routes>
-                    <Route path="/" element={<MainHome/>}/>
-                    <Route path="/join" element={<UserJoinScreen/>}/>
-                    <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
-                    <Route path="/detail/:roomId/:locale/reservation" element={<UserReservationSetScreen/>}/>
-                    <Route path="/detail/:roomId/:locale/reservation/payment" element={<UserReservationScreen/>}/>
-                    <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
-                    <Route path="/host" element={<HostScreen/>}/>
-                    <Route path="/naver" element={<NaverMap/>}/>
-                    <Route path="/host/insert" element={<MyRoomInsert/>}/>
-                    <Route path="/chat" element={<UserMessage/>}/>
+                    {/* hostMode === true 일 때 이 부분 전부 차단됨 */}
+                    <Route element={<ProtectedGuestRoute />}>
+                        <Route path="/" element={<MainHome/>}/>
+                        <Route path="/naver" element={<NaverMap/>}/>
+                        <Route path="/join" element={<UserJoinScreen/>}/>
+                        <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
+
+                        {/* 로그인 사용자 만 접근 가능 */}
+                        <Route element={<ProtectedAuthRoute />}>
+                            <Route path="/myPage" element={<GuestMyPageMenu/>}/>
+                            <Route path="/chat" element={<UserMessage/>}/>
+                            <Route path="/detail/:roomId/:locale/reservation" element={<GuestReservationSetScreen/>}/>
+                            <Route path="/detail/:roomId/:locale/reservation/payment" element={<GuestReservationScreen/>}/>
+                            <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
+                        </Route>
+                    </Route>
+                    {/* hostMode === false 일 때 /host/* 페이지 차단 */}
+                    <Route element={<ProtectedHostRoute />}>
+                        <Route path="/host" element={<HostScreen/>}/>
+                        <Route path="/host/insert" element={<MyRoomInsert/>}/>
+                        <Route path="/host/myPage" element={<HostMyPageMenu/>}/>
+                    </Route>
                 </Routes>
             </div>
             <Footer/>

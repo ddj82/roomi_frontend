@@ -58,11 +58,13 @@ export default function Message({ chatRoom, chatRoomId, onBack }: MessageProps) 
                     <span className="text-lg">{chatRoom.title}</span>
                     <div className="flex">
                         <span className="mr-2">이름</span>
-                        <div className="text-gray-400">
-                            <span>{dayjs(messages[0].createdAt).format('YYYY-MM-DD')}</span>
-                            <span> - </span>
-                            <span>{dayjs(messages[messages.length - 1].createdAt).format('YYYY-MM-DD')}</span>
-                        </div>
+                        {messages.length > 0 && (
+                            <div className="text-gray-400">
+                                <span>{dayjs(messages[0].createdAt).format('YYYY-MM-DD')}</span>
+                                <span> - </span>
+                                <span>{dayjs(messages[messages.length - 1].createdAt).format('YYYY-MM-DD')}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="flex_center">

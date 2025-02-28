@@ -6,7 +6,6 @@ import HomeScreen from "src/components/screens/HomeScreen";
 import NaverMap from "src/components/map/NaverMap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowUp} from "@fortawesome/free-solid-svg-icons";
-import MailTest from "./MailTest";
 
 export default function MainHome() {
     const [homeVisible, setHomeVisible] = useState(false);

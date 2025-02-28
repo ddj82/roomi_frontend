@@ -19,7 +19,7 @@ import {
 import dayjs from "dayjs";
 import {useReserSlideConStore} from "../stores/ReserSlideConStore";
 
-export default function UserReservationSetScreen() {
+export default function GuestReservationSetScreen() {
     const {roomId, locale} = useParams(); // URL 파라미터 추출
     const [room, setRoom] = useState<RoomData | null>(null);
     const {t} = useTranslation();
