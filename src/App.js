@@ -11,6 +11,7 @@ import MyRoomInsert from "./components/hostMenu/myRooms/MyRoomInsert";
 import UserReservationSetScreen from "./components/screens/UserReservationSetScreen";
 import UserReservationScreen from "./components/screens/UserReservationScreen";
 import UserJoinScreen from "./components/screens/UserJoinScreen";
+import UserMessage from "./components/screens/UserMessage";
 import './App.css';
 import 'src/css/Modal.css';
 import 'src/css/Calendar.css';
@@ -33,6 +34,7 @@ export default function App() {
                     <Route path="/host" element={<HostScreen/>}/>
                     <Route path="/naver" element={<NaverMap/>}/>
                     <Route path="/host/insert" element={<MyRoomInsert/>}/>
+                    <Route path="/chat" element={<UserMessage/>}/>
                 </Routes>
             </div>
             <Footer/>

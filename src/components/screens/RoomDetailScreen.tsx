@@ -16,7 +16,7 @@ import {
     faWifi, faTv, faKitchenSet, faSoap, faHandsWash,
     faSnowflake, faParking, faKitMedical, faFireExtinguisher,
     faUtensils, faCoffee, faVideo, faTree, faDumbbell,
-    faCouch, faSwimmingPool, faHotTub, faMapLocationDot, faCalendarDay, faChevronUp, faChevronDown,
+    faCouch, faSwimmingPool, faHotTub, faMapLocationDot, faCalendarDay, faChevronUp, faChevronDown, faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import {useTranslation} from "react-i18next";
 import NaverMapRoom from "../map/NaverMapRoom";
@@ -25,7 +25,9 @@ import dayjs from "dayjs";
 import {useDateStore} from "src/components/stores/DateStore";
 import 'react-calendar/dist/Calendar.css';
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
-import {useReserSlideConStore} from "../stores/ReserSlideConStore"; // 스타일 파일도 import
+import {useReserSlideConStore} from "../stores/ReserSlideConStore";
+import {useChatStore} from "../stores/ChatStore";
+import {create} from "zustand";
 
 
 const facilityIcons: Record<string, IconDefinition> = {
@@ -61,6 +63,7 @@ export default function RoomDetailScreen() {
         calUnit, setCalUnit,
         weekValue, setWeekValue } = useDateStore();
     const {slideIsOpen, setSlideIsOpen} = useReserSlideConStore();
+    const { createRoom } = useChatStore();
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -197,6 +200,14 @@ export default function RoomDetailScreen() {
         });
     };
 
+    const createChatRoom = () => {
+        console.log('룸:', Number(roomId), '호스트:', room?.host_id);
+        if (room?.host_id) {
+            createRoom(Number(roomId), room.host_id);
+        }
+        navigate('/chat');
+    };
+
     return (
         <div className="mt-8 relative overflow-visible">
             {room ? (
@@ -243,7 +254,6 @@ export default function RoomDetailScreen() {
                                                          className="flex flex-col items-center text-center m-2">
                                                         <FontAwesomeIcon icon={facilityIcons[key]}
                                                                          className="text-gray-500 text-xl"/>
-                                                        {/*<div className="">{key}</div>*/}
                                                     </div>
                                                 ))}
                                     </div>
@@ -274,13 +284,22 @@ export default function RoomDetailScreen() {
                                         <NaverMapRoom room={room}/>
                                     </div>
                                 </div>
-                                <div className="my-2">
+                                <div className="p-2 border-[1px] border-gray-300 rounded my-2 mb-5">
+                                    <div className="w-full flex justify-between">
+                                        <div className="flex w-full">
+                                            <div className="flex_center w-20 h-20 m-4 bg-roomi rounded-full">
+                                                <FontAwesomeIcon icon={faUser} className="text-white text-3xl"/>
+                                            </div>
+                                            <div className="flex flex-col justify-center h-20 m-4">{room.host_id}</div>
+                                        </div>
+                                        <div className="flex_center w-32 m-4">
+                                            <button type="button" className="border border-gray-300 rounded p-2 px-3 text-sm" 
+                                                    onClick={createChatRoom}>
+                                                채팅하기
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="my-2">
-                                </div>
-                                <div className="my-2">
-                                </div>
-                                <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
                             </div>
                         </div>
 

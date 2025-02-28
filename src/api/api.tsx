@@ -1,6 +1,7 @@
 // api.tsx
 import i18n from "src/i18n";
 import {Schedules} from "../types/rooms";
+import {User} from "../types/user";
 
 const BASE_URL = 'https://roomi.co.kr/api';
 
@@ -19,9 +20,9 @@ const getAuthToken = () => {
 * 공용 request 메소드 매개 변수
 * 1. url 패턴
 * 2. 로그인 확인
-* 3. 언어 감지 확인
-* 4. 데이터 전송 방식
-* 5. 데이터
+* 3. 데이터 전송 방식
+* 4. 데이터
+* 5. 언어 감지 확인
 * */
 const request = async (endpoint: string, requireAuth: boolean = true, method: string = 'GET', data?: any, requireLocale: boolean = false) => {
     try {
@@ -111,6 +112,11 @@ export const logout = async () => {
     }
 };
 
+// 회원가입 API
+export const createUser = async (formData: User) => {
+    return request(`/users/signUp`, false, 'POST', formData);
+};
+
 // 방 조회 API
 export const fetchRoomData = async (id: number, locale: string) => {
     return request(`/rooms/${id}`, false, 'GET', undefined, true);
@@ -155,3 +161,20 @@ export const unblockDate = async (id: number, date: string) => {
         'date': date,
     });
 };
+
+// 메일-인증 메일 전송 API
+export const sendVerificationEmail = async (email: string, code: string) => {
+    console.log('api.tsx에서 받은 변수 :', email, code);
+    return request(`/email`, false, 'POST', {
+        'recipient': email,
+        'code': code,
+    });
+};
+
+// 메일-인증 번호 확인 API
+export const getValidationCode = async (email: string) => {
+    return request(`/email`, false, 'PUT', {
+        'recipient': email,
+    });
+};
+

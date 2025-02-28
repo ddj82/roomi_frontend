@@ -27,6 +27,7 @@ interface ChatStore {
     disconnect: () => void;
     sendMessage: (chatRoomId: string, content: string) => void;
     getRoomMessages: (chatRoomId: string) => Message[];  // ✅ 특정 채팅방 메시지 가져오기
+    createRoom: (roomId: number, hostId: number) => void;
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
@@ -67,7 +68,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
         // ✅ 서버에서 초기 데이터를 받아와 Zustand 상태에 저장
         socket.on("initial_data", (data) => {
-            console.log("📥 서버에서 받은 초기 데이터:", data);
+            // console.log("📥 서버에서 받은 초기 데이터:", data);
+            console.log("📥 서버에서 받은 초기 데이터 저장");
             if (data.rooms) {
                 set({ rooms: data.rooms });
             }
@@ -94,6 +96,14 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
                 return { rooms: updatedRooms };
             });
+        });
+
+        socket.on("new_room", (room) => {
+            console.log("🆕 새 채팅방 생성됨:", room);
+
+            set((state) => ({
+                rooms: [...state.rooms, room],
+            }));
         });
 
         set({ socket });
@@ -142,6 +152,16 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
                 return { rooms: updatedRooms };
             });
+        } else {
+            console.warn("⚠️ WebSocket 연결이 안 되어 있음");
+        }
+    },
+
+    createRoom: (roomId, hostId) => {
+        const socket = get().socket;
+        if (socket && socket.connected) {
+            socket.emit("create_room", { roomId, hostId });
+            console.log("🏠 채팅방 생성 요청:", { roomId, hostId });
         } else {
             console.warn("⚠️ WebSocket 연결이 안 되어 있음");
         }

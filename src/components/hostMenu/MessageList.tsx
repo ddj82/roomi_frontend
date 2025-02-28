@@ -1,21 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {useTranslation} from "react-i18next";
 import {useChatStore} from "../stores/ChatStore";
 import Message from "./MessageList/Message";
 import dayjs from "dayjs";
-
-interface ChatRoom {
-    id: string;
-    title: string;
-    lastMessage: string;
-    timestamp: string;
-    unreadCount: number;
-}
+import {ChatRoom} from "../../types/chat";
 
 export default function MessageList() {
-    // const { t } = useTranslation();
-    // const [activeTab, setActiveTab] = useState("전체");
-    // const tabs = ["전체", "안읽은 메시지"] as const;
     const { rooms, connect } = useChatStore();
     const [selectedChatRoomId, setSelectedChatRoomId] = useState<string | null>(null); // ✅ 선택한 채팅방
     const [selectedChatRoom, setSelectedChatRoom] = useState<ChatRoom | null>(null);
@@ -47,7 +36,7 @@ export default function MessageList() {
     return (
         <div className="flex h-full">
             {(!isMobile || !selectedChatRoomId) && (
-                <div className="border border-gray-300 overflow-y-auto w-full md:w-2/5">
+                <div className="flex flex-col border border-gray-300 overflow-y-auto w-full md:w-2/5 scrollbar-hidden">
                     <div className="m-2 border border-gray-300">
                         <input type="search" className="w-full focus:outline-none p-1"/>
                     </div>

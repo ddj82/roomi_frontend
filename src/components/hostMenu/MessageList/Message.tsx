@@ -3,6 +3,7 @@ import { useChatStore } from "src/components/stores/ChatStore";
 import dayjs from 'dayjs';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPaperPlane, faXmark} from "@fortawesome/free-solid-svg-icons";
+import {ChatRoom, Messages} from "../../../types/chat";
 
 interface MessageProps {
     chatRoom: ChatRoom;
@@ -10,35 +11,18 @@ interface MessageProps {
     onBack: () => void;
 }
 
-interface Message {
-    id: string;
-    content: string;
-    chatRoomId: string;
-    createdAt: string;
-    senderId: number | string;
-    isRead: boolean;
-}
-
-interface ChatRoom {
-    id: string;
-    title: string;
-    lastMessage: string;
-    timestamp: string;
-    unreadCount: number;
-}
-
 export default function Message({ chatRoom, chatRoomId, onBack }: MessageProps) {
     const { getRoomMessages, sendMessage } = useChatStore();
-    const messages: Message[] = getRoomMessages(chatRoomId);
+    const messages: Messages[] = getRoomMessages(chatRoomId);
     const [input, setInput] = useState("");
     const myUserId = localStorage.getItem('userId');
     const chatContainerRef = useRef<HTMLDivElement>(null); // ✅ 스크롤 최하단 이동용 ref
 
     // ✅ 날짜별로 메시지 그룹화 & 오름차순 정렬
-    const groupMessagesByDate = (messages: Message[]): Record<string, Message[]> => {
+    const groupMessagesByDate = (messages: Messages[]): Record<string, Messages[]> => {
         return messages
             .sort((a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix()) // ✅ 오름차순 정렬
-            .reduce<Record<string, Message[]>>((acc, msg) => {
+            .reduce<Record<string, Messages[]>>((acc, msg) => {
                 const dateKey = dayjs(msg.createdAt).format("YYYY-MM-DD"); // ✅ YYYY-MM-DD 형식 변환
                 if (!acc[dateKey]) {
                     acc[dateKey] = [];
@@ -49,7 +33,7 @@ export default function Message({ chatRoom, chatRoomId, onBack }: MessageProps) 
     };
 
     // ✅ 날짜별로 그룹화된 메시지
-    const groupedMessages: Record<string, Message[]> = groupMessagesByDate(messages);
+    const groupedMessages: Record<string, Messages[]> = groupMessagesByDate(messages);
 
     // ✅ 스크롤을 최하단으로 이동하는 함수
     const scrollToBottom = () => {

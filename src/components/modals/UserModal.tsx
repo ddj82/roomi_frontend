@@ -40,7 +40,8 @@ export const UserModal = ({ visible, onClose }: UserModalProps) => {
 
     const handleMessage = () => {
         console.log("메시지 메뉴");
-        console.log("ishost값 :", isHost);
+        navigate('/chat');
+        onClose();
     };
 
     const handleFavorite = () => {

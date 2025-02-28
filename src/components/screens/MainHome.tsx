@@ -46,7 +46,6 @@ export default function MainHome() {
         <div className="mainHome main-container">
             {/* 상단 필터바 */}
             <FilterBar/>
-            <MailTest/>
             <div className={`mainHome content-wrapper ${homeVisible ? 'show-map' : 'show-list'}`}>
                 <div className="mainHome map-container">
                     <NaverMap onRoomsUpdate={handleRoomsUpdate}/>

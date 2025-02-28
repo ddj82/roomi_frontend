@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {useTranslation} from "react-i18next";
+import {createUser, getValidationCode, sendVerificationEmail} from "../../api/api";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import {User} from "../../types/user";
+import {useSignUpChannelStore} from "../stores/SignUpChannelStore";
+import {response} from "express";
+dayjs.extend(duration);
 
 const UserJoinScreen = () => {
     const navigate = useNavigate();
@@ -19,6 +26,7 @@ const UserJoinScreen = () => {
         phone: "",
         checkboxes: [false, false, false],
     });
+    const {signUpChannel} = useSignUpChannelStore()
     const handleBack = () => setShowModal(true);
     const confirmBack = () => navigate('/');
     const requiredChecked = formData.checkboxes[0] && formData.checkboxes[1];
@@ -27,9 +35,92 @@ const UserJoinScreen = () => {
         { label: t("약관동의동의"), required: true },
         { label: t("마케팅수신동의동의"), required: false },
     ];
+    const [remainingTime, setRemainingTime] = useState(0); // 남은 시간 (초)
+    const [isRunning, setIsRunning] = useState(false); // 타이머 실행 여부
+    const [sendSeccess, setSendSeccess] = useState(false); // 메일 전송 성공 여부
+    const [inputAuthCode, setInputAuthCode] = useState(''); // 입력받은 인증코드
+    const [isResendDisabled, setIsResendDisabled] = useState(false); // 재발송 버튼 비활성화 상태 추가
+    const [isVerified, setIsVerified] = useState(false); // ✅ 인증 성공 여부 추가
     // 오류 메시지 상태 추가
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+    // 타이머 시작, 재발송 버튼 비활성화, 30초 후 재발송 활성화
+    const startTimer = () => {
+        setRemainingTime(300); // 5분(300초)
+        setIsRunning(true);
+        setIsResendDisabled(true);
+        setTimeout(() => setIsResendDisabled(false), 30000);
+    };
+
+    useEffect(() => { // 타이머 카운트 다운
+        if (!isRunning || remainingTime <= 0) return;
+        const timer = setInterval(() => {
+            setRemainingTime((prev) => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [isRunning, remainingTime]);
+
+    useEffect(() => { // 타이머가 끝나면 상태 초기화
+        if (remainingTime <= 0 && isRunning) {
+            setSendSeccess(false);
+            setInputAuthCode("");
+            setIsRunning(false);
+        }
+    }, [remainingTime, isRunning]);
+
+    // 인증 메일 전송
+    const handleSendEmail = async () => {
+        const newErrors: { [key: string]: string } = {}; // 새로운 오류 객체
+
+        if (!formData.email.trim()) {
+            newErrors.email = "이메일을 입력하세요.";
+        } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+            newErrors.email = "올바른 이메일 형식을 입력하세요.";
+        } else {
+            setErrors({}); // 메일 오류 객체 삭제
+            const code = String(Math.floor(100000 + Math.random() * 900000));
+            try {
+                const response = await sendVerificationEmail(formData.email, code);
+                const data = await response.json();
+                console.log("발송 값 :", data);
+
+                if (data.success) {
+                    setSendSeccess(true);
+                    startTimer();
+                } else {
+                    console.error("API 호출 중 에러 발생");
+                }
+            } catch (e) {
+                console.error("API 호출 중 에러 발생:", e);
+            }
+        }
+
+        // 오류가 있으면 상태 업데이트 후 진행 중지
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+        }
+    };
+
+    // 인증 번호 확인
+    const handleVerification = async () => {
+        try {
+            const response = await getValidationCode(formData.email);
+            const data = await response.json()
+            const authCode = data.code;
+            if (authCode === inputAuthCode) {
+                alert('인증 성공');
+                setIsVerified(true); // ✅ 인증 성공 처리
+                setIsRunning(false); // 타이머 정지
+                setSendSeccess(false); // 인증 완료 후 재발송 버튼 숨김
+                setErrors({}); // 오류 객체 삭제
+            } else {
+                alert('인증 실패');
+            }
+        } catch (e) {
+            console.error('API 호출 중 에러 발생:', e);
+        }
+    };
 
     const handleNext = () => {
         const newErrors: { [key: string]: string } = {}; // 새로운 오류 객체
@@ -40,6 +131,8 @@ const UserJoinScreen = () => {
                 newErrors.email = "이메일을 입력하세요.";
             } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
                 newErrors.email = "올바른 이메일 형식을 입력하세요.";
+            } else if (!isVerified) {
+                newErrors.email = "이메일 인증을 해주세요.";
             }
 
             // 비밀번호 유효성 검사
@@ -104,6 +197,26 @@ const UserJoinScreen = () => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        const userSingUp: User = {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            channel: signUpChannel,
+            // nationality?: ,
+            sex: formData.gender,
+            birth: formData.birth,
+        };
+        try {
+            const response = await createUser(userSingUp);
+            console.log('리스폰스 :', response);
+            if (response.ok) {
+                console.log('회원가입 성공');
+                alert('축하합니다! 회원가입이 완료 되었습니다!');
+                confirmBack();
+            }
+        } catch (error) {
+            console.error('회원 가입 실패:', error);
+        }
     };
 
     return (
@@ -141,10 +254,43 @@ const UserJoinScreen = () => {
                             <div className="flex w-full">
                                 <input id="email" type="email" placeholder={t("이메일")} value={formData.email}
                                        onChange={(e) => handleChange("email", e.target.value)}
-                                       className="border p-2 w-full"/>
-                                <button type="button" className="border border-roomi text-roomi rounded p-2 ml-4 w-[30%]">인증번호 발송</button>
+                                       className="border p-2 w-full"
+                                       disabled={isVerified} // ✅ 인증 완료 시 이메일 수정 불가능
+                                />
+                                {!sendSeccess ? (
+                                    <button type="button"
+                                            className="border border-roomi text-roomi rounded p-2 ml-4 w-[30%]"
+                                            onClick={handleSendEmail}
+                                            disabled={isVerified} // ✅ 인증 완료 시 발송 버튼 숨김
+                                    >
+                                        인증번호 발송
+                                    </button>
+                                ) : (
+                                    <button type="button"
+                                            className={`border border-roomi text-roomi rounded p-2 ml-4 w-[30%] 
+                                                        ${isResendDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                                            onClick={handleSendEmail}
+                                            disabled={isResendDisabled || isVerified} // ✅ 인증 성공 시 재발송 불가능
+                                    >
+                                        재발송
+                                    </button>
+                                )}
                             </div>
                             {errors.email && <p className="font-bold text-red-500 text-sm">{errors.email}</p>}
+                            <div>
+                                {sendSeccess && (
+                                    <div>
+                                        <div>
+                                            <input id="code" type="text" placeholder="인증번호 입력" className="border p-1"
+                                                   value={inputAuthCode}
+                                                   onChange={(e) => setInputAuthCode(e.target.value)}/>
+                                            <button type="button" className="border border-roomi text-roomi rounded p-1 ml-2"
+                                                    onClick={handleVerification}>확인</button>
+                                            <span className="text-red-500 p-2">{dayjs.duration(remainingTime, "seconds").format("mm:ss")}</span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
 
                             <label htmlFor="password">{t("비밀번호")}</label>
                             <input id="password" type="password" placeholder={t("비밀번호")} value={formData.password}
@@ -172,6 +318,8 @@ const UserJoinScreen = () => {
                             <input id="birth" type="date" value={formData.birth}
                                    onChange={(e) => handleChange("birth", e.target.value)}
                                    onFocus={(e) => e.target.showPicker?.()}
+                                   min="1900-01-01"
+                                   max={new Date().toISOString().split("T")[0]} // 현재 날짜까지 입력 가능
                                    className="border p-2 w-full"/>
                             {errors.birth && <p className="font-bold text-red-500 text-sm">{errors.birth}</p>}
 
