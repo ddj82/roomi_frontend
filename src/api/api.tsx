@@ -180,3 +180,13 @@ export const getValidationCode = async (email: string) => {
     });
 };
 
+// 찜 추가 API
+export const addFavoriteRoom = async (roomId: number) => {
+    console.log('찜 추가 API');
+    return request(`/rooms/favorite/${roomId}`, true, 'POST');
+};
+// 찜 제거 API
+export const deleteFavoriteRoom = async (roomId: number) => {
+    console.log('찜 제거 API');
+    return request(`/rooms/favorite/${roomId}`, true, 'DELETE');
+};

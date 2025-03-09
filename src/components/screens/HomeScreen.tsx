@@ -18,7 +18,7 @@ const AccommodationCard = memo(
         return (
             <div className="homeScreen card" onClick={onClick}>
                 <div className="homeScreen card-header">
-                    <WishlistButton />
+                    <WishlistButton roomId={item.id}/>
                     {item.detail_urls && item.detail_urls.length > 0 ? (
                         <ImgCarousel images={item.detail_urls}
                                      customClass="h-64 md:h-72"/>
