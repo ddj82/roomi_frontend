@@ -54,7 +54,7 @@
                     currency: params.currency,
                     amount: params.amount,
                     lang: "KR",
-                    //display_type: "DOMESTIC"  // 모든 결제수단 표시
+                    payment_method: "P115"
                 },
                 merchant: {
                     mid: params.mid
@@ -64,8 +64,8 @@
                     email: "test@example.com"
                 },
                 url: {
-                    return_url: "roomiApp://success",
-                    status_url: "roomiApp://status"
+                    return_url: "com.myno1214.roomi://success",
+                    status_url: "com.myno1214.roomi://status"
                 },
                 product: [{
                     name: productData.name,
@@ -74,6 +74,7 @@
                     link: productData.link
                 }],
                 settings: {
+                    call_from_app : 'Y',
                     display_type: 'R',  // 모든 결제수단 표시 설정
                     issuer_country: settings.issuer_country,
                     ostype : 'M'
@@ -123,7 +124,7 @@
                     currency: params.currency,
                     amount: params.amount,
                     lang: "KR",
-                    //display_type: "DOMESTIC"  // 모든 결제수단 표시
+                    payment_method: "P115"  // 현대카드
                 },
                 merchant: {
                     mid: params.mid
@@ -133,8 +134,8 @@
                     email: "test@example.com"
                 },
                 url: {
-                    return_url: "roomiApp://success",
-                    status_url: "roomiApp://status"
+                    return_url: "com.myno1214.roomi://success",
+                    status_url: "com.myno1214.roomi://status"
                 },
                 product: [{
                     name: productData.name,
@@ -143,6 +144,7 @@
                     link: productData.link
                 }],
                 settings: {
+                    call_from_app : 'Y',
                     display_type: 'R',  // 모든 결제수단 표시 설정
                     issuer_country: settings.issuer_country,
                     ostype : 'M'
