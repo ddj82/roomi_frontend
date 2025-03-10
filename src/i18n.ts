@@ -9,12 +9,12 @@ i18n
     .use(LanguageDetector) // 언어 감지
     .use(initReactI18next) // React와 통합
     .init({
-        fallbackLng: 'en', // 기본 언어
-        supportedLngs: ['en', 'ko', 'en-US'], // 지원하는 언어
+        fallbackLng: 'ko', // 기본 언어
+        supportedLngs: ['ko', 'en', 'en-US'], // 지원하는 언어
         resources: {
+            ko: { translation: ko },
             en: { translation: en },
             'en-US': { translation: en },
-            ko: { translation: ko },
         },
         detection: {
             order: ['navigator', 'querystring', 'cookie', 'localStorage', 'htmlTag'],

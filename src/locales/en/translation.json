@@ -29,8 +29,9 @@
   "no_message" : "No message",
   "enter_message" : "Enter message",
   "year_symbol" : "-",
-  "month_symbol" : "-",
-  "day_symbol" : "",
+  "month_symbol" : "Month",
+  "week_symbol" : "Week",
+  "day_symbol" : "Day",
   "deposit" : "deposit",
   "service_charge" : "service charge",
   "cleaning_fee" : "cleaning fee",
@@ -133,5 +134,10 @@
   "room_status": "Room Status",
   "settlement": "Settlement",
   "room_status_set": "Status",
-  "room_config": "Config"
+  "room_config": "Config",
+  "병원 근처": "Hospital",
+  "자동 탐색": "Auto Search",
+  "공항 근처": "Airport",
+  "대학교 근처": "University",
+  "역세권": "Station"
 }

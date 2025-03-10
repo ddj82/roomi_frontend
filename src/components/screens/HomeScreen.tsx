@@ -6,14 +6,17 @@ import WishlistButton from "src/components/modals/WishlistButton";
 import i18n from "src/i18n";
 import NaverMap from "../map/NaverMap";
 import ImgCarousel from "src/components/modals/ImgCarousel";
+import {useTranslation} from "react-i18next";
 
 // Accommodation Card Component
 const AccommodationCard = memo(
     ({ item, onClick }: { item: RoomData; onClick: () => void }) => {
         const formatPrice = useCallback((price: number | null) => {
             if (!price) return '가격 정보 없음';
-            return `${price.toLocaleString()}원`;
+            return `${price.toLocaleString()}${t('원')}`;
         }, []);
+
+        const {t} = useTranslation();
 
         return (
             <div className="homeScreen card" onClick={onClick}>
@@ -32,14 +35,11 @@ const AccommodationCard = memo(
                 </div>
                 <div className="homeScreen card-content">
                     <div className="homeScreen price-container">
-                        {item.hour_enabled && item.hour_price && (
-                            <p className="homeScreen price">{formatPrice(item.hour_price)} / 시간</p>
-                        )}
                         {item.day_enabled && item.day_price && (
-                            <p className="homeScreen price">{formatPrice(item.day_price)} / 일</p>
+                            <p className="homeScreen price">{formatPrice(item.day_price)} / {t('day_unit')}</p>
                         )}
                         {item.week_enabled && item.week_price && (
-                            <p className="homeScreen price">{formatPrice(item.week_price)} / 주</p>
+                            <p className="homeScreen price">{formatPrice(item.week_price)} / {t('week_unit')}</p>
                         )}
                     </div>
                     <h3 className="homeScreen title">{item.title || '제목 없음'}</h3>
@@ -60,6 +60,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
     const navigate = useNavigate();
     const [rooms, setRooms] = useState<RoomData[]>([]);
     const [loading, setLoading] = useState(true);
+    const {t} = useTranslation();
 
     const handleRoomsUpdate = useCallback((newRooms: RoomData[]) => {
         console.log('Rooms updated:', newRooms);

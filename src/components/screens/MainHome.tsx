@@ -6,11 +6,13 @@ import HomeScreen from "src/components/screens/HomeScreen";
 import NaverMap from "src/components/map/NaverMap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowUp} from "@fortawesome/free-solid-svg-icons";
+import {useTranslation} from "react-i18next";
 
 export default function MainHome() {
     const [homeVisible, setHomeVisible] = useState(false);
     const [rooms, setRooms] = useState<RoomData[]>([]);
     const [showTopButton, setShowTopButton] = useState(false);
+    const {t} = useTranslation();
 
     const handleRoomsUpdate = useCallback((newRooms: RoomData[]) => {
         console.log('Rooms updated in App:', newRooms);
@@ -59,7 +61,7 @@ export default function MainHome() {
             <button className="mainHome toggle-button text-base bg-roomi"
                     style={{ position: 'fixed', bottom: bottomValue }}
                     onClick={toggleView}>
-                {homeVisible ? '목록 보기' : '지도 보기'}
+                {homeVisible ? t('목록보기') : t('지도보기')}
             </button>
             {showTopButton && (
                 <button onClick={scrollToTop}

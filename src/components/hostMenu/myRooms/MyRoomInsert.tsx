@@ -6,8 +6,12 @@ import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 const MyRoomInsert = () => {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false); // 모달 상태
-    const [currentStep, setCurrentStep] = useState(1); // 현재 단계 (1~14)
-    const totalSteps = 14; // 전체 단계 수
+    const [currentStep, setCurrentStep] = useState(1); // 현재 단계 (1~16)
+    const totalSteps = 15; // 전체 단계 수
+    // 오류 메시지 상태 추가
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [roomFormData, setRoomFormData] = useState({});
+    const [roomType, setRoomType] = useState('');
 
     const handleBack = () => {
         setShowModal(true); // 모달 열기
@@ -19,6 +23,7 @@ const MyRoomInsert = () => {
     };
 
     const handleNext = () => {
+        // 유효성 검사 errors 이용
         if (currentStep < totalSteps) {
             setCurrentStep(prev => prev + 1);
         }
@@ -28,6 +33,10 @@ const MyRoomInsert = () => {
         if (currentStep > 1) {
             setCurrentStep(prev => prev - 1);
         }
+    };
+
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
     };
 
     return (
@@ -57,39 +66,47 @@ const MyRoomInsert = () => {
                 </div>
             </div>
 
-            {/* 페이지 컨텐츠 */}
-            <div className="mb-6 p-4 border rounded-md">
-                <div className="text-xl font-bold">{currentStep}번 폼</div>
-            </div>
+            <form onSubmit={handleSubmit}>
+                {/* 페이지 컨텐츠 */}
+                <div className="mb-6 p-4 border rounded-md">
+                    {currentStep === 1 && (
+                        <>
+                            {/* 단기임대 */}
+                            <label htmlFor="LEASE"
+                                className={`px-4 py-2 border-2 rounded-lg cursor-pointer transition 
+                                ${roomType === "LEASE" ? 
+                                    "bg-gray-900 text-white border-gray-900" : "border-gray-500 text-gray-700 hover:bg-gray-100"}`}>
+                                단기임대
+                            </label>
+                            <input type="radio" name="roomType" id="LEASE" value="LEASE" checked={roomType === "LEASE"}
+                                   onChange={() => setRoomType("LEASE")} className="hidden"/>
 
-            {/* 이전/다음 버튼 */}
-            <div className="flex justify-between">
-                {currentStep > 1 ? (
-                    <button
-                        className="px-4 py-2 rounded-md text-roomi"
-                        onClick={handlePrev}
-                    >
-                        이전
-                    </button>
-                ) : (
-                    <div></div>
-                )}
-                {currentStep === totalSteps ? (
-                    <button
-                        className={`px-4 py-2 bg-roomi text-white rounded-md`}
-                        onClick={handleNext}
-                    >
-                        등록
-                    </button>
-                ) : (
-                    <button
-                        className={`px-4 py-2 bg-roomi text-white rounded-md`}
-                        onClick={handleNext}
-                    >
-                        다음
-                    </button>
-                )}
-            </div>
+                            {/* 숙박업소 */}
+                            <label htmlFor="LODGE" className={`px-4 py-2 border-2 rounded-lg cursor-pointer transition 
+                                   ${roomType === "LODGE" ? 
+                                "bg-gray-900 text-white border-gray-900" : "border-gray-500 text-gray-700 hover:bg-gray-100"}`}>
+                                숙박업소
+                            </label>
+                            <input type="radio" name="roomType" id="LODGE" value="LODGE" checked={roomType === "LODGE"}
+                                   onChange={() => setRoomType("LODGE")} className="hidden"/>
+                        </>
+                    )}
+                </div>
+
+                {/* 이전/다음 버튼 */}
+                <div className="flex justify-between">
+                    {currentStep > 1 ? (
+                        <button className="px-4 py-2 rounded-md text-roomi" onClick={handlePrev}>이전</button>
+                    ) : (
+                        <div></div>
+                    )}
+                    {currentStep === totalSteps ? (
+                        <button className={`px-4 py-2 bg-roomi text-white rounded-md`} type="submit">등록</button>
+                    ) : (
+                        <button className={`px-4 py-2 bg-roomi text-white rounded-md`} onClick={handleNext}>다음</button>
+                    )}
+                </div>
+            </form>
 
             {/* 모달 */}
             {showModal && (

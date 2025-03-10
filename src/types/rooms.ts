@@ -36,6 +36,11 @@ export interface UnavailableDates {
     operation_hours: RoomOperationHour[];
 }
 
+export interface Host {
+    name?: string;
+    profile_image?: string;
+}
+
 export interface RoomData {
     id: number;
     title: string;
@@ -80,6 +85,8 @@ export interface RoomData {
     deposit?: number;
     deposit_week?: number;
     cleaning_time: number;
+    breakfast_service: string;
+    checkin_service: string;
 
     // 상세 정보
     description?: string;
@@ -113,6 +120,7 @@ export interface RoomData {
     unavailable_dates: UnavailableDates;
     discounts?: any[];
     reviews?: any[];
+    host: Host;
 }
 
 export interface Schedules {

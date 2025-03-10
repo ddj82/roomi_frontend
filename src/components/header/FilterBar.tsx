@@ -3,9 +3,11 @@ import 'src/css/FilterBar.css'; // CSS 파일을 import
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight, faCalendarDay, faCalendarWeek, faCalendarAlt, faHospital, faLocationArrow, faPlane, faUniversity, faTrain } from '@fortawesome/free-solid-svg-icons';
+import {useTranslation} from "react-i18next";
 
 const FilterBar: React.FC = () => {
     const scrollRef = useRef<HTMLDivElement>(null);
+    const {t} = useTranslation();
 
     // 필터 버튼 렌더링 함수
     const renderFilterButton = (label: string, iconName: any) => (
@@ -13,9 +15,7 @@ const FilterBar: React.FC = () => {
         text-xs rounded-2xl px-4 py-2
         " key={label}>
             <FontAwesomeIcon className="text-roomi" icon={iconName} />
-            <span className="
-            ml-1 text-gray-500
-            ">{label}</span>
+            <span className="ml-1 text-gray-500">{label}</span>
         </div>
     );
 
@@ -65,14 +65,14 @@ const FilterBar: React.FC = () => {
 
     // 필터 버튼 데이터
     const filters = [
-        { label: '일', icon: faCalendarDay },
-        { label: '주', icon: faCalendarWeek },
-        { label: '월', icon: faCalendarAlt },  // 수정된 부분
-        { label: '병원 근처', icon: faHospital },
-        { label: '자동 탐색', icon: faLocationArrow },
-        { label: '공항 근처', icon: faPlane },
-        { label: '대학교 근처', icon: faUniversity },
-        { label: '역세권1', icon: faTrain },
+        { label: t('day_symbol'), icon: faCalendarDay },
+        { label: t('week_symbol'), icon: faCalendarWeek },
+        { label: t('month_symbol'), icon: faCalendarAlt },  // 수정된 부분
+        { label: t('병원 근처'), icon: faHospital },
+        { label: t('자동 탐색'), icon: faLocationArrow },
+        { label: t('공항 근처'), icon: faPlane },
+        { label: t('대학교 근처'), icon: faUniversity },
+        { label: t('역세권'), icon: faTrain },
         { label: '역세권2', icon: faTrain },
         { label: '역세권3', icon: faTrain },
         { label: '역세권4', icon: faTrain },

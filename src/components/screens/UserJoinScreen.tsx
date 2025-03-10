@@ -8,7 +8,6 @@ import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import {User} from "../../types/user";
 import {useSignUpChannelStore} from "../stores/SignUpChannelStore";
-import {response} from "express";
 dayjs.extend(duration);
 
 const UserJoinScreen = () => {
@@ -389,11 +388,11 @@ const UserJoinScreen = () => {
                         회원가입을 종료하시겠습니까?
                         </div>
                         <div className="flex justify-end">
-                            <button className="px-4 py-2 bg-gray-400 text-white rounded-md" onClick={confirmBack}>
-                                예
-                            </button>
-                            <button className="px-4 py-2 bg-roomi text-white rounded-md" onClick={() => setShowModal(false)}>
+                            <button className="px-4 py-2 bg-gray-400 text-white rounded-md" onClick={() => setShowModal(false)}>
                                 {t("취소")}
+                            </button>
+                            <button className="px-4 py-2 bg-roomi text-white rounded-md" onClick={confirmBack}>
+                                예
                             </button>
                         </div>
                     </div>

@@ -30,6 +30,7 @@
   "enter_message" : "메시지를 입력하세요...",
   "year_symbol" : "년",
   "month_symbol" : "월",
+  "week_symbol" : "주",
   "day_symbol" : "일",
   "deposit" : "보증금",
   "service_charge" : "관리비",
@@ -133,5 +134,10 @@
   "room_status": "방 현황",
   "settlement": "정산",
   "room_status_set": "방 상황",
-  "room_config": "방 설정"
+  "room_config": "방 설정",
+  "병원 근처": "병원 근처",
+  "자동 탐색": "자동 탐색",
+  "공항 근처": "공항 근처",
+  "대학교 근처": "대학교 근처",
+  "역세권": "역세권"
 }

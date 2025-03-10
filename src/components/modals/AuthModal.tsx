@@ -7,6 +7,7 @@ import 'src/css/AuthModal.css'; // CSS 파일 import
 import { useIsHostStore } from "src/components/stores/IsHostStore";
 import {useChatStore} from "../stores/ChatStore";
 import {useNavigate} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () => void; type: 'login' | 'signup' }) => {
     const [email, setEmail] = useState('');
@@ -16,6 +17,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
     const { setIsHost } = useIsHostStore();
     const connect = useChatStore((state) => state.connect);
     const navigate = useNavigate();
+    const {t} = useTranslation();
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -112,45 +114,36 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
             overlayClassName="authModal overlay" // 오버레이 스타일
         >
             <div className="authModal modal-content">
-                <div className="text-lg font-bold mb-4">{type === 'login' ? '로그인' : '회원가입'}</div>
+                <div className="text-lg font-bold mb-4">{t('로그인').toUpperCase()}</div>
                 <form onSubmit={handleSubmit} className="authModal input-container">
                     <div className="authModal input-container">
                         <input
                             type="text"
-                            placeholder="이메일"
+                            placeholder={t('이메일')}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="authInput mb-2 h-10 pl-2 text-base"
                         />
                         <input
                             type="password"
-                            placeholder="비밀번호"
+                            placeholder={t('비밀번호')}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="authInput mb-2 h-10 pl-2 text-base"
                         />
-                        {type === 'signup' && (
-                            <input
-                                type="password"
-                                placeholder="비밀번호 확인"
-                                value={passwordConfirm}
-                                onChange={(e) => setPasswordConfirm(e.target.value)}
-                                className="authInput mb-2 h-10 pl-2 text-base"
-                            />
-                        )}
                     </div>
 
                     <div className="authModal button-container">
                         <button type="submit" className="authModal submit-button">
-                            {type === 'login' ? '로그인' : '회원가입'}
+                            {t('로그인')}
                         </button>
-                        <button type="button" className="authModal cancel-button" onClick={onClose}>취소</button>
+                        <button type="button" className="authModal cancel-button" onClick={onClose}>{t('취소')}</button>
                     </div>
                 </form>
 
                 {type === 'login' && (
                     <div className="authModal social-login-container">
-                        <h4>소셜 로그인</h4>
+                        <h4>{t('소셜로그인')}</h4>
                         <div className="authModal social-buttons">
                             {['Kakao', 'Line', '3','4','5','6'].map((channel) => (
                                 <button
@@ -168,9 +161,9 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
 
                 {type === 'login' && (
                     <div className="flex_center">
-                        <div className="text-sm">계정이 없으신가요?</div>
+                        <div className="text-sm">{t('계정이없으신가요')}</div>
                         <button onClick={handleJoin}>
-                            <span className="text-sm text-roomi ml-1">회원가입</span>
+                            <span className="text-sm text-roomi ml-1">{t('시작하기')}</span>
                         </button>
                     </div>
                 )}
