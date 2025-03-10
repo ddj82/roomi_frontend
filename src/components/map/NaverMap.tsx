@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { ApiResponse, RoomData } from "src/types/rooms";
+import i18n from "../../i18n";
 
 // naver.maps 타입을 명시적으로 선언
 declare global {
@@ -37,10 +38,11 @@ const NaverMap = ({ onRoomsUpdate }: NaverMapViewProps) => {
         const bounds = map.getBounds(); // 네이버 지도에서는 getBounds() 사용
         const sw = bounds.getSW(); // 남서쪽 좌표
         const ne = bounds.getNE(); // 북동쪽 좌표
+        const currentLocale = i18n.language; // 현재 언어 감지
 
         try {
             const response = await fetch(
-                `https://roomi.co.kr/api/rooms?swLat=${sw.y}&swLng=${sw.x}&neLat=${ne.y}&neLng=${ne.x}`
+                `https://roomi.co.kr/api/rooms?swLat=${sw.y}&swLng=${sw.x}&neLat=${ne.y}&neLng=${ne.x}&locale=${currentLocale}`
             );
 
             if (!response.ok) {
@@ -120,6 +122,7 @@ const NaverMap = ({ onRoomsUpdate }: NaverMapViewProps) => {
     useEffect(() => {
         const initMap = async () => {
             if (!window.naver || !window.naver.maps) return;
+            const locale = i18n.language; // 현재 언어 감지
 
             const mapOptions = {
                 // 강남역
@@ -142,12 +145,16 @@ const NaverMap = ({ onRoomsUpdate }: NaverMapViewProps) => {
             });
         };
 
+        // 지원하는 언어 목록
+        const supportedLanguages = ["ko", "en", "ja", "zh-CN", "zh-TW"];
+        const locale = supportedLanguages.includes(i18n.language) ? i18n.language : "en";
+
         if (window.naver && window.naver.maps) {
             initMap();
         } else {
             const script = document.createElement('script');
             script.type = 'text/javascript';
-            script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=ztg68tla5j`;
+            script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=ztg68tla5j&language=${locale}`;
             script.onload = initMap;
             document.head.appendChild(script);
         }

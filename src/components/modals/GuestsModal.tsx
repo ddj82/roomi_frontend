@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
 import '../../css/GuestsModal.css';
-import {useGuestsStore} from "../stores/GuestsStore"; // CSS 파일 import
+import {useGuestsStore} from "../stores/GuestsStore";
+import {useTranslation} from "react-i18next"; // CSS 파일 import
 
 interface GuestsModalProps {
     visible: boolean;
@@ -13,6 +14,7 @@ const GuestsModal = ({ visible, onClose, position }: GuestsModalProps) => {
     // const [children, setChildren] = useState(0);
     const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
     const {guestCount, setGuestCount} = useGuestsStore();
+    const {t} = useTranslation();
 
     useEffect(() => {
         const handleResize = () => {
@@ -64,8 +66,8 @@ const GuestsModal = ({ visible, onClose, position }: GuestsModalProps) => {
             <div className="guestsModal modal-container">
                 <div className="guestsModal guest-type-container">
                     <div>
-                        <h3 className="guestsModal guest-type-title">게스트</h3>
-                        <p className="guestsModal guest-type-subtitle">13세 이상</p>
+                        <h3 className="guestsModal guest-type-title">{t('guest')}</h3>
+                        <p className="guestsModal guest-type-subtitle">{t('adult_detail')}</p>
                     </div>
                     <div className="guestsModal counter-container">
                         <button

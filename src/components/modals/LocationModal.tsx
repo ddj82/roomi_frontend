@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
 import '../../css/LocationModal.css';
 import {useLocationStore} from "../stores/LocationStore";
+import {useTranslation} from "react-i18next";
 
 interface LocationModalProps {
     visible: boolean;
@@ -13,6 +14,7 @@ const LocationModal = ({ visible, onClose, position }: LocationModalProps) => {
     // const [searchText, setSearchText] = useState('');
     const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
     const {selectedLocation, setSelectedLocation} = useLocationStore();
+    const {t} = useTranslation();
 
     useEffect(() => {
         const handleResize = () => {
@@ -24,8 +26,9 @@ const LocationModal = ({ visible, onClose, position }: LocationModalProps) => {
     }, []);
 
     const popularLocations = [
-        '서울', '부산', '제주', '강원',
-        '경기', '인천', '대구', '대전'
+        t('seoul'), t('busan'), t('jeju'), t('gangwon'),
+        t('gyeonggi'), t('incheon'), t('daegu'), t('daejeon'),
+        t('gwangju'), t('ulsan')
     ];
 
     useEffect(() => {
@@ -63,19 +66,19 @@ const LocationModal = ({ visible, onClose, position }: LocationModalProps) => {
                     <input
                         type="text"
                         className="locationModal search-input"
-                        placeholder="어디로 여행가세요?"
+                        placeholder={t('where_text')}
                         value={selectedLocation}
                         onChange={(e) => setSelectedLocation(e.target.value)}
                     />
                 </div>
 
                 <div className="locationModal content">
-                    <h3 className="locationModal section-title">인기 여행지</h3>
+                    <h3 className="locationModal section-title">{t('hot_place')}</h3>
                     <div className="locationModal location-grid">
                         {popularLocations.map((location) => (
                             <button
                                 key={location}
-                                className="locationModal location-item"
+                                className="locationModal location-item text-sm"
                                 onClick={() => setSelectedLocation(location)}
                             >
                                 {location}

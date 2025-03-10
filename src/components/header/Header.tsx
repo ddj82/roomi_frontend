@@ -75,7 +75,7 @@ const Header = () => {
         if (startDate && endDate) {
             return `${dayjs(startDate).format('MM-DD')} ~ ${dayjs(endDate).format('MM-DD')}`;
         }
-        return '날짜 지정';
+        return t('date_select');
     };
 
     useEffect(() => {
@@ -191,7 +191,7 @@ const Header = () => {
                                                 <div className="py-2">
                                                     <button onClick={handleLogout}
                                                             className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                        로그아웃
+                                                        {t('로그아웃')}
                                                     </button>
                                                 </div>
                                             </div>
@@ -202,7 +202,7 @@ const Header = () => {
                                 <button
                                     className="p-2 bg-roomi hover:bg-roomi-4 text-white text-xs md:text-sm rounded-md"
                                     onClick={() => setAuthModalVisible(true)}>
-                                    로그인
+                                    {t('로그인')}
                                 </button>
                             )}
                         </div>
@@ -226,7 +226,7 @@ const Header = () => {
                             <button ref={locationRef} className="h search-item"
                                     onClick={() => openModal('location', locationRef)}>
                                 <FontAwesomeIcon icon={faLocationDot} className="text-roomi md:text-base lg:text-lg"/>
-                                <span className="ml-2 text-gray-500">{selectedLocation || '위치 검색'}</span>
+                                <span className="ml-2 text-gray-500">{selectedLocation || t('location_select')}</span>
                             </button>
 
                             <div className="flex items-center">
@@ -237,7 +237,7 @@ const Header = () => {
                                     onClick={() => openModal('guests', guestsRef)}>
                                 <FontAwesomeIcon icon={faUserPlus} className="text-roomi md:text-base lg:text-lg"/>
                                 <span className="ml-2 text-gray-500">
-                                    {guestCount > 0 ? `게스트 ${guestCount}명` : '인원 추가'}
+                                    {guestCount > 0 ? `${t('guest')} ${guestCount}${t('guest_unit')}` : t('people_select')}
                                 </span>
                             </button>
 

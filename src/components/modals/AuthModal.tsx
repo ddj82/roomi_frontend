@@ -163,7 +163,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                     <div className="flex_center">
                         <div className="text-sm">{t('계정이없으신가요')}</div>
                         <button onClick={handleJoin}>
-                            <span className="text-sm text-roomi ml-1">{t('시작하기')}</span>
+                            <span className="text-sm text-roomi ml-1">{t('시작하기').toUpperCase()}</span>
                         </button>
                     </div>
                 )}
