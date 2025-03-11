@@ -2,7 +2,7 @@ import React, { useState, useEffect, memo, useCallback, useMemo } from 'react';
 import 'src/css/HomeScreen.css'; // 별도의 CSS 파일로 스타일 관리 (웹에 적합)
 import { RoomData } from "src/types/rooms";
 import { useNavigate } from 'react-router-dom'; // React Router 사용
-import WishlistButton from "src/components/modals/WishlistButton";
+import WishListButton from "src/components/modals/WishListButton";
 import i18n from "src/i18n";
 import NaverMap from "../map/NaverMap";
 import ImgCarousel from "src/components/modals/ImgCarousel";
@@ -21,7 +21,7 @@ const AccommodationCard = memo(
         return (
             <div className="homeScreen card" onClick={onClick}>
                 <div className="homeScreen card-header">
-                    <WishlistButton roomId={item.id} isFavorite={item.is_favorite}/>
+                    <WishListButton roomId={item.id} isFavorite={item.is_favorite}/>
                     {item.detail_urls && item.detail_urls.length > 0 ? (
                         <ImgCarousel images={item.detail_urls}
                                      customClass="h-64 md:h-72"/>

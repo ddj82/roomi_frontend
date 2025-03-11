@@ -127,10 +127,10 @@ export default function GuestReservationSetScreen() {
     };
 
     return (
-        <div className="mt-8 relative overflow-visible max-w-[1200px] mx-auto px-6">
+        <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto">
             {room ? (
-                <div className="flex md:flex-row flex-col mx-auto">
-                    <div className="md:w-3/5">
+                <div className="flex flex-col md:flex-row gap-8">
+                    <div className="md:w-3/5 w-full">
                         <div className="mb-8 text-xl font-bold text-gray-800">{t("예약확인")}</div>
                         <div className="md:flex md:p-6 border border-gray-200 rounded-xl shadow-sm mb-6 bg-white">
                             <div className="md:w-3/5">
@@ -144,10 +144,10 @@ export default function GuestReservationSetScreen() {
                             </div>
                             <div className="md:ml-6 md:my-auto p-4">
                                 <div className="text-xl font-semibold text-gray-800 my-3">{room.title}</div>
-                                <div className="my-3 flex items-center text-[#9370DB]">
+                                <div className="my-3 flex items-center text-roomi">
                                     {room.is_verified ? (
                                         <><span
-                                            className="inline-flex items-center text-sm font-medium px-2.5 py-0.5 rounded-full bg-[#F5EEFF] text-roomi mr-2">
+                                            className="inline-flex items-center text-sm font-medium px-2.5 py-0.5 text-roomi mr-2">
                                             <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"
                                                  xmlns="http://www.w3.org/2000/svg">
                                                 <path fillRule="evenodd"
@@ -176,7 +176,7 @@ export default function GuestReservationSetScreen() {
                             </div>
                             <div className="flex items-center">
                                 <div
-                                    className="w-10 h-10 rounded-full bg-[#F5EEFF] flex items-center justify-center text-[#9370DB]">
+                                    className="w-10 h-10 rounded-full bg-roomi-000 flex items-center justify-center text-roomi">
                                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
                                          xmlns="http://www.w3.org/2000/svg">
                                         <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
@@ -191,10 +191,10 @@ export default function GuestReservationSetScreen() {
                                 {t("예약정보")}
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 rounded-lg bg-[#F9F4FF]">
+                                <div className="p-4 rounded-lg bg-roomi-light">
                                     <div className="text-sm text-gray-500">{t("체크인날짜")}</div>
                                     <div className="font-bold text-gray-800 mt-1 flex items-center">
-                                        <svg className="w-5 h-5 mr-2 text-[#9370DB]" fill="none" stroke="currentColor"
+                                        <svg className="w-5 h-5 mr-2 text-roomi" fill="none" stroke="currentColor"
                                              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                                                   d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -202,10 +202,10 @@ export default function GuestReservationSetScreen() {
                                         {startDate}
                                     </div>
                                 </div>
-                                <div className="p-4 rounded-lg bg-[#F9F4FF]">
+                                <div className="p-4 rounded-lg bg-roomi-light">
                                     <div className="text-sm text-gray-500">{t("체크아웃날짜")}</div>
                                     <div className="font-bold text-gray-800 mt-1 flex items-center">
-                                        <svg className="w-5 h-5 mr-2 text-[#9370DB]" fill="none" stroke="currentColor"
+                                        <svg className="w-5 h-5 mr-2 text-roomi" fill="none" stroke="currentColor"
                                              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                                                   d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -214,15 +214,15 @@ export default function GuestReservationSetScreen() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="mt-4 p-4 rounded-lg bg-[#F9F4FF]">
+                            <div className="mt-4 p-4 rounded-lg bg-roomi-light">
                                 <div className="text-sm text-gray-500">{t("사용인원")}</div>
                                 <div className="flex items-center mt-1">
-                                    <button className="text-lg text-[#9370DB] hover:text-[#7D5EC0] transition-colors"
+                                    <button className="text-lg text-roomi hover:text-[#7D5EC0] transition-colors"
                                             onClick={() => handleguestValue(false)}>
                                         <LuCircleMinus/>
                                     </button>
                                     <div className="font-bold text-gray-800 mx-4">{guestCount}{t("guest_unit")}</div>
-                                    <button className="text-lg text-[#9370DB] hover:text-[#7D5EC0] transition-colors"
+                                    <button className="text-lg text-roomi hover:text-[#7D5EC0] transition-colors"
                                             onClick={() => handleguestValue(true)}>
                                         <LuCirclePlus/>
                                     </button>
@@ -235,42 +235,42 @@ export default function GuestReservationSetScreen() {
                             </div>
                             <div className="my-5">
                                 <div className="relative z-0">
-                                    <span className="absolute start-0 bottom-2 text-[#9370DB]">
+                                    <span className="absolute start-0 bottom-2 text-roomi">
                                         <FontAwesomeIcon icon={faUser}/>
                                     </span>
                                     <input type="text" id="name" value={formData.name} onChange={handleChange}
-                                           className="block py-3 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-[#9370DB] peer"
+                                           className="block py-3 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-roomi peer"
                                            placeholder=""/>
                                     <label htmlFor="name"
-                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-[#9370DB] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-roomi peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                                         {t("예약자명")}
                                     </label>
                                 </div>
                             </div>
                             <div className="my-5">
                                 <div className="relative z-0">
-                                    <span className="absolute start-0 bottom-2 text-[#9370DB]">
+                                    <span className="absolute start-0 bottom-2 text-roomi">
                                         <FontAwesomeIcon icon={faPhone}/>
                                     </span>
                                     <input type="text" id="phone" value={formData.phone} onChange={handleChange}
-                                           className="block py-3 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-[#9370DB] peer"
+                                           className="block py-3 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-roomi peer"
                                            pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" placeholder=""/>
                                     <label htmlFor="phone"
-                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-[#9370DB] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-roomi peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                                         {t("전화번호")}
                                     </label>
                                 </div>
                             </div>
                             <div className="my-5">
                                 <div className="relative z-0">
-                                    <span className="absolute start-0 bottom-2 text-[#9370DB]">
+                                    <span className="absolute start-0 bottom-2 text-roomi">
                                         <FontAwesomeIcon icon={faEnvelope}/>
                                     </span>
                                     <input type="text" id="email" value={formData.email} onChange={handleChange}
-                                           className="block py-3 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-[#9370DB] peer"
+                                           className="block py-3 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-roomi peer"
                                            placeholder=""/>
                                     <label htmlFor="email"
-                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-[#9370DB] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-roomi peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                                         {t("이메일")}
                                     </label>
                                 </div>
@@ -279,32 +279,35 @@ export default function GuestReservationSetScreen() {
                     </div>
 
                     {/*리모컨 영역*/}
-                    <div className="md:w-1/3 md:ml-6 md:h-fit md:sticky md:top-10 md:rounded-xl
+                    <div className="md:w-2/5 md:h-fit md:sticky md:top-10 md:rounded-xl md:shadow-md
                         border border-gray-200 shadow-sm p-6 break-words bg-white
                         w-full fixed bottom-0 z-[100]">
                         {/* 모바일 전용 아코디언 버튼 */}
                         <div
-                            className="md:hidden flex justify-between items-center p-4 bg-[#F9F4FF] rounded-lg cursor-pointer"
+                            className="md:hidden flex justify-between items-center p-4 bg-roomi-light rounded-lg cursor-pointer"
                             onClick={() => setSlideIsOpen(!slideIsOpen)}>
                             <span className="font-bold text-gray-800">{t("payment_info")}</span>
                             <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp}/>
                         </div>
                         <div className={`transition-all duration-300 ease-in-out 
-                        ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>
-                            <div className="flex justify-center text-sm m-2 bg-[#F9F4FF] rounded-full p-1">
+                            ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>
+                            <div className="flex justify-center text-sm bg-roomi-light rounded-lg p-1 pointer-events-none">
                                 <div
-                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-full cursor-pointer transition-all ${calUnit ? "bg-[#9370DB] text-white" : "text-gray-700 hover:bg-gray-100"}`}>
+                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
+                                    ${calUnit ? "bg-roomi text-white" : "text-gray-700 hover:bg-gray-100"}`}>
                                     <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}
                                 </div>
                                 <div
-                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-full cursor-pointer transition-all ${calUnit ? "text-gray-700 hover:bg-gray-100" : "bg-[#9370DB] text-white"}`}>
+                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
+                                    ${calUnit ? "text-gray-700 hover:bg-gray-100" : "bg-roomi text-white"}`}>
                                     <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}
                                 </div>
                             </div>
+                            {/*결제 정보-payment_info*/}
                             <div className="font-bold text-gray-800 mb-4 mt-6">
                                 {t("payment_info")}
                             </div>
-                            <div className="p-5 rounded-xl bg-[#F9F4FF]">
+                            <div className="p-5 rounded-lg bg-roomi-light">
                                 {/*숙박비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="font-medium text-gray-700">
@@ -332,11 +335,11 @@ export default function GuestReservationSetScreen() {
                                 <div className="flex justify-between border-t border-gray-200 mt-3 pt-4">
                                     <div className="text-gray-800 font-medium">{t("총결제금액")}</div>
                                     <div
-                                        className="font-bold text-[#9370DB] text-xl">{totalPrice.toLocaleString()}{t("원")}</div>
+                                        className="font-bold text-roomi text-xl">{totalPrice.toLocaleString()}{t("원")}</div>
                                 </div>
                             </div>
-                            <div className="my-6 text-sm space-y-6 max-w-lg mx-auto">
-                                <div className="bg-[#F5EEFF] p-4 rounded-lg text-[#9370DB] text-xs">
+                            <div className="mt-4 text-sm space-y-6 max-w-lg mx-auto">
+                                <div className="bg-[#F5EEFF] p-4 rounded-lg text-roomi text-xs">
                                     {t("계약 요청이 승인되기 전까지 요금이 결제 되지 않습니다.")}
                                 </div>
 
@@ -350,7 +353,7 @@ export default function GuestReservationSetScreen() {
                                                 className="sr-only peer"
                                             />
                                             <div
-                                                className="w-5 h-5 border-2 border-[#9370DB] rounded transition-all peer-checked:bg-[#9370DB] flex items-center justify-center">
+                                                className="w-5 h-5 border-2 border-roomi rounded transition-all peer-checked:bg-roomi flex items-center justify-center">
                                                 {isChecked1 && (
                                                     <svg className="w-3.5 h-3.5 text-white" fill="none"
                                                          stroke="currentColor" viewBox="0 0 24 24">
@@ -373,7 +376,7 @@ export default function GuestReservationSetScreen() {
                                                 className="sr-only peer"
                                             />
                                             <div
-                                                className="w-5 h-5 border-2 border-[#9370DB] rounded transition-all peer-checked:bg-[#9370DB] flex items-center justify-center">
+                                                className="w-5 h-5 border-2 border-roomi rounded transition-all peer-checked:bg-roomi flex items-center justify-center">
                                                 {isChecked3 && (
                                                     <svg className="w-3.5 h-3.5 text-white" fill="none"
                                                          stroke="currentColor" viewBox="0 0 24 24">
@@ -394,7 +397,7 @@ export default function GuestReservationSetScreen() {
                                                 className="sr-only peer"
                                             />
                                             <div
-                                                className="w-5 h-5 border-2 border-[#9370DB] rounded transition-all peer-checked:bg-[#9370DB] flex items-center justify-center">
+                                                className="w-5 h-5 border-2 border-roomi rounded transition-all peer-checked:bg-roomi flex items-center justify-center">
                                                 {isChecked2 && (
                                                     <svg className="w-3.5 h-3.5 text-white" fill="none"
                                                          stroke="currentColor" viewBox="0 0 24 24">
@@ -409,7 +412,7 @@ export default function GuestReservationSetScreen() {
                                 </div>
 
                                 <button
-                                    className="w-full py-3 px-4 bg-[#9370DB] hover:bg-[#8A5FD7] text-white font-medium rounded-lg transition-colors"
+                                    className="w-full py-3 px-4 bg-roomi hover:bg-[#8A5FD7] text-white font-medium rounded-lg transition-colors"
                                     onClick={paymentBtn}>
                                     {t("계약 요청")}
                                 </button>
@@ -421,7 +424,7 @@ export default function GuestReservationSetScreen() {
                 <div className="text-center p-12">
                     <div role="status" className="inline-flex flex-col items-center">
                         <svg aria-hidden="true"
-                             className="w-12 h-12 text-gray-200 animate-spin fill-[#9370DB]"
+                             className="w-12 h-12 text-gray-200 animate-spin fill-roomi"
                              viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"

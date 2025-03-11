@@ -42,6 +42,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
 
             console.log('로그인 성공, AuthToken, isHost 업데이트 완료'); // 로그 추가
             onClose();
+            window.location.reload();
         } catch (error) {
             console.error('로그인 실패(모달):', error);
         }

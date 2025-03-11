@@ -266,10 +266,10 @@ export default function GuestReservationScreen() {
         );
     }
     return (
-        <div className="mt-8 relative overflow-visible max-w-[1200px] mx-auto px-6">
+        <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto">
             {room ? (
-                <div className="flex md:flex-row flex-col mx-auto">
-                    <div className="md:w-3/5">
+                <div className="flex flex-col md:flex-row gap-8">
+                    <div className="md:w-3/5 w-full">
                         <div className="mb-8 text-xl font-bold text-gray-800">{t("결제하기")}</div>
                         <div className="md:flex md:p-6 border border-gray-200 rounded-xl shadow-sm mb-6 bg-white">
                             <div className="md:w-3/5">
@@ -286,14 +286,14 @@ export default function GuestReservationScreen() {
                                 <div className="my-3 flex items-center text-[#9370DB]">
                                     {room.is_verified ? (
                                         <><span
-                                            className="inline-flex items-center text-sm font-medium px-2.5 py-0.5 rounded-full bg-[#F5EEFF] text-[#9370DB] mr-2">
-                                        <FontAwesomeIcon icon={faCheckCircle} className="mr-1" />
+                                            className="inline-flex items-center text-sm font-medium px-2.5 py-0.5 text-roomi mr-2">
+                                        <FontAwesomeIcon icon={faCheckCircle} className="mr-1"/>
                                             {t("인증 숙박업소")}
                                     </span></>
                                     ) : ('')}
                                 </div>
                                 <div className="my-3 flex items-center text-gray-600">
-                                    <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
+                                    <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2"/>
                                     {room.address}
                                 </div>
                             </div>
@@ -305,7 +305,7 @@ export default function GuestReservationScreen() {
                             <div className="flex items-center">
                                 <div
                                     className="w-10 h-10 rounded-full bg-[#F5EEFF] flex items-center justify-center text-[#9370DB]">
-                                    <FontAwesomeIcon icon={faUser} />
+                                    <FontAwesomeIcon icon={faUser}/>
                                 </div>
                                 <div className="ml-3 font-medium text-gray-700">{room.host_id}</div>
                             </div>
@@ -315,42 +315,42 @@ export default function GuestReservationScreen() {
                                 {t("예약정보")}
                             </div>
                             {/* 예약자 정보 추가 - 고정값으로 표시 */}
-                            <div className="p-4 rounded-lg bg-[#F9F4FF] mb-4">
+                            <div className="p-4 rounded-lg bg-roomi-light mb-4">
                                 <div className="text-sm text-gray-500">{t("예약자 정보")}</div>
                                 <div className="font-bold text-gray-800 mt-1">
                                     <div className="grid grid-cols-1 gap-2">
                                         <div className="flex items-center">
-                                            <FontAwesomeIcon icon={faUser} className="mr-2 text-[#9370DB]" />
+                                            <FontAwesomeIcon icon={faUser} className="mr-2 text-[#9370DB]"/>
                                             <span>{formData.name || "이름을 입력해주세요"}</span>
                                         </div>
                                         <div className="flex items-center">
-                                            <FontAwesomeIcon icon={faPhone} className="mr-2 text-[#9370DB]" />
+                                            <FontAwesomeIcon icon={faPhone} className="mr-2 text-[#9370DB]"/>
                                             <span>{formData.phone || "전화번호를 입력해주세요"}</span>
                                         </div>
                                         <div className="flex items-center">
-                                            <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-[#9370DB]" />
+                                            <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-[#9370DB]"/>
                                             <span>{formData.email || "이메일을 입력해주세요"}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 rounded-lg bg-[#F9F4FF]">
+                                <div className="p-4 rounded-lg bg-roomi-light">
                                     <div className="text-sm text-gray-500">{t("체크인날짜")}</div>
                                     <div className="font-bold text-gray-800 mt-1 flex items-center">
-                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-[#9370DB]" />
+                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-[#9370DB]"/>
                                         {startDate}
                                     </div>
                                 </div>
-                                <div className="p-4 rounded-lg bg-[#F9F4FF]">
+                                <div className="p-4 rounded-lg bg-roomi-light">
                                     <div className="text-sm text-gray-500">{t("체크아웃날짜")}</div>
                                     <div className="font-bold text-gray-800 mt-1 flex items-center">
-                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-[#9370DB]" />
+                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-[#9370DB]"/>
                                         {endDate}
                                     </div>
                                 </div>
                             </div>
-                            <div className="mt-4 p-4 rounded-lg bg-[#F9F4FF]">
+                            <div className="mt-4 p-4 rounded-lg bg-roomi-light">
                                 <div className="text-sm text-gray-500">{t("사용인원")}</div>
                                 <div className="flex items-center mt-1">
                                     <button className="text-lg text-[#9370DB] hover:text-[#7D5EC0] transition-colors"
@@ -425,32 +425,34 @@ export default function GuestReservationScreen() {
                     </div>
 
                     {/*리모컨 영역*/}
-                    <div className="md:w-1/3 md:ml-6 md:h-fit md:sticky md:top-10 md:rounded-xl
-                    border border-gray-200 shadow-sm p-6 break-words bg-white
-                    w-full fixed bottom-0 z-[100]">
+                    <div className="md:w-2/5 md:h-fit md:sticky md:top-10 md:rounded-xl md:shadow-md
+                        border border-gray-200 shadow-sm p-6 break-words bg-white
+                        w-full fixed bottom-0 z-[100]">
                         {/* 모바일 전용 아코디언 버튼 */}
                         <div
-                            className="md:hidden flex justify-between items-center p-4 bg-[#F9F4FF] rounded-lg cursor-pointer"
+                            className="md:hidden flex justify-between items-center p-4 bg-roomi-light rounded-lg cursor-pointer"
                             onClick={() => setSlideIsOpen(!slideIsOpen)}>
                             <span className="font-bold text-gray-800">{t("payment_info")}</span>
                             <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp}/>
                         </div>
                         <div className={`transition-all duration-300 ease-in-out 
-                        ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>
-                            <div className="flex justify-center text-sm m-2 bg-[#F9F4FF] rounded-full p-1">
+                            ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>
+                            <div className="flex justify-center text-sm bg-roomi-light rounded-lg p-1 pointer-events-none">
                                 <div
-                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-full cursor-pointer transition-all ${calUnit ? "bg-[#9370DB] text-white" : "text-gray-700 hover:bg-gray-100"}`}>
+                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
+                                    ${calUnit ? "bg-[#9370DB] text-white" : "text-gray-700 hover:bg-gray-100"}`}>
                                     <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}
                                 </div>
                                 <div
-                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-full cursor-pointer transition-all ${calUnit ? "text-gray-700 hover:bg-gray-100" : "bg-[#9370DB] text-white"}`}>
+                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
+                                    ${calUnit ? "text-gray-700 hover:bg-gray-100" : "bg-[#9370DB] text-white"}`}>
                                     <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}
                                 </div>
                             </div>
                             <div className="font-bold text-gray-800 mb-4 mt-6">
                                 {t("payment_info")}
                             </div>
-                            <div className="p-5 rounded-xl bg-[#F9F4FF]">
+                            <div className="p-5 rounded-lg bg-roomi-light">
                                 {/*숙박비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="font-medium text-gray-700">
@@ -484,11 +486,7 @@ export default function GuestReservationScreen() {
                                         className="font-bold text-[#9370DB] text-xl">{totalPrice.toLocaleString()}{t("원")}</div>
                                 </div>
                             </div>
-                            <div className="my-6 text-sm space-y-6 max-w-lg mx-auto">
-                                {/*<div className="bg-[#F5EEFF] p-4 rounded-lg text-[#9370DB] text-xs">*/}
-                                {/*    계약 요청이 승인되기 전까지 요금이 결제 되지 않습니다.*/}
-                                {/*</div>*/}
-
+                            <div className="mt-6 text-sm space-y-6 max-w-lg mx-auto">
                                 <div className="space-y-4">
                                     <label className="flex items-start gap-3 cursor-pointer group">
                                         <div className="relative flex items-center justify-center mt-0.5">
@@ -509,7 +507,8 @@ export default function GuestReservationScreen() {
                                                 )}
                                             </div>
                                         </div>
-                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">{t('방 예약 내용을 확인했습니다. (필수)')}</span>
+                                        <span
+                                            className="text-gray-600 group-hover:text-gray-800 transition-colors">{t('방 예약 내용을 확인했습니다. (필수)')}</span>
                                     </label>
 
 
@@ -532,7 +531,8 @@ export default function GuestReservationScreen() {
                                                 )}
                                             </div>
                                         </div>
-                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">{t('마케팅 이메일 수신에 동의합니다. (선택)')}</span>
+                                        <span
+                                            className="text-gray-600 group-hover:text-gray-800 transition-colors">{t('마케팅 이메일 수신에 동의합니다. (선택)')}</span>
                                     </label>
                                     <label className="flex items-start gap-3 cursor-pointer group">
                                         <div className="relative flex items-center justify-center mt-0.5">
@@ -553,7 +553,8 @@ export default function GuestReservationScreen() {
                                                 )}
                                             </div>
                                         </div>
-                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">{t('서비스 약관, 결제 서비스 약관, 개인정보 처리방침에 동의합니다. (필수)')}</span>
+                                        <span
+                                            className="text-gray-600 group-hover:text-gray-800 transition-colors">{t('서비스 약관, 결제 서비스 약관, 개인정보 처리방침에 동의합니다. (필수)')}</span>
                                     </label>
                                 </div>
 

@@ -123,6 +123,7 @@ export interface RoomData {
     host: Host;
 
     is_favorite: boolean;
+    currency: string;
 }
 
 export interface Schedules {

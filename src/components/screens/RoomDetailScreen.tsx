@@ -186,6 +186,13 @@ export default function RoomDetailScreen() {
     };
 
     const createChatRoom = () => {
+        const isAuthenticated = !!localStorage.getItem("authToken"); // 로그인 여부 확인
+        if (!isAuthenticated) {
+            alert('로그인 후 이용 가능합니다.');
+            setAuthModalOpen(true);
+            return;
+        }
+
         console.log('룸:', Number(roomId), '호스트:', room?.host_id);
         if (room?.host_id) {
             createRoom(Number(roomId), room.host_id);
@@ -194,376 +201,376 @@ export default function RoomDetailScreen() {
     };
 
     return (
-        <div className="my-8 relative overflow-visible">
+        <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto">
             {authModalOpen && (
                 <AuthModal visible={authModalOpen} onClose={() => setAuthModalOpen(false)} type="login"/>
             )}
             {room ? (
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col md:flex-row gap-8">
-                        {/* 메인 콘텐츠 영역 */}
-                        <div className="md:w-3/5 w-full">
-                            <h1 className="text-2xl font-bold mb-6 text-gray-800">{room.title}</h1>
+                <div className="flex flex-col md:flex-row gap-8">
+                    {/* 메인 콘텐츠 영역 */}
+                    <div className="md:w-3/5 w-full">
+                        <h1 className="text-2xl font-bold mb-6 text-gray-800">{room.title}</h1>
 
-                            {/* 이미지 갤러리 */}
-                            <div className="mb-8 rounded-xl overflow-hidden shadow-sm">
-                                {room.detail_urls && room.detail_urls.length > 0 ? (
-                                    <ImgCarousel
-                                        images={room.detail_urls}
-                                        customClass="md:rounded-xl h-64 md:h-[30rem] object-cover"
-                                    />
-                                ) : (
-                                    <img
-                                        src="/default-image.jpg"
-                                        alt="thumbnail"
-                                        className="w-full md:h-[30rem] h-64 object-cover"
-                                    />
-                                )}
-                            </div>
+                        {/* 이미지 갤러리 */}
+                        <div className="mb-8 rounded-xl overflow-hidden shadow-sm">
+                            {room.detail_urls && room.detail_urls.length > 0 ? (
+                                <ImgCarousel
+                                    images={room.detail_urls}
+                                    customClass="md:rounded-xl h-64 md:h-[30rem] object-cover"
+                                />
+                            ) : (
+                                <img
+                                    src="/default-image.jpg"
+                                    alt="thumbnail"
+                                    className="w-full md:h-[30rem] h-64 object-cover"
+                                />
+                            )}
+                        </div>
 
-                            {/* 인증 및 설명 */}
-                            <div className="px-1">
-                                {room.is_verified && (
-                                    <div
-                                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-roomi mb-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1"
-                                             viewBox="0 0 20 20" fill="currentColor">
-                                            <path fillRule="evenodd"
-                                                  d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                  clipRule="evenodd"/>
-                                        </svg>
-                                        인증숙박업소
-                                    </div>
-                                )}
+                        {/* 인증 및 설명 */}
+                        <div className="px-1">
+                            {room.is_verified && (
+                                <div
+                                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-roomi mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1"
+                                         viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd"
+                                              d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                              clipRule="evenodd"/>
+                                    </svg>
+                                    인증숙박업소
+                                </div>
+                            )}
 
-                                <p className="text-gray-700 mb-8 leading-relaxed">{room.description}</p>
+                            <p className="text-gray-700 mb-8 leading-relaxed">{room.description}</p>
 
-                                {/* 숙소 정보 */}
-                                <div className="mb-10">
-                                    <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
-                                        <span className="w-1.5 h-6 bg-roomi rounded-full mr-2"></span>
-                                        {t("room_info")}
-                                    </h2>
+                            {/* 숙소 정보 */}
+                            <div className="mb-10">
+                                <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
+                                    <span className="w-1.5 h-6 bg-roomi rounded-full mr-2"></span>
+                                    {t("room_info")}
+                                </h2>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {room.accommodation_type && (
-                                            <div className="flex items-center">
-                                                <div
-                                                    className="w-10 h-10 rounded-full flex_center text-roomi mr-3">
-                                                    <FontAwesomeIcon icon={faHome}/>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-gray-500">{t("숙소유형")}</p>
-                                                    <p className="font-medium">{room.accommodation_type}</p>
-                                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {room.accommodation_type && (
+                                        <div className="flex items-center">
+                                            <div
+                                                className="w-10 h-10 rounded-full flex_center text-roomi mr-3">
+                                                <FontAwesomeIcon icon={faHome}/>
                                             </div>
-                                        )}
-
-                                        {room.building_type && (
-                                            <div className="flex items-center">
-                                                <div
-                                                    className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
-                                                    <FontAwesomeIcon icon={faBuilding}/>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-gray-500">{t("건물유형")}</p>
-                                                    <p className="font-medium">{room.building_type}</p>
-                                                </div>
+                                            <div>
+                                                <p className="text-xs text-gray-500">{t("숙소유형")}</p>
+                                                <p className="font-medium">{room.accommodation_type}</p>
                                             </div>
-                                        )}
+                                        </div>
+                                    )}
 
-                                        {room.room_structure && (
-                                            <div className="flex items-center">
-                                                <div
-                                                    className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
-                                                    <FontAwesomeIcon icon={faVectorSquare}/>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-gray-500">{t("방구조")}</p>
-                                                    <p className="font-medium">{room.room_structure}</p>
-                                                </div>
+                                    {room.building_type && (
+                                        <div className="flex items-center">
+                                            <div
+                                                className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
+                                                <FontAwesomeIcon icon={faBuilding}/>
                                             </div>
-                                        )}
+                                            <div>
+                                                <p className="text-xs text-gray-500">{t("건물유형")}</p>
+                                                <p className="font-medium">{room.building_type}</p>
+                                            </div>
+                                        </div>
+                                    )}
 
+                                    {room.room_structure && (
                                         <div className="flex items-center">
                                             <div
                                                 className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
                                                 <FontAwesomeIcon icon={faVectorSquare}/>
                                             </div>
                                             <div>
-                                                <p className="text-xs text-gray-500">{t("면적")}</p>
-                                                <p className="font-medium">{`${room.floor_area ?? 0}m²`}</p>
+                                                <p className="text-xs text-gray-500">{t("방구조")}</p>
+                                                <p className="font-medium">{room.room_structure}</p>
                                             </div>
                                         </div>
+                                    )}
 
-                                        <div className="flex items-center">
-                                            <div
-                                                className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
-                                                <FontAwesomeIcon icon={faLayerGroup}/>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-500">{t("층수")}</p>
-                                                <p className="font-medium">{`${room.floor ?? 0}층`}</p>
-                                            </div>
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
+                                            <FontAwesomeIcon icon={faVectorSquare}/>
                                         </div>
-
-                                        <div className="flex items-center">
-                                            <div
-                                                className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
-                                                <FontAwesomeIcon icon={faDoorOpen}/>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-500">{t("방개수")}</p>
-                                                <p className="font-medium">{`${room.room_count ?? 0}개`}</p>
-                                            </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("면적")}</p>
+                                            <p className="font-medium">{`${room.floor_area ?? 0}m²`}</p>
                                         </div>
+                                    </div>
 
-                                        <div className="flex items-center">
-                                            <div
-                                                className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
-                                                <FontAwesomeIcon icon={faBath}/>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-500">{t("욕실개수")}</p>
-                                                <p className="font-medium">{`${room.bathroom_count ?? 0}개`}</p>
-                                            </div>
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
+                                            <FontAwesomeIcon icon={faLayerGroup}/>
                                         </div>
-
-                                        <div className="flex items-center">
-                                            <div
-                                                className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
-                                                <FontAwesomeIcon icon={faElevator}/>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-500">{t("엘리베이터")}</p>
-                                                <p className="font-medium">{room.has_elevator ? "있음" : "없음"}</p>
-                                            </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("층수")}</p>
+                                            <p className="font-medium">{`${room.floor ?? 0}층`}</p>
                                         </div>
+                                    </div>
 
-                                        <div className="flex items-center">
-                                            <div
-                                                className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
-                                                <FontAwesomeIcon icon={faSquareParking}/>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-500">{t("주차가능")}</p>
-                                                <p className="font-medium">{room.has_parking ? "가능" : "불가능"}</p>
-                                            </div>
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
+                                            <FontAwesomeIcon icon={faDoorOpen}/>
                                         </div>
-
-                                        <div className="flex items-center">
-                                            <div
-                                                className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
-                                                <FontAwesomeIcon icon={faUsers}/>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-500">{t("최대이용인원")}</p>
-                                                <p className="font-medium">{`${room.max_guests ?? 0}명`}</p>
-                                            </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("방개수")}</p>
+                                            <p className="font-medium">{`${room.room_count ?? 0}개`}</p>
                                         </div>
+                                    </div>
 
-                                        <div className="flex items-center">
-                                            <div
-                                                className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
-                                                <FontAwesomeIcon icon={faClock}/>
-                                            </div>
-                                            <div>
-                                                <p className="text-xs text-gray-500">{t("check_in/out")}</p>
-                                                <p className="font-medium">{`${room.check_in_time ?? "0"} / ${room.check_out_time ?? "0"}`}</p>
-                                            </div>
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
+                                            <FontAwesomeIcon icon={faBath}/>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("욕실개수")}</p>
+                                            <p className="font-medium">{`${room.bathroom_count ?? 0}개`}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
+                                            <FontAwesomeIcon icon={faElevator}/>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("엘리베이터")}</p>
+                                            <p className="font-medium">{room.has_elevator ? "있음" : "없음"}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
+                                            <FontAwesomeIcon icon={faSquareParking}/>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("주차가능")}</p>
+                                            <p className="font-medium">{room.has_parking ? "가능" : "불가능"}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
+                                            <FontAwesomeIcon icon={faUsers}/>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("최대이용인원")}</p>
+                                            <p className="font-medium">{`${room.max_guests ?? 0}명`}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-roomi mr-3">
+                                            <FontAwesomeIcon icon={faClock}/>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("check_in/out")}</p>
+                                            <p className="font-medium">{`${room.check_in_time ?? "0"} / ${room.check_out_time ?? "0"}`}</p>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                {/* 편의시설 */}
-                                <div className="mb-10">
-                                    <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
-                                        <span className="w-1.5 h-6 bg-roomi rounded-full mr-2"></span>
-                                        {t("amenities")}
-                                    </h2>
+                            {/* 편의시설 */}
+                            <div className="mb-10">
+                                <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
+                                    <span className="w-1.5 h-6 bg-roomi rounded-full mr-2"></span>
+                                    {t("amenities")}
+                                </h2>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {room?.facilities &&
-                                            Object.entries(room.facilities)
-                                                .filter(([_, value]) => value)
-                                                .map(([key,value], index) => (
-                                                    <div key={index} className="flex items-center p-3 rounded-lg">
-                                                        <FontAwesomeIcon icon={facilityIcons[key]} className="text-roomi mr-3"/>
-                                                        <span className="text-sm font-medium">{value}</span>
-                                                    </div>
-                                                ))
-                                        }
-                                    </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {room?.facilities &&
+                                        Object.entries(room.facilities)
+                                            .filter(([_, value]) => value)
+                                            .map(([key, value], index) => (
+                                                <div key={index} className="flex items-center p-3 rounded-lg">
+                                                    <FontAwesomeIcon icon={facilityIcons[key]}
+                                                                     className="text-roomi mr-3"/>
+                                                    <span className="text-sm font-medium">{value}</span>
+                                                </div>
+                                            ))
+                                    }
+                                </div>
+                            </div>
+
+                            {/* 추가 시설 */}
+                            <div className="mb-10">
+                                <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
+                                    <span className="w-1.5 h-6 bg-roomi rounded-full mr-2"></span>
+                                    {t("additional_facilities")}
+                                </h2>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {room?.additional_facilities &&
+                                        Object.entries(room.additional_facilities).filter(([_, value]) => value)
+                                            .map(([key, value], index) => (
+                                                <div key={index}
+                                                     className="flex items-center p-3 rounded-lg">
+                                                    <FontAwesomeIcon icon={facilityIcons[key]}
+                                                                     className="text-roomi mr-3"/>
+                                                    <span className="text-sm font-medium">{value}</span>
+                                                </div>
+                                            ))
+                                    }
+                                </div>
+                            </div>
+
+                            {/* 위치 정보 */}
+                            <div className="mb-10">
+                                <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
+                                    <span className="w-1.5 h-6 bg-roomi rounded-full mr-2"></span>
+                                    {t("location_information")}
+                                </h2>
+
+                                <div className="flex items-center mb-4">
+                                    <FontAwesomeIcon icon={faMapLocationDot} className="text-roomi mr-3"/>
+                                    <span>{room.transportation_info}</span>
                                 </div>
 
-                                {/* 추가 시설 */}
-                                <div className="mb-10">
-                                    <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
-                                        <span className="w-1.5 h-6 bg-roomi rounded-full mr-2"></span>
-                                        {t("additional_facilities")}
-                                    </h2>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {room?.additional_facilities &&
-                                            Object.entries(room.additional_facilities).filter(([_, value]) => value)
-                                                .map(([key, value], index) => (
-                                                    <div key={index}
-                                                         className="flex items-center p-3 rounded-lg">
-                                                        <FontAwesomeIcon icon={facilityIcons[key]} className="text-roomi mr-3"/>
-                                                        <span className="text-sm font-medium">{value}</span>
-                                                    </div>
-                                                ))
-                                        }
-                                    </div>
+                                <div className="h-60 rounded-xl overflow-hidden shadow-sm">
+                                    <NaverMapRoom room={room}/>
                                 </div>
+                            </div>
 
-                                {/* 위치 정보 */}
-                                <div className="mb-10">
-                                    <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
-                                        <span className="w-1.5 h-6 bg-roomi rounded-full mr-2"></span>
-                                        {t("location_information")}
-                                    </h2>
-
-                                    <div className="flex items-center mb-4">
-                                        <FontAwesomeIcon icon={faMapLocationDot} className="text-roomi mr-3"/>
-                                        <span>{room.transportation_info}</span>
-                                    </div>
-
-                                    <div className="h-60 rounded-xl overflow-hidden shadow-sm">
-                                        <NaverMapRoom room={room}/>
-                                    </div>
-                                </div>
-
-                                {/* 호스트 정보 */}
-                                <div
-                                    className="mb-10 rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="flex justify-between items-center">
-                                        <div className="flex items-center">
-                                            <div
-                                                className="w-16 h-16 rounded-full bg-roomi flex_center text-white mr-4">
-                                                <FontAwesomeIcon icon={faUser} className="text-2xl"/>
-                                            </div>
-                                            <div>
-                                                <p className="font-medium text-gray-800">{room.host_id}</p>
-                                                <p className="text-sm text-gray-500">호스트</p>
-                                            </div>
+                            {/* 호스트 정보 */}
+                            <div
+                                className="mb-10 rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-16 h-16 rounded-full bg-roomi flex_center text-white mr-4">
+                                            <FontAwesomeIcon icon={faUser} className="text-2xl"/>
                                         </div>
-
-                                        <button
-                                            type="button"
-                                            className="px-5 py-2.5 rounded-lg bg-roomi text-white text-sm font-medium hover:bg-opacity-90 transition-colors shadow-sm"
-                                            onClick={createChatRoom}
-                                        >
-                                            채팅하기
-                                        </button>
+                                        <div>
+                                            <p className="font-medium text-gray-800">{room.host_id}</p>
+                                            <p className="text-sm text-gray-500">호스트</p>
+                                        </div>
                                     </div>
+
+                                    <button
+                                        type="button"
+                                        className="px-5 py-2.5 rounded-lg bg-roomi text-white text-sm font-medium hover:bg-opacity-90 transition-colors shadow-sm"
+                                        onClick={createChatRoom}
+                                    >
+                                        채팅하기
+                                    </button>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        {/*리모컨 영역*/}
-                        <div className="md:w-2/5 w-full">
-                            <div className="md:sticky md:top-5 rounded-xl border border-gray-100 shadow-md overflow-hidden">
-                                {/* 모바일 전용 아코디언 버튼 */}
-                                <div className="md:hidden flex justify-between items-center p-4 bg-roomi text-white cursor-pointer" onClick={() => setSlideIsOpen(!slideIsOpen)}>
-                                    <span className="font-bold">{t("payment_info")}</span>
-                                    <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp}/>
+                    {/*리모컨 영역*/}
+                    <div className="md:w-2/5 md:h-fit md:sticky md:top-10 md:rounded-xl md:shadow-md
+                        border border-gray-200 shadow-sm p-6 break-words bg-white
+                        w-full fixed bottom-0 z-[100]">
+                        {/* 모바일 전용 아코디언 버튼 */}
+                        <div
+                            className="md:hidden flex justify-between items-center p-4 bg-roomi text-white cursor-pointer"
+                            onClick={() => setSlideIsOpen(!slideIsOpen)}>
+                            <span className="font-bold">{t("payment_info")}</span>
+                            <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp}/>
+                        </div>
+                        <div className={`transition-all duration-300 ease-in-out 
+                            ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>
+                            {/* 가격 정보 헤더 */}
+                            <div className="p-3 pt-5 mx-3 border-b border-gray-100">
+                                <h2 className="text-lg font-bold text-gray-800 mb-2">
+                                    {calUnit ? room.day_price : room.week_price}
+                                    <span className="text-sm font-normal text-gray-600 ml-1">
+                                        / {calUnit ? t("day_unit") : t("week_unit")}
+                                    </span>
+                                </h2>
+                            </div>
+                            {/* 옵션 선택 탭 */}
+                            <div className="flex justify-center text-sm bg-roomi-light rounded-lg p-1 mb-6">
+                                <button
+                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
+                                    ${calUnit ? "bg-[#9370DB] text-white" : "text-gray-700 hover:bg-gray-100"}`}
+                                    onClick={dayUnit}
+                                >
+                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}
+                                </button>
+                                <button
+                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
+                                    ${calUnit ? "text-gray-700 hover:bg-gray-100" : "bg-[#9370DB] text-white"}`}
+                                    onClick={weekUnit}
+                                >
+                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}
+                                </button>
+                            </div>
+                            {/* 주 단위 선택기 */}
+                            {!calUnit && (
+                                <div className="flex_center mb-3 text-sm">
+                                    <button
+                                        className="w-8 h-8 flex_center rounded-full border border-gray-200 text-roomi"
+                                        onClick={() => handleWeekValue(false)}
+                                    >
+                                        <LuCircleMinus/>
+                                    </button>
+                                    <div className="mx-4 font-semibold">{weekValue} {t("week_unit")}</div>
+                                    <button
+                                        className="w-8 h-8 flex_center rounded-full border border-gray-200 text-roomi"
+                                        onClick={() => handleWeekValue(true)}
+                                    >
+                                        <LuCirclePlus/>
+                                    </button>
                                 </div>
-                                <div className={`transition-all duration-300 ease-in-out 
-                                    ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>
-                                    {/* 가격 정보 헤더 */}
-                                    <div className="p-3 pt-5 mx-3 border-b border-gray-100">
-                                        <h2 className="text-lg font-bold text-gray-800 mb-2">
-                                            {calUnit ? room.day_price : room.week_price}
-                                            <span className="text-sm font-normal text-gray-600 ml-1">
-                                                / {calUnit ? t("day_unit") : t("week_unit")}
-                                            </span>
-                                        </h2>
-                                    </div>
-                                    {/* 옵션 선택 탭 */}
-                                    <div className="px-6 py-3">
-                                        <div className="flex bg-gray-100 p-1 rounded-lg mb-4">
-                                            <button
-                                                className={`flex-1 py-2 rounded-md text-center text-xs font-medium transition-colors 
-                                                ${calUnit ? 'bg-roomi text-white' : 'text-gray-700'}`}
-                                                onClick={dayUnit}
-                                            >
-                                                <FontAwesomeIcon icon={faCalendarDay} className="mr-2"/>{t("day_unit")}
-                                            </button>
-                                            <button
-                                                className={`flex-1 py-2 rounded-md text-center text-xs font-medium transition-colors 
-                                                ${!calUnit ? 'bg-roomi text-white' : 'text-gray-700'}`}
-                                                onClick={weekUnit}
-                                            >
-                                                <FontAwesomeIcon icon={faCalendarDay} className="mr-2"/>{t("week_unit")}
-                                            </button>
-                                        </div>
-                                        {/* 주 단위 선택기 */}
-                                        {!calUnit && (
-                                            <div className="flex_center mb-3 text-sm">
-                                                <button
-                                                    className="w-8 h-8 flex_center rounded-full border border-gray-200 text-roomi"
-                                                    onClick={() => handleWeekValue(false)}
-                                                >
-                                                    <LuCircleMinus/>
-                                                </button>
-                                                <div className="mx-4 font-semibold">{weekValue} {t("week_unit")}</div>
-                                                <button
-                                                    className="w-8 h-8 flex_center rounded-full border border-gray-200 text-roomi"
-                                                    onClick={() => handleWeekValue(true)}
-                                                >
-                                                    <LuCirclePlus/>
-                                                </button>
-                                            </div>
-                                        )}
-                                        <div className="dateModal">
-                                            <Calendar
-                                                onClickDay={handleDayClick}
-                                                tileClassName={getTileClassName}
-                                                minDate={new Date()}
-                                                next2Label={null} // 추가로 넘어가는 버튼 제거
-                                                prev2Label={null} // 이전으로 돌아가는 버튼 제거
-                                                className="custom-calendar"
-                                                formatDay={(locale, date) => dayjs(date).format('D')}
-                                            />
-                                        </div>
-                                        {/* 체크인/아웃 정보 */}
-                                        <div className="flex justify-between mb-4 text-xs">
-                                            <div className="flex flex-col">
-                                                <span className="text-gray-500 my-2">{t("check_in")}</span>
-                                                <span className="font-bold">{startDate || '-'}</span>
-                                            </div>
-                                            <div className="flex flex-col items-end">
-                                                <span className="text-gray-500 my-2">{t("check_out")}</span>
-                                                <span className="font-bold">{endDate || '-'}</span>
-                                            </div>
-                                        </div>
-
-                                        {/* 비용 정보 */}
-                                        <div className="rounded-lg bg-gray-50 p-3 mb-4 text-sm">
-                                            <div className="flex justify-between mb-2">
-                                                <span className="text-gray-700">{t("deposit")}</span>
-                                                <span className="font-bold">
-                                                    {calUnit ? room.deposit : room.deposit_week}
-                                                </span>
-                                            </div>
-                                            <div className="flex justify-between mb-2">
-                                                <span className="text-gray-700">{t("service_charge")}</span>
-                                                <span className="font-bold">
-                                                    {calUnit ? room.maintenance_fee : room.maintenance_fee_week}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        {/* 예약 버튼 */}
-                                        <button
-                                            className="w-full py-3 bg-roomi text-white text-sm rounded-lg font-medium hover:bg-opacity-90 transition-colors shadow-sm"
-                                            onClick={reservationBtn}
-                                        >
-                                            예약하기
-                                        </button>
-                                    </div>
+                            )}
+                            <div className="dateModal">
+                                <Calendar
+                                    onClickDay={handleDayClick}
+                                    tileClassName={getTileClassName}
+                                    minDate={new Date()}
+                                    next2Label={null} // 추가로 넘어가는 버튼 제거
+                                    prev2Label={null} // 이전으로 돌아가는 버튼 제거
+                                    className="custom-calendar"
+                                    formatDay={(locale, date) => dayjs(date).format('D')}
+                                />
+                            </div>
+                            {/* 체크인/아웃 정보 */}
+                            <div className="flex justify-between mb-4 text-xs">
+                                <div className="flex flex-col">
+                                    <span className="text-gray-500 my-2">{t("check_in")}</span>
+                                    <span className="font-bold">{startDate || '-'}</span>
+                                </div>
+                                <div className="flex flex-col items-end">
+                                    <span className="text-gray-500 my-2">{t("check_out")}</span>
+                                    <span className="font-bold">{endDate || '-'}</span>
                                 </div>
                             </div>
+
+                            {/* 비용 정보 */}
+                            <div className="rounded-lg bg-gray-50 p-3 mb-4 text-sm">
+                                <div className="flex justify-between mb-2">
+                                    <span className="text-gray-700">{t("deposit")}</span>
+                                    <span className="font-bold">
+                                        {calUnit ? room.deposit : room.deposit_week}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between mb-2">
+                                    <span className="text-gray-700">{t("service_charge")}</span>
+                                    <span className="font-bold">
+                                        {calUnit ? room.maintenance_fee : room.maintenance_fee_week}
+                                    </span>
+                                </div>
+                            </div>
+                            {/* 예약 버튼 */}
+                            <button
+                                className="w-full py-3 bg-roomi text-white text-sm rounded-lg font-medium hover:bg-opacity-90 transition-colors shadow-sm"
+                                onClick={reservationBtn}
+                            >
+                                예약하기
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -591,8 +598,7 @@ export default function RoomDetailScreen() {
     );
 }
 
-const addFacilityIcons: Record<string, IconDefinition> = {
-};
+const addFacilityIcons: Record<string, IconDefinition> = {};
 
 export const facilityIcons: Record<string, IconDefinition> = {
     "bbq": faUtensils, // 바비큐
@@ -600,9 +606,9 @@ export const facilityIcons: Record<string, IconDefinition> = {
     "cctv": faVideo, // CCTV
     "garden": faTree, // 정원
     "gym": faDumbbell, // 헬스장
-    "lounge": faCouch, // 라운지
+    "weekend": faCouch, // 라운지
     "pool": faSwimmingPool, // 수영장
-    "sauna": faHotTub, // 사우나
+    "hot_tub": faHotTub, // 사우나
     "wifi": faWifi,
     "tv": faTv,
     "kitchen": faKitchenSet,

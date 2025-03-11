@@ -134,57 +134,109 @@ const Header = () => {
         <div className="border-b-[1px] border-gray-200">
             <div className="h header container mx-auto md:mt-8 mt-6">
                 <div className="md:mx-auto mx-3 xl:max-w-[1200px] lg:max-w-[1024px] md:max-w-3xl">
-                    <div className="h top-row md:mb-8 mb-6">
+                    <div className="h top-row md:mb-8 mb-6 flex items-center justify-between">
+                        {/* 로고 영역 */}
                         <div className="h logo-container">
                             <button onClick={handleLogo}>
-                                <img src="/assets/images/roomi_word.png" alt="Logo" className="md:h-8 h-6 mr-2"/>
-                            </button>
-                            <button onClick={() => setBusinessInfoVisible(true)}
-                                    className="h info-button flex items-center">
-                                <FontAwesomeIcon icon={faCircleInfo} className="text-roomi text-sm"/>
+                                <img src="/assets/images/roomi.png" alt="Logo" className="md:h-16 h-12 mr-2"/>
                             </button>
                         </div>
-                        <div>
+
+                        {/* 서치바 영역 - 중앙 배치, 특정 페이지에서만 표시 */}
+                        {isVisible ? (
+                            <div className="h search-bar-container flex-1 mx-4">
+                                <div className="h search-bar-row md:h-14 h-12
+                                w-full md:max-w-2xl lg:max-w-3xl xl:max-w-4xl
+                                text-[11px] md:text-sm lg:text-base flex items-center justify-between bg-white rounded-full shadow-md border border-gray-200">
+                                    <button ref={dateRef} className="h search-item flex items-center px-4 py-2"
+                                            onClick={() => openModal('date', dateRef)}>
+                                        <FontAwesomeIcon icon={faCalendarDay}
+                                                         className="text-roomi md:text-base lg:text-lg"/>
+                                        <span className="ml-2 text-gray-500 truncate">{formatDateRange()}</span>
+                                    </button>
+
+                                    <div className="flex items-center">
+                                        <span className="w-px h-8 bg-gray-200 mx-1"></span>
+                                    </div>
+
+                                    <button ref={locationRef} className="h search-item flex items-center px-4 py-2"
+                                            onClick={() => openModal('location', locationRef)}>
+                                        <FontAwesomeIcon icon={faLocationDot}
+                                                         className="text-roomi md:text-base lg:text-lg"/>
+                                        <span
+                                            className="ml-2 text-gray-500 truncate">{selectedLocation || t('location_select')}</span>
+                                    </button>
+
+                                    <div className="flex items-center">
+                                        <span className="w-px h-8 bg-gray-200 mx-1"></span>
+                                    </div>
+
+                                    <button ref={guestsRef} className="h search-item flex items-center px-4 py-2"
+                                            onClick={() => openModal('guests', guestsRef)}>
+                                        <FontAwesomeIcon icon={faUserPlus}
+                                                         className="text-roomi md:text-base lg:text-lg"/>
+                                        <span className="ml-2 text-gray-500 truncate">
+                                            {guestCount > 0 ? `${t('guest')} ${guestCount}${t('guest_unit')}` : t('people_select')}
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        className="h search-button md:w-10 md:h-10 w-8 h-8
+                                        m-2 flex items-center justify-center bg-roomi rounded-full">
+                                        <FontAwesomeIcon icon={faSearch} className="text-white"/>
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            // 서치바가 표시되지 않을 때 레이아웃 균형을 위한 빈 공간
+                            <div className="flex-1"></div>
+                        )}
+
+                        {/* 프로필/로그인 영역 */}
+                        <div className="mr-4">
                             {authToken ? (
                                 <div className="flex">
                                     <div className="relative" ref={dropdownRef}>
                                         <button
                                             className="w-8 h-8 md:w-10 md:h-10
-                                             flex_center bg-roomi-000 text-roomi rounded-full"
-                                            // 드롭다운으로 변경
+                                             flex items-center justify-center bg-roomi-000 text-roomi rounded-full"
                                             onClick={toggleDropdown}>
                                             <FontAwesomeIcon icon={faUser}/>
                                         </button>
                                         {userVisible && (
-                                            <div className="absolute right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-40 z-[2000] border">
+                                            <div
+                                                className="absolute right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-40 z-[2000] border">
                                                 <ul className="py-2 text-sm text-gray-700">
                                                     <li>
                                                         {hostMode ? (
-                                                            <a href="/host/myPage" className="block px-4 py-2 hover:bg-gray-100">마이페이지</a>
+                                                            <a href="/host/myPage"
+                                                               className="block px-4 py-2 hover:bg-gray-100">마이페이지</a>
                                                         ) : (
-                                                            <a href="/myPage" className="block px-4 py-2 hover:bg-gray-100">마이페이지</a>
+                                                            <a href="/myPage"
+                                                               className="block px-4 py-2 hover:bg-gray-100">마이페이지</a>
                                                         )}
                                                     </li>
                                                     <li>
-                                                        {!hostMode && (<a href="/chat" className="block px-4 py-2 hover:bg-gray-100">메시지</a>)}
+                                                        {!hostMode && (<a href="/chat"
+                                                                          className="block px-4 py-2 hover:bg-gray-100">메시지</a>)}
                                                     </li>
                                                     {isHost && (
                                                         <>
-                                                        {hostMode ? (
-                                                            <li>
-                                                                <button onClick={handleSetHostMode}
-                                                                        className="w-full text-start block px-4 py-2 hover:bg-gray-100">
-                                                                    {t("게스트로 전환")}
-                                                                </button>
-                                                            </li>
+                                                            {hostMode ? (
+                                                                <li>
+                                                                    <button onClick={handleSetHostMode}
+                                                                            className="w-full text-start block px-4 py-2 hover:bg-gray-100">
+                                                                        {t("게스트로 전환")}
+                                                                    </button>
+                                                                </li>
                                                             ) : (
-                                                            <li>
-                                                                <button onClick={handleSetHostMode}
-                                                                        className="w-full text-start block px-4 py-2 hover:bg-gray-100">
-                                                                    {t("호스트로 전환")}
-                                                                </button>
-                                                            </li>
-                                                        )}
+                                                                <li>
+                                                                    <button onClick={handleSetHostMode}
+                                                                            className="w-full text-start block px-4 py-2 hover:bg-gray-100">
+                                                                        {t("호스트로 전환")}
+                                                                    </button>
+                                                                </li>
+                                                            )}
                                                         </>
                                                     )}
                                                 </ul>
@@ -208,47 +260,7 @@ const Header = () => {
                         </div>
                     </div>
                 </div>
-                {isVisible && (
-                    <div className="h search-bar-container my-2 mx-3">
-                        <div className="h search-bar-row md:mb-4 md:h-14 h-12
-                        w-full md:max-w-2xl lg:max-w-3xl xl:max-w-4xl
-                        text-[11px] md:text-sm lg:text-base">
-                            <button ref={dateRef} className="h search-item"
-                                    onClick={() => openModal('date', dateRef)}>
-                                <FontAwesomeIcon icon={faCalendarDay} className="text-roomi md:text-base lg:text-lg"/>
-                                <span className="ml-2 text-gray-500">{formatDateRange()}</span>
-                            </button>
 
-                            <div className="flex items-center">
-                                <span className="w-px h-10 bg-gray-200 mx-1"></span>
-                            </div>
-
-                            <button ref={locationRef} className="h search-item"
-                                    onClick={() => openModal('location', locationRef)}>
-                                <FontAwesomeIcon icon={faLocationDot} className="text-roomi md:text-base lg:text-lg"/>
-                                <span className="ml-2 text-gray-500">{selectedLocation || t('location_select')}</span>
-                            </button>
-
-                            <div className="flex items-center">
-                                <span className="w-px h-10 bg-gray-200 mx-1"></span>
-                            </div>
-
-                            <button ref={guestsRef} className="h search-item"
-                                    onClick={() => openModal('guests', guestsRef)}>
-                                <FontAwesomeIcon icon={faUserPlus} className="text-roomi md:text-base lg:text-lg"/>
-                                <span className="ml-2 text-gray-500">
-                                    {guestCount > 0 ? `${t('guest')} ${guestCount}${t('guest_unit')}` : t('people_select')}
-                                </span>
-                            </button>
-
-                            <button
-                                className="h search-button md:w-10 md:h-10 w-8 h-8
-                                m-2 flex_center bg-roomi rounded">
-                                <FontAwesomeIcon icon={faSearch} className="text-white"/>
-                            </button>
-                        </div>
-                    </div>
-                )}
                 {isVisibleHostScreen && (
                     <HostHeader/>
                 )}

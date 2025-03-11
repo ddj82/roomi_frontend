@@ -6,6 +6,7 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                "roomi-light": '#faf5ff', // 완전 연하게
                 "roomi-000": '#f0eaff', // 더더더 연하게
                 "roomi-00": '#DFC2FB', // 더더더 연하게
                 "roomi-0": '#C8A7F8', // 더더 연하게
