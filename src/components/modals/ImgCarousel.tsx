@@ -92,7 +92,7 @@ const ImgCarousel: React.FC<CarouselProps> = ({ images, customClass = "", custom
                 ))}
             </div>
             <button onClick={prevSlide}
-                    className="absolute top-0 left-0 z-30 flex_center h-full px-4 cursor-pointer group focus:outline-none">
+                    className="absolute top-0 left-0 z-30 flex_center h-full pr-4 cursor-pointer group focus:outline-none">
                 <span className="inline-flex items-center justify-center w-10 h-10 rounded-full">
                   <svg className="w-4 h-4 text-white" viewBox="0 0 6 10">
                     <path className="group-hover:text-white"
@@ -101,7 +101,7 @@ const ImgCarousel: React.FC<CarouselProps> = ({ images, customClass = "", custom
                 </span>
             </button>
             <button onClick={nextSlide}
-                    className="absolute top-0 right-0 z-30 flex_center h-full px-4 cursor-pointer group focus:outline-none">
+                    className="absolute top-0 right-0 z-30 flex_center h-full pl-4 cursor-pointer group focus:outline-none">
                 <span className="inline-flex items-center justify-center w-10 h-10 rounded-full">
                   <svg className="w-4 h-4 text-white" viewBox="0 0 6 10">
                     <path className="group-hover:text-white"

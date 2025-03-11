@@ -121,6 +121,8 @@ export interface RoomData {
     discounts?: any[];
     reviews?: any[];
     host: Host;
+
+    is_favorite: boolean;
 }
 
 export interface Schedules {

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { ApiResponse, RoomData } from "src/types/rooms";
 import i18n from "../../i18n";
+import {mainRoomData} from "../../api/api";
 
 // naver.maps 타입을 명시적으로 선언
 declare global {
@@ -41,9 +42,7 @@ const NaverMap = ({ onRoomsUpdate }: NaverMapViewProps) => {
         const currentLocale = i18n.language; // 현재 언어 감지
 
         try {
-            const response = await fetch(
-                `https://roomi.co.kr/api/rooms?swLat=${sw.y}&swLng=${sw.x}&neLat=${ne.y}&neLng=${ne.x}&locale=${currentLocale}`
-            );
+            const response = await mainRoomData(sw.y, sw.x, ne.y, ne.x, currentLocale);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

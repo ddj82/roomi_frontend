@@ -119,8 +119,17 @@ export const createUser = async (formData: User) => {
     return request(`/users/signUp`, false, 'POST', formData);
 };
 
+export const mainRoomData = async (swY: number, swX: number, neY: number, neX: number, currentLocale: string) => {
+    const authToken = !!localStorage.getItem("authToken");
+    if (authToken) {
+        return request(`/rooms?swLat=${swY}&swLng=${swX}&neLat=${neY}&neLng=${neX}&locale=${currentLocale}`, true);
+    } else {
+        return request(`/rooms?swLat=${swY}&swLng=${swX}&neLat=${neY}&neLng=${neX}&locale=${currentLocale}`, false);
+    }
+};
+
 // 방 조회 API
-export const fetchRoomData = async (id: number, locale: string) => {
+export const fetchRoomData = async (id: number) => {
     return request(`/rooms/${id}`, false, 'GET', undefined, true);
 };
 

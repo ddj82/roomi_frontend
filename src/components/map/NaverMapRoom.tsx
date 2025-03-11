@@ -17,7 +17,7 @@ const NaverMapRoom = ({ room }: { room: RoomData }) => {
                 zoom: 17,
                 // minZoom: 16,
                 // maxZoom: 18,
-                draggable: false,               // 드래그 비활성화 (사용자가 이동 못함)
+                // draggable: false,               // 드래그 비활성화 (사용자가 이동 못함)
                 pinchZoom: false,               // 모바일 핀치 줌 비활성화
                 scrollWheel: false,             // 스크롤 휠 줌 비활성화
                 disableDoubleClickZoom: true,   // 더블 클릭 줌 비활성화
