@@ -605,6 +605,7 @@ export default function GuestReservationScreen() {
                         margin: "auto",
                         inset: "50% auto auto 50%",
                         transform: "translate(-50%, -50%)",
+                        overflowY: "auto",
                     },
                     overlay: {
                         backgroundColor: "rgba(0, 0, 0, 0.5)",
