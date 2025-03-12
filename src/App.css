@@ -34,3 +34,14 @@ div.app.container {
 .toss-modal {
     overflow: hidden !important; /* 스크롤 막기 */
 }
+
+.hide-on-mobile {
+    /* 기본 상태에서는 보이도록 설정 */
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .hide-on-mobile {
+        display: none;
+    }
+}

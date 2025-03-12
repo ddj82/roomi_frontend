@@ -28,7 +28,7 @@ export default function MainHome() {
         const handleScroll = () => {
             if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
                 setShowTopButton(true);
-                setBottomValue(window.innerWidth < 768 ? "131px" : "161px"); // 모바일인지 체크
+                setBottomValue(window.innerWidth < 768 ? "30px" : "161px"); // 모바일인지 체크
             } else {
                 setShowTopButton(false);
                 setBottomValue("30px");
@@ -66,7 +66,7 @@ export default function MainHome() {
             {showTopButton && (
                 <button onClick={scrollToTop}
                     className="flex_center
-                    fixed bottom-[141px] right-[20px] md:bottom-[171px] md:right-[30px]
+                    fixed bottom-[35px] right-[20px] md:bottom-[171px] md:right-[30px]
                     text-white text-sm md:text-base
                     bg-roomi rounded-full hover:ring-4 hover:ring-roomi-00
                     w-8 h-8 md:w-10 md:h-10"

@@ -201,7 +201,7 @@ export default function RoomDetailScreen() {
     };
 
     return (
-        <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto">
+        <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto pb-24 md:pb-0">
             {authModalOpen && (
                 <AuthModal visible={authModalOpen} onClose={() => setAuthModalOpen(false)} type="login"/>
             )}

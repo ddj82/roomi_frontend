@@ -54,7 +54,9 @@ export default function App() {
                     </Route>
                 </Routes>
             </div>
-            <Footer/>
+            <div className="hide-on-mobile">
+                <Footer/>
+            </div>
         </Router>
     );
 }

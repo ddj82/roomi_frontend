@@ -275,7 +275,7 @@ export default function GuestReservationScreen() {
     }
 
     return (
-        <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto">
+        <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto pb-24 md:pb-0">
             {room ? (
                 <div className="flex flex-col md:flex-row gap-8">
                     <div className="md:w-3/5 w-full">
@@ -444,8 +444,15 @@ export default function GuestReservationScreen() {
                             <span className="font-bold text-gray-800">{t("payment_info")}</span>
                             <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp}/>
                         </div>
-                        <div className={`transition-all duration-300 ease-in-out 
-                            ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>
+                        {/*<div className={`transition-all duration-300 ease-in-out */}
+                        {/*    ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>*/}
+                        <div className={`transition-all duration-300 ease-in-out md:max-h-none md:opacity-100 md:overflow-visible
+                            ${slideIsOpen
+                                // 아코디언이 열릴 때: 화면 높이 - 여유공간(예: 헤더/상단여백 80px)
+                                ? "max-h-[calc(100vh-80px)] overflow-y-auto opacity-100"
+                                // 아코디언이 닫힐 때
+                                : "max-h-0 overflow-hidden opacity-0"
+                            }`}>
                             <div className="flex justify-center text-sm bg-roomi-light rounded-lg p-1 pointer-events-none">
                                 <div
                                     className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 

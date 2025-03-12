@@ -130,7 +130,7 @@ export default function GuestReservationSetScreen() {
     };
 
     return (
-        <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto">
+        <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto pb-24 md:pb-0">
             {room ? (
                 <div className="flex flex-col md:flex-row gap-8">
                     <div className="md:w-3/5 w-full">
