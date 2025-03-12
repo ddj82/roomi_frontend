@@ -621,16 +621,7 @@ export default function GuestReservationScreen() {
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
                 </div>
-                {/*<CheckoutPage/>*/}
-                {/* d.html 파일을 iframe으로 삽입 */}
-                <iframe
-                    src="/d.html"              // public/d.html이라면 이렇게 작성
-                    style={{
-                        width: "100%",
-                        height: "80vh",          // 필요한 높이 지정
-                        border: "none"
-                    }}
-                />
+                <CheckoutPage/>
             </Modal>
         </div>
     );
