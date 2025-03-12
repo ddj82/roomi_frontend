@@ -1,123 +1,51 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>토스페이먼츠 결제 테스트</title>
+    <meta charset="utf-8" />
+    <!-- SDK 추가 -->
     <script src="https://js.tosspayments.com/v2/standard"></script>
 </head>
 <body>
-<div style="text-align: center; padding: 20px;">
-    <h2>토스페이먼츠 결제 테스트</h2>
-    <button onclick="initPayment()" style="padding: 10px; font-size: 16px; background-color: #0064FF; color: white; border: none; border-radius: 4px;">결제 요청</button>
-    <div id="debug-info" style="text-align: left; padding: 10px; font-size: 12px; color: #666; border: 1px solid #ccc; margin-top: 20px; white-space: pre-wrap;"></div>
-    <div id="error-message" style="color: red; display: none;"></div>
-</div>
-
+<!-- 결제하기 버튼 -->
+<button class="button" style="margin-top: 30px" onclick="requestPayment()">결제하기</button>
 <script>
-    function addDebugInfo(message, data = null) {
-        const debugDiv = document.getElementById('debug-info');
-        const timestamp = new Date().toLocaleTimeString();
-        let logMessage = `[${timestamp}] ${message}`;
-
-        if (data) {
-            logMessage += `\n${JSON.stringify(data, null, 2)}`;
-        }
-
-        debugDiv.innerHTML += logMessage + "\n\n";
-        console.log(logMessage);
-
-        // Flutter WebView와 통신 (오류 방지)
-        try {
-            if (window.flutter_inappwebview) {
-                window.flutter_inappwebview.callHandler('logHandler', message, data);
-            }
-        } catch (e) {
-            console.log('Flutter 통신 오류:', e);
-        }
+    // ------  SDK 초기화 ------
+    // @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
+    const clientKey = "test_ck_ALnQvDd2VJ62j1xJBMWYVMj7X41m";
+    const customerKey = "FuASvtElaPrhsxwsQ73BT";
+    const tossPayments = TossPayments(clientKey);
+    // 회원 결제
+    // @docs https://docs.tosspayments.com/sdk/v2/js#tosspaymentspayment
+    const payment = tossPayments.payment({ customerKey });
+    // 비회원 결제
+    // const payment = tossPayments.payment({customerKey: TossPayments.ANONYMOUS})
+    // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
+    // @docs https://docs.tosspayments.com/sdk/v2/js#paymentrequestpayment
+    async function requestPayment() {
+        // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
+        // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
+        await payment.requestPayment({
+            method: "CARD", // 카드 결제
+            amount: {
+                currency: "KRW",
+                value: 50000,
+            },
+            orderId: "lfxoQD3pvARrXfRDJoMHx", // 고유 주분번호
+            orderName: "토스 티셔츠 외 2건",
+            successUrl: window.location.origin + "/success", // 결제 요청이 성공하면 리다이렉트되는 URL
+            failUrl: window.location.origin + "/fail", // 결제 요청이 실패하면 리다이렉트되는 URL
+            customerEmail: "customer123@gmail.com",
+            customerName: "김토스",
+            customerMobilePhone: "01012341234",
+            // 카드 결제에 필요한 정보
+            card: {
+                useEscrow: false,
+                flowMode: "DEFAULT", // 통합결제창 여는 옵션
+                useCardPoint: false,
+                useAppCardOnly: false,
+            },
+        });
     }
-
-    // 🔹 토스페이먼츠 결제 키 설정
-    const clientKey = "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq"; // ✅ 클라이언트 키
-    let tossPayments = null;
-
-    // TossPayments 초기화 (오류 방지)
-    try {
-        tossPayments = TossPayments(clientKey);
-    } catch (e) {
-        addDebugInfo("⚠️ TossPayments 초기화 오류", e.message);
-    }
-
-    function initPayment() {
-        if (!tossPayments) {
-            addDebugInfo("❌ TossPayments가 로드되지 않았습니다.");
-            return;
-        }
-
-        const orderId = `test_order_${Date.now()}`;
-        const amount = 1000;
-        const orderName = "테스트 결제 상품";
-
-        addDebugInfo("🚀 결제 요청 시작...", { orderId, amount, orderName });
-
-        // Flutter에 결제 시작 알림
-        try {
-            if (window.flutter_inappwebview) {
-                window.flutter_inappwebview.callHandler('paymentStarted', orderId, amount);
-            }
-        } catch (e) {
-            console.log("Flutter 결제 시작 알림 오류:", e);
-        }
-
-        tossPayments.requestPayment('카드', {
-            amount: amount,
-            orderId: orderId,
-            orderName: orderName,
-            customerEmail: "test@example.com",
-            customerName: "테스트 유저",
-            successUrl: window.location.origin + "/payment-success",
-            failUrl: window.location.origin + "/payment-fail"
-        })
-            .then((result) => {
-                addDebugInfo("✅ 결제 성공!", result);
-
-                // Flutter에 성공 알림
-                try {
-                    if (window.flutter_inappwebview) {
-                        window.flutter_inappwebview.callHandler('paymentSuccess', result);
-                    }
-                } catch (e) {
-                    console.log("Flutter 결제 성공 알림 오류:", e);
-                }
-            })
-            .catch((error) => {
-                addDebugInfo("❌ 결제 실패", error);
-                document.getElementById('error-message').textContent = `결제 실패: ${error.message}`;
-                document.getElementById('error-message').style.display = 'block';
-
-                // Flutter에 실패 알림
-                try {
-                    if (window.flutter_inappwebview) {
-                        window.flutter_inappwebview.callHandler('paymentFailed', error.message, error.code);
-                    }
-                } catch (e) {
-                    console.log("Flutter 결제 실패 알림 오류:", e);
-                }
-            });
-    }
-
-    window.onload = function() {
-        addDebugInfo('📌 페이지 로드 완료');
-
-        // Flutter에 준비 완료 알림
-        try {
-            if (window.flutter_inappwebview) {
-                window.flutter_inappwebview.callHandler('pageLoaded');
-            }
-        } catch (e) {
-            console.log("Flutter 준비 완료 알림 오류:", e);
-        }
-    };
 </script>
 </body>
 </html>
