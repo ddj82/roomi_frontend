@@ -451,8 +451,7 @@ export default function GuestReservationScreen() {
                                 // 아코디언이 열릴 때: 화면 높이 - 여유공간(예: 헤더/상단여백 80px)
                                 ? "max-h-[calc(100vh-80px)] overflow-y-auto opacity-100"
                                 // 아코디언이 닫힐 때
-                                : "max-h-0 overflow-hidden opacity-0"
-                            }`}>
+                                : "max-h-0 overflow-hidden opacity-0"}`}>
                             <div className="flex justify-center text-sm bg-roomi-light rounded-lg p-1 pointer-events-none">
                                 <div
                                     className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 

@@ -480,8 +480,14 @@ export default function RoomDetailScreen() {
                             <span className="font-bold">{t("payment_info")}</span>
                             <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp}/>
                         </div>
-                        <div className={`transition-all duration-300 ease-in-out 
-                            ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>
+                        {/*<div className={`transition-all duration-300 ease-in-out */}
+                        {/*    ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>*/}
+                        <div className={`transition-all duration-300 ease-in-out md:max-h-none md:opacity-100 md:overflow-visible
+                            ${slideIsOpen
+                            // 아코디언이 열릴 때: 화면 높이 - 여유공간(예: 헤더/상단여백 80px)
+                            ? "max-h-[calc(100vh-80px)] overflow-y-auto opacity-100"
+                            // 아코디언이 닫힐 때
+                            : "max-h-0 overflow-hidden opacity-0"}`}>
                             {/* 가격 정보 헤더 */}
                             <div className="p-3 pt-5 mx-3 border-b border-gray-100">
                                 <h2 className="text-lg font-bold text-gray-800 mb-2">
