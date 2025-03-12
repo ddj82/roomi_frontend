@@ -603,8 +603,9 @@ export default function GuestReservationScreen() {
                         width: "550px",
                         maxWidth: "90%",
                         margin: "auto",
-                        inset: "50% auto auto 50%",
+                        inset: "50% 0px -200px 50%",
                         transform: "translate(-50%, -50%)",
+                        borderRadius: "8px",
                         overflowY: "auto",
                     },
                     overlay: {

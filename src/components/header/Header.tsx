@@ -134,7 +134,7 @@ const Header = () => {
         <div className="border-b-[1px] border-gray-200">
             <div className="h header container mx-auto md:mt-8 mt-6">
                 <div className="md:mx-auto mx-3 xl:max-w-[1200px] lg:max-w-[1024px] md:max-w-3xl">
-                    <div className="h top-row md:mb-8 mb-6 flex items-center justify-between">
+                    <div className="h top-row md:mb-8 mb-6 flex items-center">
                         {/* 로고 영역 */}
                         <div className="h logo-container">
                             <button onClick={handleLogo}>
@@ -144,7 +144,7 @@ const Header = () => {
 
                         {/* 서치바 영역 - 중앙 배치, 특정 페이지에서만 표시 */}
                         {isVisible ? (
-                            <div className="h search-bar-container flex-1 mx-4">
+                            <div className="h search-bar-container flex-1 mx-4 w-1/2">
                                 <div className="h search-bar-row md:h-14 h-12
                                 w-full md:max-w-2xl lg:max-w-3xl xl:max-w-4xl
                                 text-[11px] md:text-sm lg:text-base flex items-center justify-between bg-white rounded-full shadow-md border border-gray-200">
