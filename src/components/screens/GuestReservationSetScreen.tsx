@@ -114,8 +114,8 @@ export default function GuestReservationSetScreen() {
             totalNight = weekValue; // 주 단위면 초기화
         }
         formData.name = '김동준';
-        formData.phone = '01050645726';
-        formData.email = 'azmzm@naver.com';
+        formData.phone = '01012312312';
+        formData.email = 'qweqwe@naver.com';
         navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
             state: {
                 price,
