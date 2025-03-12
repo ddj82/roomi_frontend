@@ -17,7 +17,7 @@ import {
     faPhone,
     faEnvelope,
     faCalendarDay,
-    faCheckCircle, faMapMarkerAlt
+    faCheckCircle, faMapMarkerAlt, faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
 import { CheckoutPage } from "src/components/toss/Checkout.jsx";
@@ -613,10 +613,14 @@ export default function GuestReservationScreen() {
                     },
                 }}
             >
-                <CheckoutPage />
-                <button onClick={() => setShowToss(false)} className="mt-4 px-4 py-2 bg-gray-500 text-white rounded">
-                    취소
-                </button>
+                <div className="flex justify-end">
+                    <button
+                        onClick={() => setShowToss(false)}
+                        className="px-4 py-1">
+                        <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                </div>
+                <CheckoutPage/>
             </Modal>
         </div>
     );
