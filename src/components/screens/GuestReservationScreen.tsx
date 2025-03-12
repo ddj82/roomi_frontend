@@ -600,7 +600,7 @@ export default function GuestReservationScreen() {
                 bodyOpenClassName="toss-modal"
                 style={{
                     content: {
-                        width: "550px",
+                        width: "600px",
                         maxWidth: "90%",
                         margin: "auto",
                         inset: "50% 0px -200px 50%",
@@ -621,7 +621,16 @@ export default function GuestReservationScreen() {
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
                 </div>
-                <CheckoutPage/>
+                {/*<CheckoutPage/>*/}
+                {/* d.html 파일을 iframe으로 삽입 */}
+                <iframe
+                    src="/d.html"              // public/d.html이라면 이렇게 작성
+                    style={{
+                        width: "100%",
+                        height: "80vh",          // 필요한 높이 지정
+                        border: "none"
+                    }}
+                />
             </Modal>
         </div>
     );
