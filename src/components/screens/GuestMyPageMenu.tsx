@@ -6,6 +6,7 @@ import {useHostModeStore} from "../stores/HostModeStore";
 import {logout} from "src/api/api";
 import {useChatStore} from "../stores/ChatStore";
 
+
 export default function GuestMyPageMenu() {
     const { t } = useTranslation();
     const { isHost } = useIsHostStore();
@@ -36,24 +37,16 @@ export default function GuestMyPageMenu() {
     useEffect(() => {
         if (!selectedMenu) return;
 
-        // const fetchData = async () => {
-        //     setLoading(true);
-        //     try {
-        //         let response;
-        //         if (selectedMenu === 'wishlist') {
-        //             response = await axios.get('/api/wishlist');
-        //         } else if (selectedMenu === 'recent') {
-        //             response = await axios.get('/api/recent');
-        //         }
-        //         // 필요한 메뉴에 맞게 추가 조건문 작성
-        //         setData(response.data);
-        //     } catch (error) {
-        //         console.error('API 호출 오류:', error);
-        //     } finally {
-        //         setLoading(false);
-        //     }
-        // };
-        //
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+            } catch (error) {
+                console.error('API 호출 오류:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         // fetchData();
     }, [selectedMenu]);
 
@@ -96,7 +89,7 @@ export default function GuestMyPageMenu() {
                             <div className="font-bold text-lg my-2">기본 설정</div>
                             <div className="">
                                 <div className="my-2">
-                                    <button className="w-full text-start" onClick={() => setSelectedMenu('wishlist')}>
+                                    <button className="w-full text-start" onClick={() => setSelectedMenu('pay')}>
                                         알림
                                     </button>
                                 </div>

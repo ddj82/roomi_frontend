@@ -20,7 +20,8 @@ import {
     faCheckCircle, faMapMarkerAlt
 } from "@fortawesome/free-solid-svg-icons";
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
-import dayjs from "dayjs";
+import { CheckoutPage } from "src/components/toss/Checkout.jsx";
+import Modal from "react-modal";
 
 interface FormDataType {
     name: string;
@@ -59,6 +60,8 @@ export default function GuestReservationScreen() {
     const [isChecked1, setIsChecked1] = useState(false);
     const [isChecked2, setIsChecked2] = useState(false);
     const [isChecked3, setIsChecked3] = useState(false);
+
+    const [showToss, setShowToss] = useState(false);
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -111,6 +114,67 @@ export default function GuestReservationScreen() {
     useEffect(() => {
         console.log('paymentData :', paymentData);
     }, [paymentData]);
+
+    const handlePayment = () => {
+        setShowToss(true);
+    };
+/*
+    const handlePayment = async () => {
+        try {
+            const payment = await getFgkey();
+            const fgkey = payment.fgkey;
+            const params = payment.params;
+            const issuer_country = payment.issuer_country;
+
+            const requestData: Eximbay.PaymentRequest = {
+                payment: {
+                    transaction_type: "PAYMENT",
+                    order_id: "테스트 주문번호",
+                    currency: "KRW",
+                    amount: totalPrice,
+                    lang: "KR",
+                },
+                merchant: {
+                    mid: "1849705C64",
+                },
+                buyer: {
+                    name: formDataState.name, // 수정: formData -> formDataState
+                    email: formDataState.email, // 수정: formData -> formDataState
+                },
+                url: {
+                    return_url: "http://localhost:8081/",
+                    status_url: "example://status"
+                },
+                product: [{
+                    name: params.name,
+                    quantity: params.quantity,
+                    unit_price: params.unit_price,
+                    link: params.link,
+                }],
+                settings: {
+                    issuer_country: issuer_country,
+                },
+            };
+
+            if (window.EXIMBAY) {
+                window.EXIMBAY.request_pay(
+                    {fgkey, ...requestData},
+                    (response: Eximbay.PaymentResponse) => {
+                        if (response.status === "SUCCESS") {
+                            alert("결제 성공!");
+                        } else {
+                            alert(`결제 실패: ${response.message}`);
+                        }
+                    }
+                );
+            } else {
+                console.error("Eximbay 스크립트가 로드되지 않았습니다.");
+            }
+        } catch (error) {
+            console.error("결제 요청 중 오류 발생:", error);
+            alert("결제 요청에 실패했습니다.");
+        }
+    };
 
     const getFgkey = async () => {
         const apiUrl = "https://api-test.eximbay.com/v1/payments/ready";
@@ -178,63 +242,7 @@ export default function GuestReservationScreen() {
         }
     };
 
-    const handlePayment = async () => {
-        try {
-            const payment = await getFgkey();
-            const fgkey = payment.fgkey;
-            const params = payment.params;
-            const issuer_country = payment.issuer_country;
-
-            const requestData: Eximbay.PaymentRequest = {
-                payment: {
-                    transaction_type: "PAYMENT",
-                    order_id: "테스트 주문번호",
-                    currency: "KRW",
-                    amount: totalPrice,
-                    lang: "KR",
-                },
-                merchant: {
-                    mid: "1849705C64",
-                },
-                buyer: {
-                    name: formDataState.name, // 수정: formData -> formDataState
-                    email: formDataState.email, // 수정: formData -> formDataState
-                },
-                url: {
-                    return_url: "http://localhost:8081/",
-                    status_url: "example://status"
-                },
-                product: [{
-                    name: params.name,
-                    quantity: params.quantity,
-                    unit_price: params.unit_price,
-                    link: params.link,
-                }],
-                settings: {
-                    issuer_country: issuer_country,
-                },
-            };
-
-            if (window.EXIMBAY) {
-                window.EXIMBAY.request_pay(
-                    {fgkey, ...requestData},
-                    (response: Eximbay.PaymentResponse) => {
-                        if (response.status === "SUCCESS") {
-                            alert("결제 성공!");
-                        } else {
-                            alert(`결제 실패: ${response.message}`);
-                        }
-                    }
-                );
-            } else {
-                console.error("Eximbay 스크립트가 로드되지 않았습니다.");
-            }
-        } catch (error) {
-            console.error("결제 요청 중 오류 발생:", error);
-            alert("결제 요청에 실패했습니다.");
-        }
-    };
-
+* */
     interface PaymentOptionProps {
         id: string;
         label: string;
@@ -265,6 +273,7 @@ export default function GuestReservationScreen() {
             </div>
         );
     }
+
     return (
         <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto">
             {room ? (
@@ -584,6 +593,30 @@ export default function GuestReservationScreen() {
                     </div>
                 </div>
             )}
+            <Modal
+                isOpen={showToss}
+                onRequestClose={() => setShowToss(false)}
+                contentLabel="토스 결제 모달"
+                bodyOpenClassName="toss-modal"
+                style={{
+                    content: {
+                        width: "550px",
+                        maxWidth: "90%",
+                        margin: "auto",
+                        inset: "50% auto auto 50%",
+                        transform: "translate(-50%, -50%)",
+                    },
+                    overlay: {
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        zIndex: 9999,
+                    },
+                }}
+            >
+                <CheckoutPage />
+                <button onClick={() => setShowToss(false)} className="mt-4 px-4 py-2 bg-gray-500 text-white rounded">
+                    취소
+                </button>
+            </Modal>
         </div>
     );
 }

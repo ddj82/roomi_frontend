@@ -13,9 +13,6 @@ interface WishlistButtonProps {
 const WishListButton: React.FC<WishlistButtonProps> = ({onToggle, roomId, isFavorite}) => {
     const [isLiked, setIsLiked] = useState(isFavorite);
     const [authModalOpen, setAuthModalOpen] = useState(false);
-    useEffect(() => {
-        console.log('WishListButton 방번호, 찜상태', roomId, isFavorite);
-    }, []);
 
     // 찜 상태를 토글하는 함수
     const toggleWishlist = (event: React.MouseEvent<HTMLButtonElement>) => {

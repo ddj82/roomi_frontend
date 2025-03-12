@@ -30,3 +30,7 @@ div.app.container {
     margin: 0 auto;
     flex: 1;
 }
+
+.toss-modal {
+    overflow: hidden !important; /* 스크롤 막기 */
+}
