@@ -87,6 +87,11 @@ export const login = async (email: string, password: string, setAuthToken: (toke
             localStorage.setItem('userEmail', data.data.email);
             localStorage.setItem('userName', data.data.name);
             localStorage.setItem('userIsHost', data.data.isHost);
+            localStorage.setItem('userProfileImg', data.data.profile_image);
+
+            // DB에서 받아온 언어 적용
+            localStorage.setItem('i18nextLng', data.data.language);
+            i18n.changeLanguage(data.data.language);
         } else {
             console.error('로그인 실패:', data.message);
         }
@@ -106,7 +111,13 @@ export const logout = async () => {
         localStorage.removeItem('userName'); // 유저 정보 제거
         localStorage.removeItem('userEmail'); // 유저 정보 제거
         localStorage.removeItem('userIsHost'); // 유저 정보 제거
+        localStorage.removeItem('userProfileImg'); // 유저 정보 제거
         localStorage.removeItem('hostMode');
+        localStorage.removeItem('i18nextLng');
+
+        const detectedLang = i18n.services.languageDetector?.detect();
+        console.log('detectedLang:', detectedLang);
+        i18n.changeLanguage(detectedLang || 'ko');
         return '로그아웃 성공';
     } catch (error) {
         console.error('로그아웃 실패:', error);
@@ -191,11 +202,27 @@ export const getValidationCode = async (email: string) => {
 
 // 찜 추가 API
 export const addFavoriteRoom = async (roomId: number) => {
-    console.log('찜 추가 API');
     return request(`/rooms/favorite/${roomId}`, true, 'POST');
 };
 // 찜 제거 API
 export const deleteFavoriteRoom = async (roomId: number) => {
-    console.log('찜 제거 API');
     return request(`/rooms/favorite/${roomId}`, true, 'DELETE');
+};
+// 찜 목록 API
+export const getRoomFavoriteList = async () => {
+    return request(`/rooms/favorite/list`, true, 'GET', undefined,true);
+};
+
+// 최근 본 방 추가 API
+export const addRoomHistory = async (roomId: number) => {
+    return request(`/rooms/history/${roomId}`, true, 'POST');
+};
+// 최근 본 방 목록 API
+export const getRoomHistoryList = async () => {
+    return request(`/rooms/history/list`, true, 'GET', undefined,true);
+};
+
+// 유저 언어 코드 변경 API
+export const updateLanguage = async (langCode: string) => {
+    return request(`/users/lang?language=${langCode}`, true, 'POST');
 };

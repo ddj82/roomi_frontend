@@ -37,6 +37,11 @@ module.exports = {
                     'align-items': 'center',
                     'justify-content': 'center',
                 },
+                '.font_title': {
+                    fontWeight: 'bold',
+                    fontSize: '1.125rem',
+                    lineHeight: '1.75rem',
+                },
             });
         },
         function ({ addComponents }) {

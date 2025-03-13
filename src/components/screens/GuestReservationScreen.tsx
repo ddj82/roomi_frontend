@@ -274,6 +274,18 @@ export default function GuestReservationScreen() {
         );
     }
 
+    useEffect(() => {
+        if (slideIsOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+        // 컴포넌트 언마운트 시 스크롤 복원
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [slideIsOpen]);
+
     return (
         <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto pb-24 md:pb-0">
             {room ? (
@@ -449,21 +461,21 @@ export default function GuestReservationScreen() {
                         <div className={`transition-all duration-300 ease-in-out md:max-h-none md:opacity-100 md:overflow-visible
                             ${slideIsOpen
                                 // 아코디언이 열릴 때: 화면 높이 - 여유공간(예: 헤더/상단여백 80px)
-                                ? "max-h-[calc(100vh-80px)] overflow-y-auto opacity-100"
+                                ? "max-h-[calc(60vh)] overflow-y-auto opacity-100"
                                 // 아코디언이 닫힐 때
                                 : "max-h-0 overflow-hidden opacity-0"}`}>
-                            <div className="flex justify-center text-sm bg-roomi-light rounded-lg p-1 pointer-events-none">
-                                <div
-                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
-                                    ${calUnit ? "bg-[#9370DB] text-white" : "text-gray-700 hover:bg-gray-100"}`}>
-                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}
-                                </div>
-                                <div
-                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
-                                    ${calUnit ? "text-gray-700 hover:bg-gray-100" : "bg-[#9370DB] text-white"}`}>
-                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}
-                                </div>
-                            </div>
+                            {/*<div className="flex justify-center text-sm bg-roomi-light rounded-lg p-1 pointer-events-none">*/}
+                            {/*    <div*/}
+                            {/*        className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all */}
+                            {/*        ${calUnit ? "bg-[#9370DB] text-white" : "text-gray-700 hover:bg-gray-100"}`}>*/}
+                            {/*        <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}*/}
+                            {/*    </div>*/}
+                            {/*    <div*/}
+                            {/*        className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all */}
+                            {/*        ${calUnit ? "text-gray-700 hover:bg-gray-100" : "bg-[#9370DB] text-white"}`}>*/}
+                            {/*        <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
                             <div className="font-bold text-gray-800 mb-4 mt-6">
                                 {t("payment_info")}
                             </div>

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from 'react-router-dom';
-import {fetchRoomData} from "src/api/api";
+import {addRoomHistory, fetchRoomData} from "src/api/api";
 import {RoomData} from "../../types/rooms";
 import ImgCarousel from "../modals/ImgCarousel";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -10,7 +10,7 @@ import {
     faWifi, faTv, faKitchenSet, faSoap, faHandsWash, faSnowflake, faParking, faKitMedical, faFireExtinguisher, faUtensils,
     faCoffee, faVideo, faTree, faDumbbell, faCouch, faSwimmingPool, faHotTub, faMapLocationDot, faCalendarDay, faChevronUp,
     faChevronDown, faUser, faMugSaucer, faShower, faWindowRestore, faChair, faTable, faTshirt, faPaw, faSmoking,
-    faSmokingBan, faPersonSwimming, faBriefcase, faMartiniGlass, faBed, faTemperatureHalf, faPhone, faPlug, faBolt,
+    faSmokingBan, faBriefcase, faMartiniGlass, faBed, faTemperatureHalf, faPhone, faPlug, faBolt,
     faShield, faLock, faBroom, faBellConcierge, faSpa, faMusic, faDice, faBookOpen, faUmbrellaBeach, faCity,
     faBabyCarriage, faWheelchair, faFire
 } from "@fortawesome/free-solid-svg-icons";
@@ -64,6 +64,7 @@ export default function RoomDetailScreen() {
 
         let token = localStorage.getItem('authToken');
         if (token) {
+            addRoomHistory(Number(roomId));
             token = token.replace(/^Bearer\s/, ""); // 🔥 "Bearer " 제거
             connect(token); // ✅ WebSocket 연결
         } else {
@@ -200,6 +201,18 @@ export default function RoomDetailScreen() {
         window.location.href = '/chat';
     };
 
+    useEffect(() => {
+        if (slideIsOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+        // 컴포넌트 언마운트 시 스크롤 복원
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [slideIsOpen]);
+
     return (
         <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto pb-24 md:pb-0">
             {authModalOpen && (
@@ -242,7 +255,7 @@ export default function RoomDetailScreen() {
                                 </div>
                             )}
 
-                            <p className="text-gray-700 mb-8 leading-relaxed">{room.description}</p>
+                            <p className="text-gray-700 mb-8 leading-relaxed whitespace-pre-wrap">{room.description}</p>
 
                             {/* 숙소 정보 */}
                             <div className="mb-10">
@@ -475,7 +488,7 @@ export default function RoomDetailScreen() {
                         w-full fixed bottom-0 z-[100]">
                         {/* 모바일 전용 아코디언 버튼 */}
                         <div
-                            className="md:hidden flex justify-between items-center p-4 bg-roomi text-white cursor-pointer"
+                            className="md:hidden flex justify-between items-center p-4 bg-roomi-light rounded-lg cursor-pointer"
                             onClick={() => setSlideIsOpen(!slideIsOpen)}>
                             <span className="font-bold">{t("payment_info")}</span>
                             <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp}/>
@@ -485,7 +498,7 @@ export default function RoomDetailScreen() {
                         <div className={`transition-all duration-300 ease-in-out md:max-h-none md:opacity-100 md:overflow-visible
                             ${slideIsOpen
                             // 아코디언이 열릴 때: 화면 높이 - 여유공간(예: 헤더/상단여백 80px)
-                            ? "max-h-[calc(100vh-80px)] overflow-y-auto opacity-100"
+                            ? "max-h-[calc(60vh)] overflow-y-auto opacity-100"
                             // 아코디언이 닫힐 때
                             : "max-h-0 overflow-hidden opacity-0"}`}>
                             {/* 가격 정보 헤더 */}

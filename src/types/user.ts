@@ -7,4 +7,5 @@ export interface User {
     sex?: string;
     birth: string;
     channel_uid?: string;
+    profile_image?: string;
 }

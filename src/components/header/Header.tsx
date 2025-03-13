@@ -27,6 +27,7 @@ import {useTranslation} from "react-i18next";
 import {logout} from "../../api/api";
 import {useChatStore} from "../stores/ChatStore";
 import {useIsHostStore} from "../stores/IsHostStore";
+import i18n from "i18next";
 type ModalSection = 'date' | 'location' | 'guests';
 type ModalPosition = { x: number; y: number };
 
@@ -52,6 +53,18 @@ const Header = () => {
     const disconnect = useChatStore((state) => state.disconnect);
     const [userVisible, setUserVisible] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const isLoggedIn = Boolean(authToken);
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            // 로그인 안 된 상태 → 브라우저 언어 강제 적용
+            // i18n 초기화 시 localStorage 우선이 설정되어 있다면, 기존 언어 설정을 지워줘야 함
+            localStorage.removeItem('i18nextLng');
+            // 브라우저 언어 감지
+            const detectedLang = i18n.services.languageDetector?.detect();
+            i18n.changeLanguage(detectedLang || 'ko');
+        }
+    }, [isLoggedIn]);
 
     const openModal = (section: ModalSection, ref: React.RefObject<any>) => {
         if (ref.current) {
@@ -210,15 +223,15 @@ const Header = () => {
                                                     <li>
                                                         {hostMode ? (
                                                             <a href="/host/myPage"
-                                                               className="block px-4 py-2 hover:bg-gray-100">마이페이지</a>
+                                                               className="block px-4 py-2 hover:bg-gray-100">{t('마이페이지')}</a>
                                                         ) : (
                                                             <a href="/myPage"
-                                                               className="block px-4 py-2 hover:bg-gray-100">마이페이지</a>
+                                                               className="block px-4 py-2 hover:bg-gray-100">{t('마이페이지')}</a>
                                                         )}
                                                     </li>
                                                     <li>
                                                         {!hostMode && (<a href="/chat"
-                                                                          className="block px-4 py-2 hover:bg-gray-100">메시지</a>)}
+                                                                          className="block px-4 py-2 hover:bg-gray-100">{t('메시지')}</a>)}
                                                     </li>
                                                     {isHost && (
                                                         <>
@@ -279,7 +292,6 @@ const Header = () => {
                 )}
                 <BusinessInfoModal visible={businessInfoVisible} onClose={() => setBusinessInfoVisible(false)}/>
                 <AuthModal visible={authModalVisible} onClose={() => setAuthModalVisible(false)} type="login"/>
-                {/*<UserModal visible={userVisible} onClose={() => setUserVisible(false)}/>*/}
             </div>
         </div>
     );

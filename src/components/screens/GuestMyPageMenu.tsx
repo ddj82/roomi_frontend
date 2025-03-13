@@ -5,7 +5,19 @@ import {useNavigate} from "react-router-dom";
 import {useHostModeStore} from "../stores/HostModeStore";
 import {logout} from "src/api/api";
 import {useChatStore} from "../stores/ChatStore";
-
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faBell, faEye, faThumbsUp} from '@fortawesome/free-regular-svg-icons';
+import {faArrowLeft, faDollarSign, faGlobe, faLanguage} from "@fortawesome/free-solid-svg-icons";
+import { RoomData } from "src/types/rooms";
+import MyFavoriteList from "./myPageMenu/MyFavoriteList";
+import MyHistoryList from "./myPageMenu/MyHistoryList";
+import NotificationSet from "./myPageMenu/NotificationSet";
+import LanguageSet from "./myPageMenu/LanguageSet";
+import HelpCenter from "./myPageMenu/HelpCenter";
+import FAQ from "./myPageMenu/FAQ";
+import Notices from "./myPageMenu/Notices";
+import CurrencySet from "./myPageMenu/CurrencySet";
+import {useMediaQuery} from "react-responsive";
 
 export default function GuestMyPageMenu() {
     const { t } = useTranslation();
@@ -14,8 +26,14 @@ export default function GuestMyPageMenu() {
     const navigate = useNavigate();
     const disconnect = useChatStore((state) => state.disconnect);
     const [selectedMenu, setSelectedMenu] = useState('');
-    const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const isMobile = useMediaQuery({ maxWidth: 768 }); // 768px 이하를 모바일로 간주
+    const [profileImg, setProfileImg] = useState('');
+
+    useEffect(() => {
+        const img = localStorage.getItem('userProfileImg');
+        if (img) setProfileImg(img);
+    }, []);
 
     const handleLogout = async () => {
         try {
@@ -33,30 +51,43 @@ export default function GuestMyPageMenu() {
         navigate('/hostAgree');
     };
 
-    // 메뉴가 바뀔 때마다 해당 API 호출
-    useEffect(() => {
-        if (!selectedMenu) return;
+    // 메뉴 내용 렌더링 로직을 함수로 분리
+    const renderMenuContent = () => {
+        if (loading) return <p className="flex_center">Loading...</p>;
+        if (!selectedMenu) return <p className="flex_center">메뉴를 선택해주세요.</p>;
 
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-            } catch (error) {
-                console.error('API 호출 오류:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        // fetchData();
-    }, [selectedMenu]);
+        switch (selectedMenu) {
+            case '관심':
+                return <MyFavoriteList/>;
+            case '최근본게시물':
+                return <MyHistoryList/>;
+            case '알림':
+                return <NotificationSet/>;
+            case '언어':
+                return <LanguageSet/>;
+            case '통화':
+                return <CurrencySet/>;
+            case '공지사항':
+                return <Notices/>;
+            case 'FAQ':
+                return <FAQ/>;
+            case '고객센터':
+                return <HelpCenter/>;
+            default:
+                return <p className="flex_center">메뉴를 선택해주세요.</p>;
+        }
+    };
 
     return (
-        <div className="w-full flex my-4">
-            <div className="border-r w-1/3">
-                <div className="my-2 mx-4">
-                    <div className="flex_center">프사</div>
-                    <div>{localStorage.getItem('userName')}</div>
-                    <div>{localStorage.getItem('userEmail')}</div>
+        <div className="w-full my-4 flex flex-col md:flex-row relative">
+            {/* 메뉴 영역 */}
+            <div className="md:border-r md:w-1/3">
+                <div className="m-2 mx-4 mb-4">
+                    <div className="flex_center">
+                        <img src={profileImg} alt="프로필사진" className="rounded-full w-28 h-28 mb-4"/>
+                    </div>
+                    <div className="flex_center">{localStorage.getItem('userName')}</div>
+                    <div className="flex_center">{localStorage.getItem('userEmail')}</div>
                 </div>
                 <div className="my-2 mx-4">
                     <div>
@@ -71,71 +102,71 @@ export default function GuestMyPageMenu() {
                 <div className="my-2 mx-4">
                     <div className="w-full">
                         <div className="border-t border-gray-300">
-                            <div className="font-bold text-lg my-2">나의 거래</div>
+                            <div className="font-bold text-lg my-2">{t("나의 거래")}</div>
                             <div className="">
                                 <div className="my-2">
-                                    <button className="w-full text-start" onClick={() => setSelectedMenu('wishlist')}>
-                                        관심 목록
+                                    <button className="w-full text-start" onClick={() => setSelectedMenu('관심')}>
+                                        <FontAwesomeIcon icon={faThumbsUp} className="w-4 h-4 mr-1"/>{t("관심 목록")}
                                     </button>
                                 </div>
                                 <div className="my-2">
-                                    <button className="w-full text-start" onClick={() => setSelectedMenu('recent')}>
-                                        최근 본 게시물
+                                    <button className="w-full text-start" onClick={() => setSelectedMenu('최근본게시물')}>
+                                        <FontAwesomeIcon icon={faEye} className="w-4 h-4 mr-1"/>{t("최근 본 게시물")}
                                     </button>
                                 </div>
                             </div>
                         </div>
                         <div className="border-t border-gray-300">
-                            <div className="font-bold text-lg my-2">기본 설정</div>
+                            <div className="font-bold text-lg my-2">{t("기본 설정")}</div>
                             <div className="">
                                 <div className="my-2">
-                                    <button className="w-full text-start" onClick={() => setSelectedMenu('pay')}>
-                                        알림
+                                    <button className="w-full text-start" onClick={() => setSelectedMenu('알림')}>
+                                        <FontAwesomeIcon icon={faBell} className="w-4 h-4 mr-1"/>{t("알림 설정")}
                                     </button>
                                 </div>
                                 <div className="my-2">
-                                    <button className="w-full text-start" onClick={() => setSelectedMenu('wishlist')}>
-                                        언어
+                                    <button className="w-full text-start" onClick={() => setSelectedMenu('언어')}>
+                                        <FontAwesomeIcon icon={faGlobe} className="w-4 h-4 mr-1"/>{t("언어 설정")}
                                     </button>
                                 </div>
                                 <div className="my-2">
-                                    <button className="w-full text-start" onClick={() => setSelectedMenu('wishlist')}>
-                                        통화
+                                    <button className="w-full text-start" onClick={() => setSelectedMenu('통화')}>
+                                        <FontAwesomeIcon icon={faDollarSign} className="w-4 h-4 mr-1"/>{t("통화 설정")}
                                     </button>
                                 </div>
                             </div>
                         </div>
                         <div className="border-t border-gray-300">
-                            <div className="font-bold text-lg my-2">고객 지원</div>
+                            <div className="font-bold text-lg my-2">{t("고객 지원")}</div>
                             <div className="">
                                 <div className="my-2">
-                                    <button className="w-full text-start" onClick={() => setSelectedMenu('wishlist')}>
-                                        공지사항
+                                    <button className="w-full text-start" onClick={() => setSelectedMenu('공지사항')}>
+                                        {t("공지사항")}
                                     </button>
                                 </div>
                                 <div className="my-2">
-                                    <button className="w-full text-start" onClick={() => setSelectedMenu('wishlist')}>
+                                    <button className="w-full text-start" onClick={() => setSelectedMenu('FAQ')}>
                                         FAQ
                                     </button>
                                 </div>
                                 <div className="my-2">
-                                    <button className="w-full text-start" onClick={() => setSelectedMenu('wishlist')}>
-                                        고객센터
+                                    <button className="w-full text-start" onClick={() => setSelectedMenu('고객센터')}>
+                                        {t("고객센터")}
                                     </button>
                                 </div>
                             </div>
                         </div>
                         <div className="border-t border-gray-300">
-                            <div className="font-bold text-lg my-2">계정</div>
+                            <div className="font-bold text-lg my-2">{t("계정 설정")}</div>
                             <div className="">
                                 <div className="my-2">
                                     <button className="w-full text-start" onClick={handleLogout}>
-                                        로그아웃
+                                        {t("로그아웃")}
                                     </button>
                                 </div>
                                 <div className="my-2">
-                                    <button className="w-full text-start" onClick={() => setSelectedMenu('wishlist')}>
-                                        회원탈퇴
+                                    <button className="w-full text-start">
+                                        {t("회원탈퇴")}
                                     </button>
                                 </div>
                             </div>
@@ -143,29 +174,22 @@ export default function GuestMyPageMenu() {
                     </div>
                 </div>
             </div>
-            <div className="border-l w-full">
+            {/* 데스크톱 전용 오른쪽 콘텐츠 (모바일에서는 숨김) */}
+            <div className="md:border-l md:w-full hidden md:block">
                 <div id="myPageContent" className="m-2">
-                    {loading ? (
-                        <p>Loading...</p>
-                    ) : (
-                        <>
-                            {selectedMenu === 'wishlist' && (
-                                <div>
-                                    <h2>관심 목록</h2>
-                                    {/*<pre>{JSON.stringify(data, null, 2)}</pre>*/}
-                                </div>
-                            )}
-                            {selectedMenu === 'recent' && (
-                                <div>
-                                    <h2>최근 본 게시물</h2>
-                                    {/*<pre>{JSON.stringify(data, null, 2)}</pre>*/}
-                                </div>
-                            )}
-                            {!selectedMenu && <p>메뉴를 선택해주세요.</p>}
-                        </>
-                    )}
+                    {renderMenuContent()}
                 </div>
             </div>
+            {/* 모바일에서만 오버레이 표시 */}
+            {isMobile && selectedMenu && (
+                <div className="absolute top-0 left-0 w-full h-full bg-white z-50 p-4">
+                    <button className="mb-4 px-3 py-2 bg-gray-200 rounded" onClick={() => setSelectedMenu('')}>
+                        <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
+                    {/* 메뉴 내용 표시 */}
+                    {renderMenuContent()}
+                </div>
+            )}
         </div>
     );
 };

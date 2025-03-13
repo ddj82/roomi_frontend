@@ -25,20 +25,16 @@ const WishListButton: React.FC<WishlistButtonProps> = ({onToggle, roomId, isFavo
         }
         const newState = !isLiked;
         setIsLiked(newState);
-        if (newState) {
-            console.log('찜', newState);
-            try {
+        try {
+            if (newState) {
+                console.log('찜', newState);
                 addFavorite();
-            } catch (error) {
-                console.error('찜 추가 실패:', error);
-            }
-        } else {
-            console.log('ㄴ찜', newState);
-            try {
+            } else {
+                console.log('ㄴ찜', newState);
                 deleteFavorite();
-            } catch (error) {
-                console.error('찜 추가 실패:', error);
             }
+        } catch (error) {
+            console.error('찜 api 실패:', error);
         }
     };
     const addFavorite = async () => {
