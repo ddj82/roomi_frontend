@@ -60,14 +60,36 @@
     .redirect-button:hover {
       background-color: #2980b9;
     }
+    .payment-info {
+      text-align: left;
+      margin: 20px auto;
+      max-width: 400px;
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 6px;
+      border: 1px solid #eee;
+    }
+    .payment-info p {
+      margin: 8px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    .payment-info strong {
+      font-weight: 500;
+      color: #555;
+    }
+    .payment-info span {
+      color: #222;
+      word-break: break-all;
+    }
   </style>
 </head>
 <body>
 <div class="payment-result">
   <div class="success-icon"></div>
   <h1>결제가 성공적으로 완료되었습니다</h1>
-  <div id="payment-details">
-    <p>잠시 후 자동으로 앱으로 이동합니다.</p>
+  <div id="payment-details" class="payment-info">
+    <p>결제 정보를 불러오는 중...</p>
   </div>
   <p class="redirect-message">자동으로 앱이 열리지 않는 경우 아래 버튼을 클릭하세요.</p>
   <button class="redirect-button" id="openAppButton">앱으로 이동</button>
@@ -88,29 +110,103 @@
     const params = getUrlParams();
     let deepLink = `com.myno1214.roomi://success`;
 
-    // URL 파라미터를 딥링크에 추가
-    if (params.paymentKey) {
-      deepLink += `?paymentKey=${params.paymentKey}`;
-    }
-    if (params.orderId) {
-      deepLink += deepLink.includes('?') ? `&orderId=${params.orderId}` : `?orderId=${params.orderId}`;
-    }
-    if (params.amount) {
-      deepLink += deepLink.includes('?') ? `&amount=${params.amount}` : `?amount=${params.amount}`;
+    // 모든 URL 파라미터를 딥링크에 추가
+    let isFirstParam = true;
+    for (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        // 첫 번째 파라미터는 '?'로, 나머지는 '&'로 구분
+        deepLink += isFirstParam ? `?${key}=${encodeURIComponent(params[key])}` : `&${key}=${encodeURIComponent(params[key])}`;
+        isFirstParam = false;
+      }
     }
 
-    // 상세 정보 표시
-    const detailsElement = document.getElementById('payment-details');
-    if (params.orderId && params.amount) {
-      detailsElement.innerHTML = `
-                    <p><strong>주문번호:</strong> ${params.orderId}</p>
-                    <p><strong>결제금액:</strong> ${parseInt(params.amount).toLocaleString()}원</p>
-                    <p>잠시 후 자동으로 앱으로 이동합니다.</p>
-                `;
+    // 추가 정보 객체 생성 (토스페이먼츠 응답에 없는 정보도 추가 가능)
+    const additionalInfo = {
+      timestamp: new Date().toISOString(),
+      device: navigator.userAgent,
+      // 다른 필요한 정보 추가
+    };
+
+    // 추가 정보도 딥링크에 포함
+    for (const key in additionalInfo) {
+      if (additionalInfo.hasOwnProperty(key)) {
+        deepLink += `&${key}=${encodeURIComponent(additionalInfo[key])}`;
+      }
     }
+
+    // 상세 정보 표시 (주요 정보만 선택적으로 보여줌)
+    const detailsElement = document.getElementById('payment-details');
+    if (params.orderId) {
+      let detailsHtml = '';
+
+      // 주요 결제 정보 표시 (우선 순위 높은 것들)
+      if (params.orderId) detailsHtml += `<p><strong>주문번호:</strong> <span>${params.orderId}</span></p>`;
+      if (params.amount) detailsHtml += `<p><strong>결제금액:</strong> <span>${parseInt(params.amount).toLocaleString()}원</span></p>`;
+      if (params.paymentKey) detailsHtml += `<p><strong>결제키:</strong> <span>${params.paymentKey}</span></p>`;
+      if (params.orderName) detailsHtml += `<p><strong>상품명:</strong> <span>${params.orderName}</span></p>`;
+
+      // 추가 정보 표시 (결제 방법, 상태 등)
+      if (params.method) detailsHtml += `<p><strong>결제방법:</strong> <span>${getPaymentMethodName(params.method)}</span></p>`;
+      if (params.status) detailsHtml += `<p><strong>상태:</strong> <span>${getStatusName(params.status)}</span></p>`;
+
+      // 시간 정보 (있는 경우)
+      if (params.approvedAt) {
+        const approvedDate = new Date(params.approvedAt);
+        detailsHtml += `<p><strong>승인시간:</strong> <span>${formatDate(approvedDate)}</span></p>`;
+      }
+
+      detailsHtml += `<p>잠시 후 자동으로 앱으로 이동합니다.</p>`;
+
+      detailsElement.innerHTML = detailsHtml;
+    } else {
+      detailsElement.innerHTML = `<p>결제 정보를 찾을 수 없습니다.</p>`;
+    }
+
+    // 디버깅용 로그
+    console.log('딥링크:', deepLink);
+    console.log('전달할 파라미터:', params);
 
     // 앱으로 리다이렉트
     window.location.href = deepLink;
+  }
+
+  // 결제 방법 이름 반환
+  function getPaymentMethodName(method) {
+    const methodNames = {
+      CARD: '카드',
+      VIRTUAL_ACCOUNT: '가상계좌',
+      MOBILE_PHONE: '휴대폰',
+      TRANSFER: '계좌이체',
+      CULTURE_GIFT_CERTIFICATE: '문화상품권',
+      BOOK_GIFT_CERTIFICATE: '도서문화상품권',
+      GAME_GIFT_CERTIFICATE: '게임문화상품권'
+    };
+    return methodNames[method] || method;
+  }
+
+  // 상태 이름 반환
+  function getStatusName(status) {
+    const statusNames = {
+      READY: '준비됨',
+      IN_PROGRESS: '진행중',
+      WAITING_FOR_DEPOSIT: '입금대기',
+      DONE: '완료',
+      CANCELED: '취소됨',
+      PARTIAL_CANCELED: '부분취소',
+      ABORTED: '중단됨',
+      EXPIRED: '만료됨'
+    };
+    return statusNames[status] || status;
+  }
+
+  // 날짜 포맷 함수
+  function formatDate(date) {
+    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}`;
+  }
+
+  // 숫자 앞에 0 추가
+  function padZero(num) {
+    return num < 10 ? '0' + num : num;
   }
 
   // 앱 열기 버튼 클릭 이벤트
