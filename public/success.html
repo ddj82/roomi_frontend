@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+      <html lang="ko">
+      <head>
+      <meta charset="utf-8" />
+      <title>결제 성공</title>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+    .payment-result {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      background-color: #f9f9f9;
+    }
+    .success-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 20px;
+      background-color: #4caf50;
+      border-radius: 50%;
+      position: relative;
+    }
+    .success-icon:after {
+      content: '';
+      position: absolute;
+      width: 30px;
+      height: 15px;
+      border-left: 3px solid white;
+      border-bottom: 3px solid white;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -60%) rotate(-45deg);
+    }
+    .redirect-message {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #666;
+      font-style: italic;
+    }
+    .redirect-button {
+      margin-top: 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .redirect-button:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+<div class="payment-result">
+  <div class="success-icon"></div>
+  <h1>결제가 성공적으로 완료되었습니다</h1>
+  <div id="payment-details">
+    <p>잠시 후 자동으로 앱으로 이동합니다.</p>
+  </div>
+  <p class="redirect-message">자동으로 앱이 열리지 않는 경우 아래 버튼을 클릭하세요.</p>
+  <button class="redirect-button" id="openAppButton">앱으로 이동</button>
+</div>
+
+<script>
+  // URL에서 쿼리 파라미터 추출
+  function getUrlParams() {
+    const params = {};
+    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) {
+      params[key] = decodeURIComponent(value);
+    });
+    return params;
+  }
+
+  // 앱으로 리다이렉트하는 함수
+  function redirectToApp() {
+    const params = getUrlParams();
+    let deepLink = `com.myno1214.roomi://success`;
+
+    // URL 파라미터를 딥링크에 추가
+    if (params.paymentKey) {
+      deepLink += `?paymentKey=${params.paymentKey}`;
+    }
+    if (params.orderId) {
+      deepLink += deepLink.includes('?') ? `&orderId=${params.orderId}` : `?orderId=${params.orderId}`;
+    }
+    if (params.amount) {
+      deepLink += deepLink.includes('?') ? `&amount=${params.amount}` : `?amount=${params.amount}`;
+    }
+
+    // 상세 정보 표시
+    const detailsElement = document.getElementById('payment-details');
+    if (params.orderId && params.amount) {
+      detailsElement.innerHTML = `
+                    <p><strong>주문번호:</strong> ${params.orderId}</p>
+                    <p><strong>결제금액:</strong> ${parseInt(params.amount).toLocaleString()}원</p>
+                    <p>잠시 후 자동으로 앱으로 이동합니다.</p>
+                `;
+    }
+
+    // 앱으로 리다이렉트
+    window.location.href = deepLink;
+  }
+
+  // 앱 열기 버튼 클릭 이벤트
+  document.getElementById('openAppButton').addEventListener('click', function() {
+    redirectToApp();
+  });
+
+  // 페이지 로드 시 자동으로 앱 리다이렉트 (1.5초 후)
+  window.onload = function() {
+    setTimeout(redirectToApp, 1500);
+  };
+
+  // 서버에 결제 정보 전송 (선택사항)
+  const sendPaymentInfoToServer = async () => {
+    const params = getUrlParams();
+    if (params.paymentKey && params.orderId && params.amount) {
+      try {
+        // 실제 환경에서는 이 부분을 구현하여 서버에 결제 정보 전송
+        console.log('결제 정보 서버 전송:', params);
+      } catch (error) {
+        console.error('서버 전송 오류:', error);
+      }
+    }
+  };
+
+  // 서버 전송 실행 (필요한 경우)
+  // sendPaymentInfoToServer();
+</script>
+</body>
+</html></title>
+</head>
+<body>
+
+</body>
+</html>
