@@ -46,7 +46,7 @@ const NaverMapRoom = ({ room }: { room: RoomData }) => {
                     alignItems: "center",
                     justifyContent: "center",
                     fontSize: "2rem",
-                    color: "#9370db",
+                    color: "#f47366",
                     cursor: "default",
                     pointerEvents: "none",
                 }}>

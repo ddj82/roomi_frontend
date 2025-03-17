@@ -265,7 +265,7 @@ export default function GuestReservationScreen() {
                 <label
                     htmlFor={id}
                     className={`cursor-pointer flex justify-center items-center rounded-lg py-3 border transition-colors ${
-                        selected ? "border-[#9370DB] text-[#9370DB]" : "border-gray-300 text-gray-500 hover:bg-gray-100"
+                        selected ? "border-roomi text-roomi" : "border-gray-300 text-gray-500 hover:bg-gray-100"
                     }`}
                 >
                     {label}
@@ -302,18 +302,18 @@ export default function GuestReservationScreen() {
                                          className="w-full md:h-64 h-72 rounded-xl object-cover"/>
                                 )}
                             </div>
-                            <div className="md:ml-6 md:my-auto p-4">
+                            <div className="md:w-2/5 md:ml-6 md:my-auto p-4">
                                 <div className="text-xl font-semibold text-gray-800 my-3">{room.title}</div>
-                                <div className="my-3 flex items-center text-[#9370DB]">
+                                <div className="my-3 flex items-center text-roomi">
                                     {room.is_verified ? (
-                                        <><span
-                                            className="inline-flex items-center text-sm font-medium px-2.5 py-0.5 text-roomi mr-2">
-                                        <FontAwesomeIcon icon={faCheckCircle} className="mr-1"/>
+                                        <span
+                                            className="inline-flex items-center text-sm font-medium py-0.5 text-roomi mr-2">
+                                            <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
                                             {t("인증 숙박업소")}
-                                    </span></>
+                                        </span>
                                     ) : ('')}
                                 </div>
-                                <div className="my-3 flex items-center text-gray-600">
+                                <div className="my-3 flex items-center text-gray-600 text-sm">
                                     <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2"/>
                                     {room.address}
                                 </div>
@@ -325,7 +325,7 @@ export default function GuestReservationScreen() {
                             </div>
                             <div className="flex items-center">
                                 <div
-                                    className="w-10 h-10 rounded-full bg-[#F5EEFF] flex items-center justify-center text-[#9370DB]">
+                                    className="w-10 h-10 rounded-full bg-roomi-light flex items-center justify-center text-roomi">
                                     <FontAwesomeIcon icon={faUser}/>
                                 </div>
                                 <div className="ml-3 font-medium text-gray-700">{room.host_id}</div>
@@ -341,15 +341,15 @@ export default function GuestReservationScreen() {
                                 <div className="font-bold text-gray-800 mt-1">
                                     <div className="grid grid-cols-1 gap-2">
                                         <div className="flex items-center">
-                                            <FontAwesomeIcon icon={faUser} className="mr-2 text-[#9370DB]"/>
+                                            <FontAwesomeIcon icon={faUser} className="mr-2 text-roomi"/>
                                             <span>{formData.name || "이름을 입력해주세요"}</span>
                                         </div>
                                         <div className="flex items-center">
-                                            <FontAwesomeIcon icon={faPhone} className="mr-2 text-[#9370DB]"/>
+                                            <FontAwesomeIcon icon={faPhone} className="mr-2 text-roomi"/>
                                             <span>{formData.phone || "전화번호를 입력해주세요"}</span>
                                         </div>
                                         <div className="flex items-center">
-                                            <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-[#9370DB]"/>
+                                            <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-roomi"/>
                                             <span>{formData.email || "이메일을 입력해주세요"}</span>
                                         </div>
                                     </div>
@@ -359,14 +359,14 @@ export default function GuestReservationScreen() {
                                 <div className="p-4 rounded-lg bg-roomi-light">
                                     <div className="text-sm text-gray-500">{t("체크인날짜")}</div>
                                     <div className="font-bold text-gray-800 mt-1 flex items-center">
-                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-[#9370DB]"/>
+                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
                                         {startDate}
                                     </div>
                                 </div>
                                 <div className="p-4 rounded-lg bg-roomi-light">
                                     <div className="text-sm text-gray-500">{t("체크아웃날짜")}</div>
                                     <div className="font-bold text-gray-800 mt-1 flex items-center">
-                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-[#9370DB]"/>
+                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
                                         {endDate}
                                     </div>
                                 </div>
@@ -374,12 +374,12 @@ export default function GuestReservationScreen() {
                             <div className="mt-4 p-4 rounded-lg bg-roomi-light">
                                 <div className="text-sm text-gray-500">{t("사용인원")}</div>
                                 <div className="flex items-center mt-1">
-                                    <button className="text-lg text-[#9370DB] hover:text-[#7D5EC0] transition-colors"
+                                    <button className="text-lg text-roomi hover:text-roomi-4 transition-colors"
                                             onClick={() => handleguestValue(false)}>
                                         <LuCircleMinus/>
                                     </button>
                                     <div className="font-bold text-gray-800 mx-4">{guestCount}{t("guest_unit")}</div>
-                                    <button className="text-lg text-[#9370DB] hover:text-[#7D5EC0] transition-colors"
+                                    <button className="text-lg text-roomi hover:text-roomi-4 transition-colors"
                                             onClick={() => handleguestValue(true)}>
                                         <LuCirclePlus/>
                                     </button>
@@ -392,42 +392,42 @@ export default function GuestReservationScreen() {
                             </div>
                             <div className="my-5">
                                 <div className="relative z-0">
-                                <span className="absolute start-0 bottom-2 text-[#9370DB]">
+                                <span className="absolute start-0 bottom-2 text-roomi">
                                     <FontAwesomeIcon icon={faUser}/>
                                 </span>
                                     <input type="text" id="name" value={formDataState.name} onChange={handleChange}
-                                           className="block py-3 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-[#9370DB] peer"
+                                           className="block py-3 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-roomi peer"
                                            placeholder=""/>
                                     <label htmlFor="name"
-                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-[#9370DB] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-roomi peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                                         {t("이름")}
                                     </label>
                                 </div>
                             </div>
                             <div className="my-5">
                                 <div className="relative z-0">
-                                <span className="absolute start-0 bottom-2 text-[#9370DB]">
+                                <span className="absolute start-0 bottom-2 text-roomi">
                                     <FontAwesomeIcon icon={faPhone}/>
                                 </span>
                                     <input type="text" id="phone" value={formDataState.phone} onChange={handleChange}
-                                           className="block py-3 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-[#9370DB] peer"
+                                           className="block py-3 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-roomi peer"
                                            pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" placeholder=""/>
                                     <label htmlFor="phone"
-                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-[#9370DB] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-roomi peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                                         {t("전화번호")}
                                     </label>
                                 </div>
                             </div>
                             <div className="my-5">
                                 <div className="relative z-0">
-                                <span className="absolute start-0 bottom-2 text-[#9370DB]">
+                                <span className="absolute start-0 bottom-2 text-roomi">
                                     <FontAwesomeIcon icon={faEnvelope}/>
                                 </span>
                                     <input type="text" id="email" value={formDataState.email} onChange={handleChange}
-                                           className="block py-3 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-[#9370DB] peer"
+                                           className="block py-3 px-6 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-roomi peer"
                                            placeholder=""/>
                                     <label htmlFor="email"
-                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-[#9370DB] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-roomi peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                                         {t("이메일")}
                                     </label>
                                 </div>
@@ -467,50 +467,50 @@ export default function GuestReservationScreen() {
                             {/*<div className="flex justify-center text-sm bg-roomi-light rounded-lg p-1 pointer-events-none">*/}
                             {/*    <div*/}
                             {/*        className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all */}
-                            {/*        ${calUnit ? "bg-[#9370DB] text-white" : "text-gray-700 hover:bg-gray-100"}`}>*/}
+                            {/*        ${calUnit ? "bg-roomi text-white" : "text-gray-700 hover:bg-gray-100"}`}>*/}
                             {/*        <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}*/}
                             {/*    </div>*/}
                             {/*    <div*/}
                             {/*        className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all */}
-                            {/*        ${calUnit ? "text-gray-700 hover:bg-gray-100" : "bg-[#9370DB] text-white"}`}>*/}
+                            {/*        ${calUnit ? "text-gray-700 hover:bg-gray-100" : "bg-roomi text-white"}`}>*/}
                             {/*        <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}*/}
                             {/*    </div>*/}
                             {/*</div>*/}
-                            <div className="font-bold text-gray-800 mb-4 mt-6">
-                                {t("payment_info")}
+                            <div className="font-bold text-gray-800 mb-4 mt-6 text-lg">
+                                {t("price_info")}
                             </div>
                             <div className="p-5 rounded-lg bg-roomi-light">
                                 {/*숙박비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="font-medium text-gray-700">
                                         {calUnit
-                                            ? `${Math.round(price).toLocaleString()}원 × ${totalNight}일`
-                                            : `${Math.round(price).toLocaleString()}원 × ${totalNight}주`
+                                            ? `${t('원')}${Math.round(price).toLocaleString()} × ${totalNight}${t('일')}`
+                                            : `${t('원')}${Math.round(price).toLocaleString()} × ${totalNight}${t('주')}`
                                         }
                                     </div>
                                     <div className="font-bold text-gray-800">
-                                        {(price * totalNight).toLocaleString()}원
+                                        {t('원')}{(price * totalNight).toLocaleString()}
                                     </div>
                                 </div>
                                 {/*보증금*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("deposit")}</div>
-                                    <div className="font-bold text-gray-800">{depositPrice.toLocaleString()}원</div>
+                                    <div className="font-bold text-gray-800">{t('원')}{depositPrice.toLocaleString()}</div>
                                 </div>
                                 {/*관리비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("service_charge")}</div>
-                                    <div className="font-bold text-gray-800">{maintenancePrice.toLocaleString()}원</div>
+                                    <div className="font-bold text-gray-800">{t('원')}{maintenancePrice.toLocaleString()}</div>
                                 </div>
                                 {/*청소비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("cleaning_fee")}</div>
-                                    <div className="font-bold text-gray-800">{cleaningPrice.toLocaleString()}원</div>
+                                    <div className="font-bold text-gray-800">{t('원')}{cleaningPrice.toLocaleString()}</div>
                                 </div>
                                 <div className="flex justify-between border-t border-gray-200 mt-3 pt-4">
                                     <div className="text-gray-800 font-medium">{t("총결제금액")}</div>
                                     <div
-                                        className="font-bold text-[#9370DB] text-xl">{totalPrice.toLocaleString()}{t("원")}</div>
+                                        className="font-bold text-roomi text-xl">{t("원")}{totalPrice.toLocaleString()}</div>
                                 </div>
                             </div>
                             <div className="mt-6 text-sm space-y-6 max-w-lg mx-auto">
@@ -524,7 +524,7 @@ export default function GuestReservationScreen() {
                                                 className="sr-only peer"
                                             />
                                             <div
-                                                className="w-5 h-5 border-2 border-[#9370DB] rounded transition-all peer-checked:bg-[#9370DB] flex items-center justify-center">
+                                                className="w-5 h-5 border-2 border-roomi rounded transition-all peer-checked:bg-roomi flex items-center justify-center">
                                                 {isChecked1 && (
                                                     <svg className="w-3.5 h-3.5 text-white" fill="none"
                                                          stroke="currentColor" viewBox="0 0 24 24">
@@ -548,7 +548,7 @@ export default function GuestReservationScreen() {
                                                 className="sr-only peer"
                                             />
                                             <div
-                                                className="w-5 h-5 border-2 border-[#9370DB] rounded transition-all peer-checked:bg-[#9370DB] flex items-center justify-center">
+                                                className="w-5 h-5 border-2 border-roomi rounded transition-all peer-checked:bg-roomi flex items-center justify-center">
                                                 {isChecked3 && (
                                                     <svg className="w-3.5 h-3.5 text-white" fill="none"
                                                          stroke="currentColor" viewBox="0 0 24 24">
@@ -570,7 +570,7 @@ export default function GuestReservationScreen() {
                                                 className="sr-only peer"
                                             />
                                             <div
-                                                className="w-5 h-5 border-2 border-[#9370DB] rounded transition-all peer-checked:bg-[#9370DB] flex items-center justify-center">
+                                                className="w-5 h-5 border-2 border-roomi rounded transition-all peer-checked:bg-roomi flex items-center justify-center">
                                                 {isChecked2 && (
                                                     <svg className="w-3.5 h-3.5 text-white" fill="none"
                                                          stroke="currentColor" viewBox="0 0 24 24">
@@ -586,7 +586,7 @@ export default function GuestReservationScreen() {
                                 </div>
 
                                 <button
-                                    className="w-full py-3 px-4 bg-[#9370DB] hover:bg-[#8A5FD7] text-white font-medium rounded-lg transition-colors"
+                                    className="w-full py-3 px-4 bg-roomi hover:bg-roomi-3 text-white font-medium rounded-lg transition-colors"
                                     onClick={paymentBtn}>
                                     {t("결제하기")}
                                 </button>
@@ -598,7 +598,7 @@ export default function GuestReservationScreen() {
                 <div className="text-center p-12">
                     <div role="status" className="inline-flex flex-col items-center">
                         <svg aria-hidden="true"
-                             className="w-12 h-12 text-gray-200 animate-spin fill-[#9370DB]"
+                             className="w-12 h-12 text-gray-200 animate-spin fill-roomi"
                              viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"

@@ -89,6 +89,11 @@ export const login = async (email: string, password: string, setAuthToken: (toke
             localStorage.setItem('userIsHost', data.data.isHost);
             localStorage.setItem('userProfileImg', data.data.profile_image);
 
+            const { accept_SMS, accept_alert, accept_email } = data.data;
+            localStorage.setItem('accept_SMS', accept_SMS ? '1' : '0');
+            localStorage.setItem('accept_alert', accept_alert ? '1' : '0');
+            localStorage.setItem('accept_email', accept_email ? '1' : '0');
+
             // DB에서 받아온 언어 적용
             localStorage.setItem('i18nextLng', data.data.language);
             i18n.changeLanguage(data.data.language);
@@ -114,6 +119,9 @@ export const logout = async () => {
         localStorage.removeItem('userProfileImg'); // 유저 정보 제거
         localStorage.removeItem('hostMode');
         localStorage.removeItem('i18nextLng');
+        localStorage.removeItem('accept_SMS');
+        localStorage.removeItem('accept_alert');
+        localStorage.removeItem('accept_email');
 
         const detectedLang = i18n.services.languageDetector?.detect();
         console.log('detectedLang:', detectedLang);
@@ -225,4 +233,26 @@ export const getRoomHistoryList = async () => {
 // 유저 언어 코드 변경 API
 export const updateLanguage = async (langCode: string) => {
     return request(`/users/lang?language=${langCode}`, true, 'POST');
+};
+
+// 유저 알림 설정 API
+export const acceptions = async (alert: boolean, SMS: boolean, email: boolean) => {
+    try {
+        const response = await request(
+            `/users/accept?accept_alert=${alert}&accept_SMS=${SMS}&accept_email=${email}`, true, 'POST');
+        if (response.ok) {
+            localStorage.setItem('accept_alert', alert ? '1' : '0');
+            localStorage.setItem('accept_SMS', SMS ? '1' : '0');
+            localStorage.setItem('accept_email', email ? '1' : '0');
+            return response;
+        }
+    } catch (error) {
+        console.error('유저 알림 설정 실패:', error);
+        return undefined;
+    }
+};
+
+// 유저 공지사항 목록 API
+export const getNotices = async () => {
+    return request(`/notices`, true);
 };

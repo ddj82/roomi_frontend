@@ -195,7 +195,7 @@ const Header = () => {
 
                                     <button
                                         className="h search-button md:w-10 md:h-10 w-8 h-8
-                                        m-2 flex items-center justify-center bg-roomi rounded-full">
+                                        m-2 flex items-center justify-center bg-roomi hover:bg-roomi-3 rounded-full">
                                         <FontAwesomeIcon icon={faSearch} className="text-white"/>
                                     </button>
                                 </div>

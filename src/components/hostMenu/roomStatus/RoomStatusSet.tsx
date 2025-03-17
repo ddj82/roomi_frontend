@@ -2,10 +2,12 @@ import React, {useEffect, useState} from 'react';
 import Calendar from "react-calendar";
 import dayjs from "dayjs";
 import {RoomData} from "src/types/rooms";
+import i18n from "i18next";
 
 const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: number }) => {
     const [customBlockDatesRSS, setCustomBlockDatesRSS] = useState<string[]>([]);
     const [reservationDatesRSS, setReservationDatesRSS] = useState<string[]>([]);
+    const [userLocale, setUserLocale] = useState(i18n.language);
 
     // selectedRoom 값이 바뀔 때마다 관련된 날짜 업데이트
     useEffect(() => {
@@ -81,6 +83,7 @@ const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: 
                     }}
                     next2Label={null} // 추가로 넘어가는 버튼 제거
                     prev2Label={null} // 이전으로 돌아가는 버튼 제거
+                    locale={userLocale}
                 />
             </div>
             {/* 캘린더 포인트 비활성화 */}

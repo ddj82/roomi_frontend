@@ -58,7 +58,7 @@ export default function MainHome() {
             </div>
 
             {/* 하단 버튼 */}
-            <button className="mainHome toggle-button text-base bg-roomi"
+            <button className="mainHome toggle-button text-base bg-roomi hover:bg-roomi-3"
                     style={{ position: 'fixed', bottom: bottomValue }}
                     onClick={toggleView}>
                 {homeVisible ? t('목록보기') : t('지도보기')}

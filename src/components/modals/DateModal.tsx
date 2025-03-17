@@ -9,6 +9,7 @@ import {useTranslation} from "react-i18next";
 import {faCalendarDay} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { LuCirclePlus, LuCircleMinus } from "react-icons/lu";
+import i18n from "i18next";
 
 interface DateModalProps {
     visible: boolean;
@@ -24,6 +25,7 @@ const DateModal = ({ visible, onClose, position }: DateModalProps) => {
         weekValue, setWeekValue } = useDateStore();
     const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
     const {t} = useTranslation();
+    const [userLocale, setUserLocale] = useState(i18n.language);
 
     useEffect(() => {
         const handleResize = () => {
@@ -156,12 +158,12 @@ const DateModal = ({ visible, onClose, position }: DateModalProps) => {
                     <div className="flex text-xs rounded-lg bg-gray-200 px-1.5 p-0.5">
                         <div className={`flex_center ${calUnit ? "bg-roomi rounded text-white" : ""}`}>
                             <button onClick={dayUnit} className="px-2.5 py-1">
-                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>{t("day_unit")}
+                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>{t("일")}
                             </button>
                         </div>
                         <div className={`flex_center ${calUnit ? "" : "bg-roomi rounded text-white"}`}>
                             <button onClick={weekUnit} className="px-2.5 py-1">
-                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>{t("week_unit")}
+                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>{t("주")}
                             </button>
                         </div>
                     </div>
@@ -171,7 +173,7 @@ const DateModal = ({ visible, onClose, position }: DateModalProps) => {
                         <button className="text-lg" onClick={() => handleWeekValue(false)}>
                             <LuCircleMinus/>
                         </button>
-                        <div className="text-xs font-bold mx-3">{weekValue}{t("week_unit")}</div>
+                        <div className="text-xs font-bold mx-3">{weekValue}{t("주")}</div>
                         <button className="text-lg" onClick={() => handleWeekValue(true)}>
                             <LuCirclePlus />
                         </button>
@@ -185,6 +187,7 @@ const DateModal = ({ visible, onClose, position }: DateModalProps) => {
                     prev2Label={null} // 이전으로 돌아가는 버튼 제거
                     className="custom-calendar"
                     formatDay ={(locale, date) => dayjs(date).format('D')}
+                    locale={userLocale}
                 />
                 {startDate && endDate && (
                     <button className="dateModal confirm-button" onClick={handleConfirm}>

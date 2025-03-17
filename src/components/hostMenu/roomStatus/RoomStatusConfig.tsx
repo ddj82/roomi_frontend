@@ -6,6 +6,7 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import {createBulkBlocks, unblockDate} from "src/api/api";
 import {useDataUpdateStore} from "src/components/stores/DataUpdateStore";
+import i18n from "i18next";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
@@ -23,6 +24,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
     const [isBlockDate, setIsBlockDate] = useState('');
     const { dataUpdate, toggleDataUpdate } = useDataUpdateStore();
     const [calendarKey, setCalendarKey] = useState(0);
+    const [userLocale, setUserLocale] = useState(i18n.language);
 
     const handleDayClick = (date: Date) => {
         const dateStringRSC = dayjs(date).format('YYYY-MM-DD');
@@ -260,6 +262,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                     next2Label={null} // 추가로 넘어가는 버튼 제거
                     prev2Label={null} // 이전으로 돌아가는 버튼 제거
                     key={calendarKey}
+                    locale={userLocale}
                 />
             </div>
             <div className="md:w-[50%] flex flex-col m-4 md:my-0">

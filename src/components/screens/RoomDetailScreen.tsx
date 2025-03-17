@@ -24,6 +24,7 @@ import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
 import {useReserSlideConStore} from "../stores/ReserSlideConStore";
 import {useChatStore} from "../stores/ChatStore";
 import AuthModal from "../modals/AuthModal";
+import i18n from "i18next";
 
 
 
@@ -42,6 +43,7 @@ export default function RoomDetailScreen() {
     const {createRoom} = useChatStore();
     const connect = useChatStore((state) => state.connect);
     const [authModalOpen, setAuthModalOpen] = useState(false);
+    const [userLocale, setUserLocale] = useState(i18n.language);
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -322,7 +324,7 @@ export default function RoomDetailScreen() {
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-500">{t("층수")}</p>
-                                            <p className="font-medium">{`${room.floor ?? 0}층`}</p>
+                                            <p className="font-medium">{`${room.floor ?? 0}`}</p>
                                         </div>
                                     </div>
 
@@ -333,7 +335,7 @@ export default function RoomDetailScreen() {
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-500">{t("방개수")}</p>
-                                            <p className="font-medium">{`${room.room_count ?? 0}개`}</p>
+                                            <p className="font-medium">{`${room.room_count ?? 0}`}</p>
                                         </div>
                                     </div>
 
@@ -344,7 +346,7 @@ export default function RoomDetailScreen() {
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-500">{t("욕실개수")}</p>
-                                            <p className="font-medium">{`${room.bathroom_count ?? 0}개`}</p>
+                                            <p className="font-medium">{`${room.bathroom_count ?? 0}`}</p>
                                         </div>
                                     </div>
 
@@ -355,7 +357,7 @@ export default function RoomDetailScreen() {
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-500">{t("엘리베이터")}</p>
-                                            <p className="font-medium">{room.has_elevator ? "있음" : "없음"}</p>
+                                            <p className="font-medium">{room.has_elevator ? "\u2714" : "\u274C"}</p>
                                         </div>
                                     </div>
 
@@ -366,7 +368,7 @@ export default function RoomDetailScreen() {
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-500">{t("주차가능")}</p>
-                                            <p className="font-medium">{room.has_parking ? "가능" : "불가능"}</p>
+                                            <p className="font-medium">{room.has_parking ? "\u2714" : "\u274C"}</p>
                                         </div>
                                     </div>
 
@@ -377,7 +379,7 @@ export default function RoomDetailScreen() {
                                         </div>
                                         <div>
                                             <p className="text-xs text-gray-500">{t("최대이용인원")}</p>
-                                            <p className="font-medium">{`${room.max_guests ?? 0}명`}</p>
+                                            <p className="font-medium">{`${room.max_guests ?? 0}${t('guest_unit')}`}</p>
                                         </div>
                                     </div>
 
@@ -398,7 +400,7 @@ export default function RoomDetailScreen() {
                             <div className="mb-10">
                                 <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
                                     <span className="w-1.5 h-6 bg-roomi rounded-full mr-2"></span>
-                                    {t("amenities")}
+                                    {t("편의시설")}
                                 </h2>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -420,7 +422,7 @@ export default function RoomDetailScreen() {
                             <div className="mb-10">
                                 <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
                                     <span className="w-1.5 h-6 bg-roomi rounded-full mr-2"></span>
-                                    {t("additional_facilities")}
+                                    {t("추가시설")}
                                 </h2>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -442,7 +444,7 @@ export default function RoomDetailScreen() {
                             <div className="mb-10">
                                 <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
                                     <span className="w-1.5 h-6 bg-roomi rounded-full mr-2"></span>
-                                    {t("location_information")}
+                                    {t("위치정보")}
                                 </h2>
 
                                 <div className="flex items-center mb-4">
@@ -493,8 +495,6 @@ export default function RoomDetailScreen() {
                             <span className="font-bold">{t("payment_info")}</span>
                             <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp}/>
                         </div>
-                        {/*<div className={`transition-all duration-300 ease-in-out */}
-                        {/*    ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>*/}
                         <div className={`transition-all duration-300 ease-in-out md:max-h-none md:opacity-100 md:overflow-visible
                             ${slideIsOpen
                             // 아코디언이 열릴 때: 화면 높이 - 여유공간(예: 헤더/상단여백 80px)
@@ -504,9 +504,9 @@ export default function RoomDetailScreen() {
                             {/* 가격 정보 헤더 */}
                             <div className="p-3 pt-5 mx-3 border-b border-gray-100">
                                 <h2 className="text-lg font-bold text-gray-800 mb-2">
-                                    {calUnit ? room.day_price : room.week_price}
+                                    {t("원")}{calUnit ? room.day_price?.toLocaleString() : room.week_price?.toLocaleString()}
                                     <span className="text-sm font-normal text-gray-600 ml-1">
-                                        / {calUnit ? t("day_unit") : t("week_unit")}
+                                        / {calUnit ? t("일") : t("주")}
                                     </span>
                                 </h2>
                             </div>
@@ -514,17 +514,17 @@ export default function RoomDetailScreen() {
                             <div className="flex justify-center text-sm bg-roomi-light rounded-lg p-1 mb-6">
                                 <button
                                     className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
-                                    ${calUnit ? "bg-[#9370DB] text-white" : "text-gray-700 hover:bg-gray-100"}`}
+                                    ${calUnit ? "bg-roomi text-white" : "text-gray-700 hover:bg-roomi-000"}`}
                                     onClick={dayUnit}
                                 >
-                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}
+                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("일")}
                                 </button>
                                 <button
                                     className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
-                                    ${calUnit ? "text-gray-700 hover:bg-gray-100" : "bg-[#9370DB] text-white"}`}
+                                    ${calUnit ? "text-gray-700 hover:bg-roomi-000" : "bg-roomi text-white"}`}
                                     onClick={weekUnit}
                                 >
-                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}
+                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("주")}
                                 </button>
                             </div>
                             {/* 주 단위 선택기 */}
@@ -536,7 +536,7 @@ export default function RoomDetailScreen() {
                                     >
                                         <LuCircleMinus/>
                                     </button>
-                                    <div className="mx-4 font-semibold">{weekValue} {t("week_unit")}</div>
+                                    <div className="mx-4 font-semibold">{weekValue} {t("주")}</div>
                                     <button
                                         className="w-8 h-8 flex_center rounded-full border border-gray-200 text-roomi"
                                         onClick={() => handleWeekValue(true)}
@@ -554,6 +554,7 @@ export default function RoomDetailScreen() {
                                     prev2Label={null} // 이전으로 돌아가는 버튼 제거
                                     className="custom-calendar"
                                     formatDay={(locale, date) => dayjs(date).format('D')}
+                                    locale={userLocale}
                                 />
                             </div>
                             {/* 체크인/아웃 정보 */}
@@ -569,26 +570,27 @@ export default function RoomDetailScreen() {
                             </div>
 
                             {/* 비용 정보 */}
-                            <div className="rounded-lg bg-gray-50 p-3 mb-4 text-sm">
+                            <div className="rounded-lg bg-roomi-light p-3 mb-4 text-sm">
                                 <div className="flex justify-between mb-2">
                                     <span className="text-gray-700">{t("deposit")}</span>
                                     <span className="font-bold">
-                                        {calUnit ? room.deposit : room.deposit_week}
+                                        {t("원")}{calUnit ? room.deposit?.toLocaleString() : room.deposit_week?.toLocaleString()}
                                     </span>
                                 </div>
                                 <div className="flex justify-between mb-2">
                                     <span className="text-gray-700">{t("service_charge")}</span>
                                     <span className="font-bold">
-                                        {calUnit ? room.maintenance_fee : room.maintenance_fee_week}
+                                        {t("원")}{calUnit ?
+                                        room.maintenance_fee?.toLocaleString() : room.maintenance_fee_week?.toLocaleString()}
                                     </span>
                                 </div>
                             </div>
                             {/* 예약 버튼 */}
                             <button
-                                className="w-full py-3 bg-roomi text-white text-sm rounded-lg font-medium hover:bg-opacity-90 transition-colors shadow-sm"
+                                className="w-full py-3 bg-roomi text-white text-sm rounded-lg font-medium hover:bg-roomi-3 transition-colors shadow-sm"
                                 onClick={reservationBtn}
                             >
-                                예약하기
+                                {t('confirm_reservation')}
                             </button>
                         </div>
                     </div>

@@ -9,10 +9,10 @@ import {useGuestsStore} from "../stores/GuestsStore";
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
-    faCalendarDay,
+    faCalendarDay, faCheckCircle,
     faChevronDown,
     faChevronUp,
-    faEnvelope,
+    faEnvelope, faMapMarkerAlt,
     faPhone,
     faUser
 } from "@fortawesome/free-solid-svg-icons";
@@ -157,30 +157,19 @@ export default function GuestReservationSetScreen() {
                                          className="w-full md:h-64 h-72 rounded-xl object-cover"/>
                                 )}
                             </div>
-                            <div className="md:ml-6 md:my-auto p-4">
+                            <div className="md:w-2/5 md:ml-6 md:my-auto p-4">
                                 <div className="text-xl font-semibold text-gray-800 my-3">{room.title}</div>
                                 <div className="my-3 flex items-center text-roomi">
                                     {room.is_verified ? (
-                                        <><span
-                                            className="inline-flex items-center text-sm font-medium px-2.5 py-0.5 text-roomi mr-2">
-                                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"
-                                                 xmlns="http://www.w3.org/2000/svg">
-                                                <path fillRule="evenodd"
-                                                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                      clipRule="evenodd"></path>
-                                            </svg>
+                                        <span
+                                            className="inline-flex items-center text-sm font-medium py-0.5 text-roomi mr-2">
+                                            <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
                                             {t("인증 숙박업소")}
-                                        </span></>
+                                        </span>
                                     ) : ('')}
                                 </div>
-                                <div className="my-3 flex items-center text-gray-600">
-                                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
+                                <div className="my-3 flex items-center text-gray-600 text-sm">
+                                    <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2"/>
                                     {room.address}
                                 </div>
                             </div>
@@ -232,12 +221,12 @@ export default function GuestReservationSetScreen() {
                             <div className="mt-4 p-4 rounded-lg bg-roomi-light">
                                 <div className="text-sm text-gray-500">{t("사용인원")}</div>
                                 <div className="flex items-center mt-1">
-                                    <button className="text-lg text-roomi hover:text-[#7D5EC0] transition-colors"
+                                    <button className="text-lg text-roomi hover:text-roomi-4 transition-colors"
                                             onClick={() => handleguestValue(false)}>
                                         <LuCircleMinus/>
                                     </button>
                                     <div className="font-bold text-gray-800 mx-4">{guestCount}{t("guest_unit")}</div>
-                                    <button className="text-lg text-roomi hover:text-[#7D5EC0] transition-colors"
+                                    <button className="text-lg text-roomi hover:text-roomi-4 transition-colors"
                                             onClick={() => handleguestValue(true)}>
                                         <LuCirclePlus/>
                                     </button>
@@ -325,42 +314,42 @@ export default function GuestReservationSetScreen() {
                             {/*    </div>*/}
                             {/*</div>*/}
                             {/*결제 정보-payment_info*/}
-                            <div className="font-bold text-gray-800 mb-4 mt-6">
-                                {t("payment_info")}
+                            <div className="font-bold text-gray-800 mb-4 mt-6 text-lg">
+                                {t("price_info")}
                             </div>
                             <div className="p-5 rounded-lg bg-roomi-light">
                                 {/*숙박비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="font-medium text-gray-700">
-                                        {price.toLocaleString()}원 × {calUnit ? (`${nightVal}일`) : (`${weekValue}주`)}
+                                        {t('원')}{price.toLocaleString()} × {calUnit ? (`${nightVal}${t('일')}`) : (`${weekValue}${t('주')}`)}
                                     </div>
                                     <div className="font-bold text-gray-800">
-                                        {(calUnit ? (price * nightVal) : (price * weekValue)).toLocaleString()}원
+                                        {t('원')}{(calUnit ? (price * nightVal) : (price * weekValue)).toLocaleString()}
                                     </div>
                                 </div>
                                 {/*보증금*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("deposit")}</div>
-                                    <div className="font-bold text-gray-800">{depositPrice.toLocaleString()}원</div>
+                                    <div className="font-bold text-gray-800">{t('원')}{depositPrice.toLocaleString()}</div>
                                 </div>
                                 {/*관리비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("service_charge")}</div>
-                                    <div className="font-bold text-gray-800">{maintenancePrice.toLocaleString()}원</div>
+                                    <div className="font-bold text-gray-800">{t('원')}{maintenancePrice.toLocaleString()}</div>
                                 </div>
                                 {/*청소비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("cleaning_fee")}</div>
-                                    <div className="font-bold text-gray-800">{cleaningPrice.toLocaleString()}원</div>
+                                    <div className="font-bold text-gray-800">{t('원')}{cleaningPrice.toLocaleString()}</div>
                                 </div>
                                 <div className="flex justify-between border-t border-gray-200 mt-3 pt-4">
                                     <div className="text-gray-800 font-medium">{t("총결제금액")}</div>
                                     <div
-                                        className="font-bold text-roomi text-xl">{totalPrice.toLocaleString()}{t("원")}</div>
+                                        className="font-bold text-roomi text-xl">{t("원")}{totalPrice.toLocaleString()}</div>
                                 </div>
                             </div>
                             <div className="mt-4 text-sm space-y-6 max-w-lg mx-auto">
-                                <div className="bg-[#F5EEFF] p-4 rounded-lg text-roomi text-xs">
+                                <div className="bg-roomi-light p-4 rounded-lg text-roomi text-xs">
                                     {t("계약 요청이 승인되기 전까지 요금이 결제 되지 않습니다.")}
                                 </div>
 
@@ -428,12 +417,14 @@ export default function GuestReservationSetScreen() {
                                                 )}
                                             </div>
                                         </div>
-                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">서비스 약관, 결제 서비스 약관, 개인정보 처리방침에 동의합니다.</span>
+                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
+                                            서비스 약관, 결제 서비스 약관, 개인정보 처리방침에 동의합니다.
+                                        </span>
                                     </label>
                                 </div>
 
                                 <button
-                                    className="w-full py-3 px-4 bg-roomi hover:bg-[#8A5FD7] text-white font-medium rounded-lg transition-colors"
+                                    className="w-full py-3 px-4 bg-roomi hover:bg-roomi-3 text-white font-medium rounded-lg transition-colors"
                                     onClick={paymentBtn}>
                                     {t("계약 요청")}
                                 </button>
