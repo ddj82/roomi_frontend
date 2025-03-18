@@ -7,8 +7,7 @@ import {logout} from "src/api/api";
 import {useChatStore} from "../stores/ChatStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBell, faEye, faThumbsUp} from '@fortawesome/free-regular-svg-icons';
-import {faArrowLeft, faDollarSign, faGlobe, faLanguage} from "@fortawesome/free-solid-svg-icons";
-import { RoomData } from "src/types/rooms";
+import {faArrowLeft, faDollarSign, faGlobe} from "@fortawesome/free-solid-svg-icons";
 import MyFavoriteList from "./myPageMenu/MyFavoriteList";
 import MyHistoryList from "./myPageMenu/MyHistoryList";
 import NotificationSet from "./myPageMenu/NotificationSet";
@@ -32,7 +31,11 @@ export default function GuestMyPageMenu() {
 
     useEffect(() => {
         const img = localStorage.getItem('userProfileImg');
-        if (img) setProfileImg(img);
+        if (img && img != 'null') {
+            setProfileImg(img);
+        } else {
+            setProfileImg('/assets/images/profile.png');
+        }
     }, []);
 
     const handleLogout = async () => {
@@ -104,6 +107,14 @@ export default function GuestMyPageMenu() {
                         <div className="border-t border-gray-300">
                             <div className="font-bold text-lg my-2">{t("나의 거래")}</div>
                             <div className="">
+                                <div className="my-2">
+                                    <button className="w-full text-start"
+                                            // onClick={() => setSelectedMenu('관심')}
+                                    >
+                                        {/*<FontAwesomeIcon icon={faThumbsUp} className="w-4 h-4 mr-1"/>*/}
+                                        {t("예약 내역")}
+                                    </button>
+                                </div>
                                 <div className="my-2">
                                     <button className="w-full text-start" onClick={() => setSelectedMenu('관심')}>
                                         <FontAwesomeIcon icon={faThumbsUp} className="w-4 h-4 mr-1"/>{t("관심 목록")}

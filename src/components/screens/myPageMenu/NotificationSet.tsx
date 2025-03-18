@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import ToggleButton from "../../modals/ToggleButton";
+import ToggleButton from "../../util/ToggleButton";
 import {useTranslation} from "react-i18next";
 import {acceptions} from "../../../api/api";
 

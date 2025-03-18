@@ -4,7 +4,7 @@ import {fetchRoomData} from "../../api/api";
 import {RoomData} from "../../types/rooms";
 import {useTranslation} from "react-i18next";
 import {useDateStore} from "../stores/DateStore";
-import ImgCarousel from "../modals/ImgCarousel";
+import ImgCarousel from "../util/ImgCarousel";
 import {useGuestsStore} from "../stores/GuestsStore";
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -50,7 +50,7 @@ export default function GuestReservationSetScreen() {
         phone: "",
         email: "",
     });
-    const {slideIsOpen, setSlideIsOpen} = useReserSlideConStore();
+    const [slideIsOpen, setSlideIsOpen] = useState(false);
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -145,6 +145,7 @@ export default function GuestReservationSetScreen() {
         <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto pb-24 md:pb-0">
             {room ? (
                 <div className="flex flex-col md:flex-row gap-8">
+                    {/* 메인 콘텐츠 영역 */}
                     <div className="md:w-3/5 w-full">
                         <div className="mb-8 text-xl font-bold text-gray-800">{t("예약확인")}</div>
                         <div className="md:flex md:p-6 border border-gray-200 rounded-xl shadow-sm mb-6 bg-white">
@@ -164,7 +165,7 @@ export default function GuestReservationSetScreen() {
                                         <span
                                             className="inline-flex items-center text-sm font-medium py-0.5 text-roomi mr-2">
                                             <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
-                                            {t("인증 숙박업소")}
+                                            {t('[인증숙박업소]')}
                                         </span>
                                     ) : ('')}
                                 </div>
@@ -284,37 +285,25 @@ export default function GuestReservationSetScreen() {
 
                     {/*리모컨 영역*/}
                     <div className="md:w-2/5 md:h-fit md:sticky md:top-10 md:rounded-xl md:shadow-md
-                        border border-gray-200 shadow-sm p-6 break-words bg-white
+                        border border-gray-200 shadow-sm md:p-6 p-4 break-words bg-white
                         w-full fixed bottom-0 z-[100]">
                         {/* 모바일 전용 아코디언 버튼 */}
-                        <div
-                            className="md:hidden flex justify-between items-center p-4 bg-roomi-light rounded-lg cursor-pointer"
-                            onClick={() => setSlideIsOpen(!slideIsOpen)}>
-                            <span className="font-bold text-gray-800">{t("payment_info")}</span>
-                            <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp}/>
+                        <div className="md:hidden w-full items-center p-4 rounded-lg cursor-pointer bg-roomi text-white">
+                            <button type="button" className="w-full flex justify-between items-center"
+                                    onClick={() => setSlideIsOpen(!slideIsOpen)}>
+                                <span className="font-bold">{t("price_info")}</span>
+                                <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp}/>
+                            </button>
                         </div>
-                        {/*<div className={`transition-all duration-300 ease-in-out */}
-                        {/*    ${slideIsOpen ? "max-h-fit opacity-100" : "max-h-0 opacity-0 overflow-hidden md:max-h-none md:opacity-100"}`}>*/}
                         <div className={`transition-all duration-300 ease-in-out md:max-h-none md:opacity-100 md:overflow-visible
                             ${slideIsOpen
                             // 아코디언이 열릴 때: 화면 높이 - 여유공간(예: 헤더/상단여백 80px)
                             ? "max-h-[calc(60vh)] overflow-y-auto opacity-100"
                             // 아코디언이 닫힐 때
-                            : "max-h-0 overflow-hidden opacity-0"}`}>
-                            {/*<div className="flex justify-center text-sm bg-roomi-light rounded-lg p-1 pointer-events-none">*/}
-                            {/*    <div*/}
-                            {/*        className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all */}
-                            {/*        ${calUnit ? "bg-roomi text-white" : "text-gray-700 hover:bg-gray-100"}`}>*/}
-                            {/*        <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("day_unit")}*/}
-                            {/*    </div>*/}
-                            {/*    <div*/}
-                            {/*        className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all */}
-                            {/*        ${calUnit ? "text-gray-700 hover:bg-gray-100" : "bg-roomi text-white"}`}>*/}
-                            {/*        <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("week_unit")}*/}
-                            {/*    </div>*/}
-                            {/*</div>*/}
-                            {/*결제 정보-payment_info*/}
-                            <div className="font-bold text-gray-800 mb-4 mt-6 text-lg">
+                            : "max-h-0 overflow-hidden opacity-0"}`}
+                        >
+                            {/*결제 정보*/}
+                            <div className="font-bold text-gray-800 md:mb-4 my-4 text-lg md:block hidden">
                                 {t("price_info")}
                             </div>
                             <div className="p-5 rounded-lg bg-roomi-light">

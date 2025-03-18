@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {FaHeart, FaRegHeart} from 'react-icons/fa'; // react-icons/fa에서 FontAwesome 아이콘 가져오기
 import 'src/css/WishlistButton.css';
 import {addFavoriteRoom, deleteFavoriteRoom} from "../../api/api";
-import AuthModal from "./AuthModal";
+import AuthModal from "../modals/AuthModal";
 
 interface WishlistButtonProps {
     onToggle?: (isLiked: boolean) => void,

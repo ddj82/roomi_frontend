@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {RoomData} from "../../../types/rooms";
 import {useTranslation} from "react-i18next";
-import WishListButton from "../../modals/WishListButton";
+import WishListButton from "../../util/WishListButton";
 import {getRoomFavoriteList} from "../../../api/api";
 import i18n from "../../../i18n";
 
@@ -35,16 +35,16 @@ export default function MyFavoriteList() {
             <h2 className="mb-4 font_title">{t("관심 목록")}</h2>
             {roomData && roomData.length > 0 ? (
                 roomData.map((room, index) => (
-                    <div key={index} className="flex p-4 bg-gray-100 my-4 rounded-lg relative">
+                    <div key={index} className="flex md:p-4 bg-gray-100 my-4 rounded-lg relative md:flex-row flex-col">
                         <WishListButton roomId={room.id} isFavorite={true}/>
-                        <div className="md:w-36 md:h-32 mr-4">
+                        <div className="md:w-36 md:h-32 md:mr-4">
                             <img
                                 className="object-cover rounded md:rounded-lg w-full h-full"
                                 src={room.detail_urls?.[0]}
                                 alt="thumbnail"
                             />
                         </div>
-                        <div className="flex flex-col justify-center">
+                        <div className="flex flex-col justify-center md:p-0 p-4">
                             <div className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
                                 <button type="button" onClick={() => handleCardClick(room.id)}>
                                     {room.title}

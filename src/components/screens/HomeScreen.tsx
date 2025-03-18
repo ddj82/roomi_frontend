@@ -2,10 +2,10 @@ import React, { useState, useEffect, memo, useCallback, useMemo } from 'react';
 import 'src/css/HomeScreen.css'; // 별도의 CSS 파일로 스타일 관리 (웹에 적합)
 import { RoomData } from "src/types/rooms";
 import { useNavigate } from 'react-router-dom'; // React Router 사용
-import WishListButton from "src/components/modals/WishListButton";
+import WishListButton from "src/components/util/WishListButton";
 import i18n from "src/i18n";
 import NaverMap from "../map/NaverMap";
-import ImgCarousel from "src/components/modals/ImgCarousel";
+import ImgCarousel from "src/components/util/ImgCarousel";
 import {useTranslation} from "react-i18next";
 
 // Accommodation Card Component

@@ -1,12 +1,11 @@
 import React from 'react';
 
 interface RoomiToggleProps {
-    label?: string;
     checked: boolean;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function ToggleButton({ label = "Checked toggle", checked, onChange }: RoomiToggleProps) {
+const ToggleButton = ({ checked, onChange }: RoomiToggleProps) => {
     return (
         <label className="inline-flex items-center cursor-pointer">
             {/* 숨겨진 체크박스 (스크린 리더용) */}
@@ -26,4 +25,6 @@ export default function ToggleButton({ label = "Checked toggle", checked, onChan
             {/*<span className="ms-3 text-sm font-medium text-gray-900">{label}</span>*/}
         </label>
     );
-}
+};
+
+export default ToggleButton;

@@ -2,17 +2,72 @@ import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from 'react-router-dom';
 import {addRoomHistory, fetchRoomData} from "src/api/api";
 import {RoomData} from "../../types/rooms";
-import ImgCarousel from "../modals/ImgCarousel";
+import ImgCarousel from "../util/ImgCarousel";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {IconDefinition} from "@fortawesome/fontawesome-svg-core";
 import {
-    faBath, faBuilding, faClock, faDoorOpen, faElevator, faHome, faLayerGroup, faSquareParking, faUsers, faVectorSquare,
-    faWifi, faTv, faKitchenSet, faSoap, faHandsWash, faSnowflake, faParking, faKitMedical, faFireExtinguisher, faUtensils,
-    faCoffee, faVideo, faTree, faDumbbell, faCouch, faSwimmingPool, faHotTub, faMapLocationDot, faCalendarDay, faChevronUp,
-    faChevronDown, faUser, faMugSaucer, faShower, faWindowRestore, faChair, faTable, faTshirt, faPaw, faSmoking,
-    faSmokingBan, faBriefcase, faMartiniGlass, faBed, faTemperatureHalf, faPhone, faPlug, faBolt,
-    faShield, faLock, faBroom, faBellConcierge, faSpa, faMusic, faDice, faBookOpen, faUmbrellaBeach, faCity,
-    faBabyCarriage, faWheelchair, faFire
+    faBath,
+    faBuilding,
+    faClock,
+    faDoorOpen,
+    faElevator,
+    faHome,
+    faLayerGroup,
+    faSquareParking,
+    faUsers,
+    faVectorSquare,
+    faWifi,
+    faTv,
+    faKitchenSet,
+    faSoap,
+    faHandsWash,
+    faSnowflake,
+    faParking,
+    faKitMedical,
+    faFireExtinguisher,
+    faUtensils,
+    faCoffee,
+    faVideo,
+    faTree,
+    faDumbbell,
+    faCouch,
+    faSwimmingPool,
+    faHotTub,
+    faMapLocationDot,
+    faCalendarDay,
+    faChevronUp,
+    faChevronDown,
+    faUser,
+    faMugSaucer,
+    faShower,
+    faWindowRestore,
+    faChair,
+    faTable,
+    faTshirt,
+    faPaw,
+    faSmoking,
+    faSmokingBan,
+    faBriefcase,
+    faMartiniGlass,
+    faBed,
+    faTemperatureHalf,
+    faPhone,
+    faPlug,
+    faBolt,
+    faShield,
+    faLock,
+    faBroom,
+    faBellConcierge,
+    faSpa,
+    faMusic,
+    faDice,
+    faBookOpen,
+    faUmbrellaBeach,
+    faCity,
+    faBabyCarriage,
+    faWheelchair,
+    faFire,
+    faCheckCircle
 } from "@fortawesome/free-solid-svg-icons";
 import {useTranslation} from "react-i18next";
 import NaverMapRoom from "../map/NaverMapRoom";
@@ -39,7 +94,7 @@ export default function RoomDetailScreen() {
         calUnit, setCalUnit,
         weekValue, setWeekValue
     } = useDateStore();
-    const {slideIsOpen, setSlideIsOpen} = useReserSlideConStore();
+    const [slideIsOpen, setSlideIsOpen] = useState(false);
     const {createRoom} = useChatStore();
     const connect = useChatStore((state) => state.connect);
     const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -245,15 +300,9 @@ export default function RoomDetailScreen() {
                         {/* 인증 및 설명 */}
                         <div className="px-1">
                             {room.is_verified && (
-                                <div
-                                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-roomi mb-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1"
-                                         viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd"
-                                              d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                              clipRule="evenodd"/>
-                                    </svg>
-                                    인증숙박업소
+                                <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-roomi mb-4">
+                                    <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
+                                    {t('[인증숙박업소]')}
                                 </div>
                             )}
 
@@ -486,23 +535,25 @@ export default function RoomDetailScreen() {
 
                     {/*리모컨 영역*/}
                     <div className="md:w-2/5 md:h-fit md:sticky md:top-10 md:rounded-xl md:shadow-md
-                        border border-gray-200 shadow-sm p-6 break-words bg-white
+                        border border-gray-200 shadow-sm md:p-6 p-4 break-words bg-white
                         w-full fixed bottom-0 z-[100]">
                         {/* 모바일 전용 아코디언 버튼 */}
-                        <div
-                            className="md:hidden flex justify-between items-center p-4 bg-roomi-light rounded-lg cursor-pointer"
-                            onClick={() => setSlideIsOpen(!slideIsOpen)}>
-                            <span className="font-bold">{t("payment_info")}</span>
-                            <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp}/>
+                        <div className="md:hidden w-full items-center p-4 rounded-lg cursor-pointer bg-roomi text-white">
+                            <button type="button" className="w-full flex justify-between items-center"
+                                    onClick={() => setSlideIsOpen(!slideIsOpen)}>
+                                <span className="font-bold">{t("price_info")}</span>
+                                <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp}/>
+                            </button>
                         </div>
                         <div className={`transition-all duration-300 ease-in-out md:max-h-none md:opacity-100 md:overflow-visible
                             ${slideIsOpen
                             // 아코디언이 열릴 때: 화면 높이 - 여유공간(예: 헤더/상단여백 80px)
                             ? "max-h-[calc(60vh)] overflow-y-auto opacity-100"
                             // 아코디언이 닫힐 때
-                            : "max-h-0 overflow-hidden opacity-0"}`}>
+                            : "max-h-0 overflow-hidden opacity-0"}`}
+                        >
                             {/* 가격 정보 헤더 */}
-                            <div className="p-3 pt-5 mx-3 border-b border-gray-100">
+                            <div className="p-3 pt-5 border-b border-gray-100">
                                 <h2 className="text-lg font-bold text-gray-800 mb-2">
                                     {t("원")}{calUnit ? room.day_price?.toLocaleString() : room.week_price?.toLocaleString()}
                                     <span className="text-sm font-normal text-gray-600 ml-1">

@@ -59,7 +59,8 @@
 
 .reservation-date abbr {
     text-decoration: line-through;
-    color: #828282;
+    /*color: #828282;*/
+    color: #f47366;
     font-weight: bold;
 
 }
