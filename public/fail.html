@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <title>결제 실패</title>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .payment-result {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #fff0f0;
+        }
+        .error-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            position: relative;
+        }
+        .error-icon:before, .error-icon:after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 4px;
+            background-color: white;
+            top: 50%;
+            left: 50%;
+        }
+        .error-icon:before {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+        .error-icon:after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+        .redirect-message {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+        }
+        .redirect-button {
+            margin-top: 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .redirect-button:hover {
+            background-color: #2980b9;
+        }
+        .error-details {
+            text-align: left;
+            margin: 20px auto;
+            max-width: 400px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ffcccc;
+        }
+        .error-details p {
+            margin: 8px 0;
+        }
+        .error-details .label {
+            font-weight: 500;
+            color: #555;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .error-details .value {
+            color: #e74c3c;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+<div class="payment-result">
+    <div class="error-icon"></div>
+    <h1>결제에 실패했습니다</h1>
+    <div id="error-details" class="error-details">
+        <p>오류 정보를 불러오는 중...</p>
+    </div>
+    <p class="redirect-message">자동으로 앱이 열리지 않는 경우 아래 버튼을 클릭하세요.</p>
+    <button class="redirect-button" id="openAppButton">앱으로 이동</button>
+</div>
+
+<script>
+    // URL에서 쿼리 파라미터 추출
+    function getUrlParams() {
+        const params = {};
+        window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) {
+            params[key] = decodeURIComponent(value);
+        });
+        return params;
+    }
+
+    // 앱으로 리다이렉트하는 함수
+    function redirectToApp() {
+        const params = getUrlParams();
+        let deepLink = `com.myno1214.roomi://fail`;
+
+        // 모든 URL 파라미터를 딥링크에 추가
+        let isFirstParam = true;
+        for (const key in params) {
+            if (params.hasOwnProperty(key)) {
+                // 첫 번째 파라미터는 '?'로, 나머지는 '&'로 구분
+                deepLink += isFirstParam ? `?${key}=${encodeURIComponent(params[key])}` : `&${key}=${encodeURIComponent(params[key])}`;
+                isFirstParam = false;
+            }
+        }
+
+        // 추가 정보 객체 생성
+        const additionalInfo = {
+            timestamp: new Date().toISOString(),
+            device: navigator.userAgent,
+            // 다른 필요한 정보 추가
+        };
+
+        // 추가 정보도 딥링크에 포함
+        for (const key in additionalInfo) {
+            if (additionalInfo.hasOwnProperty(key)) {
+                deepLink += `&${key}=${encodeURIComponent(additionalInfo[key])}`;
+            }
+        }
+
+        // 오류 상세 정보 표시
+        const detailsElement = document.getElementById('error-details');
+        let detailsHtml = '';
+
+        // 주요 오류 정보
+        if (params.code) {
+            detailsHtml += `
+        <p>
+          <span class="label">오류 코드</span>
+          <span class="value">${params.code}</span>
+        </p>
+      `;
+        }
+
+        if (params.message) {
+            detailsHtml += `
+        <p>
+          <span class="label">오류 메시지</span>
+          <span class="value">${params.message}</span>
+        </p>
+      `;
+        }
+
+        // 추가 정보 (있는 경우)
+        if (params.orderId) {
+            detailsHtml += `
+        <p>
+          <span class="label">주문번호</span>
+          <span class="value">${params.orderId}</span>
+        </p>
+      `;
+        }
+
+        if (params.errorCode) {
+            detailsHtml += `
+        <p>
+          <span class="label">상세 오류 코드</span>
+          <span class="value">${params.errorCode}</span>
+        </p>
+      `;
+        }
+
+        // 에러 타입 (있는 경우)
+        if (params.errorType) {
+            detailsHtml += `
+        <p>
+          <span class="label">오류 유형</span>
+          <span class="value">${getErrorTypeName(params.errorType)}</span>
+        </p>
+      `;
+        }
+
+        detailsHtml += `<p>잠시 후 자동으로 앱으로 이동합니다.</p>`;
+
+        if (detailsHtml) {
+            detailsElement.innerHTML = detailsHtml;
+        } else {
+            detailsElement.innerHTML = '<p>오류 정보를 찾을 수 없습니다.</p>';
+        }
+
+        // 디버깅용 로그
+        console.log('딥링크:', deepLink);
+        console.log('전달할 오류 파라미터:', params);
+
+        // 앱으로 리다이렉트
+        window.location.href = deepLink;
+    }
+
+    // 오류 유형 이름 반환
+    function getErrorTypeName(errorType) {
+        const errorTypeNames = {
+            PROVIDER: '결제 제공자 오류',
+            INVALID_REQUEST: '잘못된 요청',
+            TIMEOUT: '시간 초과',
+            INTERNAL: '내부 오류',
+            USER_CANCELED: '사용자 취소',
+            REJECT: '거부됨',
+            UNAUTHORIZED: '인증 오류'
+        };
+        return errorTypeNames[errorType] || errorType;
+    }
+
+    // 앱 열기 버튼 클릭 이벤트
+    document.getElementById('openAppButton').addEventListener('click', function() {
+        redirectToApp();
+    });
+
+    // 페이지 로드 시 자동으로 앱 리다이렉트 (1.5초 후)
+    window.onload = function() {
+        setTimeout(redirectToApp, 1500);
+    };
+
+    // 서버에 오류 정보 전송 (선택사항)
+    const sendErrorInfoToServer = async () => {
+        const params = getUrlParams();
+        if (params.code && params.message) {
+            try {
+                // 실제 환경에서는 이 부분을 구현하여 서버에 오류 정보 전송
+                console.log('오류 정보 서버 전송:', params);
+            } catch (error) {
+                console.error('서버 전송 오류:', error);
+            }
+        }
+    };
+
+    // 서버 전송 실행 (필요한 경우)
+    // sendErrorInfoToServer();
+</script>
+</body>
+</html>
