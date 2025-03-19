@@ -239,7 +239,10 @@ export const updateLanguage = async (langCode: string) => {
 export const acceptions = async (alert: boolean, SMS: boolean, email: boolean) => {
     try {
         const response = await request(
-            `/users/accept?accept_alert=${alert}&accept_SMS=${SMS}&accept_email=${email}`, true, 'POST');
+            `/users/accept?accept_alert=${alert}&accept_SMS=${SMS}&accept_email=${email}`,
+            true,
+            'POST'
+        );
         if (response.ok) {
             localStorage.setItem('accept_alert', alert ? '1' : '0');
             localStorage.setItem('accept_SMS', SMS ? '1' : '0');
@@ -255,4 +258,13 @@ export const acceptions = async (alert: boolean, SMS: boolean, email: boolean) =
 // 유저 공지사항 목록 API
 export const getNotices = async () => {
     return request(`/notices`, true);
+};
+
+// 예약하기 API (결제 전 서버 저장)
+export const bookReservation = async (checkIn: string, checkOut: string, selectionMode: string, roomId: number) => {
+    return request(
+        `/book?checkIn=${checkIn}&checkOut=${checkOut}&selectionMode=${selectionMode}&roomId=${roomId}`,
+        true,
+        'POST'
+    );
 };

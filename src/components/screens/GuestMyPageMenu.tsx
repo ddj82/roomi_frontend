@@ -6,7 +6,7 @@ import {useHostModeStore} from "../stores/HostModeStore";
 import {logout} from "src/api/api";
 import {useChatStore} from "../stores/ChatStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBell, faEye, faThumbsUp} from '@fortawesome/free-regular-svg-icons';
+import {faBell, faEye, faRectangleList, faThumbsUp} from '@fortawesome/free-regular-svg-icons';
 import {faArrowLeft, faDollarSign, faGlobe} from "@fortawesome/free-solid-svg-icons";
 import MyFavoriteList from "./myPageMenu/MyFavoriteList";
 import MyHistoryList from "./myPageMenu/MyHistoryList";
@@ -17,6 +17,7 @@ import FAQ from "./myPageMenu/FAQ";
 import Notices from "./myPageMenu/Notices";
 import CurrencySet from "./myPageMenu/CurrencySet";
 import {useMediaQuery} from "react-responsive";
+import MyReservations from "./myPageMenu/MyReservations";
 
 export default function GuestMyPageMenu() {
     const { t } = useTranslation();
@@ -60,6 +61,8 @@ export default function GuestMyPageMenu() {
         if (!selectedMenu) return <p className="flex_center">메뉴를 선택해주세요.</p>;
 
         switch (selectedMenu) {
+            case '예약내역':
+                return <MyReservations/>;
             case '관심':
                 return <MyFavoriteList/>;
             case '최근본게시물':
@@ -108,10 +111,8 @@ export default function GuestMyPageMenu() {
                             <div className="font-bold text-lg my-2">{t("나의 거래")}</div>
                             <div className="">
                                 <div className="my-2">
-                                    <button className="w-full text-start"
-                                            // onClick={() => setSelectedMenu('관심')}
-                                    >
-                                        {/*<FontAwesomeIcon icon={faThumbsUp} className="w-4 h-4 mr-1"/>*/}
+                                    <button className="w-full text-start" onClick={() => setSelectedMenu('예약내역')}>
+                                        <FontAwesomeIcon icon={faRectangleList} className="w-4 h-4 mr-1"/>
                                         {t("예약 내역")}
                                     </button>
                                 </div>

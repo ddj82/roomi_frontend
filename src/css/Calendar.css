@@ -9,9 +9,9 @@
 
 /* 지난 날짜 (비활성화) */
 .react-calendar__tile:disabled {
-    color: #d3d3d3;
-    cursor: default;
-    background-color: white;
+    color: #d3d3d3 !important;
+    cursor: default !important;
+    background-color: white !important;
 }
 .react-calendar__navigation button:disabled {
     background-color: transparent;
@@ -51,21 +51,23 @@
     border-radius: 5px !important;
 }
 
+/* 예약 날짜 */
+.reservation-date abbr {
+    text-decoration: line-through;
+    color: #f47366;
+    font-weight: bold;
+}
+.reservation-date {
+    pointer-events: none;
+}
+/* 예약 날짜 중에 체크 인(체크 아웃은 가능한 날) */
+
+/* 예약 날짜 중에 체크 아웃(체크 인은 가능한 날) */
+
 .custom-block-date abbr {
     text-decoration: line-through;
     color: red;
     font-weight: bold;
-}
-
-.reservation-date abbr {
-    text-decoration: line-through;
-    /*color: #828282;*/
-    color: #f47366;
-    font-weight: bold;
-
-}
-.reservation-date {
-    pointer-events: none;
 }
 
 .react-calendar .start-dateRCS,

@@ -3,6 +3,9 @@ import Calendar from "react-calendar";
 import dayjs from "dayjs";
 import {RoomData} from "src/types/rooms";
 import i18n from "i18next";
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: number }) => {
     const [customBlockDatesRSS, setCustomBlockDatesRSS] = useState<string[]>([]);
@@ -25,8 +28,8 @@ const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: 
         const reservationArrRSS: string[] = [];
 
         selectedRoomData.unavailable_dates?.reservations?.forEach((reservation) => {
-            const startDate = dayjs(reservation.check_in_date);
-            const endDate = dayjs(reservation.check_out_date);
+            const startDate = dayjs.utc(reservation.check_in_date);
+            const endDate = dayjs.utc(reservation.check_out_date);
             const today = dayjs().format('YYYY-MM-DD');
 
             // 날짜 범위 생성
@@ -37,7 +40,7 @@ const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: 
                     if (formattedDate >= today) {
                         customBlockArrRSS.push(formattedDate);
                     }
-                } else {
+                } else if (formattedDate >= today) {
                     reservationArrRSS.push(formattedDate);
                 }
                 currentDate = currentDate.add(1, 'day');
@@ -49,19 +52,21 @@ const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: 
     }, [selectedRoom, data]);
 
     const tileContent = () => {
-        return <div className="add-content text-gray-500 text-xs">
-                    {data.filter((room) => room.id === selectedRoom) // 조건에 맞는 데이터 필터링
-                        .map((room, index) => (
-                            <div key={index}>
-                                {room.day_price !== undefined ? (
-                                    <>{(room.day_price / 10000).toFixed(2)}만</>
-                                ) : (
-                                    '없음'
-                                )}
-                            </div>
-                        ))
-                    }
-                </div>;
+        return (
+            <div className="add-content text-gray-500 text-xs">
+                {data.filter((room) => room.id === selectedRoom) // 조건에 맞는 데이터 필터링
+                    .map((room, index) => (
+                        <div key={index}>
+                            {room.day_price !== undefined ? (
+                                <>{(room.day_price / 10000).toFixed(2)}만</>
+                            ) : (
+                                '없음'
+                            )}
+                        </div>
+                    ))
+                }
+            </div>
+        );
     };
 
     return (
@@ -123,33 +128,6 @@ const RoomStatusSet = ({data, selectedRoom}: { data: RoomData[], selectedRoom?: 
 
                     </table>
                 </div>
-                {/*
-                <div className="w-full flex-1 m-2 p-2">
-                    <div className="mb-2 font-bold text-roomi">예약 목록</div>
-                    {reservationDatesRSS.length > 1 ? (
-                        <div className="flex flex-wrap gap-2">
-                            {reservationDatesRSS.map((date, index) => (
-                                <div key={index} className="px-4 py-2">{date}</div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="px-4">없음</div>
-                    )}
-                </div>
-                <div className="w-full flex-1 m-2 p-2">
-                    <div className="mb-2 font-bold text-red-600">블락 목록</div>
-                    {customBlockDatesRSS.length > 1 ? (
-                        <div className="flex flex-wrap gap-2">
-                            {customBlockDatesRSS.map((date, index) => (
-                                <div key={index} className="px-4 py-2">{date}</div>
-                            ))
-                            }
-                        </div>
-                    ) : (
-                        <div className="px-4">없음</div>
-                    )}
-                </div>
-                */}
             </div>
         </div>
     );

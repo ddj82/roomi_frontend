@@ -53,6 +53,14 @@ module.exports = {
                     fontSize: '1.125rem',
                     lineHeight: '1.75rem',
                 },
+                '.text-xxs': {
+                    fontSize: '0.6rem',
+                    lineHeight: '1rem',
+                },
+                '.text-xxxs': {
+                    fontSize: '0.3rem',
+                    lineHeight: '0.4rem',
+                },
             });
         },
         function ({ addComponents }) {

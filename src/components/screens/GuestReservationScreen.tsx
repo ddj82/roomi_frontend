@@ -464,10 +464,10 @@ export default function GuestReservationScreen() {
                             : "max-h-0 overflow-hidden opacity-0"}`}
                         >
                             {/*결제 정보*/}
-                            <div className="font-bold text-gray-800 md:mb-4 my-4 text-lg md:block hidden">
+                            <div className="font-bold text-gray-800 md:mt-0 my-4 text-lg md:block hidden">
                                 {t("price_info")}
                             </div>
-                            <div className="p-5 rounded-lg bg-roomi-light">
+                            <div className="p-5 mt-4 rounded-lg bg-roomi-light">
                                 {/*숙박비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="font-medium text-gray-700">

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from 'react-router-dom';
 import {addRoomHistory, fetchRoomData} from "src/api/api";
-import {RoomData} from "../../types/rooms";
+import {Reservation, RoomData} from "../../types/rooms";
 import ImgCarousel from "../util/ImgCarousel";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {IconDefinition} from "@fortawesome/fontawesome-svg-core";
@@ -67,7 +67,7 @@ import {
     faBabyCarriage,
     faWheelchair,
     faFire,
-    faCheckCircle
+    faCheckCircle, faCircle
 } from "@fortawesome/free-solid-svg-icons";
 import {useTranslation} from "react-i18next";
 import NaverMapRoom from "../map/NaverMapRoom";
@@ -76,12 +76,14 @@ import dayjs from "dayjs";
 import {useDateStore} from "src/components/stores/DateStore";
 import 'react-calendar/dist/Calendar.css';
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
-import {useReserSlideConStore} from "../stores/ReserSlideConStore";
 import {useChatStore} from "../stores/ChatStore";
 import AuthModal from "../modals/AuthModal";
 import i18n from "i18next";
+import utc from 'dayjs/plugin/utc';
+import isBetween from 'dayjs/plugin/isBetween';
 
-
+dayjs.extend(utc);
+dayjs.extend(isBetween);
 
 export default function RoomDetailScreen() {
     const {roomId, locale} = useParams(); // URL 파라미터 추출
@@ -99,6 +101,13 @@ export default function RoomDetailScreen() {
     const connect = useChatStore((state) => state.connect);
     const [authModalOpen, setAuthModalOpen] = useState(false);
     const [userLocale, setUserLocale] = useState(i18n.language);
+    const [blockDates, setBlockDates] = useState<string[]>([]);
+    // 체크인 날짜들
+    const [checkInList, setCheckInList] = useState<string[]>([]);
+    // 체크아웃 날짜들
+    const [checkOutList, setCheckOutList] = useState<string[]>([]);
+    // 1박2일 날짜들
+    const [oneDayList, setOneDayList] = useState<string[]>([]);
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -111,6 +120,48 @@ export default function RoomDetailScreen() {
                         const roomData = responseJson.data;
                         console.log('데이터 :', roomData);
                         setRoom(roomData);
+
+                        // 사용불가 날짜 커스텀 클래스 추가
+                        const blockDateArr: string[] = [];
+                        const checkInListArr: string[] = [];
+                        const checkOutListArr: string[] = [];
+                        const oneDayListArr: string[] = [];
+
+                        roomData.unavailable_dates?.reservations?.forEach((reservation: Reservation) => {
+                            const startDate = dayjs.utc(reservation.check_in_date);
+                            const endDate = dayjs.utc(reservation.check_out_date);
+                            const today = dayjs().format('YYYY-MM-DD');
+
+                            if (endDate.diff(startDate, 'day') === 1) {
+                                oneDayListArr.push(endDate.format('YYYY-MM-DD'));
+                            }
+
+                            // 체크인 날짜들, 체크아웃 날짜들 처리를 위한 배열
+                            checkInListArr.push(startDate.format('YYYY-MM-DD'));
+                            checkOutListArr.push(endDate.format('YYYY-MM-DD'));
+                            
+                            // 커스텀 블락 날짜 배열
+                            if (reservation.status === 'BLOCKED') {
+                                blockDateArr.push(startDate.format('YYYY-MM-DD'));
+                            }
+
+                            // 예약된 날짜를 체크인 다음날부터 체크아웃 하루 전까지만 막음 (체크인/체크아웃은 가능)
+                            let currentDate = startDate.add(1, 'day'); // 체크인 날짜 제외, 다음날부터 차단
+                            // let currentDate = startDate; // 체크인 날짜 제외, 다음날부터 차단
+                            while (currentDate.isBefore(endDate)) { // 체크아웃 날짜는 제외 (체크인 가능하게 하기 위해)
+                                const formattedDate = currentDate.format('YYYY-MM-DD');
+
+                                if (formattedDate >= today) {
+                                    blockDateArr.push(formattedDate);
+                                }
+
+                                currentDate = currentDate.add(1, 'day'); // 하루씩 증가
+                            }
+                        });
+                        setBlockDates(blockDateArr);
+                        setCheckInList(checkInListArr);
+                        setCheckOutList(checkOutListArr);
+                        setOneDayList(oneDayListArr);
                     }
                 } catch (error) {
                     console.error('방 정보 불러오기 실패:', error);
@@ -127,38 +178,108 @@ export default function RoomDetailScreen() {
         } else {
             console.error('❌ Auth Token이 없습니다.');
         }
+
     }, [roomId, locale]); // roomId와 locale 변경 시 실행
 
     const handleDayClick = (date: Date) => {
-        const dateString = formatDate(date);
+        const dateString = dayjs(date).format('YYYY-MM-DD');
+
+        console.log('blockDates', blockDates);
+        console.log('checkInList', checkInList);
+        console.log('checkOutList', checkOutList);
+        console.log('oneDayList', oneDayList);
+
+        // checkInList 배열을 돌면서 dateString과 같은 날짜가 있는지 확인
+        const isCheckInDate = checkInList.some((checkIn) => checkIn === dateString);
+        // checkOutList 배열을 돌면서 dateString과 같은 날짜가 있는지 확인
+        const isCheckOutDate = checkOutList.some((checkIn) => checkIn === dateString);
+
         if (calUnit) {
             if (!startDate || (startDate && endDate)) {
-                setStartDate(dateString);
-                setEndDate(null);
-            } else {
-                if (new Date(dateString) >= new Date(startDate)) {
-                    setEndDate(dateString);
+                if (isCheckInDate) {
+                    alert('체크아웃만 가능한 날짜입니다.');
+                    setStartDate(null);
+                    setEndDate(null);
                 } else {
                     setStartDate(dateString);
                     setEndDate(null);
                 }
+            } else if (new Date(dateString) >= new Date(startDate)) {
+                if (isCheckOutDate) {
+                    alert('체크인만 가능한 날짜입니다.');
+                    setStartDate(null);
+                    setEndDate(null);
+                } else {
+                    // startDate부터 dateString 사이에 하나라도 blockDates에 있으면 alert 띄우기
+                    const hasBlockedDate = blockDates.some(blockedDate =>
+                        dayjs(blockedDate).isBetween(startDate, dateString, 'day', '[]')
+                    );
+                    const hasBlockedDate2 = oneDayList.some(date =>
+                        dayjs(date).isBetween(dayjs(startDate).add(1, 'day').format('YYYY-MM-DD'), dateString, 'day', '[]')
+                    );
+
+                    console.log('hasBlockedDate2', hasBlockedDate2);
+
+                    if (hasBlockedDate || hasBlockedDate2) {
+                        alert('선택한 날짜 범위에 예약 불가 날짜가 포함되어 있습니다.');
+                        setStartDate(null);
+                        setEndDate(null);
+                    } else {
+                        setEndDate(dateString);
+                    }
+                }
+            } else {
+                setStartDate(dateString);
+                setEndDate(null);
             }
         } else {
             weekDateSet(dateString);
         }
     };
 
+    // 블록 날짜 범위 검사 함수
+    function hasBlockedDatesInRange(start: string, end: string, blockDates: string[]) {
+        // start ~ end 사이에 하나라도 blockDates가 있으면 true
+        return blockDates.some(blockedDate =>
+            dayjs(blockedDate).isBetween(start, end, 'day', '[]')
+        );
+    }
+
     const weekDateSet = (dateString: string) => {
-        setStartDate(dateString);
         const startDateObj = new Date(dateString);
-        const endDateObj = new Date(startDateObj);
+        const endDateObj = new Date(dateString);
         endDateObj.setDate(startDateObj.getDate() + (weekValue * 7)); // 주 단위 계산
-        const formattedEndDate = formatDate(endDateObj);
-        setEndDate(formattedEndDate);
+        const formattedEndDate = dayjs(endDateObj).format('YYYY-MM-DD');
+
+        // 블록 날짜 범위 검사
+          if (hasBlockedDatesInRange(dateString, formattedEndDate, blockDates)) {
+            alert('선택한 날짜 범위에 예약 불가 날짜가 포함되어 있습니다.');
+            setStartDate(null);
+            setEndDate(null);
+          } else {
+            setStartDate(dateString);
+            setEndDate(formattedEndDate);
+          }
+    };
+
+    const handleWeekValue = (value: boolean) => {
+        if (value) {
+            // 플러스 버튼 클릭 시
+            setWeekValue(prev => prev + 1);
+        } else {
+            // 마이너스 버튼 클릭 시
+            if (weekValue === 1) return;
+            setWeekValue(prev => prev - 1);
+        }
+
+        // 만약 이미 startDate가 선택되어 있다면, 주(week) 값 변경 후 다시 검사
+        if (startDate) {
+            weekDateSet(startDate);
+        }
     };
 
     const getTileClassName = ({date}: { date: Date }) => {
-        const dateString = formatDate(date);
+        const dateString = dayjs(date).format('YYYY-MM-DD');
         if (dateString === startDate) {
             return 'start-date';
         }
@@ -168,15 +289,31 @@ export default function RoomDetailScreen() {
         if (startDate && endDate && date > new Date(startDate) && date < new Date(endDate)) {
             return 'in-range';
         }
+        if (blockDates.includes(dateString)) {
+            return 'reservation-date';
+        }
+        if (checkInList.includes(dateString)) {
+            return 'checkInList';
+        }
+        if (checkOutList.includes(dateString)) {
+            return 'checkOutList';
+        }
         return null;
     };
 
-    // 날짜 문자열 변환 함수
-    const formatDate = (date: Date): string => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1 필요
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+    const tileContent = ({ date }: { date: Date }) => {
+        const dateString = dayjs(date).format('YYYY-MM-DD');
+        // checkInList 체크 아웃 만 가능
+        if (checkInList.includes(dateString)) {
+            return <div className="text-xxxs !text-blue-500"><FontAwesomeIcon icon={faCircle}/></div>;
+        }
+
+        // checkOutList 체크인 만 가능
+        if (checkOutList.includes(dateString)) {
+            return <div className="text-xxxs !text-yellow-500"><FontAwesomeIcon icon={faCircle}/></div>;
+        }
+
+        return null;
     };
 
     const dayUnit = () => {
@@ -190,17 +327,6 @@ export default function RoomDetailScreen() {
         setCalUnit(false);
         setStartDate(null);
         setEndDate(null);
-    };
-
-    const handleWeekValue = (value: boolean) => {
-        if (value) {
-            // 플러스 버튼 클릭 시
-            setWeekValue(prev => prev + 1);
-        } else {
-            // 마이너스 버튼 클릭 시
-            if (weekValue === 1) return;
-            setWeekValue(prev => prev - 1);
-        }
     };
 
     useEffect(() => {
@@ -232,6 +358,7 @@ export default function RoomDetailScreen() {
             cleaningPrice = (Number(room?.cleaning_fee_week) || 0);
         }
         const allOptionPrice = depositPrice + maintenancePrice + cleaningPrice;
+        const thisRoom = room;
         navigate(`/detail/${roomId}/${locale}/reservation`, {
             state: {
                 price,
@@ -239,6 +366,7 @@ export default function RoomDetailScreen() {
                 maintenancePrice,
                 cleaningPrice,
                 allOptionPrice,
+                thisRoom
             },
         });
     };
@@ -553,7 +681,7 @@ export default function RoomDetailScreen() {
                             : "max-h-0 overflow-hidden opacity-0"}`}
                         >
                             {/* 가격 정보 헤더 */}
-                            <div className="p-3 pt-5 border-b border-gray-100">
+                            <div className="p-3 border-b border-gray-100">
                                 <h2 className="text-lg font-bold text-gray-800 mb-2">
                                     {t("원")}{calUnit ? room.day_price?.toLocaleString() : room.week_price?.toLocaleString()}
                                     <span className="text-sm font-normal text-gray-600 ml-1">
@@ -578,6 +706,14 @@ export default function RoomDetailScreen() {
                                     <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("주")}
                                 </button>
                             </div>
+                            <div className="text-xs items-center">
+                                <div className="items-center">
+                                    <FontAwesomeIcon icon={faCircle} className="text-xxs text-blue-500"/> : 체크아웃만 가능한 날짜
+                                </div>
+                                <div className="items-center">
+                                    <FontAwesomeIcon icon={faCircle} className="text-xxs text-yellow-500"/> : 체크인만 가능한 날짜
+                                </div>
+                            </div>
                             {/* 주 단위 선택기 */}
                             {!calUnit && (
                                 <div className="flex_center mb-3 text-sm">
@@ -600,6 +736,7 @@ export default function RoomDetailScreen() {
                                 <Calendar
                                     onClickDay={handleDayClick}
                                     tileClassName={getTileClassName}
+                                    tileContent={tileContent} // 날짜별 커스텀 콘텐츠 추가
                                     minDate={new Date()}
                                     next2Label={null} // 추가로 넘어가는 버튼 제거
                                     prev2Label={null} // 이전으로 돌아가는 버튼 제거
@@ -669,8 +806,6 @@ export default function RoomDetailScreen() {
         </div>
     );
 }
-
-const addFacilityIcons: Record<string, IconDefinition> = {};
 
 export const facilityIcons: Record<string, IconDefinition> = {
     "bbq": faUtensils, // 바비큐

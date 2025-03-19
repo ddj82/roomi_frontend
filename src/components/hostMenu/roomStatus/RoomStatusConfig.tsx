@@ -7,7 +7,9 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import {createBulkBlocks, unblockDate} from "src/api/api";
 import {useDataUpdateStore} from "src/components/stores/DataUpdateStore";
 import i18n from "i18next";
+import utc from 'dayjs/plugin/utc';
 
+dayjs.extend(utc);
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
@@ -73,19 +75,22 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                 const selectedRoomData = data.find((room) => room.id === selectedRoom);
                 // 예약 데이터 가져오기
                 const reservations = selectedRoomData?.unavailable_dates?.reservations || [];
+                console.log('예약 데이터 가져옴', reservations);
 
                 // 날짜 범위 생성
                 while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
                     const formattedDate = currentDate.format('YYYY-MM-DD');
+                    // 비교용
+                    const formattedDateUTC = dayjs.utc(formattedDate, 'YYYY-MM-DD');
 
                     // 해당 날짜가 예약된 날짜인지 확인
-                    const isUnavailable = reservations.some(
-                        (reservation) =>
-                            reservation.status &&
-                            dayjs(reservation.check_in_date).isSameOrBefore(formattedDate, 'day') &&
-                            dayjs(reservation.check_out_date).isSameOrAfter(formattedDate, 'day')
+                    const isUnavailable = reservations.some((reservation) =>
+                        reservation.status &&
+                        dayjs.utc(reservation.check_in_date).isSameOrBefore(formattedDateUTC, 'day') &&
+                        dayjs.utc(reservation.check_out_date).isSameOrAfter(formattedDateUTC, 'day')
                     );
 
+                    console.log('formattedDate',formattedDate, 'isUnavailable',isUnavailable);
                     // 예약되지 않은 날짜만 추가
                     if (!isUnavailable) {
                         dates.push(formattedDate);
@@ -119,8 +124,8 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
         const reservationArrRSC: string[] = [];
 
         selectedRoomData.unavailable_dates?.reservations?.forEach((reservation) => {
-            const startDate = dayjs(reservation.check_in_date);
-            const endDate = dayjs(reservation.check_out_date);
+            const startDate = dayjs.utc(reservation.check_in_date);
+            const endDate = dayjs.utc(reservation.check_out_date);
             const today = dayjs().format('YYYY-MM-DD');
 
             // 날짜 범위 생성
@@ -132,7 +137,9 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
                         customBlockArrRSC.push(formattedDate);
                     }
                 } else {
-                    reservationArrRSC.push(formattedDate);
+                    if (formattedDate >= today) {
+                        reservationArrRSC.push(formattedDate);
+                    }
                 }
                 currentDate = currentDate.add(1, 'day');
             }

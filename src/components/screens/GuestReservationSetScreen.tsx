@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {fetchRoomData} from "../../api/api";
+import {bookReservation, fetchRoomData} from "../../api/api";
 import {RoomData} from "../../types/rooms";
 import {useTranslation} from "react-i18next";
 import {useDateStore} from "../stores/DateStore";
@@ -9,7 +9,7 @@ import {useGuestsStore} from "../stores/GuestsStore";
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
-    faCalendarDay, faCheckCircle,
+    faCheckCircle,
     faChevronDown,
     faChevronUp,
     faEnvelope, faMapMarkerAlt,
@@ -17,7 +17,6 @@ import {
     faUser
 } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
-import {useReserSlideConStore} from "../stores/ReserSlideConStore";
 
 export default function GuestReservationSetScreen() {
     //동의항목
@@ -43,6 +42,7 @@ export default function GuestReservationSetScreen() {
         maintenancePrice = 0,
         cleaningPrice = 0,
         allOptionPrice = 0,
+        thisRoom = null,
     } = location.state || {}; // state가 없는 경우 기본값 설정
     const [totalPrice, setTotalPrice] = useState(0);
     const [formData, setFormData] = useState({
@@ -53,22 +53,37 @@ export default function GuestReservationSetScreen() {
     const [slideIsOpen, setSlideIsOpen] = useState(false);
 
     useEffect(() => {
-        const loadRoomData = async () => {
-            if (roomId) {
-                console.log(`Room ID: ${roomId}`);
-                try {
-                    if (locale != null) {
-                        const response = await fetchRoomData(Number(roomId));
-                        const responseJson = await response.json();
-                        const roomData = responseJson.data;
-                        setRoom(roomData);
-                    }
-                } catch (error) {
-                    console.error('방 정보 불러오기 실패:', error);
+        // const loadRoomData = async () => {
+        //     if (roomId) {
+        //         console.log(`Room ID: ${roomId}`);
+        //         try {
+        //             if (locale != null) {
+        //                 const response = await fetchRoomData(Number(roomId));
+        //                 const responseJson = await response.json();
+        //                 const roomData = responseJson.data;
+        //                 setRoom(roomData);
+        //             }
+        //         } catch (error) {
+        //             console.error('방 정보 불러오기 실패:', error);
+        //         }
+        //     }
+        // };
+        // loadRoomData();
+        const reservationData = async () => {
+            try {
+                if (startDate && endDate) {
+                    const selectionMode = calUnit ? 'daily' : 'weekly';
+                    const response = await bookReservation(startDate, endDate, selectionMode, Number(roomId));
+                    const responseJson = await response.json();
+                    const bookData = responseJson.data;
+                    console.log('bookData', bookData);
                 }
+            } catch (e) {
+                console.error('예약하기 실패:', e);
             }
         };
-        loadRoomData();
+        reservationData()
+        setRoom(thisRoom);
         handleNight();
     }, [roomId, locale]);
 
@@ -303,10 +318,10 @@ export default function GuestReservationSetScreen() {
                             : "max-h-0 overflow-hidden opacity-0"}`}
                         >
                             {/*결제 정보*/}
-                            <div className="font-bold text-gray-800 md:mb-4 my-4 text-lg md:block hidden">
+                            <div className="font-bold text-gray-800 md:mt-0 my-4 text-lg md:block hidden">
                                 {t("price_info")}
                             </div>
-                            <div className="p-5 rounded-lg bg-roomi-light">
+                            <div className="p-5 mt-4 rounded-lg bg-roomi-light">
                                 {/*숙박비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="font-medium text-gray-700">
