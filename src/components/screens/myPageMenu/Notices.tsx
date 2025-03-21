@@ -73,7 +73,7 @@ export default function Notices() {
                     })}
                 </>
             ) : (
-                <div>공지사항이 없습니다.</div>
+                <div className="flex_center">공지사항이 없습니다.</div>
             )}
         </div>
     );

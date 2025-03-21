@@ -171,7 +171,7 @@ export const be_host = async () => {
     }
 };
 
-// 나의 방 API
+// 호스트모드 나의 방 API
 export const myRoomList = async () => {
     return request(`/rooms/my/list`, true, 'GET', undefined, true);
 };
@@ -267,4 +267,9 @@ export const bookReservation = async (checkIn: string, checkOut: string, selecti
         true,
         'POST'
     );
+};
+
+// 게스트 예약내역 API
+export const getReservationHistory = async () => {
+    return request(`/rooms/my/history`, true, 'GET', undefined, true);
 };

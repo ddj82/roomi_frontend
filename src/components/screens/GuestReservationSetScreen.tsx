@@ -53,36 +53,6 @@ export default function GuestReservationSetScreen() {
     const [slideIsOpen, setSlideIsOpen] = useState(false);
 
     useEffect(() => {
-        // const loadRoomData = async () => {
-        //     if (roomId) {
-        //         console.log(`Room ID: ${roomId}`);
-        //         try {
-        //             if (locale != null) {
-        //                 const response = await fetchRoomData(Number(roomId));
-        //                 const responseJson = await response.json();
-        //                 const roomData = responseJson.data;
-        //                 setRoom(roomData);
-        //             }
-        //         } catch (error) {
-        //             console.error('방 정보 불러오기 실패:', error);
-        //         }
-        //     }
-        // };
-        // loadRoomData();
-        const reservationData = async () => {
-            try {
-                if (startDate && endDate) {
-                    const selectionMode = calUnit ? 'daily' : 'weekly';
-                    const response = await bookReservation(startDate, endDate, selectionMode, Number(roomId));
-                    const responseJson = await response.json();
-                    const bookData = responseJson.data;
-                    console.log('bookData', bookData);
-                }
-            } catch (e) {
-                console.error('예약하기 실패:', e);
-            }
-        };
-        reservationData()
         setRoom(thisRoom);
         handleNight();
     }, [roomId, locale]);
@@ -122,26 +92,48 @@ export default function GuestReservationSetScreen() {
         }));
     };
 
-    const paymentBtn = () => {
+    const reservationBtn = async () => {
         console.log('결제 할 금액 :', totalPrice);
         let totalNight = nightVal; // 기본 일 단위로 초기화
         if (!calUnit) {
             totalNight = weekValue; // 주 단위면 초기화
         }
-        formData.name = '김동준';
-        formData.phone = '01012312312';
-        formData.email = 'qweqwe@naver.com';
-        navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
-            state: {
-                price,
-                depositPrice,
-                maintenancePrice,
-                cleaningPrice,
-                totalPrice,
-                totalNight,
-                formData,
-            },
-        });
+
+        if (thisRoom.is_auto_accepted) {
+            // 더미데이터
+            alert('이프문~');
+            formData.name = '김동준';
+            formData.phone = '01012312312';
+            formData.email = 'qweqwe@naver.com';
+
+            try {
+                if (startDate && endDate) {
+                    const selectionMode = calUnit ? 'daily' : 'weekly';
+                    const response = await bookReservation(startDate, endDate, selectionMode, Number(roomId));
+                    const responseJson = await response.json();
+                    const bookData = responseJson.data;
+                    console.log('bookData', bookData);
+
+                    navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
+                        state: {
+                            price,
+                            depositPrice,
+                            maintenancePrice,
+                            cleaningPrice,
+                            totalPrice,
+                            totalNight,
+                            formData,
+                        },
+                    });
+                }
+            } catch (e) {
+                console.error('예약하기 실패:', e);
+            }
+
+        } else {
+            // 예약내역으로 갈것인지 메인으로 갈것인지 모달
+            alert('엘스문~');
+        }
     };
 
     useEffect(() => {
@@ -429,7 +421,7 @@ export default function GuestReservationSetScreen() {
 
                                 <button
                                     className="w-full py-3 px-4 bg-roomi hover:bg-roomi-3 text-white font-medium rounded-lg transition-colors"
-                                    onClick={paymentBtn}>
+                                    onClick={reservationBtn}>
                                     {t("계약 요청")}
                                 </button>
                             </div>

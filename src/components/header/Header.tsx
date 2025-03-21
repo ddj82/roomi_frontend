@@ -12,7 +12,7 @@ import {
     faCalendarDay,
     faLocationDot,
     faUserPlus,
-    faCircleInfo, faUser
+    faUser
 } from '@fortawesome/free-solid-svg-icons';
 import '../../css/Header.css';
 import {useHeaderBtnVisibility} from "src/components/stores/HeaderBtnStore";

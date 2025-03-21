@@ -117,6 +117,13 @@ export default function GuestMyPageMenu() {
                                     </button>
                                 </div>
                                 <div className="my-2">
+                                    <button className="w-full text-start" onClick={() => setSelectedMenu('')}>
+                                        <FontAwesomeIcon icon={faRectangleList} className="w-4 h-4 mr-1"/>
+                                        {/*{t("예약 내역")}*/}
+                                        취소 및 환불 내역
+                                    </button>
+                                </div>
+                                <div className="my-2">
                                     <button className="w-full text-start" onClick={() => setSelectedMenu('관심')}>
                                         <FontAwesomeIcon icon={faThumbsUp} className="w-4 h-4 mr-1"/>{t("관심 목록")}
                                     </button>

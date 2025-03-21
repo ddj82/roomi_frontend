@@ -59,7 +59,7 @@ export default function MyFavoriteList() {
                     </div>
                 ))
             ) : (
-                <p>관심 목록이 없습니다.</p>
+                <div className="flex_center">관심 목록이 없습니다.</div>
             )}
         </div>
     );

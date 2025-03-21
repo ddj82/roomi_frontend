@@ -132,22 +132,24 @@ export default function RoomDetailScreen() {
                             const endDate = dayjs.utc(reservation.check_out_date);
                             const today = dayjs().format('YYYY-MM-DD');
 
-                            if (endDate.diff(startDate, 'day') === 1) {
+                            // 1박2일 예약 배열
+                            if (endDate.diff(startDate, 'day') === 1 &&  startDate.format('YYYY-MM-DD') >= today) {
                                 oneDayListArr.push(endDate.format('YYYY-MM-DD'));
                             }
-
-                            // 체크인 날짜들, 체크아웃 날짜들 처리를 위한 배열
-                            checkInListArr.push(startDate.format('YYYY-MM-DD'));
-                            checkOutListArr.push(endDate.format('YYYY-MM-DD'));
                             
                             // 커스텀 블락 날짜 배열
+                            // 체크인 날짜들, 체크아웃 날짜들 처리를 위한 배열 (커스텀 블락 제외)
                             if (reservation.status === 'BLOCKED') {
-                                blockDateArr.push(startDate.format('YYYY-MM-DD'));
+                                if (startDate.format('YYYY-MM-DD') >= today) {
+                                    blockDateArr.push(startDate.format('YYYY-MM-DD'));
+                                }
+                            } else if (startDate.format('YYYY-MM-DD') >= today) {
+                                checkInListArr.push(startDate.format('YYYY-MM-DD'));
+                                checkOutListArr.push(endDate.format('YYYY-MM-DD'));
                             }
 
                             // 예약된 날짜를 체크인 다음날부터 체크아웃 하루 전까지만 막음 (체크인/체크아웃은 가능)
                             let currentDate = startDate.add(1, 'day'); // 체크인 날짜 제외, 다음날부터 차단
-                            // let currentDate = startDate; // 체크인 날짜 제외, 다음날부터 차단
                             while (currentDate.isBefore(endDate)) { // 체크아웃 날짜는 제외 (체크인 가능하게 하기 위해)
                                 const formattedDate = currentDate.format('YYYY-MM-DD');
 
@@ -158,9 +160,22 @@ export default function RoomDetailScreen() {
                                 currentDate = currentDate.add(1, 'day'); // 하루씩 증가
                             }
                         });
+
+                        // checkInListArr와 checkOutListArr에 모두 포함된 날짜 찾기
+                        const duplicateDates = checkInListArr.filter(date => checkOutListArr.includes(date));
+
+                        // 해당 날짜를 checkInListArr, checkOutListArr에서 제거하고 blockDateArr에 추가
+                        duplicateDates.forEach(date => {
+                            blockDateArr.push(date);
+                        });
+
+                        // checkInListArr와 checkOutListArr에서 중복된 날짜 제거
+                        const filteredCheckInList = checkInListArr.filter(date => !duplicateDates.includes(date));
+                        const filteredCheckOutList = checkOutListArr.filter(date => !duplicateDates.includes(date));
+
                         setBlockDates(blockDateArr);
-                        setCheckInList(checkInListArr);
-                        setCheckOutList(checkOutListArr);
+                        setCheckInList(filteredCheckInList);
+                        setCheckOutList(filteredCheckOutList);
                         setOneDayList(oneDayListArr);
                     }
                 } catch (error) {
@@ -184,10 +199,10 @@ export default function RoomDetailScreen() {
     const handleDayClick = (date: Date) => {
         const dateString = dayjs(date).format('YYYY-MM-DD');
 
-        console.log('blockDates', blockDates);
-        console.log('checkInList', checkInList);
-        console.log('checkOutList', checkOutList);
-        console.log('oneDayList', oneDayList);
+        // console.log('blockDates', blockDates);
+        // console.log('checkInList', checkInList);
+        // console.log('checkOutList', checkOutList);
+        // console.log('oneDayList', oneDayList);
 
         // checkInList 배열을 돌면서 dateString과 같은 날짜가 있는지 확인
         const isCheckInDate = checkInList.some((checkIn) => checkIn === dateString);
@@ -217,8 +232,6 @@ export default function RoomDetailScreen() {
                     const hasBlockedDate2 = oneDayList.some(date =>
                         dayjs(date).isBetween(dayjs(startDate).add(1, 'day').format('YYYY-MM-DD'), dateString, 'day', '[]')
                     );
-
-                    console.log('hasBlockedDate2', hasBlockedDate2);
 
                     if (hasBlockedDate || hasBlockedDate2) {
                         alert('선택한 날짜 범위에 예약 불가 날짜가 포함되어 있습니다.');
@@ -303,12 +316,18 @@ export default function RoomDetailScreen() {
 
     const tileContent = ({ date }: { date: Date }) => {
         const dateString = dayjs(date).format('YYYY-MM-DD');
-        // checkInList 체크 아웃 만 가능
-        if (checkInList.includes(dateString)) {
+
+        // checkInList에서 blockDateArr의 날짜 +1일인 경우 필터링
+        const hasBlockedAdjacent = blockDates.some(blockedDate =>
+            dayjs(blockedDate).add(1, 'day').format('YYYY-MM-DD') === dateString
+        );
+
+        // 🔹 체크아웃만 가능한 날짜 (파란색)
+        if (checkInList.includes(dateString) && !hasBlockedAdjacent) {
             return <div className="text-xxxs !text-blue-500"><FontAwesomeIcon icon={faCircle}/></div>;
         }
 
-        // checkOutList 체크인 만 가능
+        // 🔸 체크인만 가능한 날짜 (노란색)
         if (checkOutList.includes(dateString)) {
             return <div className="text-xxxs !text-yellow-500"><FontAwesomeIcon icon={faCircle}/></div>;
         }
@@ -706,12 +725,14 @@ export default function RoomDetailScreen() {
                                     <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("주")}
                                 </button>
                             </div>
-                            <div className="text-xs items-center">
-                                <div className="items-center">
-                                    <FontAwesomeIcon icon={faCircle} className="text-xxs text-blue-500"/> : 체크아웃만 가능한 날짜
+                            <div className="text-xs mb-2">
+                                <div className="flex items-center gap-1">
+                                    <FontAwesomeIcon icon={faCircle} className="text-xxs text-blue-500"/>
+                                    <span className="text-gray-600">: 체크아웃만 가능한 날짜</span>
                                 </div>
-                                <div className="items-center">
-                                    <FontAwesomeIcon icon={faCircle} className="text-xxs text-yellow-500"/> : 체크인만 가능한 날짜
+                                <div className="flex items-center gap-1">
+                                    <FontAwesomeIcon icon={faCircle} className="text-xxs text-yellow-500"/>
+                                    <span className="text-gray-600">: 체크인만 가능한 날짜</span>
                                 </div>
                             </div>
                             {/* 주 단위 선택기 */}

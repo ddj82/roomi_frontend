@@ -57,7 +57,7 @@ export default function MyHistoryList() {
                     </div>
                 ))
             ) : (
-                <p>최근 본 게시물이 없습니다.</p>
+                <div className="flex_center">최근 본 게시물이 없습니다.</div>
             )}
         </div>
     );

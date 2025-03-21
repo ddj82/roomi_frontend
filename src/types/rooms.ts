@@ -134,3 +134,27 @@ export interface Schedules {
     reason: string;
     isBlocked: string;
 }
+
+export interface Guest {
+    name: string,
+    email: string,
+    phone?: string,
+}
+
+export interface ReservationHistory {
+    id: number,
+    room_id: number,
+    order_id: string,
+    check_in_date: Date,
+    check_out_date: Date,
+    status: string,
+    payment_status: string,
+    total_price: number,
+    is_reviewed: boolean,
+    guest_count: number,
+    created_at: Date,
+    currency: string,
+    guest: Guest,
+    room: RoomData,
+    selection_mode: string,
+}
