@@ -1,6 +1,6 @@
 declare global {
     interface Window {
-        kakao: any; // Kakao 객체를 any 타입으로 선언
+        Kakao: any; // Kakao 객체를 any 타입으로 선언
     }
 }
 

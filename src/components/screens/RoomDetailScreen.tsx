@@ -212,7 +212,7 @@ export default function RoomDetailScreen() {
         if (calUnit) {
             if (!startDate || (startDate && endDate)) {
                 if (isCheckInDate) {
-                    alert('체크아웃만 가능한 날짜입니다.');
+                    alert('선택한 날짜 범위에 예약 불가 날짜가 포함되어 있습니다.');
                     setStartDate(null);
                     setEndDate(null);
                 } else {
@@ -221,7 +221,7 @@ export default function RoomDetailScreen() {
                 }
             } else if (new Date(dateString) >= new Date(startDate)) {
                 if (isCheckOutDate) {
-                    alert('체크인만 가능한 날짜입니다.');
+                    alert('선택한 날짜 범위에 예약 불가 날짜가 포함되어 있습니다.');
                     setStartDate(null);
                     setEndDate(null);
                 } else {
@@ -311,27 +311,6 @@ export default function RoomDetailScreen() {
         if (checkOutList.includes(dateString)) {
             return 'checkOutList';
         }
-        return null;
-    };
-
-    const tileContent = ({ date }: { date: Date }) => {
-        const dateString = dayjs(date).format('YYYY-MM-DD');
-
-        // checkInList에서 blockDateArr의 날짜 +1일인 경우 필터링
-        const hasBlockedAdjacent = blockDates.some(blockedDate =>
-            dayjs(blockedDate).add(1, 'day').format('YYYY-MM-DD') === dateString
-        );
-
-        // 🔹 체크아웃만 가능한 날짜 (파란색)
-        if (checkInList.includes(dateString) && !hasBlockedAdjacent) {
-            return <div className="text-xxxs !text-blue-500"><FontAwesomeIcon icon={faCircle}/></div>;
-        }
-
-        // 🔸 체크인만 가능한 날짜 (노란색)
-        if (checkOutList.includes(dateString)) {
-            return <div className="text-xxxs !text-yellow-500"><FontAwesomeIcon icon={faCircle}/></div>;
-        }
-
         return null;
     };
 
@@ -655,22 +634,24 @@ export default function RoomDetailScreen() {
 
                             {/* 호스트 정보 */}
                             <div
-                                className="mb-10 rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                className="mb-10 rounded-xl p-6 border border-gray-100 shadow-sm">
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center">
                                         <div
-                                            className="w-16 h-16 rounded-full bg-roomi flex_center text-white mr-4">
-                                            <FontAwesomeIcon icon={faUser} className="text-2xl"/>
+                                            className="flex_center mr-4">
+                                            <img src={room.host.profile_image ?
+                                                (room.host.profile_image) : ('/assets/images/profile.png')}
+                                                 alt="프로필사진"
+                                                 className="rounded-full w-16 h-16"/>
                                         </div>
                                         <div>
-                                            <p className="font-medium text-gray-800">{room.host_id}</p>
-                                            <p className="text-sm text-gray-500">호스트</p>
+                                        <div className="font-medium text-gray-800">{room.host.name}</div>
                                         </div>
                                     </div>
 
                                     <button
                                         type="button"
-                                        className="px-5 py-2.5 rounded-lg bg-roomi text-white text-sm font-medium hover:bg-opacity-90 transition-colors shadow-sm"
+                                        className="px-4 py-2 rounded-lg bg-roomi text-white text-sm font-medium hover:bg-opacity-90 transition-colors shadow-sm"
                                         onClick={createChatRoom}
                                     >
                                         채팅하기
@@ -725,16 +706,6 @@ export default function RoomDetailScreen() {
                                     <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("주")}
                                 </button>
                             </div>
-                            <div className="text-xs mb-2">
-                                <div className="flex items-center gap-1">
-                                    <FontAwesomeIcon icon={faCircle} className="text-xxs text-blue-500"/>
-                                    <span className="text-gray-600">: 체크아웃만 가능한 날짜</span>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                    <FontAwesomeIcon icon={faCircle} className="text-xxs text-yellow-500"/>
-                                    <span className="text-gray-600">: 체크인만 가능한 날짜</span>
-                                </div>
-                            </div>
                             {/* 주 단위 선택기 */}
                             {!calUnit && (
                                 <div className="flex_center mb-3 text-sm">
@@ -757,7 +728,6 @@ export default function RoomDetailScreen() {
                                 <Calendar
                                     onClickDay={handleDayClick}
                                     tileClassName={getTileClassName}
-                                    tileContent={tileContent} // 날짜별 커스텀 콘텐츠 추가
                                     minDate={new Date()}
                                     next2Label={null} // 추가로 넘어가는 버튼 제거
                                     prev2Label={null} // 이전으로 돌아가는 버튼 제거
@@ -804,8 +774,6 @@ export default function RoomDetailScreen() {
                         </div>
                     </div>
                 </div>
-
-
             ) : (
                 <div className="text-center">
                     <div role="status" className="m-10">
@@ -819,7 +787,6 @@ export default function RoomDetailScreen() {
                                 d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
                                 fill="currentFill"/>
                         </svg>
-                        {/*<span className="sr-only">로딩중...</span>*/}
                         <div>로딩중...</div>
                     </div>
                 </div>

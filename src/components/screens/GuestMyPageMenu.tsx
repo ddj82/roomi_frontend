@@ -116,13 +116,13 @@ export default function GuestMyPageMenu() {
                                         {t("예약 내역")}
                                     </button>
                                 </div>
-                                <div className="my-2">
-                                    <button className="w-full text-start" onClick={() => setSelectedMenu('')}>
-                                        <FontAwesomeIcon icon={faRectangleList} className="w-4 h-4 mr-1"/>
-                                        {/*{t("예약 내역")}*/}
-                                        취소 및 환불 내역
-                                    </button>
-                                </div>
+                                {/*<div className="my-2">*/}
+                                {/*    <button className="w-full text-start" onClick={() => setSelectedMenu('')}>*/}
+                                {/*        <FontAwesomeIcon icon={faRectangleList} className="w-4 h-4 mr-1"/>*/}
+                                {/*        /!*{t("예약 내역")}*!/*/}
+                                {/*        취소 및 환불 내역*/}
+                                {/*    </button>*/}
+                                {/*</div>*/}
                                 <div className="my-2">
                                     <button className="w-full text-start" onClick={() => setSelectedMenu('관심')}>
                                         <FontAwesomeIcon icon={faThumbsUp} className="w-4 h-4 mr-1"/>{t("관심 목록")}
@@ -202,7 +202,7 @@ export default function GuestMyPageMenu() {
             {/* 모바일에서만 오버레이 표시 */}
             {isMobile && selectedMenu && (
                 <div className="absolute top-0 left-0 w-full h-full bg-white z-50 p-4">
-                    <button className="mb-4 px-3 py-2 bg-gray-200 rounded" onClick={() => setSelectedMenu('')}>
+                    <button className="mb-4 px-3 py-2 rounded" onClick={() => setSelectedMenu('')}>
                         <FontAwesomeIcon icon={faArrowLeft} />
                     </button>
                     {/* 메뉴 내용 표시 */}

@@ -108,6 +108,16 @@ export const login = async (email: string, password: string, setAuthToken: (toke
     }
 };
 
+// 카카오 로그인 API
+export const kakaoLogin = async (channel_uid: string, channel: string) => {
+    return request(`/users/validate`, false, 'POST', {
+        'channel_uid': channel_uid,
+        'channel': channel,
+        // 'channel_uid': '3939833827',
+        // 'channel': channel,
+    });
+};
+
 // 로그아웃
 export const logout = async () => {
     try {

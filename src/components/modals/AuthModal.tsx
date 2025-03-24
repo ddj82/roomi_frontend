@@ -19,6 +19,13 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
     const navigate = useNavigate();
     const {t} = useTranslation();
 
+    useEffect(() => {
+        if (window.Kakao && !window.Kakao.isInitialized()) {
+            window.Kakao.init('7e84a0bfbb21e40d283ad5d48d3d9d6c'); // 카카오 JavaScript 키로 초기화
+            console.log('✅ Kakao SDK initialized');
+        }
+    }, []);
+
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
@@ -64,6 +71,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                 // Implement Facebook login logic here
                 break;
             case 'Kakao':
+                if (!window.Kakao) return;
                 loginResult = await SocialAuth.kakaoLogin();
                 break;
             case 'Line':

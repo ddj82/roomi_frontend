@@ -37,7 +37,7 @@ export interface UnavailableDates {
 }
 
 export interface Host {
-    name?: string;
+    name: string;
     profile_image?: string;
 }
 
@@ -121,6 +121,8 @@ export interface RoomData {
     discounts?: any[];
     reviews?: any[];
     host: Host;
+    host_name: string;
+    host_profile_image?: string;
 
     is_favorite: boolean;
     currency: string;

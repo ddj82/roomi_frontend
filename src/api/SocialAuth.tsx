@@ -16,11 +16,16 @@ export class SocialAuth {
         WEIBO_CLIENT_ID: process.env.EXPO_PUBLIC_WEIBO_CLIENT_ID,
     };
 
-    private static readonly redirectUri = 'http://localhost:3000/'; // 웹에서는 이렇게 기본 URI를 설정해두었습니다.
+    private static readonly redirectUri = 'http://localhost:8081/sign-up'; // 웹에서는 이렇게 기본 URI를 설정해두었습니다.
 
     static async kakaoLogin(): Promise<SocialAuthResponse> {
         try {
-            const authUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${this.CONFIG.KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(this.redirectUri)}&response_type=code`;
+            const REST_API_KEY='d809b6614a5cf090c577f4f1c21fdda3' //REST API KEY
+            const REDIRECT_URI = 'http://localhost:8081/sign-up' //Redirect URI
+            // oauth 요청 URL
+            const authUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`
+
+            // const authUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${this.CONFIG.KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(this.redirectUri)}&response_type=code`;
 
             // 리디렉션을 위해 window.location.href를 사용
             window.location.href = authUrl;
