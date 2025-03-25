@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import Modal from 'react-modal'; // react-modal을 사용
+import Modal from 'react-modal';
 import { useAuthStore } from 'src/components/stores/AuthStore';
-import { login } from 'src/api/api';
 import { SocialAuth } from "src/api/SocialAuth";
-import 'src/css/AuthModal.css'; // CSS 파일 import
+import 'src/css/AuthModal.css';
 import { useIsHostStore } from "src/components/stores/IsHostStore";
 import {useChatStore} from "../stores/ChatStore";
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import {handleLogin, SocialLogin} from "../util/authUtils";
+import {validateUser} from "../../api/api";
 
 const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () => void; type: 'login' | 'signup' }) => {
     const [email, setEmail] = useState('');
@@ -30,24 +31,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
         event.preventDefault();
         try {
             console.log('로그인 버튼(모달):', { email, password });
-            // 로그인 요청
-            await login(email, password, setAuthToken);
-            // isHost 가 ture 이면 hostStatus = ture
-            // isHost 가 false 이면 hostStatus = false
-            const hostStatus = localStorage.getItem('userIsHost') === 'true';
-            console.log('hostStatus값 :',hostStatus);
-            // 로그인 유저의 isHost 값으로 전역 상태 관리
-            setIsHost(hostStatus);
-
-            let token = localStorage.getItem('authToken');
-            if (token) {
-                token = token.replace(/^Bearer\s/, ""); // 🔥 "Bearer " 제거
-                connect(token); // ✅ WebSocket 연결
-            } else {
-                console.error('❌ Auth Token이 없습니다.');
-            }
-
-            console.log('로그인 성공, AuthToken, isHost 업데이트 완료'); // 로그 추가
+            await handleLogin(email, password, setAuthToken, setIsHost, connect);
             onClose();
             window.location.reload();
         } catch (error) {
@@ -59,22 +43,68 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
         console.log(`${channel} 로그인 시도`);
 
         let loginResult; // loginResult 타입을 명확히 지정
+        let statusCode;
+        let socialEmail;
+        let socialName;
+        let socialProfileImage;
+        let socialChannelUid;
+        let socialChannel;
 
         switch (channel) {
-            case 'Google':
-                // Implement Google login logic here
+            case 'Google': {
+                loginResult = await SocialAuth.googleLogin();
+                console.log('구글 loginResult', loginResult);
+                const googleData = loginResult.data;
+                // email,
+                // name,
+                // socialId,
+                // provider,
+                if (googleData) {
+                    onClose();
+                    try {
+                        statusCode = await validateUser(googleData.socialId, googleData.provider);
+                        console.log('statusCode', statusCode);
+                        socialEmail = googleData.email;
+                        socialName = googleData.name;
+                        socialChannelUid = googleData.socialId;
+                        socialChannel = googleData.provider;
+
+                        if (statusCode === 409) {
+                            // 회원가입
+                            navigate('/join/social', {
+                                state : {
+                                    socialEmail,
+                                    socialName,
+                                    socialChannel,
+                                    socialChannelUid,
+                                },
+                            })
+                        } else if (statusCode === 200) {
+                            // 소셜 로그인
+                            await SocialLogin(socialChannelUid, socialChannel, setAuthToken, setIsHost, connect);
+                        }
+                    } catch (e) {
+
+                    }
+                }
                 break;
-            case 'Apple':
+            }
+            case 'Apple': {
                 // Implement Apple login logic here
                 break;
-            case 'Facebook':
+            }
+            case 'Facebook': {
                 // Implement Facebook login logic here
                 break;
-            case 'Kakao':
+            }
+            case 'Kakao': {
                 if (!window.Kakao) return;
                 loginResult = await SocialAuth.kakaoLogin();
+                console.log("카카오 loginResult:", loginResult);
+                onClose();
                 break;
-            case 'Line':
+            }
+            case 'Line': {
                 try {
                     loginResult = await SocialAuth.lineLogin();
                     onClose(); // 모달만 닫아주기
@@ -83,19 +113,21 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                     alert('로그인 시도 중 문제가 발생했습니다. 다시 시도해주세요.');
                 }
                 break;
-            case 'WeChat':
+            }
+            case 'WeChat': {
                 loginResult = await SocialAuth.weiboLogin(); // Adjust for WeChat login if needed
                 break;
+            }
             default:
                 console.log('Unknown social platform');
                 return;
         }
 
-        if (loginResult && loginResult.success) { // loginResult가 undefined가 아닌지 확인
-            console.log(`${channel} 로그인 성공!`, loginResult.data);
-        } else {
-            console.log(`${channel} 로그인 실패`, loginResult?.error);
-        }
+        // if (loginResult && loginResult.success) { // loginResult가 undefined가 아닌지 확인
+        //     console.log(`${channel} 로그인 성공!`, loginResult.data);
+        // } else {
+        //     console.log(`${channel} 로그인 실패`, loginResult?.error);
+        // }
     };
 
     const handleJoin = () => {
@@ -154,7 +186,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                     <div className="authModal social-login-container">
                         <h4>{t('소셜로그인')}</h4>
                         <div className="authModal social-buttons">
-                            {['Kakao', 'Line', '3','4','5','6'].map((channel) => (
+                            {['Kakao', 'Google', 'Line','Facebook','Apple','WeChat'].map((channel) => (
                                 <button
                                     key={channel}
                                     className="authModal social-button"

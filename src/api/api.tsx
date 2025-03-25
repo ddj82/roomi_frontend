@@ -51,15 +51,16 @@ const request = async (endpoint: string, requireAuth: boolean = true, method: st
             body: data ? JSON.stringify(data) : undefined,
         });
 
-        if (response.ok) {
-            console.log('API 요청 성공');
-            return response; // 응답을 JSON으로 반환
-        } else {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'API 요청 실패');
-        }
+        // if (response.ok) {
+        //     console.log('API 요청 성공');
+        //     return response; // 응답을 JSON으로 반환
+        // } else {
+        //     const errorData = await response.json();
+        //     throw new Error(errorData.message || 'API 요청 실패');
+        // }
+        return response;
     } catch (error) {
-        console.error(`API 요청 실패: ${endpoint}`, error);
+        console.error(`API 요청 실패(request): ${endpoint}`, error);
         throw error;  // 전체 오류를 전달
     }
 };
@@ -96,7 +97,7 @@ export const login = async (email: string, password: string, setAuthToken: (toke
 
             // DB에서 받아온 언어 적용
             localStorage.setItem('i18nextLng', data.data.language);
-            i18n.changeLanguage(data.data.language);
+            await i18n.changeLanguage(data.data.language);
         } else {
             console.error('로그인 실패:', data.message);
         }
@@ -108,14 +109,59 @@ export const login = async (email: string, password: string, setAuthToken: (toke
     }
 };
 
-// 카카오 로그인 API
-export const kakaoLogin = async (channel_uid: string, channel: string) => {
-    return request(`/users/validate`, false, 'POST', {
+// 소셜 로그인 API
+export const channelLogin = async (channel_uid: string, channel: string, setAuthToken: (token: string | null) => void) => {
+    try {
+        const response = await request(`/users/channel/login`, false, 'POST', {
+            'channel_uid': channel_uid,
+            'channel': channel,
+        });
+        const token = response.headers.get('Authorization'); // 응답에서 토큰 추출
+        console.log('토큰:', token);
+        if (token) {
+            localStorage.setItem('authToken', token); // 토큰 저장
+            setAuthToken(token); // 전역 상태 업데이트
+        } else {
+            throw new Error('토큰을 찾을 수 없습니다.');
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            console.log('사용자 정보:', data.data);
+            localStorage.setItem('userId', data.data.id);
+            localStorage.setItem('userEmail', data.data.email);
+            localStorage.setItem('userName', data.data.name);
+            localStorage.setItem('userIsHost', data.data.isHost);
+            localStorage.setItem('userProfileImg', data.data.profile_image);
+
+            const { accept_SMS, accept_alert, accept_email } = data.data;
+            localStorage.setItem('accept_SMS', accept_SMS ? '1' : '0');
+            localStorage.setItem('accept_alert', accept_alert ? '1' : '0');
+            localStorage.setItem('accept_email', accept_email ? '1' : '0');
+
+            // DB에서 받아온 언어 적용
+            localStorage.setItem('i18nextLng', data.data.language);
+            await i18n.changeLanguage(data.data.language);
+        } else {
+            console.error('로그인 실패:', data.message);
+        }
+
+        return response; // 로그인 응답 데이터를 반환
+    } catch (error) {
+        console.error('로그인 실패(api.tsx):', error);
+        throw error;  // 전체 오류를 전달
+    }
+};
+
+// 소셜 로그인 중복 확인 API
+export const validateUser = async (channel_uid: string, channel: string) => {
+    const response = await request(`/users/validate`, false, 'POST', {
         'channel_uid': channel_uid,
         'channel': channel,
-        // 'channel_uid': '3939833827',
-        // 'channel': channel,
     });
+    const responseJson = await response.json();
+    return responseJson.statusCode;
 };
 
 // 로그아웃

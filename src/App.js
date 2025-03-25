@@ -20,7 +20,8 @@ import GuestMyPageMenu from "./components/screens/GuestMyPageMenu";
 import HostMyPageMenu from "./components/screens/HostMyPageMenu";
 import ProtectedHostRoute from "./api/ProtectedHostRoute";
 import ProtectedGuestRoute from "./api/ProtectedGuestRoute";
-import SocialCallback from "./components/util/SocialCallback";
+import KakaoLoginCallback from "./components/util/KakaoLoginCallback";
+import SocialJoinScreen from "./components/screens/SocialJoinScreen";
 
 
 export default function App() {
@@ -37,7 +38,8 @@ export default function App() {
                         <Route path="/naver" element={<NaverMap/>}/>
                         <Route path="/join" element={<UserJoinScreen/>}/>
                         <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
-                        <Route path="/sign-up" element={<SocialCallback/>}/>
+                        <Route path="/sign-up" element={<KakaoLoginCallback/>}/>
+                        <Route path="/join/social" element={<SocialJoinScreen/>}/>
 
                         {/* 로그인 사용자 만 접근 가능 */}
                         <Route element={<ProtectedAuthRoute />}>

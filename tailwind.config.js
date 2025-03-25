@@ -29,7 +29,7 @@ module.exports = {
                 // "roomi-5": '#603EA8', // 더더 진하게
             },
             accentColor: {
-                roomi: '#9370db', // ✅ accent-roomi 추가 (체크박스 색상)
+                "roomi": "#f47366", // ✅ accent-roomi 추가 (체크박스 색상)
             },
         },
     },

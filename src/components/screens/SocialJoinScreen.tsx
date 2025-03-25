@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft, faCheck} from "@fortawesome/free-solid-svg-icons";
 import {useTranslation} from "react-i18next";
@@ -7,15 +7,22 @@ import {createUser, getValidationCode, sendVerificationEmail} from "../../api/ap
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import {User} from "../../types/user";
-import {useSignUpChannelStore} from "../stores/SignUpChannelStore";
 dayjs.extend(duration);
 
-const UserJoinScreen = () => {
+const SocialJoinScreen = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [showModal, setShowModal] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const totalSteps = 3; // 전체 단계 수
+    const location = useLocation();
+    const {
+        socialEmail = '',
+        socialName = '',
+        socialProfileImage = '',
+        socialChannel = '',
+        socialChannelUid = '',
+    } = location.state || {}; // state가 없는 경우 기본값 설정
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -25,7 +32,6 @@ const UserJoinScreen = () => {
         phone: "",
         checkboxes: [false, false, false],
     });
-    const {signUpChannel} = useSignUpChannelStore()
     const handleBack = () => setShowModal(true);
     const confirmBack = () => navigate('/');
     const requiredChecked = formData.checkboxes[0] && formData.checkboxes[1];
@@ -42,6 +48,23 @@ const UserJoinScreen = () => {
     const [isVerified, setIsVerified] = useState(false); // ✅ 인증 성공 여부 추가
     // 오류 메시지 상태 추가
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+    useEffect(() => {
+        formData.email = socialEmail;
+        formData.name = socialName;
+        console.log('socialEmail:',socialEmail);
+        console.log('socialName:',socialName);
+        console.log('socialProfileImage:',socialProfileImage);
+        console.log('socialChannel:',socialChannel);
+        console.log('formData.email:',formData.email);
+        console.log('formData.name:',formData.name);
+
+        if (socialEmail !== '') {
+            setSendSeccess(true);
+            setIsVerified(true);
+        }
+    }, []);
+
 
     // 타이머 시작, 재발송 버튼 비활성화, 30초 후 재발송 활성화
     const startTimer = () => {
@@ -124,45 +147,38 @@ const UserJoinScreen = () => {
     const handleNext = () => {
         const newErrors: { [key: string]: string } = {}; // 새로운 오류 객체
 
-        // if (currentStep === 1) {
-        //     // 이메일 유효성 검사
-        //     if (!formData.email.trim()) {
-        //         newErrors.email = "이메일을 입력하세요.";
-        //     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-        //         newErrors.email = "올바른 이메일 형식을 입력하세요.";
-        //     } else if (!isVerified) {
-        //         newErrors.email = "이메일 인증을 해주세요.";
-        //     }
-        //
-        //     // 비밀번호 유효성 검사
-        //     // if (!formData.password.trim()) {
-        //     //     newErrors.password = "비밀번호를 입력하세요.";
-        //     // } else if (formData.password.length < 8) {
-        //     //     newErrors.password = "비밀번호는 최소 8자리 이상이어야 합니다.";
-        //     // }
-        //
-        //     // 전화번호 유효성 검사
-        //     if (!formData.phone.trim()) {
-        //         newErrors.phone = "전화번호를 입력하세요.";
-        //     } else if (!/^\d{10,11}$/.test(formData.phone)) {
-        //         newErrors.phone = "올바른 전화번호를 입력하세요.";
-        //     }
-        // } else if (currentStep === 2) {
-        //     // 이름 유효성 검사
-        //     if (!formData.name.trim()) {
-        //         newErrors.name = "이름을 입력하세요.";
-        //     }
-        //
-        //     // 생년월일 유효성 검사
-        //     if (!formData.birth.trim()) {
-        //         newErrors.birth = "생년월일을 입력하세요.";
-        //     }
-        //
-        //     // 성별 유효성 검사
-        //     if (!formData.gender) {
-        //         newErrors.gender = "성별을 선택하세요.";
-        //     }
-        // }
+        if (currentStep === 1) {
+            // 이메일 유효성 검사
+            if (!formData.email.trim()) {
+                newErrors.email = "이메일을 입력하세요.";
+            } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+                newErrors.email = "올바른 이메일 형식을 입력하세요.";
+            } else if (!isVerified) {
+                newErrors.email = "이메일 인증을 해주세요.";
+            }
+
+            // 전화번호 유효성 검사
+            if (!formData.phone.trim()) {
+                newErrors.phone = "전화번호를 입력하세요.";
+            } else if (!/^\d{10,11}$/.test(formData.phone)) {
+                newErrors.phone = "올바른 전화번호를 입력하세요.";
+            }
+        } else if (currentStep === 2) {
+            // 이름 유효성 검사
+            if (!formData.name.trim()) {
+                newErrors.name = "이름을 입력하세요.";
+            }
+
+            // 생년월일 유효성 검사
+            if (!formData.birth.trim()) {
+                newErrors.birth = "생년월일을 입력하세요.";
+            }
+
+            // 성별 유효성 검사
+            if (!formData.gender) {
+                newErrors.gender = "성별을 선택하세요.";
+            }
+        }
 
         // 오류가 있으면 상태 업데이트 후 진행 중지
         if (Object.keys(newErrors).length > 0) {
@@ -200,11 +216,16 @@ const UserJoinScreen = () => {
             name: formData.name,
             email: formData.email,
             password: formData.password,
-            channel: signUpChannel,
-            // nationality?: ,
             sex: formData.gender,
             birth: formData.birth,
+            channel: socialChannel,
+            channel_uid: socialChannelUid,
+            profile_image: socialProfileImage,
+            accept_SMS: formData.checkboxes[2],
+            accept_alert: formData.checkboxes[2],
+            accept_email: formData.checkboxes[2],
         };
+        console.log('회원가입 할 정보:',userSingUp);
         try {
             const response = await createUser(userSingUp);
             console.log('리스폰스 :', response);
@@ -250,52 +271,58 @@ const UserJoinScreen = () => {
                     {currentStep === 1 && (
                         <div>
                             <label htmlFor="email">{t("이메일")}</label>
-                            <div className="flex md:flex-row flex-col w-full">
-                                <input id="email" type="email" placeholder={t("이메일")} value={formData.email}
-                                       onChange={(e) => handleChange("email", e.target.value)}
-                                       className="border p-2 w-full"
-                                       disabled={isVerified} // ✅ 인증 완료 시 이메일 수정 불가능
-                                />
-                                {!sendSeccess ? (
-                                    <button type="button"
-                                            className="bg-roomi text-white rounded md:p-2 p-1 md:ml-4 md:w-[30%]"
-                                            onClick={handleSendEmail}
-                                            disabled={isVerified} // ✅ 인증 완료 시 발송 버튼 숨김
-                                    >
-                                        인증번호 발송
-                                    </button>
-                                ) : (
-                                    <button type="button"
-                                            className={`border border-roomi text-roomi rounded p-2 ml-4 w-[30%] 
+                            <div className="flex w-full">
+                                {socialEmail === '' ? (
+                                    <>
+                                        <input id="email" type="email" placeholder={t("이메일")} value={formData.email}
+                                               onChange={(e) => handleChange("email", e.target.value)}
+                                               className="border p-2 w-full"
+                                               disabled={isVerified} // ✅ 인증 완료 시 이메일 수정 불가능
+                                        />
+                                        {!sendSeccess ? (
+                                            <button type="button"
+                                                    className="border border-roomi text-roomi rounded p-2 ml-4 w-[30%]"
+                                                    onClick={handleSendEmail}
+                                                    disabled={isVerified} // ✅ 인증 완료 시 발송 버튼 숨김
+                                            >
+                                                인증번호 발송
+                                            </button>
+                                        ) : (
+                                            <button type="button"
+                                                    className={`border border-roomi text-roomi rounded p-2 ml-4 w-[30%] 
                                                         ${isResendDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
-                                            onClick={handleSendEmail}
-                                            disabled={isResendDisabled || isVerified} // ✅ 인증 성공 시 재발송 불가능
-                                    >
-                                        재발송
-                                    </button>
+                                                    onClick={handleSendEmail}
+                                                    disabled={isResendDisabled || isVerified} // ✅ 인증 성공 시 재발송 불가능
+                                            >
+                                                재발송
+                                            </button>
+                                        )}
+                                        <div>
+                                            {sendSeccess && (
+                                                <div>
+                                                    <div>
+                                                        <input id="code" type="text" placeholder="인증번호 입력"
+                                                               className="border p-1"
+                                                               value={inputAuthCode}
+                                                               onChange={(e) => setInputAuthCode(e.target.value)}/>
+                                                        <button type="button"
+                                                                className="border border-roomi text-roomi rounded p-1 ml-2"
+                                                                onClick={handleVerification}>확인
+                                                        </button>
+                                                        <span
+                                                            className="text-red-500 p-2">{dayjs.duration(remainingTime, "seconds").format("mm:ss")}</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </>
+
+                                ) : (
+                                    <input id="email" type="email" value={formData.email} className="border p-2 w-full"
+                                           disabled/>
                                 )}
                             </div>
                             {errors.email && <p className="font-bold text-red-500 text-sm">{errors.email}</p>}
-                            <div>
-                                {sendSeccess && (
-                                    <div>
-                                        <div>
-                                            <input id="code" type="text" placeholder="인증번호 입력" className="border p-1"
-                                                   value={inputAuthCode}
-                                                   onChange={(e) => setInputAuthCode(e.target.value)}/>
-                                            <button type="button" className="border border-roomi text-roomi rounded p-1 ml-2"
-                                                    onClick={handleVerification}>확인</button>
-                                            <span className="text-red-500 p-2">{dayjs.duration(remainingTime, "seconds").format("mm:ss")}</span>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            <label htmlFor="password">{t("비밀번호")}</label>
-                            <input id="password" type="password" placeholder={t("비밀번호")} value={formData.password}
-                                   onChange={(e) => handleChange("password", e.target.value)}
-                                   className="border p-2 w-full"/>
-                            {errors.password && <p className="font-bold text-red-500 text-sm">{errors.password}</p>}
 
                             <label htmlFor="phone">{t("전화번호")}</label>
                             <input id="phone" type="tel" placeholder={t("전화번호")} value={formData.phone}
@@ -404,8 +431,8 @@ const UserJoinScreen = () => {
                     )}
                     {currentStep === 3 ? (
                         <button type="submit"
-                            className={`px-4 py-2 rounded-md text-white ${requiredChecked ? "bg-roomi" : "bg-gray-300 cursor-not-allowed"}`}
-                            disabled={!requiredChecked}>
+                                className={`px-4 py-2 rounded-md text-white ${requiredChecked ? "bg-roomi" : "bg-gray-300 cursor-not-allowed"}`}
+                                disabled={!requiredChecked}>
                             등록
                         </button>
                     ) : (
@@ -421,10 +448,11 @@ const UserJoinScreen = () => {
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50">
                     <div className="bg-white p-6 rounded-md shadow-md">
                         <div className="mb-4">
-                        회원가입을 종료하시겠습니까?
+                            회원가입을 종료하시겠습니까?
                         </div>
                         <div className="flex justify-end">
-                            <button className="px-4 py-2 bg-gray-400 text-white rounded-md" onClick={() => setShowModal(false)}>
+                            <button className="px-4 py-2 bg-gray-400 text-white rounded-md"
+                                    onClick={() => setShowModal(false)}>
                                 {t("취소")}
                             </button>
                             <button className="px-4 py-2 bg-roomi text-white rounded-md" onClick={confirmBack}>
@@ -438,4 +466,4 @@ const UserJoinScreen = () => {
     );
 };
 
-export default UserJoinScreen;
+export default SocialJoinScreen;

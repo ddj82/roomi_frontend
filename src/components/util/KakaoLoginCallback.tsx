@@ -3,17 +3,33 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 // 💡 쿼리 스트링 형태로 데이터를 인코딩할 때 필요
 import qs from "qs";
-import {kakaoLogin} from "../../api/api";
+import {validateUser} from "../../api/api";
+import {useAuthStore} from "../stores/AuthStore";
+import {useIsHostStore} from "../stores/IsHostStore";
+import {useChatStore} from "../stores/ChatStore";
+import {SocialLogin} from "./authUtils";
 
-export default function SocialCallback() {
+export default function KakaoLoginCallback() {
     const navigate = useNavigate();
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
     const [accessTokenFetching, setAccessTokenFetching] = useState(false);
+    const { setAuthToken } = useAuthStore();
+    const { setIsHost } = useIsHostStore();
+    const connect = useChatStore((state) => state.connect);
+
+    useEffect(() => {
+        const code = new URL(window.location.href).searchParams.get("code");
+        console.log('code', code);
+        if (!code) {
+            navigate('/');
+        } else {
+            getAccessToken(code); // 요청 보내는 함수
+        }
+    }, [accessTokenFetching]);
+
 
     // Access Token 받아오기
-    const getAccessToken = async () => {
-        if (accessTokenFetching) return; // Return early if fetching
+    const getAccessToken = async (code: string) => {
+        if (accessTokenFetching) navigate('/');
 
         try {
             setAccessTokenFetching(true); // Set fetching to true
@@ -67,22 +83,35 @@ export default function SocialCallback() {
 
     const Login = async (data: any) => {
         try {
-            console.log(data.id.toString());
-            const response = await kakaoLogin(data.id.toString(), 'kakao');
-            console.log('카카오 로그인 함수:',response);
-            console.log('카카오 로그인 함수:',response.status);
+            console.log('카카오 :',data);
+            console.log('카카오 유저id:', data.id.toString());
+            const socialChannelUid = data.id.toString();
+            const socialChannel = 'kakao';
+            const statusCode = await validateUser(socialChannelUid, socialChannel);
+
+            if (statusCode === 409) {
+                // 회원가입
+                const socialEmail = data.kakao_account.email || '';
+                const socialName = data.properties.nickname;
+                const socialProfileImage = data.properties.profile_image || '';
+
+                navigate('/join/social', {
+                    state : {
+                        socialEmail,
+                        socialName,
+                        socialProfileImage,
+                        socialChannel,
+                        socialChannelUid,
+                    },
+                })
+            } else if (statusCode === 200) {
+                // 소셜 로그인
+                await SocialLogin(socialChannelUid, socialChannel, setAuthToken, setIsHost, connect);
+            }
         } catch (error) {
             console.error("Error:", error);
         }
-
     };
-
-
-    useEffect(() => {
-        if (code) {
-            getAccessToken();
-        }
-    }, [code]);
 
     return (
         <div className="text-center">

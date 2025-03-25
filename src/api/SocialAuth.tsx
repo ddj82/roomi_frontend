@@ -1,3 +1,6 @@
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../firebase'; // 모듈화된 Firebase Auth 인스턴스
+
 interface SocialAuthResponse {
     success: boolean;
     data?: {
@@ -18,34 +21,56 @@ export class SocialAuth {
 
     private static readonly redirectUri = 'http://localhost:8081/sign-up'; // 웹에서는 이렇게 기본 URI를 설정해두었습니다.
 
-    static async kakaoLogin(): Promise<SocialAuthResponse> {
+    static async googleLogin(): Promise<SocialAuthResponse> {
         try {
-            const REST_API_KEY='d809b6614a5cf090c577f4f1c21fdda3' //REST API KEY
-            const REDIRECT_URI = 'http://localhost:8081/sign-up' //Redirect URI
-            // oauth 요청 URL
-            const authUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`
+            const provider = new GoogleAuthProvider();
+            const result = await signInWithPopup(auth, provider);
 
-            // const authUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${this.CONFIG.KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(this.redirectUri)}&response_type=code`;
-
-            // 리디렉션을 위해 window.location.href를 사용
-            window.location.href = authUrl;
-
-            // 결과를 받아오기 위한 후속 처리 (리디렉션 후 URL에서 code 추출 등)
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
-            if (code) {
-                const userData = await this.getKakaoUserInfo(code);
-                return {
-                    success: true,
-                    data: userData
-                };
+            if (!result.user) {
+                throw new Error('No user information returned from Google.');
             }
-            return { success: false, error: 'Login canceled' };
+
+            const { uid, email, displayName } = result.user;
+
+            return {
+                success: true,
+                data: {
+                    email: email || '',
+                    name: displayName || '',
+                    socialId: uid,
+                    provider: 'google',
+                },
+            };
         } catch (error: unknown) {
-            console.error('Kakao login failed:', error);
-            return { success: false, error };  // 전체 오류 객체를 반환
+            console.error('Google login failed:', error);
+            return {
+                success: false,
+                error,
+            };
         }
     }
+
+    static async kakaoLogin() {
+        try {
+            const KAKAO_JS_KEY = "7e84a0bfbb21e40d283ad5d48d3d9d6c";
+            const REDIRECT_URI = 'http://localhost:8081/sign-up' //Redirect URI
+            // Kakao SDK 초기화 (중복 방지)
+            if (!window.Kakao) {
+                throw new Error("Kakao SDK not loaded.");
+            }
+            if (!window.Kakao.isInitialized()) {
+                window.Kakao.init(KAKAO_JS_KEY);
+            }
+
+            window.Kakao.Auth.authorize({
+                redirectUri: REDIRECT_URI,
+            });
+
+        } catch (error: unknown) {
+            return { success: false, error };
+        }
+    }
+
 
     static async lineLogin(): Promise<SocialAuthResponse> {
         try {
