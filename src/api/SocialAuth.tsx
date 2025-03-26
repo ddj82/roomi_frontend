@@ -53,7 +53,8 @@ export class SocialAuth {
     static async kakaoLogin() {
         try {
             const KAKAO_JS_KEY = "7e84a0bfbb21e40d283ad5d48d3d9d6c";
-            const REDIRECT_URI = 'http://localhost:8081/sign-up' //Redirect URI
+            // const REDIRECT_URI = 'http://localhost:8081/sign-up' //Redirect URI
+            const REDIRECT_URI = 'https://roomi.co.kr/sign-up' //Redirect URI
             // Kakao SDK 초기화 (중복 방지)
             if (!window.Kakao) {
                 throw new Error("Kakao SDK not loaded.");
