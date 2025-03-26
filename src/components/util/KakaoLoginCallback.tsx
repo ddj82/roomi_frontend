@@ -24,17 +24,16 @@ export default function KakaoLoginCallback() {
         } else {
             getAccessToken(code); // 요청 보내는 함수
         }
-    }, [accessTokenFetching]);
+    }, []);
 
 
     // Access Token 받아오기
     const getAccessToken = async (code: string) => {
-        if (accessTokenFetching) navigate('/');
-
         try {
             setAccessTokenFetching(true); // Set fetching to true
             const REST_API_KEY='d809b6614a5cf090c577f4f1c21fdda3' //REST API KEY
-            const REDIRECT_URI = 'http://localhost:8081/sign-up'
+            // const REDIRECT_URI = 'http://localhost:8081/sign-up'
+            const REDIRECT_URI = 'https://roomi.co.kr/sign-up'; //Redirect URI
 
             const response = await axios.post(
                 "https://kauth.kakao.com/oauth/token",
@@ -106,7 +105,13 @@ export default function KakaoLoginCallback() {
                 })
             } else if (statusCode === 200) {
                 // 소셜 로그인
-                await SocialLogin(socialChannelUid, socialChannel, setAuthToken, setIsHost, connect);
+                const response = await SocialLogin(socialChannelUid, socialChannel, setAuthToken, setIsHost, connect);
+                if (response) {
+                    navigate('/');
+                } else {
+                    alert('로그인에 실패 하셨습니다.');
+                    navigate('/');
+                }
             }
         } catch (error) {
             console.error("Error:", error);

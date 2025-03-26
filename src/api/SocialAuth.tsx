@@ -1,5 +1,5 @@
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../firebase'; // 모듈화된 Firebase Auth 인스턴스
+import {GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
+import {auth} from '../firebase'; // 모듈화된 Firebase Auth 인스턴스
 
 interface SocialAuthResponse {
     success: boolean;
@@ -53,8 +53,7 @@ export class SocialAuth {
     static async kakaoLogin() {
         try {
             const KAKAO_JS_KEY = "7e84a0bfbb21e40d283ad5d48d3d9d6c";
-            // const REDIRECT_URI = 'http://localhost:8081/sign-up' //Redirect URI
-            const REDIRECT_URI = 'https://roomi.co.kr/sign-up' //Redirect URI
+
             // Kakao SDK 초기화 (중복 방지)
             if (!window.Kakao) {
                 throw new Error("Kakao SDK not loaded.");
@@ -62,10 +61,6 @@ export class SocialAuth {
             if (!window.Kakao.isInitialized()) {
                 window.Kakao.init(KAKAO_JS_KEY);
             }
-
-            window.Kakao.Auth.authorize({
-                redirectUri: REDIRECT_URI,
-            });
 
         } catch (error: unknown) {
             return { success: false, error };
