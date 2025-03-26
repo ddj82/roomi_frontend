@@ -17,6 +17,7 @@ import {
     faUser
 } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
+import {Reservation} from "../../types/reservation";
 
 export default function GuestReservationSetScreen() {
     //동의항목
@@ -108,23 +109,35 @@ export default function GuestReservationSetScreen() {
 
             try {
                 if (startDate && endDate) {
+                    console.log('들어오지?');
                     const selectionMode = calUnit ? 'daily' : 'weekly';
-                    const response = await bookReservation(startDate, endDate, selectionMode, Number(roomId));
+                    const reservation: Reservation = {
+                        checkIn: startDate,
+                        checkOut: endDate,
+                        selectionMode: selectionMode,
+                        roomId: Number(roomId),
+                        unit: totalNight,
+                        guestName: formData.name,
+                        guestPhone: formData.phone,
+                        guestEmail: formData.email,
+                        totalGuests: guestCount
+                    };
+                    const response = await bookReservation(reservation);
                     const responseJson = await response.json();
                     const bookData = responseJson.data;
                     console.log('bookData', bookData);
 
-                    navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
-                        state: {
-                            price,
-                            depositPrice,
-                            maintenancePrice,
-                            cleaningPrice,
-                            totalPrice,
-                            totalNight,
-                            formData,
-                        },
-                    });
+                    // navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
+                    //     state: {
+                    //         price,
+                    //         depositPrice,
+                    //         maintenancePrice,
+                    //         cleaningPrice,
+                    //         totalPrice,
+                    //         totalNight,
+                    //         formData,
+                    //     },
+                    // });
                 }
             } catch (e) {
                 console.error('예약하기 실패:', e);

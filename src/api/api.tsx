@@ -2,6 +2,7 @@
 import i18n from "src/i18n";
 import {Schedules} from "../types/rooms";
 import {User} from "../types/user";
+import {Reservation} from "../types/reservation";
 
 const BASE_URL = 'https://roomi.co.kr/api';
 
@@ -317,11 +318,15 @@ export const getNotices = async () => {
 };
 
 // 예약하기 API (결제 전 서버 저장)
-export const bookReservation = async (checkIn: string, checkOut: string, selectionMode: string, roomId: number) => {
+export const bookReservation = async (reservation: Reservation) => {
     return request(
-        `/book?checkIn=${checkIn}&checkOut=${checkOut}&selectionMode=${selectionMode}&roomId=${roomId}`,
+        `/book`,
         true,
-        'POST'
+        'POST',
+        {
+            ...reservation,
+        },
+        true
     );
 };
 

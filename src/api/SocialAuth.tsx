@@ -53,8 +53,8 @@ export class SocialAuth {
     static async kakaoLogin(): Promise<void> {
         try {
             const REST_API_KEY='d809b6614a5cf090c577f4f1c21fdda3' //REST API KEY
-            // const REDIRECT_URI = 'http://localhost:8081/sign-up'; //Redirect URI
-            const REDIRECT_URI = 'https://roomi.co.kr/sign-up'; //Redirect URI
+            const REDIRECT_URI = 'http://localhost:8081/sign-up'; //Redirect URI
+            // const REDIRECT_URI = 'https://roomi.co.kr/sign-up'; //Redirect URI
             const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
             // 팝업 띄우기
