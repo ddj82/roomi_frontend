@@ -633,8 +633,7 @@ export default function RoomDetailScreen() {
                             </div>
 
                             {/* 호스트 정보 */}
-                            <div
-                                className="mb-10 rounded-xl p-6 border border-gray-100 shadow-sm">
+                            <div className="mb-10 rounded-xl p-6 border border-gray-100 shadow-sm">
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center">
                                         <div

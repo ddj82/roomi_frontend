@@ -3,8 +3,6 @@ import {useTranslation} from "react-i18next";
 import {getReservationHistory} from "../../../api/api";
 import {ReservationHistory} from "../../../types/rooms";
 import dayjs from "dayjs";
-import {faAngleRight} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import utc from 'dayjs/plugin/utc';
 import MyReservationDetails from "./MyReservationDetails";
 import {useMediaQuery} from "react-responsive";
@@ -159,6 +157,7 @@ export default function MyReservations() {
 
     return (
         <div className="p-4 md:px-8">
+            {/*타이틀*/}
             <div className="flex justify-between items-center mb-4">
                 {reservedDetails ? (
                     /*예약 상세 정보*/
@@ -187,9 +186,10 @@ export default function MyReservations() {
                     </>
                 )}
             </div>
-            {reservedDetails ? (
-                /*예약 상세 정보*/
-                <div>
+            {/*컨텐츠*/}
+            <div>
+                {reservedDetails ? (
+                    /*예약 상세 정보*/
                     <MyReservationDetails
                         reserveData={reservedDetails}
                         statusInfo={getStatusMessage(
@@ -199,17 +199,17 @@ export default function MyReservations() {
                             dayjs.utc(reservedDetails.check_out_date).format('YYYY-MM-DD')
                         )}
                     />
-                </div>
-            ) : (
-                /*예약 내역*/
-                <div>
-                    {reservedListSet ? (
-                        <>{nowReserved && renderReservationUI(nowReserved, "현재 예약이 없습니다.")}</>
-                    ) : (
-                        <>{beforeReserved && renderReservationUI(beforeReserved, "지난 예약이 없습니다.")}</>
-                    )}
-                </div>
-            )}
+                ) : (
+                    /*예약 내역*/
+                    <>
+                        {reservedListSet ? (
+                            <>{nowReserved && renderReservationUI(nowReserved, "현재 예약이 없습니다.")}</>
+                        ) : (
+                            <>{beforeReserved && renderReservationUI(beforeReserved, "지난 예약이 없습니다.")}</>
+                        )}
+                    </>
+                )}
+            </div>
         </div>
     );
 };

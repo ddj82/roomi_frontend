@@ -102,7 +102,6 @@ export default function GuestReservationSetScreen() {
 
         if (thisRoom.is_auto_accepted) {
             // 더미데이터
-            alert('이프문~');
             formData.name = '김동준';
             formData.phone = '01012312312';
             formData.email = 'qweqwe@naver.com';
@@ -125,6 +124,8 @@ export default function GuestReservationSetScreen() {
                     const response = await bookReservation(reservation);
                     const responseJson = await response.json();
                     const bookData = responseJson.data;
+                    console.log('book', response);
+                    console.log('bookJson', responseJson);
                     console.log('bookData', bookData);
 
                     // navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
@@ -200,15 +201,17 @@ export default function GuestReservationSetScreen() {
                                 {t("호스트정보")}
                             </div>
                             <div className="flex items-center">
-                                <div
-                                    className="w-10 h-10 rounded-full bg-roomi-000 flex items-center justify-center text-roomi">
-                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                              clipRule="evenodd"></path>
-                                    </svg>
+                                <div className="flex items-center">
+                                    <div className="flex_center mr-4">
+                                        <img src={room.host.profile_image ?
+                                            (room.host.profile_image) : ('/assets/images/profile.png')}
+                                             alt="프로필사진"
+                                             className="rounded-full w-16 h-16"/>
+                                    </div>
+                                    <div>
+                                        <div className="font-medium text-gray-800">{room.host.name}</div>
+                                    </div>
                                 </div>
-                                <div className="ml-3 font-medium text-gray-700">{room.host_id}</div>
                             </div>
                         </div>
                         <div className="p-6 border border-gray-200 rounded-xl shadow-sm mb-6 bg-white">

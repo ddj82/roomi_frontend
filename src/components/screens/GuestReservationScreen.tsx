@@ -323,11 +323,15 @@ export default function GuestReservationScreen() {
                                 {t("호스트정보")}
                             </div>
                             <div className="flex items-center">
-                                <div
-                                    className="w-10 h-10 rounded-full bg-roomi-light flex items-center justify-center text-roomi">
-                                    <FontAwesomeIcon icon={faUser}/>
+                                <div className="flex_center mr-4">
+                                    <img src={room.host.profile_image ?
+                                        (room.host.profile_image) : ('/assets/images/profile.png')}
+                                         alt="프로필사진"
+                                         className="rounded-full w-16 h-16"/>
                                 </div>
-                                <div className="ml-3 font-medium text-gray-700">{room.host_id}</div>
+                                <div>
+                                    <div className="font-medium text-gray-800">{room.host.name}</div>
+                                </div>
                             </div>
                         </div>
                         <div className="p-6 border border-gray-200 rounded-xl shadow-sm mb-6 bg-white">

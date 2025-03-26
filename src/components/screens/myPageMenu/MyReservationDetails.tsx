@@ -29,6 +29,30 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
         setReservedDetails(reserveData);
     }, []);
 
+    const renderStatus = (message: string) => {
+        if (message === '결제대기') {
+
+        } else if (message === '이용중') {
+
+        } else if (message === '예약완료') {
+
+        } else if (message === '계약종료') {
+
+        } else if (message === '계약취소') {
+
+        } else { // '승인대기'
+
+        }
+    };
+
+    const renderStatusUI = (backgroundColor: string, message: string) => {
+        return (
+            <button type="button" className={`w-1/2 text-white p-2 rounded ${backgroundColor}`}>
+                {message}
+            </button>
+        );
+    };
+
     return (
         <div>
             <div className="flex md:flex-row flex-col gap-4 bg-gray-100 my-4 rounded-lg md:p-2">
@@ -166,6 +190,9 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                         </div>
                     </div>
                 </AccodionItem>
+            </div>
+            <div className="flex_center mt-8">
+                {renderStatusUI('bg-black', statusInfo.message)}
             </div>
         </div>
     );

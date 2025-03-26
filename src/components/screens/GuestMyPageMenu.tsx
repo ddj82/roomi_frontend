@@ -7,7 +7,12 @@ import {logout} from "src/api/api";
 import {useChatStore} from "../stores/ChatStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBell, faEye, faRectangleList, faThumbsUp} from '@fortawesome/free-regular-svg-icons';
-import {faArrowLeft, faDollarSign, faGlobe} from "@fortawesome/free-solid-svg-icons";
+import {
+    faArrowLeft,
+    faDollarSign,
+    faGlobe,
+    faPenToSquare,
+} from "@fortawesome/free-solid-svg-icons";
 import MyFavoriteList from "./myPageMenu/MyFavoriteList";
 import MyHistoryList from "./myPageMenu/MyHistoryList";
 import NotificationSet from "./myPageMenu/NotificationSet";
@@ -18,6 +23,8 @@ import Notices from "./myPageMenu/Notices";
 import CurrencySet from "./myPageMenu/CurrencySet";
 import {useMediaQuery} from "react-responsive";
 import MyReservations from "./myPageMenu/MyReservations";
+import {useAuthStore} from "../stores/AuthStore";
+import MyInfoEdit from "./myPageMenu/MyInfoEdit";
 
 export default function GuestMyPageMenu() {
     const { t } = useTranslation();
@@ -25,19 +32,16 @@ export default function GuestMyPageMenu() {
     const { resetUserMode } = useHostModeStore();
     const navigate = useNavigate();
     const disconnect = useChatStore((state) => state.disconnect);
-    const [selectedMenu, setSelectedMenu] = useState('');
+    const [selectedMenu, setSelectedMenu] = useState('예약내역');
     const [loading, setLoading] = useState(false);
     const isMobile = useMediaQuery({ maxWidth: 768 }); // 768px 이하를 모바일로 간주
-    const [profileImg, setProfileImg] = useState('');
+    const {profileImg} = useAuthStore();
 
     useEffect(() => {
-        const img = localStorage.getItem('userProfileImg');
-        if (img && img != 'null') {
-            setProfileImg(img);
-        } else {
-            setProfileImg('/assets/images/profile.png');
-        }
-    }, []);
+        // window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0 });
+    }, [selectedMenu]);
+
 
     const handleLogout = async () => {
         try {
@@ -57,10 +61,12 @@ export default function GuestMyPageMenu() {
 
     // 메뉴 내용 렌더링 로직을 함수로 분리
     const renderMenuContent = () => {
-        if (loading) return <p className="flex_center">Loading...</p>;
-        if (!selectedMenu) return <p className="flex_center">메뉴를 선택해주세요.</p>;
+        if (loading) return <div className="flex_center">Loading...</div>;
+        if (!selectedMenu) return <div className="flex_center">메뉴를 선택해주세요.</div>;
 
         switch (selectedMenu) {
+            case '내정보' :
+                return <MyInfoEdit/>;
             case '예약내역':
                 return <MyReservations/>;
             case '관심':
@@ -80,7 +86,7 @@ export default function GuestMyPageMenu() {
             case '고객센터':
                 return <HelpCenter/>;
             default:
-                return <p className="flex_center">메뉴를 선택해주세요.</p>;
+                return <div className="flex_center">메뉴를 선택해주세요.</div>;
         }
     };
 
@@ -90,13 +96,19 @@ export default function GuestMyPageMenu() {
             <div className="md:border-r md:w-1/3">
                 <div className="m-2 mx-4 mb-4">
                     <div className="flex_center">
-                        <img src={profileImg} alt="프로필사진" className="rounded-full w-28 h-28 mb-4"/>
+                        <div className="relative">
+                            {/*<button className="absolute right-1 bottom-3 bg-white rounded-full border border-black w-8 h-8">*/}
+                            {/*    /!*<FontAwesomeIcon icon={faPenToSquare} />*!/*/}
+                            {/*    <FontAwesomeIcon icon={faGear} />*/}
+                            {/*</button>*/}
+                            <img src={profileImg} alt="프로필사진" className="rounded-full w-28 h-28 mb-4"/>
+                        </div>
                     </div>
                     <div className="flex_center">{localStorage.getItem('userName')}</div>
                     <div className="flex_center">{localStorage.getItem('userEmail')}</div>
                 </div>
                 <div className="my-2 mx-4">
-                    <div>
+                    <div className="my-2">
                         {!isHost && (
                             <button onClick={handleSetHostMode}
                                     className="w-full p-2 text-white bg-roomi rounded">
@@ -104,6 +116,22 @@ export default function GuestMyPageMenu() {
                             </button>
                         )}
                     </div>
+                    {/*<div className="border-t border-gray-300">*/}
+                    {/*    <div className="my-2">*/}
+                    {/*        {!isHost && (*/}
+                    {/*            <button onClick={handleSetHostMode}*/}
+                    {/*                    className="w-full p-2 text-white bg-roomi rounded">*/}
+                    {/*                {t("호스트 등록")}*/}
+                    {/*            </button>*/}
+                    {/*        )}*/}
+                    {/*    </div>*/}
+                    {/*    <div className="my-2">*/}
+                    {/*        <button className="w-full text-start" onClick={() => setSelectedMenu('내 정보 수정')}>*/}
+                    {/*            <FontAwesomeIcon icon={faPenToSquare} className="w-4 h-4 mr-1"/>*/}
+                    {/*            {t("내 정보 수정")}*/}
+                    {/*        </button>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
                 </div>
                 <div className="my-2 mx-4">
                     <div className="w-full">
@@ -179,6 +207,12 @@ export default function GuestMyPageMenu() {
                             <div className="font-bold text-lg my-2">{t("계정 설정")}</div>
                             <div className="">
                                 <div className="my-2">
+                                    <button className="w-full text-start" onClick={() => setSelectedMenu('내정보')}>
+                                        <FontAwesomeIcon icon={faPenToSquare} className="w-4 h-4 mr-1"/>
+                                        {t("내 정보")}
+                                    </button>
+                                </div>
+                                <div className="my-2">
                                     <button className="w-full text-start" onClick={handleLogout}>
                                         {t("로그아웃")}
                                     </button>
@@ -190,7 +224,7 @@ export default function GuestMyPageMenu() {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                </div>
                 </div>
             </div>
             {/* 데스크톱 전용 오른쪽 콘텐츠 (모바일에서는 숨김) */}

@@ -6,6 +6,7 @@ export interface User {
     nationality?: string;
     sex?: string;
     birth: string;
+    phone?: string;
     channel_uid?: string;
     profile_image?: string;
     accept_SMS? : boolean;

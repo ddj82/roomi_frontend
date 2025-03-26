@@ -134,7 +134,13 @@ export const channelLogin = async (channel_uid: string, channel: string, setAuth
             localStorage.setItem('userEmail', data.data.email);
             localStorage.setItem('userName', data.data.name);
             localStorage.setItem('userIsHost', data.data.isHost);
-            localStorage.setItem('userProfileImg', data.data.profile_image);
+            console.log('프로필',data.data.profile_image);
+            console.log('프로필 === null',data.data.profile_image === null);
+            if (data.data.profile_image === null) {
+                localStorage.setItem('userProfileImg', '/assets/images/profile.png');
+            } else {
+                localStorage.setItem('userProfileImg', data.data.profile_image);
+            }
 
             const { accept_SMS, accept_alert, accept_email } = data.data;
             localStorage.setItem('accept_SMS', accept_SMS ? '1' : '0');
@@ -333,4 +339,9 @@ export const bookReservation = async (reservation: Reservation) => {
 // 게스트 예약내역 API
 export const getReservationHistory = async () => {
     return request(`/rooms/my/history`, true, 'GET', undefined, true);
+};
+
+// 유저 내 정보 API
+export const getUserById = async (userId: number) => {
+    return request(`/users/${userId}`, true);
 };

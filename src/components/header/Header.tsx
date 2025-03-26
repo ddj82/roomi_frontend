@@ -54,6 +54,7 @@ const Header = () => {
     const [userVisible, setUserVisible] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const isLoggedIn = Boolean(authToken);
+    const {profileImg} = useAuthStore();
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -214,7 +215,7 @@ const Header = () => {
                                             className="w-8 h-8 md:w-10 md:h-10
                                              flex items-center justify-center bg-roomi-000 text-roomi rounded-full"
                                             onClick={toggleDropdown}>
-                                            <FontAwesomeIcon icon={faUser}/>
+                                            <img src={profileImg} alt="프로필사진" className="rounded-full w-10 h-10"/>
                                         </button>
                                         {userVisible && (
                                             <div

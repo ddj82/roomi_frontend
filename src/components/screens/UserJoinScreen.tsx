@@ -204,6 +204,7 @@ const UserJoinScreen = () => {
             // nationality?: ,
             sex: formData.gender,
             birth: formData.birth,
+            phone: formData.phone,
         };
         try {
             const response = await createUser(userSingUp);
