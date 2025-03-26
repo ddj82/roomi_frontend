@@ -50,26 +50,39 @@ export class SocialAuth {
         }
     }
 
-    static async kakaoLogin() {
+    static async kakaoLogin(): Promise<void> {
         try {
-            const KAKAO_JS_KEY = "7e84a0bfbb21e40d283ad5d48d3d9d6c";
+            const REST_API_KEY='d809b6614a5cf090c577f4f1c21fdda3' //REST API KEY
             // const REDIRECT_URI = 'http://localhost:8081/sign-up'; //Redirect URI
             const REDIRECT_URI = 'https://roomi.co.kr/sign-up'; //Redirect URI
+            const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+            // 팝업 띄우기
+            const popup = window.open(kakaoAuthUrl, 'kakaoLogin', 'width=500,height=600');
+
+            // 팝업 감시 → 닫히면 새로고침
+            const timer = setInterval(() => {
+                if (!popup || popup.closed) {
+                    clearInterval(timer);
+                    window.location.reload(); // 팝업 닫히면 새로고침
+                }
+            }, 500);
 
             // Kakao SDK 초기화 (중복 방지)
-            if (!window.Kakao) {
-                throw new Error("Kakao SDK not loaded.");
-            }
-            if (!window.Kakao.isInitialized()) {
-                window.Kakao.init(KAKAO_JS_KEY);
-            }
-
-            window.Kakao.Auth.authorize({
-                redirectUri: REDIRECT_URI,
-            });
+            // if (!window.Kakao) {
+            //     throw new Error("Kakao SDK not loaded.");
+            // }
+            // if (!window.Kakao.isInitialized()) {
+            //     window.Kakao.init(KAKAO_JS_KEY);
+            // }
+            //
+            // window.Kakao.Auth.authorize({
+            //     redirectUri: REDIRECT_URI,
+            // });
 
         } catch (error: unknown) {
-            return { success: false, error };
+            console.error("카카오 로그인 팝업 오류:", error);
+            return;
         }
     }
 

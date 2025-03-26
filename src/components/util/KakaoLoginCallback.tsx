@@ -105,14 +105,15 @@ export default function KakaoLoginCallback() {
                 })
             } else if (statusCode === 200) {
                 // 소셜 로그인
-                const response = await SocialLogin(socialChannelUid, socialChannel, setAuthToken, setIsHost, connect);
-                if (response) {
-                    navigate('/');
-                } else {
-                    alert('로그인에 실패 하셨습니다.');
-                    navigate('/');
-                }
+                await SocialLogin(socialChannelUid, socialChannel, setAuthToken, setIsHost, connect);
             }
+
+            if (window.opener) {
+                window.close(); // 팝업이라면 닫기
+            } else {
+                navigate('/'); // 직접 접근이면 홈으로
+            }
+
         } catch (error) {
             console.error("Error:", error);
         }

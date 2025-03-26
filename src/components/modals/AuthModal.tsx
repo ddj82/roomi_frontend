@@ -82,6 +82,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                         } else if (statusCode === 200) {
                             // 소셜 로그인
                             await SocialLogin(socialChannelUid, socialChannel, setAuthToken, setIsHost, connect);
+                            window.location.reload();
                         }
                     } catch (e) {
 
