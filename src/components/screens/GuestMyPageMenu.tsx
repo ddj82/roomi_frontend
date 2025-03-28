@@ -116,22 +116,6 @@ export default function GuestMyPageMenu() {
                             </button>
                         )}
                     </div>
-                    {/*<div className="border-t border-gray-300">*/}
-                    {/*    <div className="my-2">*/}
-                    {/*        {!isHost && (*/}
-                    {/*            <button onClick={handleSetHostMode}*/}
-                    {/*                    className="w-full p-2 text-white bg-roomi rounded">*/}
-                    {/*                {t("호스트 등록")}*/}
-                    {/*            </button>*/}
-                    {/*        )}*/}
-                    {/*    </div>*/}
-                    {/*    <div className="my-2">*/}
-                    {/*        <button className="w-full text-start" onClick={() => setSelectedMenu('내 정보 수정')}>*/}
-                    {/*            <FontAwesomeIcon icon={faPenToSquare} className="w-4 h-4 mr-1"/>*/}
-                    {/*            {t("내 정보 수정")}*/}
-                    {/*        </button>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
                 </div>
                 <div className="my-2 mx-4">
                     <div className="w-full">
@@ -144,13 +128,6 @@ export default function GuestMyPageMenu() {
                                         {t("예약 내역")}
                                     </button>
                                 </div>
-                                {/*<div className="my-2">*/}
-                                {/*    <button className="w-full text-start" onClick={() => setSelectedMenu('')}>*/}
-                                {/*        <FontAwesomeIcon icon={faRectangleList} className="w-4 h-4 mr-1"/>*/}
-                                {/*        /!*{t("예약 내역")}*!/*/}
-                                {/*        취소 및 환불 내역*/}
-                                {/*    </button>*/}
-                                {/*</div>*/}
                                 <div className="my-2">
                                     <button className="w-full text-start" onClick={() => setSelectedMenu('관심')}>
                                         <FontAwesomeIcon icon={faThumbsUp} className="w-4 h-4 mr-1"/>{t("관심 목록")}
@@ -224,7 +201,7 @@ export default function GuestMyPageMenu() {
                                 </div>
                             </div>
                         </div>
-                </div>
+                    </div>
                 </div>
             </div>
             {/* 데스크톱 전용 오른쪽 콘텐츠 (모바일에서는 숨김) */}

@@ -12,4 +12,7 @@ export interface User {
     accept_SMS? : boolean;
     accept_alert? : boolean;
     accept_email? : boolean;
+    bank_holder?: string;
+    bank?: string;
+    account?: string;
 }

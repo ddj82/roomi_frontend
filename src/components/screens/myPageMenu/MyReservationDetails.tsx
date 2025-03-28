@@ -34,10 +34,10 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
     const renderStatus = (message: string) => {
         if (message === '승인대기') {
             return renderStatusUI('bg-gray-700', '예약취소');
-        } else if (message === '예약완료') {
-            return renderStatusUI('bg-gray-500', '환불요청');
         } else if (message === '결제대기') {
             return renderStatusUI('bg-roomi', '결제하기');
+        } else if (message === '예약완료') {
+            return renderStatusUI('bg-gray-500', '환불요청');
         } else if (message === '이용중') {
             return renderStatusUI('bg-gray-500', '퇴실요청');
         } else { // 계약종료, 예약취소
