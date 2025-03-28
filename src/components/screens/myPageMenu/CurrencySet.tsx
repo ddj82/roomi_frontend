@@ -1,8 +1,16 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from "react-i18next";
+
+// 지원할 언어 목록
+const LANGUAGES = [
+    { code: 'ko', label: 'KRW' },
+    { code: 'en', label: 'USD' },
+    { code: 'ja', label: 'JPY' },
+];
 
 export default function CurrencySet() {
     const {t} = useTranslation();
+    const [langCode, setLangCode] = useState('ko');
 
     return (
         <div className="p-4 md:px-8">
@@ -19,6 +27,21 @@ export default function CurrencySet() {
                 >
                     {t('수정')}
                 </button>
+            </div>
+
+            <div className="flex flex-col space-y-2">
+                {/* (2) 나머지 언어 선택 버튼들 */}
+                {LANGUAGES.map((lang) => (
+                    <button
+                        key={lang.code}
+                        onClick={() => setLangCode(lang.code)}
+                        className={`px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 
+                            ${langCode === lang.code && 'bg-roomi hover:bg-roomi text-white'}
+                        `}
+                    >
+                        {lang.label}
+                    </button>
+                ))}
             </div>
         </div>
     );

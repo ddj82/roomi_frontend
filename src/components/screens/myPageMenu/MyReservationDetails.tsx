@@ -27,21 +27,21 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
 
     useEffect(() => {
         setReservedDetails(reserveData);
+        // window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0 });
     }, []);
 
     const renderStatus = (message: string) => {
-        if (message === '결제대기') {
-
-        } else if (message === '이용중') {
-
+        if (message === '승인대기') {
+            return renderStatusUI('bg-gray-700', '예약취소');
         } else if (message === '예약완료') {
-
-        } else if (message === '계약종료') {
-
-        } else if (message === '계약취소') {
-
-        } else { // '승인대기'
-
+            return renderStatusUI('bg-gray-500', '환불요청');
+        } else if (message === '결제대기') {
+            return renderStatusUI('bg-roomi', '결제하기');
+        } else if (message === '이용중') {
+            return renderStatusUI('bg-gray-500', '퇴실요청');
+        } else { // 계약종료, 예약취소
+            return renderStatusUI('bg-roomi', '삭제');
         }
     };
 
@@ -55,6 +55,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
 
     return (
         <div>
+            {/*예약 정보*/}
             <div className="flex md:flex-row flex-col gap-4 bg-gray-100 my-4 rounded-lg md:p-2">
                 <div className="md:w-48 md:h-36 md:mr-4">
                     <img
@@ -191,8 +192,9 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                     </div>
                 </AccodionItem>
             </div>
+            {/*버튼*/}
             <div className="flex_center mt-8">
-                {renderStatusUI('bg-black', statusInfo.message)}
+                {renderStatus(statusInfo.message)}
             </div>
         </div>
     );

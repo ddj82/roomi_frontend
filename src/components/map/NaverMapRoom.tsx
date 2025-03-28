@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { RoomData } from "../../types/rooms";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faLocationDot} from "@fortawesome/free-solid-svg-icons";
+import {faLocationDot, faMapPin} from "@fortawesome/free-solid-svg-icons";
 import ReactDOMServer from "react-dom/server";
 
 const NaverMapRoom = ({ room }: { room: RoomData }) => {
@@ -15,11 +15,11 @@ const NaverMapRoom = ({ room }: { room: RoomData }) => {
             const mapOptions = {
                 center: new window.naver.maps.LatLng(room.coordinate_lat, room.coordinate_long),
                 zoom: 17,
-                // minZoom: 16,
-                // maxZoom: 18,
+                minZoom: 17,
+                maxZoom: 18,
                 // draggable: false,               // 드래그 비활성화 (사용자가 이동 못함)
                 pinchZoom: false,               // 모바일 핀치 줌 비활성화
-                scrollWheel: false,             // 스크롤 휠 줌 비활성화
+                // scrollWheel: false,             // 스크롤 휠 줌 비활성화
                 disableDoubleClickZoom: true,   // 더블 클릭 줌 비활성화
                 keyboardShortcuts: false,       // 키보드 이동(방향키) 비활성화
             };
@@ -41,16 +41,10 @@ const NaverMapRoom = ({ room }: { room: RoomData }) => {
             const position = new window.naver.maps.LatLng(room.coordinate_lat, room.coordinate_long);
             // FontAwesome 아이콘을 포함한 HTML 문자열 생성
             const markerContent = ReactDOMServer.renderToString(
-                <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "2rem",
-                    color: "#f47366",
-                    cursor: "default",
-                    pointerEvents: "none",
-                }}>
-                    <FontAwesomeIcon icon={faLocationDot} />
+                <div
+                    className="flex_center text-roomi text-[1.5rem] cursor-default pointer-events-none relative -translate-x-1/2 -translate-y-[110%] drop-shadow-md"
+                >
+                    <FontAwesomeIcon icon={faLocationDot}/>
                 </div>
             );
             const marker = new window.naver.maps.Marker({

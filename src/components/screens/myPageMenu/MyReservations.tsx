@@ -49,6 +49,7 @@ export default function MyReservations() {
 
     const renderReservationUI = (reservations: ReservationHistory[], emptyMessage: string) => {
         if (!reservations || reservations.length === 0) {
+            console.log('안와?');
             return <div className="flex_center">{emptyMessage}</div>;
         }
         return renderReservationList(reservations);
@@ -111,7 +112,7 @@ export default function MyReservations() {
     const renderReservationList = (list: ReservationHistory[]) => {
         return (
             list.map((item) => (
-                <div key={item.order_id} className="flex flex-col md:flex-row justify-between md:p-4 bg-gray-100 my-4 rounded-lg relative">
+                <div key={item.order_id} className="flex flex-col md:flex-row justify-between md:p-2 bg-gray-100 my-4 rounded-lg relative">
                     <div className="md:w-1/4">
                         <div className="md:w-36 md:h-32 md:mr-4">
                             <img
