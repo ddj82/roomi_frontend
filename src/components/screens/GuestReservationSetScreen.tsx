@@ -56,6 +56,11 @@ export default function GuestReservationSetScreen() {
     useEffect(() => {
         setRoom(thisRoom);
         handleNight();
+        // 더미데이터
+        formData.name = '진유진';
+        formData.phone = '01012312312';
+        formData.email = 'qweqwe@naver.com';
+        setGuestCount(prev => 2);
     }, [roomId, locale]);
 
     const handleguestValue = (value : boolean) => {
@@ -101,11 +106,6 @@ export default function GuestReservationSetScreen() {
         }
 
         if (thisRoom.is_auto_accepted) {
-            // 더미데이터
-            // formData.name = '김동준';
-            // formData.phone = '01012312312';
-            // formData.email = 'qweqwe@naver.com';
-
             try {
                 if (startDate && endDate) {
                     const selectionMode = calUnit ? 'daily' : 'weekly';

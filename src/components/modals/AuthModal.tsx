@@ -25,12 +25,14 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
             window.Kakao.init('7e84a0bfbb21e40d283ad5d48d3d9d6c'); // 카카오 JavaScript 키로 초기화
             console.log('✅ Kakao SDK initialized');
         }
+        // 토스 결제 심사 목적
+        setEmail("admin");
+        setPassword("admin");
     }, []);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-            console.log('로그인 버튼(모달):', { email, password });
             await handleLogin(email, password, setAuthToken, setIsHost, connect);
             onClose();
             window.location.reload();
