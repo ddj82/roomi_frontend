@@ -22,6 +22,7 @@ import ProtectedHostRoute from "./api/ProtectedHostRoute";
 import ProtectedGuestRoute from "./api/ProtectedGuestRoute";
 import KakaoLoginCallback from "./components/util/KakaoLoginCallback";
 import SocialJoinScreen from "./components/screens/SocialJoinScreen";
+import SuccessPage from "./components/toss/SuccessPage";
 
 
 export default function App() {
@@ -47,6 +48,7 @@ export default function App() {
                             <Route path="/chat" element={<UserMessage/>}/>
                             <Route path="/detail/:roomId/:locale/reservation" element={<GuestReservationSetScreen/>}/>
                             <Route path="/detail/:roomId/:locale/reservation/payment" element={<GuestReservationScreen/>}/>
+                            <Route path="/success" element={<SuccessPage/>}/>
                             <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
                         </Route>
                     </Route>

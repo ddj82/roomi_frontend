@@ -1,4 +1,4 @@
-import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
+import {ANONYMOUS, loadTossPayments} from "@tosspayments/tosspayments-sdk";
 import { useEffect, useState } from "react";
 
 // TODO: clientKey는 개발자센터의 결제위젯 연동 키 > 클라이언트 키로 바꾸세요.
@@ -6,13 +6,16 @@ import { useEffect, useState } from "react";
 const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 const customerKey = generateRandomString();
 
-export function CheckoutPage() {
+export function CheckoutPage({ paymentData }) {
   const [amount, setAmount] = useState({
-    currency: "KRW",
-    value: 50000,
+    currency: "",
+    value: 0,
   });
   const [ready, setReady] = useState(false);
   const [widgets, setWidgets] = useState(null);
+  const [reservation, setReservation] = useState(null);
+  const [room, setRoom] = useState(null);
+  const [form, setForm] = useState(null);
 
   useEffect(() => {
     async function fetchPaymentWidgets() {
@@ -34,6 +37,13 @@ export function CheckoutPage() {
     }
 
     fetchPaymentWidgets();
+    setReservation(paymentData.bookData.reservation);
+    setRoom(paymentData.bookData.room);
+    setForm(paymentData.formDataState);
+    setAmount({
+      currency: paymentData.formDataState.currency,
+      value: paymentData.price,
+    });
   }, [clientKey, customerKey]);
 
   useEffect(() => {
@@ -44,7 +54,10 @@ export function CheckoutPage() {
 
       // ------  주문서의 결제 금액 설정 ------
       // TODO: 위젯의 결제금액을 결제하려는 금액으로 초기화하세요.
-      // TODO: renderPaymentMethods, renderAgreement, requestPayment 보다 반드시 선행되어야 합니다.
+      setAmount({
+        currency: paymentData.formDataState.currency,
+        value: paymentData.price,
+      });
       await widgets.setAmount(amount);
 
       // ------  결제 UI 렌더링 ------
@@ -95,13 +108,13 @@ export function CheckoutPage() {
                 // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
                 // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
                 await widgets.requestPayment({
-                  orderId: generateRandomString(),
-                  orderName: "토스 티셔츠 외 2건",
+                  orderId: reservation.order_id,
+                  orderName: room.title,
                   successUrl: window.location.origin + "/success",
                   failUrl: window.location.origin + "/fail",
-                  customerEmail: "customer123@gmail.com",
-                  customerName: "김토스",
-                  customerMobilePhone: "01012341234",
+                  customerEmail: form.email,
+                  customerName: form.name,
+                  customerMobilePhone: form.phone,
                 });
               } catch (error) {
                 // 에러 처리하기

@@ -6,7 +6,6 @@ import {useTranslation} from "react-i18next";
 import {useDateStore} from "../stores/DateStore";
 import ImgCarousel from "../util/ImgCarousel";
 import {useGuestsStore} from "../stores/GuestsStore";
-import {useReserSlideConStore} from "../stores/ReserSlideConStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faChevronDown,
@@ -18,13 +17,19 @@ import {
     faCheckCircle, faMapMarkerAlt, faXmark
 } from "@fortawesome/free-solid-svg-icons";
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
-import { CheckoutPage } from "src/components/toss/Checkout.jsx";
+import {BookData, CheckoutPage, FormDataState} from "src/components/toss/Checkout.jsx";
 import Modal from "react-modal";
 
 interface FormDataType {
     name: string;
     phone: string;
     email: string;
+    currency: string;
+}
+interface PaymentData {
+    bookData: BookData,
+    formDataState: FormDataState,
+    price: number,
 }
 
 export default function GuestReservationScreen() {
@@ -48,36 +53,27 @@ export default function GuestReservationScreen() {
             phone: "",
             email: "",
         },
+        thisRoom = null,
+        bookData = {
+            reservation: {},
+            room: {},
+        },
     } = location.state || {};
 
     const [formDataState, setFormDataState] = useState<FormDataType>(formData);
 
     const [selectedPayment, setSelectedPayment] = useState<string>("KR");
-    const [paymentData, setPaymentData] = useState({});
+    const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
     const [slideIsOpen, setSlideIsOpen] = useState(false);
     const [isChecked1, setIsChecked1] = useState(false);
     const [isChecked2, setIsChecked2] = useState(false);
     const [isChecked3, setIsChecked3] = useState(false);
-
     const [showToss, setShowToss] = useState(false);
+    const [userCurrency, setUserCurrency] = useState('');
 
     useEffect(() => {
-        const loadRoomData = async () => {
-            if (roomId) {
-                console.log(`Room ID: ${roomId}`);
-                try {
-                    if (locale != null) {
-                        const response = await fetchRoomData(Number(roomId));
-                        const responseJson = await response.json();
-                        const roomData = responseJson.data;
-                        setRoom(roomData);
-                    }
-                } catch (error) {
-                    console.error('방 정보 불러오기 실패:', error);
-                }
-            }
-        };
-        loadRoomData();
+        setRoom(thisRoom);
+        setUserCurrency(localStorage.getItem('userCurrency') ?? "");
     }, [roomId, locale]);
 
     const handleguestValue = (increase: boolean) => {
@@ -106,6 +102,13 @@ export default function GuestReservationScreen() {
             alert('필수 약관에 동의해주세요.');
             return;
         }
+        formDataState.currency = userCurrency;
+        console.log('예약셋 formDataState',formDataState );
+        setPaymentData({
+            bookData: bookData,
+            formDataState: formDataState,
+            price: totalPrice,
+        });
         handlePayment();
     };
 
@@ -116,131 +119,131 @@ export default function GuestReservationScreen() {
     const handlePayment = () => {
         setShowToss(true);
     };
-/*
-    const handlePayment = async () => {
-        try {
-            const payment = await getFgkey();
-            const fgkey = payment.fgkey;
-            const params = payment.params;
-            const issuer_country = payment.issuer_country;
+    /*
+        const handlePayment = async () => {
+            try {
+                const payment = await getFgkey();
+                const fgkey = payment.fgkey;
+                const params = payment.params;
+                const issuer_country = payment.issuer_country;
 
-            const requestData: Eximbay.PaymentRequest = {
-                payment: {
-                    transaction_type: "PAYMENT",
-                    order_id: "테스트 주문번호",
-                    currency: "KRW",
-                    amount: totalPrice,
-                    lang: "KR",
-                },
-                merchant: {
-                    mid: "1849705C64",
-                },
-                buyer: {
-                    name: formDataState.name, // 수정: formData -> formDataState
-                    email: formDataState.email, // 수정: formData -> formDataState
-                },
-                url: {
-                    return_url: "http://localhost:8081/",
-                    status_url: "example://status"
-                },
-                product: [{
-                    name: params.name,
-                    quantity: params.quantity,
-                    unit_price: params.unit_price,
-                    link: params.link,
-                }],
-                settings: {
-                    issuer_country: issuer_country,
-                },
-            };
+                const requestData: Eximbay.PaymentRequest = {
+                    payment: {
+                        transaction_type: "PAYMENT",
+                        order_id: "테스트 주문번호",
+                        currency: "KRW",
+                        amount: totalPrice,
+                        lang: "KR",
+                    },
+                    merchant: {
+                        mid: "1849705C64",
+                    },
+                    buyer: {
+                        name: formDataState.name, // 수정: formData -> formDataState
+                        email: formDataState.email, // 수정: formData -> formDataState
+                    },
+                    url: {
+                        return_url: "http://localhost:8081/",
+                        status_url: "example://status"
+                    },
+                    product: [{
+                        name: params.name,
+                        quantity: params.quantity,
+                        unit_price: params.unit_price,
+                        link: params.link,
+                    }],
+                    settings: {
+                        issuer_country: issuer_country,
+                    },
+                };
 
-            if (window.EXIMBAY) {
-                window.EXIMBAY.request_pay(
-                    {fgkey, ...requestData},
-                    (response: Eximbay.PaymentResponse) => {
-                        if (response.status === "SUCCESS") {
-                            alert("결제 성공!");
-                        } else {
-                            alert(`결제 실패: ${response.message}`);
+                if (window.EXIMBAY) {
+                    window.EXIMBAY.request_pay(
+                        {fgkey, ...requestData},
+                        (response: Eximbay.PaymentResponse) => {
+                            if (response.status === "SUCCESS") {
+                                alert("결제 성공!");
+                            } else {
+                                alert(`결제 실패: ${response.message}`);
+                            }
                         }
-                    }
-                );
-            } else {
-                console.error("Eximbay 스크립트가 로드되지 않았습니다.");
+                    );
+                } else {
+                    console.error("Eximbay 스크립트가 로드되지 않았습니다.");
+                }
+            } catch (error) {
+                console.error("결제 요청 중 오류 발생:", error);
+                alert("결제 요청에 실패했습니다.");
             }
-        } catch (error) {
-            console.error("결제 요청 중 오류 발생:", error);
-            alert("결제 요청에 실패했습니다.");
-        }
-    };
-
-    const getFgkey = async () => {
-        const apiUrl = "https://api-test.eximbay.com/v1/payments/ready";
-        const mid = "1849705C64"; // 엑심베이에서 발급받은 상점ID
-        const params = {
-            product: JSON.stringify({
-                name: room?.title,
-                quantity: 1,
-                unit_price: totalPrice,
-                link: `http://localhost:8081/detail/${roomId}/${locale}`,
-            }),
-            issuer_country: selectedPayment,
         };
 
-        try {
-            const productData = JSON.parse(params.product);
-            const requestBody: Eximbay.PaymentRequest = {
-                payment: {
-                    transaction_type: "PAYMENT",
-                    order_id: "테스트 주문번호",
-                    currency: "KRW",
-                    amount: totalPrice,
-                    lang: "KR",
-                },
-                merchant: {
-                    mid: mid,
-                },
-                buyer: {
-                    name: formDataState.name, // 수정: formData -> formDataState
-                    email: formDataState.email, // 수정: formData -> formDataState
-                },
-                url: {
-                    return_url: "http://localhost:8081/",
-                    status_url: "example://status"
-                },
-                product: [{
-                    name: productData.name,
-                    quantity: productData.quantity,
-                    unit_price: productData.unit_price,
-                    link: productData.link,
-                }],
-                settings: {
-                    issuer_country: params.issuer_country,
-                },
+        const getFgkey = async () => {
+            const apiUrl = "https://api-test.eximbay.com/v1/payments/ready";
+            const mid = "1849705C64"; // 엑심베이에서 발급받은 상점ID
+            const params = {
+                product: JSON.stringify({
+                    name: room?.title,
+                    quantity: 1,
+                    unit_price: totalPrice,
+                    link: `http://localhost:8081/detail/${roomId}/${locale}`,
+                }),
+                issuer_country: selectedPayment,
             };
 
-            const response = await axios.post(
-                apiUrl,
-                requestBody,
-                {
-                    headers: {
-                        'Authorization': 'Basic dGVzdF8xODQ5NzA1QzY0MkMyMTdFMEIyRDo=',
-                        "Content-Type": "application/json",
+            try {
+                const productData = JSON.parse(params.product);
+                const requestBody: Eximbay.PaymentRequest = {
+                    payment: {
+                        transaction_type: "PAYMENT",
+                        order_id: "테스트 주문번호",
+                        currency: "KRW",
+                        amount: totalPrice,
+                        lang: "KR",
                     },
-                }
-            );
-            const data = response.data;
-            return {
-                fgkey: data.fgkey,
-                params: productData,
-                issuer_country: params.issuer_country,
-            };
-        } catch (error: any) {
-            throw error;
-        }
-    };
+                    merchant: {
+                        mid: mid,
+                    },
+                    buyer: {
+                        name: formDataState.name, // 수정: formData -> formDataState
+                        email: formDataState.email, // 수정: formData -> formDataState
+                    },
+                    url: {
+                        return_url: "http://localhost:8081/",
+                        status_url: "example://status"
+                    },
+                    product: [{
+                        name: productData.name,
+                        quantity: productData.quantity,
+                        unit_price: productData.unit_price,
+                        link: productData.link,
+                    }],
+                    settings: {
+                        issuer_country: params.issuer_country,
+                    },
+                };
 
-* */
+                const response = await axios.post(
+                    apiUrl,
+                    requestBody,
+                    {
+                        headers: {
+                            'Authorization': 'Basic dGVzdF8xODQ5NzA1QzY0MkMyMTdFMEIyRDo=',
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+                const data = response.data;
+                return {
+                    fgkey: data.fgkey,
+                    params: productData,
+                    issuer_country: params.issuer_country,
+                };
+            } catch (error: any) {
+                throw error;
+            }
+        };
+
+    * */
     interface PaymentOptionProps {
         id: string;
         label: string;
@@ -323,14 +326,16 @@ export default function GuestReservationScreen() {
                                 {t("호스트정보")}
                             </div>
                             <div className="flex items-center">
-                                <div className="flex_center mr-4">
-                                    <img src={room.host.profile_image ?
-                                        (room.host.profile_image) : ('/assets/images/profile.png')}
-                                         alt="프로필사진"
-                                         className="rounded-full w-16 h-16"/>
-                                </div>
-                                <div>
-                                    <div className="font-medium text-gray-800">{room.host.name}</div>
+                                <div className="flex items-center">
+                                    <div className="flex_center mr-4">
+                                        <img src={room.host.profile_image ?
+                                            (room.host.profile_image) : ('/assets/images/profile.png')}
+                                             alt="프로필사진"
+                                             className="rounded-full w-16 h-16"/>
+                                    </div>
+                                    <div>
+                                        <div className="font-medium text-gray-800">{room.host.name}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -634,7 +639,7 @@ export default function GuestReservationScreen() {
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
                 </div>
-                <CheckoutPage/>
+                <CheckoutPage paymentData={paymentData as PaymentData}/>
             </Modal>
         </div>
     );

@@ -119,12 +119,6 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                 console.log('Unknown social platform');
                 return;
         }
-
-        // if (loginResult && loginResult.success) { // loginResult가 undefined가 아닌지 확인
-        //     console.log(`${channel} 로그인 성공!`, loginResult.data);
-        // } else {
-        //     console.log(`${channel} 로그인 실패`, loginResult?.error);
-        // }
     };
 
     const handleJoin = () => {

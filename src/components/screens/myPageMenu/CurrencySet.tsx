@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 
 // 지원할 언어 목록
@@ -11,6 +11,13 @@ const LANGUAGES = [
 export default function CurrencySet() {
     const {t} = useTranslation();
     const [langCode, setLangCode] = useState('ko');
+    const [userCurrency, setUserCurrency] = useState('');
+
+    useEffect(() => {
+        setUserCurrency(localStorage.getItem('userCurrency') ?? "");
+        console.log('로컬스토리지',localStorage.getItem('userCurrency'));
+
+    }, []);
 
     return (
         <div className="p-4 md:px-8">

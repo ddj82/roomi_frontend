@@ -102,13 +102,12 @@ export default function GuestReservationSetScreen() {
 
         if (thisRoom.is_auto_accepted) {
             // 더미데이터
-            formData.name = '김동준';
-            formData.phone = '01012312312';
-            formData.email = 'qweqwe@naver.com';
+            // formData.name = '김동준';
+            // formData.phone = '01012312312';
+            // formData.email = 'qweqwe@naver.com';
 
             try {
                 if (startDate && endDate) {
-                    console.log('들어오지?');
                     const selectionMode = calUnit ? 'daily' : 'weekly';
                     const reservation: Reservation = {
                         checkIn: startDate,
@@ -128,17 +127,19 @@ export default function GuestReservationSetScreen() {
                     console.log('bookJson', responseJson);
                     console.log('bookData', bookData);
 
-                    // navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
-                    //     state: {
-                    //         price,
-                    //         depositPrice,
-                    //         maintenancePrice,
-                    //         cleaningPrice,
-                    //         totalPrice,
-                    //         totalNight,
-                    //         formData,
-                    //     },
-                    // });
+                    navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
+                        state: {
+                            price,
+                            depositPrice,
+                            maintenancePrice,
+                            cleaningPrice,
+                            totalPrice,
+                            totalNight,
+                            formData,
+                            thisRoom,
+                            bookData,
+                        },
+                    });
                 }
             } catch (e) {
                 console.error('예약하기 실패:', e);

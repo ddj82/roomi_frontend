@@ -61,6 +61,14 @@ module.exports = {
                     fontSize: '0.3rem',
                     lineHeight: '0.4rem',
                 },
+                '.text-xxl': {
+                    fontSize: '1.5rem',
+                    lineHeight: '2rem',
+                },
+                '.text-xxxl': {
+                    fontSize: '2rem',
+                    lineHeight: '2.5rem',
+                },
             });
         },
         function ({ addComponents }) {

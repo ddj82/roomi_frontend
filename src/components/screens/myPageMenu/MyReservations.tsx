@@ -68,9 +68,12 @@ export default function MyReservations() {
                 return renderStatusUI('bg-roomi', '예약완료');
             }
         } else if (status === 'COMPLETED') { // 계약 종료
+            // 보증금환불여부 확인
             return renderStatusUI('bg-gray-500', '계약종료');
         } else if (status === 'CANCELLED') { // 취소
             return renderStatusUI('bg-gray-700', '계약취소');
+        } else if (status === 'REJECTED') { // 승인 거절
+            return renderStatusUI('bg-gray-700', '승인거절');
         } else { // 승인 대기, 결제전, 기본값
             return renderStatusUI('bg-gray-500', '승인대기');
         }

@@ -89,7 +89,12 @@ export const login = async (email: string, password: string, setAuthToken: (toke
             localStorage.setItem('userEmail', data.data.email);
             localStorage.setItem('userName', data.data.name);
             localStorage.setItem('userIsHost', data.data.isHost);
-            localStorage.setItem('userProfileImg', data.data.profile_image);
+            if (data.data.profile_image === null) {
+                localStorage.setItem('userProfileImg', '/assets/images/profile.png');
+            } else {
+                localStorage.setItem('userProfileImg', data.data.profile_image);
+            }
+            localStorage.setItem('userCurrency', data.data.currency);
 
             const { accept_SMS, accept_alert, accept_email } = data.data;
             localStorage.setItem('accept_SMS', accept_SMS ? '1' : '0');
@@ -134,13 +139,12 @@ export const channelLogin = async (channel_uid: string, channel: string, setAuth
             localStorage.setItem('userEmail', data.data.email);
             localStorage.setItem('userName', data.data.name);
             localStorage.setItem('userIsHost', data.data.isHost);
-            console.log('프로필',data.data.profile_image);
-            console.log('프로필 === null',data.data.profile_image === null);
             if (data.data.profile_image === null) {
                 localStorage.setItem('userProfileImg', '/assets/images/profile.png');
             } else {
                 localStorage.setItem('userProfileImg', data.data.profile_image);
             }
+            localStorage.setItem('userCurrency', data.data.currency);
 
             const { accept_SMS, accept_alert, accept_email } = data.data;
             localStorage.setItem('accept_SMS', accept_SMS ? '1' : '0');
@@ -185,6 +189,7 @@ export const logout = async () => {
         localStorage.removeItem('accept_SMS');
         localStorage.removeItem('accept_alert');
         localStorage.removeItem('accept_email');
+        localStorage.removeItem('userCurrency');
 
         const detectedLang = i18n.services.languageDetector?.detect();
         console.log('detectedLang:', detectedLang);
