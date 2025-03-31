@@ -97,6 +97,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
             case 'Kakao': {
                 if (!window.Kakao) return;
                 loginResult = await SocialAuth.kakaoLogin();
+
                 console.log("카카오 loginResult:", loginResult);
                 onClose();
                 break;
