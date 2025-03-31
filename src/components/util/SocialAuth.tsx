@@ -64,24 +64,12 @@ export class SocialAuth {
             const popup = window.open(kakaoAuthUrl, 'kakaoLogin', 'width=500,height=600');
 
             // 팝업 감시 → 닫히면 새로고침
-            const timer = setInterval(() => {
-                if (!popup || popup.closed) {
-                    clearInterval(timer);
-                    window.location.reload(); // 팝업 닫히면 새로고침
-                }
-            }, 500);
-
-            // Kakao SDK 초기화 (중복 방지)
-            // if (!window.Kakao) {
-            //     throw new Error("Kakao SDK not loaded.");
-            // }
-            // if (!window.Kakao.isInitialized()) {
-            //     window.Kakao.init(KAKAO_JS_KEY);
-            // }
-            //
-            // window.Kakao.Auth.authorize({
-            //     redirectUri: REDIRECT_URI,
-            // });
+            // const timer = setInterval(() => {
+            //     if (!popup || popup.closed) {
+            //         clearInterval(timer);
+            //         window.location.reload(); // 팝업 닫히면 새로고침
+            //     }
+            // }, 500);
 
         } catch (error: unknown) {
             console.error("카카오 로그인 팝업 오류:", error);
