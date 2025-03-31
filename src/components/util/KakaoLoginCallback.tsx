@@ -31,9 +31,9 @@ export default function KakaoLoginCallback() {
     const getAccessToken = async (code: string) => {
         try {
             setAccessTokenFetching(true); // Set fetching to true
-            const REST_API_KEY='d809b6614a5cf090c577f4f1c21fdda3' //REST API KEY
-            const REDIRECT_URI = 'http://localhost:8081/sign-up'
-            // const REDIRECT_URI = 'https://roomi.co.kr/sign-up'; //Redirect URI
+            const REST_API_KEY=process.env.REACT_APP_REST_API_KEY; //REST API KEY
+            const BASE_URL = process.env.REACT_APP_BASE_URL;
+            const REDIRECT_URI = BASE_URL + '/sign-up'; //Redirect URI
 
             const response = await axios.post(
                 "https://kauth.kakao.com/oauth/token",

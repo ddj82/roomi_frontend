@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Modal from 'react-modal';
 import { useAuthStore } from 'src/components/stores/AuthStore';
-import { SocialAuth } from "src/api/SocialAuth";
+import { SocialAuth } from "src/components/util/SocialAuth";
 import 'src/css/AuthModal.css';
 import { useIsHostStore } from "src/components/stores/IsHostStore";
 import {useChatStore} from "../stores/ChatStore";
@@ -55,10 +55,6 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                 loginResult = await SocialAuth.googleLogin();
                 console.log('구글 loginResult', loginResult);
                 const googleData = loginResult.data;
-                // email,
-                // name,
-                // socialId,
-                // provider,
                 if (googleData) {
                     onClose();
                     try {
@@ -82,7 +78,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                         } else if (statusCode === 200) {
                             // 소셜 로그인
                             await SocialLogin(socialChannelUid, socialChannel, setAuthToken, setIsHost, connect);
-                            // window.location.reload();
+                            window.location.reload();
                         }
                     } catch (e) {
 

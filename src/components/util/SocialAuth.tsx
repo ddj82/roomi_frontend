@@ -1,5 +1,5 @@
 import {GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
-import {auth} from '../firebase'; // 모듈화된 Firebase Auth 인스턴스
+import {auth} from '../../firebase'; // 모듈화된 Firebase Auth 인스턴스
 
 interface SocialAuthResponse {
     success: boolean;
@@ -19,7 +19,7 @@ export class SocialAuth {
         WEIBO_CLIENT_ID: process.env.EXPO_PUBLIC_WEIBO_CLIENT_ID,
     };
 
-    private static readonly redirectUri = 'http://localhost:8081/sign-up'; // 웹에서는 이렇게 기본 URI를 설정해두었습니다.
+    private static readonly redirectUri = process.env.REACT_APP_BASE_URL; // 웹에서는 이렇게 기본 URI를 설정해두었습니다.
 
     static async googleLogin(): Promise<SocialAuthResponse> {
         try {
@@ -52,10 +52,13 @@ export class SocialAuth {
 
     static async kakaoLogin(): Promise<void> {
         try {
-            const REST_API_KEY='d809b6614a5cf090c577f4f1c21fdda3' //REST API KEY
-            const REDIRECT_URI = 'http://localhost:8081/sign-up'; //Redirect URI
-            // const REDIRECT_URI = 'https://roomi.co.kr/sign-up'; //Redirect URI
+            const REST_API_KEY=process.env.REACT_APP_REST_API_KEY; //REST API KEY
+            const REDIRECT_URI = this.redirectUri + '/sign-up'; //Redirect URI
             const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+            console.log('redirectUri',this.redirectUri);
+            console.log('REST_API_KEY',REST_API_KEY);
+            console.log('REDIRECT_URI',REDIRECT_URI);
+            console.log('kakaoAuthUrl',kakaoAuthUrl);
 
             // 팝업 띄우기
             const popup = window.open(kakaoAuthUrl, 'kakaoLogin', 'width=500,height=600');
@@ -154,7 +157,8 @@ export class SocialAuth {
     // Weibo 로그인 처리
     static async weiboLogin(): Promise<SocialAuthResponse> {
         try {
-            const authUrl = `https://api.weibo.com/oauth2/authorize?client_id=${this.CONFIG.WEIBO_CLIENT_ID}&response_type=code&redirect_uri=${this.redirectUri}`;
+            const REDIRECT_URI = this.redirectUri + '/sign-up';
+            const authUrl = `https://api.weibo.com/oauth2/authorize?client_id=${this.CONFIG.WEIBO_CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}`;
 
             window.location.href = authUrl;
 
