@@ -64,12 +64,12 @@ export class SocialAuth {
             const popup = window.open(kakaoAuthUrl, 'kakaoLogin', 'width=500,height=600');
 
             // 팝업 감시 → 닫히면 새로고침
-            // const timer = setInterval(() => {
-            //     if (!popup || popup.closed) {
-            //         clearInterval(timer);
-            //         window.location.reload(); // 팝업 닫히면 새로고침
-            //     }
-            // }, 500);
+            const timer = setInterval(() => {
+                if (!popup || popup.closed) {
+                    clearInterval(timer);
+                    window.location.reload(); // 팝업 닫히면 새로고침
+                }
+            }, 500);
 
         } catch (error: unknown) {
             console.error("카카오 로그인 팝업 오류:", error);
