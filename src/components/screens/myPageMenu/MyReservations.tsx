@@ -49,7 +49,6 @@ export default function MyReservations() {
 
     const renderReservationUI = (reservations: ReservationHistory[], emptyMessage: string) => {
         if (!reservations || reservations.length === 0) {
-            console.log('안와?');
             return <div className="flex_center">{emptyMessage}</div>;
         }
         return renderReservationList(reservations);

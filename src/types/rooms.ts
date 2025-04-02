@@ -128,6 +128,20 @@ export interface RoomData {
     currency: string;
 }
 
+export interface CreateRoomData {
+    roomData: RoomData,
+
+    discounts: Discounts[],
+
+    business_number: string,
+    business_name: string,
+    business_representative: string,
+    business_address: string,
+    business_additional_address: string,
+    business_license_type: string,
+
+}
+
 export interface Schedules {
     date: Date;
     dayPrice: number | null;
@@ -159,4 +173,10 @@ export interface ReservationHistory {
     guest: Guest,
     room: RoomData,
     selection_mode: string,
+}
+
+export interface Discounts {
+    type: string,
+    days: number,
+    percentage: number,
 }
