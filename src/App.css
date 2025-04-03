@@ -45,3 +45,15 @@ div.app.container {
         display: none;
     }
 }
+
+/* number input 화살표 제거 - Chrome, Safari */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}

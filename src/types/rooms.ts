@@ -1,4 +1,6 @@
 // src/types/room.ts
+import {IconProp} from "@fortawesome/fontawesome-svg-core";
+
 export interface ApiResponse {
     success: boolean;
     message?: string;
@@ -46,8 +48,8 @@ export interface RoomData {
     title: string;
     address?: string;
     address_detail?: string;
-    coordinate_long: number;
-    coordinate_lat: number;
+    coordinate_long?: number;
+    coordinate_lat?: number;
     thumbnail_url?: string;
     detail_urls?: string[];
     created_at?: Date;
@@ -127,6 +129,32 @@ export interface RoomData {
     is_favorite: boolean;
     currency: string;
 }
+
+export interface RoomFormData {
+    title: string;
+    address: string;
+    address_detail: string;
+    has_elevator: boolean;
+    has_parking: boolean;
+    building_type: string;
+    room_structure: string;
+    facilities: Record<string, string>;
+    is_auto_accepted: boolean;
+    hour_enabled: boolean;
+    day_enabled: boolean;
+    week_enabled: boolean;
+    cleaning_time: number;
+    breakfast_service: string;
+    checkin_service: string;
+    additional_facilities: Record<string, string>;
+}
+
+export interface FacilityItem {
+    key: string;
+    label: string;
+    icon: IconProp;
+}
+
 
 export interface CreateRoomData {
     roomData: RoomData,

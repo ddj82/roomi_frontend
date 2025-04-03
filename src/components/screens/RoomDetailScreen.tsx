@@ -4,7 +4,7 @@ import {addRoomHistory, fetchRoomData} from "src/api/api";
 import {Reservation, RoomData} from "../../types/rooms";
 import ImgCarousel from "../util/ImgCarousel";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {IconDefinition} from "@fortawesome/fontawesome-svg-core";
+import { facilityIcons } from "src/types/facilityIcons";
 import {
     faBath,
     faBuilding,
@@ -16,58 +16,11 @@ import {
     faSquareParking,
     faUsers,
     faVectorSquare,
-    faWifi,
-    faTv,
-    faKitchenSet,
-    faSoap,
-    faHandsWash,
-    faSnowflake,
-    faParking,
-    faKitMedical,
-    faFireExtinguisher,
-    faUtensils,
-    faCoffee,
-    faVideo,
-    faTree,
-    faDumbbell,
-    faCouch,
-    faSwimmingPool,
-    faHotTub,
     faMapLocationDot,
     faCalendarDay,
     faChevronUp,
     faChevronDown,
-    faUser,
-    faMugSaucer,
-    faShower,
-    faWindowRestore,
-    faChair,
-    faTable,
-    faTshirt,
-    faPaw,
-    faSmoking,
-    faSmokingBan,
-    faBriefcase,
-    faMartiniGlass,
-    faBed,
-    faTemperatureHalf,
-    faPhone,
-    faPlug,
-    faBolt,
-    faShield,
-    faLock,
-    faBroom,
-    faBellConcierge,
-    faSpa,
-    faMusic,
-    faDice,
-    faBookOpen,
-    faUmbrellaBeach,
-    faCity,
-    faBabyCarriage,
-    faWheelchair,
-    faFire,
-    faCheckCircle, faCircle
+    faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import {useTranslation} from "react-i18next";
 import NaverMapRoom from "../map/NaverMapRoom";
@@ -793,63 +746,3 @@ export default function RoomDetailScreen() {
         </div>
     );
 }
-
-export const facilityIcons: Record<string, IconDefinition> = {
-    "bbq": faUtensils, // 바비큐
-    "cafe": faCoffee, // 카페
-    "cctv": faVideo, // CCTV
-    "garden": faTree, // 정원
-    "gym": faDumbbell, // 헬스장
-    "weekend": faCouch, // 라운지
-    "pool": faSwimmingPool, // 수영장
-    "hot_tub": faHotTub, // 사우나
-    "wifi": faWifi,
-    "tv": faTv,
-    "kitchen": faKitchenSet,
-    "ac_unit": faSnowflake,
-    // "laundry": faSoap,
-    "washing_machine": faSoap,
-    "dry": faHandsWash,
-    "bathtub": faBath,
-    "shower": faShower,
-    "desk": faTable,
-    "iron": faTshirt,
-    "coffee": faMugSaucer,
-    "refrigerator": faKitchenSet,
-    "microwave": faKitchenSet,
-    "park": faTree,
-    "pets": faPaw,
-    "smoking": faSmoking,
-    "smoke_free": faSmokingBan,
-    "fitness": faDumbbell,
-    "grill": faFire,
-    "business": faBriefcase,
-    "restaurant": faUtensils,
-    "bar": faMartiniGlass,
-    "parking": faParking,
-    "medical_services": faKitMedical,
-    "fire_extinguisher": faFireExtinguisher,
-    "videocam": faVideo,
-    "bed": faBed,
-    "door_sliding": faDoorOpen,
-    "window": faWindowRestore,
-    "thermostat": faTemperatureHalf,
-    "chair": faChair,
-    "fridge": faKitchenSet,
-    "outlet": faPlug,
-    "charging_station": faBolt,
-    "phone": faPhone,
-    "beach_access": faUmbrellaBeach,
-    "city_view": faCity,
-    "non_smoking": faSmokingBan,
-    "baby_care": faBabyCarriage,
-    "accessible": faWheelchair,
-    "room_service": faBellConcierge,
-    "cleaning_services": faBroom,
-    "spa": faSpa,
-    "library": faBookOpen,
-    "games": faDice,
-    "music": faMusic,
-    "safe": faLock,
-    "security": faShield
-};
