@@ -12,7 +12,6 @@ import {
     faCalendarDay,
     faLocationDot,
     faUserPlus,
-    faUser
 } from '@fortawesome/free-solid-svg-icons';
 import '../../css/Header.css';
 import {useHeaderBtnVisibility} from "src/components/stores/HeaderBtnStore";
@@ -147,7 +146,7 @@ const Header = () => {
     return (
         <div className="border-b-[1px] border-gray-200">
             <div className="h header container mx-auto md:mt-8 mt-6">
-                <div className="md:mx-auto mx-3 xl:max-w-[1200px] lg:max-w-[1024px] md:max-w-3xl">
+                <div className="mx-auto xl:max-w-[1500px] px-[20px]">
                     <div className="h top-row md:mb-8 mb-6 flex items-center">
                         {/* 로고 영역 */}
                         <div className="h logo-container">
