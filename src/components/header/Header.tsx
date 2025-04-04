@@ -231,7 +231,7 @@ const Header = () => {
     }, [userVisible]);
 
     return (
-        <div className="border-b-[1px] border-gray-200">
+        <div className="border-b border-gray-200">
             <div className="h header container mx-auto md:mt-8 mt-6">
                 <div className="mx-auto xl:max-w-[1500px] px-[20px]">
                     <div className="h top-row md:mb-8 mb-6 flex items-center">

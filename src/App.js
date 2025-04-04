@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import Footer from "./components/footer/Footer";
 import Header from "./components/header/Header";
@@ -12,25 +12,54 @@ import GuestReservationSetScreen from "./components/screens/GuestReservationSetS
 import GuestReservationScreen from "./components/screens/GuestReservationScreen";
 import UserJoinScreen from "./components/screens/UserJoinScreen";
 import UserMessage from "./components/screens/UserMessage";
-import './App.css';
 import 'src/css/Modal.css';
 import 'src/css/Calendar.css';
 import ProtectedAuthRoute from "./api/ProtectedAuthRoute";
-import GuestMyPageMenu from "./components/screens/GuestMyPageMenu";
-import HostMyPageMenu from "./components/screens/HostMyPageMenu";
+import GuestMyPageMobile from "./components/screens/GuestMyPageMobile";
+import HostMyPage from "./components/screens/HostMyPage";
 import ProtectedHostRoute from "./api/ProtectedHostRoute";
 import ProtectedGuestRoute from "./api/ProtectedGuestRoute";
 import KakaoLoginCallback from "./components/util/KakaoLoginCallback";
 import SocialJoinScreen from "./components/screens/SocialJoinScreen";
 import SuccessPage from "./components/toss/SuccessPage";
-
+import {useHeaderStore, useHeaderVisibility} from "./components/stores/HeaderStore";
+import { useLocation } from "react-router-dom";
 
 export default function App() {
     return (
         <Router>
-            <Header/>
+            <AppContent/>
+        </Router>
+    );
+}
+
+function AppContent() {
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    const location = useLocation();
+    const { setVisibility } = useHeaderStore();
+
+    // 경로 변경 감지해서 헤더 visible 상태 설정
+    useEffect(() => {
+        const isMyPage = location.pathname.startsWith("/myPage");
+        setVisibility(!isMobile || !isMyPage);  // 모바일 && myPage면 숨김
+    }, [location.pathname, isMobile]); // <- 경로 or 모바일 상태가 바뀔 때마다 재평가
+
+    // resize에 대한 반응 처리
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    const isVisible = useHeaderStore((state) => state.isVisible);
+
+    return (
+        <>
+            {isVisible && <Header />}
             <div className="app container xl:max-w-[1500px]"
-                 // style={{minHeight: window.innerHeight - 130,}}
+                // style={{minHeight: window.innerHeight - 130,}}
             >
                 <Routes>
                     {/* hostMode === true 일 때 이 부분 전부 차단됨 */}
@@ -44,7 +73,8 @@ export default function App() {
 
                         {/* 로그인 사용자 만 접근 가능 */}
                         <Route element={<ProtectedAuthRoute />}>
-                            <Route path="/myPage" element={<GuestMyPageMenu/>}/>
+                            <Route path="/myPage" element={<GuestMyPageMobile/>}/>
+                            <Route path="/myPage/:menu" element={<GuestMyPageMobile />} />
                             <Route path="/chat" element={<UserMessage/>}/>
                             <Route path="/detail/:roomId/:locale/reservation" element={<GuestReservationSetScreen/>}/>
                             <Route path="/detail/:roomId/:locale/reservation/payment" element={<GuestReservationScreen/>}/>
@@ -56,13 +86,13 @@ export default function App() {
                     <Route element={<ProtectedHostRoute />}>
                         <Route path="/host" element={<HostScreen/>}/>
                         <Route path="/host/insert" element={<MyRoomInsert/>}/>
-                        <Route path="/host/myPage" element={<HostMyPageMenu/>}/>
+                        <Route path="/host/myPage" element={<HostMyPage/>}/>
                     </Route>
                 </Routes>
             </div>
             <div className="hide-on-mobile">
                 <Footer/>
             </div>
-        </Router>
+        </>
     );
 }

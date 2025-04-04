@@ -10,7 +10,7 @@ import Notices from "./myPageMenu/Notices";
 import FAQ from "./myPageMenu/FAQ";
 import HelpCenter from "./myPageMenu/HelpCenter";
 
-export default function HostMyPageMenu() {
+export default function HostMyPage() {
     const { t } = useTranslation();
     const { resetUserMode } = useHostModeStore();
     const disconnect = useChatStore((state) => state.disconnect);
