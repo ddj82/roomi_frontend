@@ -24,7 +24,7 @@ const AccommodationCard = memo(
                     <WishListButton roomId={item.id} isFavorite={item.is_favorite}/>
                     {item.detail_urls && item.detail_urls.length > 0 ? (
                         <ImgCarousel images={item.detail_urls}
-                                     customClass="h-64 md:h-72"/>
+                                     customClass="h-56"/>
                     ) : (
                         <img
                             src="/default-image.jpg" // 이미지 없을 경우 기본 이미지
@@ -106,7 +106,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
     }, [rooms, loading]);
 
     return (
-        <div className="homeScreen container">
+        <div className="homeScreen container mx-auto">
             {renderMap()}
             <div className="homeScreen room-content-container">{renderAccommodations}</div>
         </div>

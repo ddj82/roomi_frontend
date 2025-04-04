@@ -233,7 +233,7 @@ const Header = () => {
     return (
         <div className="border-b-[1px] border-gray-200">
             <div className="h header container mx-auto md:mt-8 mt-6">
-                <div className="md:mx-auto mx-3 xl:max-w-[1200px] lg:max-w-[1024px] md:max-w-3xl">
+                <div className="mx-auto xl:max-w-[1500px] px-[20px]">
                     <div className="h top-row md:mb-8 mb-6 flex items-center">
                         {/* 로고 영역 */}
                         <div className="h logo-container">
@@ -296,7 +296,7 @@ const Header = () => {
                                         {userVisible && (
                                             <div
                                                 className="absolute right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-40 z-[2000] border">
-                                            <ul className="py-2 text-sm text-gray-700">
+                                                <ul className="py-2 text-sm text-gray-700">
                                                     <li>
                                                         {hostMode ? (
                                                             <a href="/host/myPage"

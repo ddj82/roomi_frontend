@@ -29,7 +29,7 @@ export default function App() {
     return (
         <Router>
             <Header/>
-            <div className="app container xl:max-w-[1200px]"
+            <div className="app container xl:max-w-[1500px]"
                  // style={{minHeight: window.innerHeight - 130,}}
             >
                 <Routes>
