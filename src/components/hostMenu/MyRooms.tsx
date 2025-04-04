@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {myRoomList} from "src/api/api";
 import { RoomData } from "src/types/rooms";
-import {faSearch} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useNavigate} from "react-router-dom";
+import { Search, ChevronDown } from 'lucide-react'; // Modern icon library instead of FontAwesome
 
 const MyRooms = () => {
     const navigate = useNavigate();
@@ -11,6 +10,22 @@ const MyRooms = () => {
     const [filteredData, setFilteredData] = useState<RoomData[]>([]); // ✅ 필터링된 데이터
     const [searchQuery, setSearchQuery] = useState(""); // ✅ 검색어 상태
     const [roomCondition, setRoomCondition] = useState(""); // ✅ 방 상태 필터
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // 드롭다운 옵션 정의
+    const conditions = [
+        { value: '', label: '전체' },
+        { value: '활성', label: '활성' },
+        { value: '비활성', label: '비활성' },
+        { value: '승인대기', label: '승인대기' },
+        { value: '승인거절', label: '승인거절' }
+    ];
+
+    // 현재 선택된 조건의 라벨 표시
+    const displayValue = roomCondition ?
+        conditions.find(item => item.value === roomCondition)?.label :
+        '전체';
 
     useEffect(() => {
         const myRoomAPI = async () => {
@@ -55,7 +70,21 @@ const MyRooms = () => {
 
         setFilteredData(filtered);
     }, [searchQuery, roomCondition, data]);
-    
+
+    // 드롭다운 외부 클릭 시 닫기
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const handleInsertBtn = () => {
         console.log('방 등록 클릭');
         navigate("/host/insert");
@@ -63,82 +92,124 @@ const MyRooms = () => {
 
     return (
         <div className="w-full p-4">
-            <div className="mx-auto my-5 flex flex-col md:justify-between md:flex-row">
-                <div className="relative md:w-1/2 flex">
-                    <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <FontAwesomeIcon icon={faSearch} className="w-4 h-4 text-gray-700"/>
+            <div className="mx-auto my-5 flex flex-col gap-4 w-full">
+                <div className="w-full flex flex-col sm:flex-row gap-3">
+                    <div className="relative flex-grow">
+                        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <Search className="w-4 h-4 text-gray-500"/>
+                        </div>
+                        <input
+                            type="search"
+                            className="w-full py-3 pl-10 pr-3 text-base border border-gray-200 rounded-lg
+                  shadow-sm focus:outline-none"
+                            placeholder="제목 또는 주소 입력"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
                     </div>
-                    <input
-                        type="search"
-                        className="w-2/3 ps-10 text-sm border border-gray-300 rounded
-                            focus:ring-2 focus:ring-roomi-0 focus:border-roomi focus:outline-none"
-                        placeholder="제목 또는 주소 입력"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <select
-                        value={roomCondition}
-                        onChange={(e) => setRoomCondition(e.target.value)}
-                        className="border border-gray-300 rounded-md p-2 w-1/3 ml-4
-                            focus:ring-2 focus:ring-roomi-0 focus:border-roomi focus:outline-none">
-                        <option value="">전체</option>
-                        <option value="활성">활성</option>
-                        <option value="비활성">비활성</option>
-                        <option value="승인대기">승인대기</option>
-                        <option value="승인거절">승인거절</option>
-                    </select>
+
+                    {/* 커스텀 드롭다운 */}
+                    <div className="relative w-full sm:w-1/3" ref={dropdownRef}>
+                        <button
+                            type="button"
+                            className="w-full flex items-center justify-between px-3 py-3 text-base
+                  bg-white border  rounded-lg cursor-pointer"
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        >
+                            <span className="text-gray-700">{displayValue}</span>
+                            <ChevronDown className="w-5 h-5 text-gray-500" />
+                        </button>
+
+                        {/* 드롭다운 메뉴 */}
+                        {isDropdownOpen && (
+                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+                                {conditions.map((condition) => (
+                                    <div
+                                        key={condition.value || 'empty'}
+                                        className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
+                                            ${roomCondition === condition.value ? 'bg-roomi-1' : ''}`}
+                                        onClick={() => {
+                                            setRoomCondition(condition.value);
+                                            setIsDropdownOpen(false);
+                                        }}
+                                    >
+                                        {condition.label}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
-                <div className="flex_center md:w-1/4 mt-4 md:mt-0">
-                    <button type="button"
-                            className="p-3.5 text-base text-white bg-roomi border-[1px] border-roomi rounded w-full
-                            hover:text-roomi hover:bg-white focus:ring-4 focus:ring-roomi-0 focus:outline-none"
-                            onClick={handleInsertBtn}>
-                        + 방 등록하기
+
+                {/* 버튼 */}
+                <div className="w-full mt-4 ">
+                    <button
+                        type="button"
+                        className="w-full py-3 px-4 text-base font-medium text-white bg-roomi rounded-lg
+                focus:outline-none flex items-center justify-center "
+                        onClick={handleInsertBtn}
+                    >
+                        <span className="mr-1 ">+</span> 방 등록하기
                     </button>
                 </div>
             </div>
-            {/* ✅ 필터링된 방 목록 */}
-            <div>
+
+            {/* ✅ 필터링된 방 목록 - 스타일 업그레이드 */}
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredData.length > 0 ? (
                     filteredData.map((room, index) => (
-                        <div key={index}
-                             className="flex flex-col items-center bg-gray-100 rounded my-4 p-4
-                             md:flex-row md:py-0 md:px-4 ">
-                            <div className="md:w-48 md:h-32">
+                        <div
+                            key={index}
+                            className="flex flex-col border border-gray-200 rounded-lg p-3 hover:shadow-sm transition-shadow duration-300"
+                        >
+                            <div className="w-full h-64 rounded-md overflow-hidden mb-3">
                                 <img
-                                    className="object-cover rounded md:rounded-lg w-full h-full"
+                                    className="object-cover w-full h-full"
                                     src={room.detail_urls?.[0]}
                                     alt="thumbnail"
                                 />
                             </div>
-                            <div className="md:flex md:justify-between w-full">
-                                <div className="flex flex-col justify-between leading-normal py-2 md:p-4">
-                                    <div
-                                        className={`p-2 mb-2 rounded text-sm w-fit text-white ${
-                                            getRoomStatus(room) === "활성" ? "bg-roomi" :
-                                                getRoomStatus(room) === "비활성" ? "bg-black" :
-                                                    getRoomStatus(room) === "승인거절" ? "bg-red-500" : "bg-gray-500"
-                                        }`}
-                                    >
-                                        {getRoomStatus(room)}
-                                    </div>
 
-                                    <div className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                            <div className="flex-1 flex flex-col justify-between w-full">
+                                <div>
+                        <span
+                            className={`inline-block px-2 py-1 text-xs font-semibold rounded 
+                            ${getRoomStatus(room) === "활성"
+                                ? "bg-blue-100 text-blue-700"
+                                : getRoomStatus(room) === "비활성"
+                                    ? "bg-gray-100 text-gray-700"
+                                    : getRoomStatus(room) === "승인거절"
+                                        ? "bg-red-100 text-red-700"
+                                        : "bg-yellow-100 text-yellow-800"
+                            }`}
+                        >
+                            {getRoomStatus(room)}
+                        </span>
+                                    <div className="mt-1 text-base font-semibold text-gray-900">
                                         {room.title}
                                     </div>
-                                    <div className="mb-3 font-normal text-gray-700">
-                                    {room.address}
+                                    <div className="text-sm text-gray-500">{room.address}</div>
+                                    <div className="text-sm text-gray-500">
+                                        ￦{room.week_price?.toLocaleString()}/주
                                     </div>
                                 </div>
-                                <div className="md:flex_center">
-                                    <button className="bg-gray-300 rounded p-2 text-sm text-gray-700">삭제</button>
-                                    <button className="bg-gray-300 rounded p-2 text-sm text-gray-700 ml-2">수정</button>
+
+                                <div className="mt-3 flex space-x-2">
+                                    <button className="text-xs px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 transition">
+                                        삭제
+                                    </button>
+                                    <button className="text-xs px-3 py-1 border border-blue-300 text-blue-700 rounded hover:bg-blue-50 transition">
+                                        수정
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     ))
                 ) : (
-                    <div className="text-center text-gray-500">🔍 검색 결과가 없습니다.</div>
+                    <div className="text-center bg-gray-50 rounded-lg p-10 mt-6 col-span-full">
+                        <div className="text-gray-500 text-lg">🔍 검색 결과가 없습니다.</div>
+                        <div className="text-gray-400 mt-2">다른 검색어나 필터를 사용해보세요.</div>
+                    </div>
                 )}
             </div>
         </div>

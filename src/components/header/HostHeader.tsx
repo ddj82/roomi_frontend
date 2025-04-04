@@ -33,12 +33,12 @@ const HostHeader: React.FC = () => {
     }, []);
 
     return (
-        <div className="flex flex-wrap justify-center text-sm font-medium text-center" role="tablist">
+        <div className="flex flex-wrap justify-center text-sm font-medium text-center -mt-4" role="tablist">
             {tabs.map((tab) => (
                 <div key={tab} role="presentation" className="mx-2 sm:mx-4 text-base">
                     <button
                         className={`
-                            inline-block p-4
+                            inline-block p-4 relative -top-2
                             ${activeTab === tab ? "text-roomi border-b-2 border-b-roomi" : "hover:text-roomi"
                         }`}
                         onClick={() => {

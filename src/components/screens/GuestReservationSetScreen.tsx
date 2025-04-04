@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {bookReservation} from "../../api/api";
-import {RoomData} from "../../types/rooms";
+import {ReservationHistory, RoomData} from "../../types/rooms";
 import {useTranslation} from "react-i18next";
 import {useDateStore} from "../stores/DateStore";
 import ImgCarousel from "../util/ImgCarousel";
@@ -98,59 +98,98 @@ export default function GuestReservationSetScreen() {
         }));
     };
 
-    const reservationBtn = async () => {
+    const reservationBtn = async (): Promise<void> => {
+        // eslint-disable-next-line no-console
         console.log('결제 할 금액 :', totalPrice);
         let totalNight = nightVal; // 기본 일 단위로 초기화
         if (!calUnit) {
             totalNight = weekValue; // 주 단위면 초기화
         }
+        try {
+            if (startDate && endDate) {
+                const selectionMode = calUnit ? 'daily' : 'weekly';
+                const reservation: Reservation = {
+                    checkIn: startDate,
+                    checkOut: endDate,
+                    selectionMode,
+                    roomId: Number(roomId),
+                    unit: totalNight,
+                    guestName: formData.name,
+                    guestPhone: formData.phone,
+                    guestEmail: formData.email,
+                    totalGuests: guestCount
+                };
+                const response = await bookReservation(reservation);
+                const responseJson = await response.json();
 
-        if (thisRoom.is_auto_accepted) {
-            try {
-                if (startDate && endDate) {
-                    const selectionMode = calUnit ? 'daily' : 'weekly';
-                    const reservation: Reservation = {
-                        checkIn: startDate,
-                        checkOut: endDate,
-                        selectionMode: selectionMode,
-                        roomId: Number(roomId),
-                        unit: totalNight,
-                        guestName: formData.name,
-                        guestPhone: formData.phone,
-                        guestEmail: formData.email,
-                        totalGuests: guestCount
-                    };
-                    const response = await bookReservation(reservation);
-                    const responseJson = await response.json();
-                    const bookData = responseJson.data;
-                    console.log('book', response);
-                    console.log('bookJson', responseJson);
-                    console.log('bookData', bookData);
+                if (responseJson.success && responseJson.data.reservation) {
+                    const bookData = responseJson.data.reservation as ReservationHistory;
+                    // eslint-disable-next-line no-console
+                    console.log('예약 성공:', bookData);
 
-                    navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
-                        state: {
-                            price,
-                            depositPrice,
-                            maintenancePrice,
-                            cleaningPrice,
-                            totalPrice,
-                            totalNight,
-                            formData,
-                            thisRoom,
-                            bookData,
-                        },
-                    });
+                    // 자동 승인 여부에 따라 다른 처리
+                    if (thisRoom.is_auto_accepted) {
+                        // 자동 승인인 경우 결제 페이지로 이동
+                        navigateToPayment(bookData);
+                    } else {
+                        // 자동 승인이 아닌 경우 예약 완료 페이지로 이동
+                        showReservationCompleteModal(bookData);
+                    }
+                } else {
+                    // eslint-disable-next-line no-console
+                    console.error('예약 응답 오류:', responseJson);
+                    alert('예약 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
                 }
-            } catch (e) {
-                console.error('예약하기 실패:', e);
             }
-
-        } else {
-            // 예약내역으로 갈것인지 메인으로 갈것인지 모달
-            alert('엘스문~');
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('예약하기 실패:', e);
+            alert('예약 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
         }
     };
 
+// 결제 페이지로 이동하는 함수
+    const navigateToPayment = (reservationInfo: ReservationHistory): void => {
+        // 결제 페이지로 이동
+        navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
+            state: {
+                price: reservationInfo.price,
+                depositPrice: reservationInfo.deposit,
+                maintenancePrice: reservationInfo.maintenance_fee,
+                cleaningPrice: reservationInfo.fee,
+                totalPrice: reservationInfo.total_price,
+                totalNight: reservationInfo.unit,
+                formData,
+                thisRoom,
+                bookData: reservationInfo,
+            },
+        });
+    };
+
+        // 예약 완료 모달 표시 함수
+    const showReservationCompleteModal = (reservationInfo: ReservationHistory): void => {
+        // 모달 표시 로직
+        // 예시: 모달 컴포넌트 상태 업데이트 또는 모달 라이브러리 활용
+
+        // 모달에서 확인 버튼 클릭 시 처리할 함수
+        const handleConfirm = (): void => {
+            // 예약 내역 페이지로 이동
+            window.location.href = `/reservations/${reservationInfo.id}`;
+        };
+
+        // 모달에서 메인으로 돌아가기 버튼 클릭 시 처리할 함수
+        const handleGoToMain = (): void => {
+            window.location.href = '/';
+        };
+
+        // 여기서는 간단히 alert로 대체하고 예약 내역 페이지로 이동
+        // eslint-disable-next-line no-restricted-globals
+        if (confirm('예약이 완료되었습니다. 예약 내역 페이지로 이동하시겠습니까?')) {
+            handleConfirm();
+        } else {
+            handleGoToMain();
+        }
+    };
     useEffect(() => {
         if (slideIsOpen) {
             document.body.style.overflow = 'hidden';

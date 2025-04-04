@@ -243,6 +243,10 @@ export const be_host = async () => {
 export const myRoomList = async () => {
     return request(`/rooms/my/list`, true, 'GET', undefined, true);
 };
+// 호스트모드 계약 관리 API
+export const myContractList = async () => {
+    return request(`/rooms/my/history`, true, 'GET', undefined, true);
+};
 
 // 방 사용 불가 처리 API
 export const createBulkBlocks = async (id: number, schedulesData: Schedules[]) => {

@@ -1,12 +1,12 @@
 import React, {useState, useRef, useEffect} from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "src/components/stores/AuthStore";
+import {useNavigate} from "react-router-dom";
+import {useAuthStore} from "src/components/stores/AuthStore";
 import DateModal from "src/components/modals/DateModal";
 import LocationModal from "src/components/modals/LocationModal";
 import GuestsModal from "src/components/modals/GuestsModal";
 import AuthModal from "src/components/modals/AuthModal";
-import { BusinessInfoModal } from "src/components/modals/BusinessInfoModal";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {BusinessInfoModal} from "src/components/modals/BusinessInfoModal";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
     faSearch,
     faCalendarDay,
@@ -42,24 +42,24 @@ type LocationOption = {
 type ActiveCardType = 'location' | 'date' | 'guests' | null;
 
 const Header = () => {
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const navigate = useNavigate();
     const [authModalVisible, setAuthModalVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [activeSection, setActiveSection] = useState<ModalSection | null>(null);
-    const [modalPosition, setModalPosition] = useState<ModalPosition>({ x: 0, y: 0 });
+    const [modalPosition, setModalPosition] = useState<ModalPosition>({x: 0, y: 0});
     const [businessInfoVisible, setBusinessInfoVisible] = useState(false);
-    const { authToken } = useAuthStore();
+    const {authToken} = useAuthStore();
     const isVisible = useHeaderBtnVisibility();
     const isVisibleHostScreen = useHostHeaderBtnVisibility();
     const dateRef = useRef(null);
     const locationRef = useRef(null);
     const guestsRef = useRef(null);
-    const {startDate, endDate, } = useDateStore();
+    const {startDate, endDate,} = useDateStore();
     const {guestCount, setGuestCount} = useGuestsStore();
     const {selectedLocation, setSelectedLocation} = useLocationStore();
-    const { hostMode, setHostMode, resetUserMode } = useHostModeStore();
-    const { isHost } = useIsHostStore();
+    const {hostMode, setHostMode, resetUserMode} = useHostModeStore();
+    const {isHost} = useIsHostStore();
     const disconnect = useChatStore((state) => state.disconnect);
     const [userVisible, setUserVisible] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -74,10 +74,10 @@ const Header = () => {
 
     // 위치 옵션 데이터
     const locationOptions: LocationOption[] = [
-        { name: 'Seoul', country: '대한민국' },
-        { name: 'Busan', country: '대한민국' },
-        { name: 'Jeju', country: '대한민국' },
-        { name: 'Daejeon', country: '대한민국' }
+        {name: 'Seoul', country: '대한민국'},
+        {name: 'Busan', country: '대한민국'},
+        {name: 'Jeju', country: '대한민국'},
+        {name: 'Daejeon', country: '대한민국'}
     ];
 
     useEffect(() => {
@@ -149,7 +149,7 @@ const Header = () => {
 
         console.log('Search performed with:', {
             location: selectedLocation,
-            dates: { startDate, endDate },
+            dates: {startDate, endDate},
             guests: guestCount
         });
     };
@@ -380,10 +380,11 @@ const Header = () => {
                                     className="p-2 rounded-full hover:bg-gray-100"
                                     onClick={closeSearchModal}
                                 >
-                                    <FontAwesomeIcon icon={faTimes} className="text-gray-800" />
+                                    <FontAwesomeIcon icon={faTimes} className="text-gray-800"/>
                                 </button>
                                 <h1 className="text-xl font-semibold text-center flex-1">{t('Search')}</h1>
-                                <div className="w-8"></div> {/* 정렬을 위한 여백 */}
+                                <div className="w-8"></div>
+                                {/* 정렬을 위한 여백 */}
                             </div>
 
                             <div ref={modalRef} className="search-content pb-20">
@@ -397,7 +398,7 @@ const Header = () => {
                                         onClick={() => toggleCard('location')}
                                     >
                                         <div className="flex items-center">
-                                            <FontAwesomeIcon icon={faLocationDot} className="text-roomi text-lg mr-3" />
+                                            <FontAwesomeIcon icon={faLocationDot} className="text-roomi text-lg mr-3"/>
                                             <div>
                                                 <h2 className="text-lg font-semibold">{t('Where')}</h2>
                                                 <p className="text-sm text-gray-500">
@@ -412,10 +413,12 @@ const Header = () => {
                                     </div>
 
                                     {/* 카드 내용 - 접기/펼치기 */}
-                                    <div className={`search-card-content p-4 ${activeCard === 'location' ? 'block' : 'hidden'}`}>
+                                    <div
+                                        className={`search-card-content p-4 ${activeCard === 'location' ? 'block' : 'hidden'}`}>
                                         <div className="search-input-container p-3 bg-gray-50 rounded-xl mb-4">
                                             <div className="flex items-center">
-                                                <FontAwesomeIcon icon={faSearch} className="text-gray-400 text-lg mr-3" />
+                                                <FontAwesomeIcon icon={faSearch}
+                                                                 className="text-gray-400 text-lg mr-3"/>
                                                 <input
                                                     type="text"
                                                     className="flex-1 outline-none border-none text-base bg-transparent"
@@ -435,7 +438,8 @@ const Header = () => {
                                                         className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-gray-100"
                                                         onClick={() => handleSelectLocation(location)}
                                                     >
-                                                        <FontAwesomeIcon icon={faLocationDot} className="text-gray-400 mr-3" />
+                                                        <FontAwesomeIcon icon={faLocationDot}
+                                                                         className="text-gray-400 mr-3"/>
                                                         <div>
                                                             <p className="font-medium">{t(location.name.toLowerCase())}</p>
                                                             <p className="text-sm text-gray-500">{t(location.country)}</p>
@@ -507,7 +511,8 @@ const Header = () => {
                                     </div>
 
                                     {/* 카드 내용 - 접기/펼치기 */}
-                                    <div className={`search-card-content p-4 ${activeCard === 'guests' ? 'block' : 'hidden'}`}>
+                                    <div
+                                        className={`search-card-content p-4 ${activeCard === 'guests' ? 'block' : 'hidden'}`}>
                                         <div className="guests-picker-container p-4 bg-gray-50 rounded-xl">
                                             <div className="flex justify-between items-center py-2">
                                                 <div>
