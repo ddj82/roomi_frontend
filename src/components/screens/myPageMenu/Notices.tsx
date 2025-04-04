@@ -31,7 +31,6 @@ export default function Notices() {
 
     return (
         <div className="p-4 md:px-8">
-            <h2 className="mb-4 font_title">{t("공지사항")}</h2>
             {noticeList && noticeList.length > 0 ? (
                 <>
                     {noticeList.map((notice) => {

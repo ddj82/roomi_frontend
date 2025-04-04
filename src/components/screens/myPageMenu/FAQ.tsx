@@ -87,7 +87,6 @@ export default function FAQ() {
 
     return (
         <div className="p-4 md:px-8">
-            <h2 className="mb-4 font_title">{t('루미 FAQ')}</h2>
             {/* 상단 버튼들 */}
             <div className="my-8 grid md:grid-cols-3 grid-cols-2 gap-4">
                 {faqTitles.map((faq) => (

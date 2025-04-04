@@ -69,7 +69,6 @@ export default function MyInfoEdit() {
         <div className="p-4 md:px-8">
             <form onSubmit={handleSubmit}>
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="font_title">{t('내 정보')}</h2>
                     {!editMyInfo ? (
                         <button
                             type="button"

@@ -43,7 +43,6 @@ export default function LanguageSet() {
     return (
         <div className="p-4 md:px-8">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="font_title">{t("언어 설정")}</h2>
                 <button type="button"
                         onClick={() => handleChangeLanguage(langCode)}
                         className={`py-2 px-5 text-white text-sm rounded 

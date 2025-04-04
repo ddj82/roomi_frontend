@@ -31,7 +31,6 @@ export default function MyHistoryList() {
 
     return (
         <div className="p-4 md:px-8">
-            <h2 className="mb-4 font_title">{t("최근 본 게시물")}</h2>
             {roomData && roomData.length > 0 ? (
                 roomData.map((room, index) => (
                     <div key={index} className="flex md:p-4 bg-gray-100 my-4 rounded-lg relative md:flex-row flex-col">

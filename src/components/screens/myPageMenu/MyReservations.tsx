@@ -165,7 +165,6 @@ export default function MyReservations() {
                 {reservedDetails ? (
                     /*예약 상세 정보*/
                     <>
-                        <h2 className="font_title">{t("예약 상세 정보")}</h2>
                         <button type="button" onClick={() => setReservedDetails(null)} className="py-2 px-4 text-sm rounded font-bold">
                             목록 보기
                         </button>
@@ -173,7 +172,6 @@ export default function MyReservations() {
                 ) : (
                     /*예약 내역*/
                     <>
-                        <h2 className="font_title">{t("예약 내역")}</h2>
                         <div>
                             <button type="button" onClick={() => setReservedListSet(true)}
                                     className={`py-2 px-4 text-sm rounded font-bold ${!reservedListSet && 'text-gray-400'}`}
