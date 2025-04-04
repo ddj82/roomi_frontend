@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import Modal from 'react-modal';
 import Calendar from 'react-calendar';
-import 'src/css/DateModal.css';
-import 'react-calendar/dist/Calendar.css'; // 스타일 파일도 import
+import 'react-calendar/dist/Calendar.css';
 import dayjs from 'dayjs';
 import {useDateStore} from "src/components/stores/DateStore";
 import {useTranslation} from "react-i18next";
@@ -10,20 +8,20 @@ import {faCalendarDay} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { LuCirclePlus, LuCircleMinus } from "react-icons/lu";
 import i18n from "i18next";
+import './AccordionCalendar.css'; // 새로운 CSS 파일 생성
 
-interface DateModalProps {
-    visible: boolean;
-    onClose: () => void;
-    position: { x: number; y: number };
-    embedded?: boolean;
+interface AccordionCalendarProps {
+    onSave?: () => void; // 날짜 선택 완료 시 호출될 콜백 함수
 }
 
-const DateModal = ({ visible, onClose, position }: DateModalProps) => {
+const AccordionCalendar: React.FC<AccordionCalendarProps> = ({ onSave }) => {
     const {
         startDate, setStartDate,
         endDate, setEndDate,
         calUnit, setCalUnit,
-        weekValue, setWeekValue } = useDateStore();
+        weekValue, setWeekValue
+    } = useDateStore();
+
     const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 875);
     const {t} = useTranslation();
     const [userLocale, setUserLocale] = useState(i18n.language);
@@ -55,7 +53,7 @@ const DateModal = ({ visible, onClose, position }: DateModalProps) => {
         }
     };
 
-    const weekDateSet = (dateString : string) => {
+    const weekDateSet = (dateString: string) => {
         setStartDate(dateString);
         const startDateObj = new Date(dateString);
         const endDateObj = new Date(startDateObj);
@@ -80,30 +78,20 @@ const DateModal = ({ visible, onClose, position }: DateModalProps) => {
 
     const handleConfirm = () => {
         if (startDate && endDate) {
-            setStartDate(startDate);
-            setEndDate(endDate);
-            onClose();
+            // 날짜 저장 시 onSave 콜백 호출
+            if (onSave) {
+                onSave();
+            }
         }
     };
 
     // 날짜 문자열 변환 함수
     const formatDate = (date: Date): string => {
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1 필요
+        const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     };
-
-    useEffect(() => {
-        if (visible) {
-            document.body.style.overflow = 'hidden'; // 스크롤 방지
-        } else {
-            document.body.style.overflow = 'auto'; // 스크롤 복원
-        }
-        return () => {
-            document.body.style.overflow = 'auto'; // 컴포넌트 언마운트 시 복원
-        };
-    }, [visible]);
 
     const dayUnit = () => {
         setCalUnit(true);
@@ -118,7 +106,7 @@ const DateModal = ({ visible, onClose, position }: DateModalProps) => {
         setEndDate(null);
     };
 
-    const handleWeekValue = (value : boolean) => {
+    const handleWeekValue = (value: boolean) => {
         if (value) {
             // 플러스 버튼 클릭 시
             setWeekValue(prev => prev + 1);
@@ -136,68 +124,71 @@ const DateModal = ({ visible, onClose, position }: DateModalProps) => {
         }
     }, [weekValue]);
 
+    // 날짜 범위 표시 형식
+    const getDateRangeText = () => {
+        if (startDate && endDate) {
+            const start = dayjs(startDate).format('YYYY-MM-DD');
+            const end = dayjs(endDate).format('YYYY-MM-DD');
+            return `${start} ~ ${end}`;
+        }
+        return t('날짜를 선택하세요');
+    };
+
     return (
-        <Modal
-            isOpen={visible}
-            onRequestClose={onClose}
-            overlayClassName="overlay"
-            style={{
-                content: {
-                    backgroundColor: '#FFF',
-                    borderRadius: '12px',
-                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-                    position: isMobile ? 'initial' : 'absolute',
-                    width: '350px',
-                    top: `${position.y}px`,
-                    left: `${position.x}px`,
-                }
-            }}
-            className="dateModal"
-        >
-            <div className="dateModal modal-container">
-                <div className="dateModal header-text flex justify-end">
-                    <div className="flex text-xs rounded-lg bg-gray-200 px-1.5 p-0.5">
-                        <div className={`flex_center ${calUnit ? "bg-roomi rounded text-white" : ""}`}>
-                            <button onClick={dayUnit} className="px-2.5 py-1">
-                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>{t("일")}
-                            </button>
-                        </div>
-                        <div className={`flex_center ${calUnit ? "" : "bg-roomi rounded text-white"}`}>
-                            <button onClick={weekUnit} className="px-2.5 py-1">
-                                <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>{t("주")}
-                            </button>
-                        </div>
+        <div className="accordion-calendar">
+            <div className="calendar-header flex justify-between items-center mb-4">
+                <div className="selected-dates text-sm">
+                    {getDateRangeText()}
+                </div>
+                <div className="flex text-xs rounded-lg bg-gray-200 px-1.5 p-0.5">
+                    <div className={`flex_center ${calUnit ? "bg-roomi rounded text-white" : ""}`}>
+                        <button onClick={dayUnit} className="px-2.5 py-1">
+                            <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>{t("일")}
+                        </button>
+                    </div>
+                    <div className={`flex_center ${calUnit ? "" : "bg-roomi rounded text-white"}`}>
+                        <button onClick={weekUnit} className="px-2.5 py-1">
+                            <FontAwesomeIcon icon={faCalendarDay} className="mr-1"/>{t("주")}
+                        </button>
                     </div>
                 </div>
-                {!calUnit && (
-                    <div className="flex_center m-4">
-                        <button className="text-lg" onClick={() => handleWeekValue(false)}>
-                            <LuCircleMinus/>
-                        </button>
-                        <div className="text-xs font-bold mx-3">{weekValue}{t("주")}</div>
-                        <button className="text-lg" onClick={() => handleWeekValue(true)}>
-                            <LuCirclePlus />
-                        </button>
-                    </div>
-                )}
+            </div>
+
+            {!calUnit && (
+                <div className="flex_center my-3">
+                    <button className="text-lg" onClick={() => handleWeekValue(false)}>
+                        <LuCircleMinus/>
+                    </button>
+                    <div className="text-xs font-bold mx-3">{weekValue}{t("주")}</div>
+                    <button className="text-lg" onClick={() => handleWeekValue(true)}>
+                        <LuCirclePlus />
+                    </button>
+                </div>
+            )}
+
+            <div className="calendar-container">
                 <Calendar
                     onClickDay={handleDayClick}
                     tileClassName={getTileClassName}
                     minDate={new Date()}
-                    next2Label={null} // 추가로 넘어가는 버튼 제거
-                    prev2Label={null} // 이전으로 돌아가는 버튼 제거
-                    className="custom-calendar"
+                    next2Label={null}
+                    prev2Label={null}
+                    className="custom-calendar accordion-custom-calendar"
                     formatDay ={(locale, date) => dayjs(date).format('D')}
                     locale={userLocale}
                 />
-                {startDate && endDate && (
-                    <button className="dateModal confirm-button" onClick={handleConfirm}>
-                        선택 완료
-                    </button>
-                )}
             </div>
-        </Modal>
+
+            {startDate && endDate && (
+                <button
+                    className="confirm-button w-full mt-4 p-3 bg-roomi text-white rounded-lg font-medium"
+                    onClick={handleConfirm}
+                >
+                    {t('선택 완료')}
+                </button>
+            )}
+        </div>
     );
 };
 
-export default DateModal;
+export default AccordionCalendar;
