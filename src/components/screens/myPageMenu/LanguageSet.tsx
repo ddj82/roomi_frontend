@@ -1,29 +1,25 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 import i18n from 'src/i18n';
-import {updateLanguage} from "../../../api/api"; // i18n 초기화 파일 import
+import {updateLanguage} from "../../../api/api";
 
-// 지원할 언어 목록
+// 지원할 언어 목록 (언어 코드, 라벨, 로케일 정보 추가)
 const LANGUAGES = [
-    { code: 'ko', label: '한국어' },
-    { code: 'en', label: 'English' },
-    { code: 'ja', label: '日本語' },
-    { code: 'zh', label: '中文' },
+    { code: 'ko', label: '한국어', locale: 'ko-KR' },
+    { code: 'en', label: 'English', locale: 'en-US' },
+    { code: 'ja', label: '日本語', locale: 'ja-JP' },
+    { code: 'zh', label: '中文', locale: 'zh-CN' },
 ];
 
 export default function LanguageSet() {
     const {t} = useTranslation();
-    // i18n.language에는 현재 적용된 언어 코드가 들어있음
     const [currentLang, setCurrentLang] = useState(i18n.language);
     const [langCode, setLangCode] = useState('');
 
-    // 언어 변경 함수
-    const handleChangeLanguage = async (langCode: string) => {
+    const handleChangeLanguage = async (langCode:string) => {
         try {
-            // api 호출
             const response = await updateLanguage(langCode);
             if (response.ok) {
-                // i18n 설정
                 i18n.changeLanguage(langCode);
                 setCurrentLang(langCode);
                 localStorage.setItem('i18nextLng', langCode);
@@ -35,48 +31,73 @@ export default function LanguageSet() {
         }
     };
 
-    // 현재 적용된 언어 객체
     const currentLanguage = LANGUAGES.find((lang) => lang.code === currentLang);
-    // 현재 적용된 언어를 제외한 나머지 언어 목록
     const otherLanguages = LANGUAGES.filter((lang) => lang.code !== currentLang);
 
     return (
-        <div className="p-4 md:px-8">
-            <div className="flex justify-between items-center mb-4">
-                <button type="button"
-                        onClick={() => handleChangeLanguage(langCode)}
-                        className={`py-2 px-5 text-white text-sm rounded 
-                        ${langCode
-                            ? 'bg-roomi hover:bg-roomi'        // langCode가 있을 때
-                            : 'bg-gray-300 cursor-not-allowed'  // langCode가 없을 때
-                        }`}
-                        disabled={!langCode} // langCode가 없으면 비활성화
-                >
-                    {t('수정')}
-                </button>
-            </div>
-
+        <div className="p-4 md:p-6 max-w-md mx-auto">
+            {/* 현재 언어 섹션 */}
             <div className="mb-8">
-                <p className="my-2 mt-4">{t('현재 언어')}</p>
-                <p className="px-4 py-2 mb-2 rounded flex_center bg-roomi text-white">{currentLanguage?.label}</p>
-                <div className="text-xs text-gray-600 mb-4">
+                <h3 className="text-lg font-bold mb-4">{t('현재 언어')}</h3>
+                <div className="border border-roomi rounded-lg p-5 flex items-center justify-between">
+                    <div className="flex flex-col">
+                        <span className="text-lg font-medium">{currentLanguage?.label}</span>
+                        <span className="text-sm text-gray-500 mt-1">{currentLanguage?.locale}</span>
+                    </div>
+                    <div className="bg-roomi text-white px-3 py-1 rounded-full text-xs">
+                        {t('현재')}
+                    </div>
+                </div>
+                <div className="text-xs text-gray-600 mt-3">
                     {t('언어설정 가이드')}
                 </div>
             </div>
 
-            <div className="flex flex-col space-y-2">
-                {/* (2) 나머지 언어 선택 버튼들 */}
+            {/* 언어 선택 섹션 */}
+            <h3 className="text-lg font-bold mb-4">{t('언어 선택')}</h3>
+            <div className="space-y-3">
                 {otherLanguages.map((lang) => (
-                    <button
+                    <div
                         key={lang.code}
                         onClick={() => setLangCode(lang.code)}
-                        className={`px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 
-                            ${langCode === lang.code && 'bg-roomi hover:bg-roomi text-white'}
+                        className={`border rounded-lg p-5 cursor-pointer transition-all
+                            ${langCode === lang.code
+                            ? 'border-roomi bg-roomi-light'
+                            : 'border-gray-200 hover:border-roomi-2'
+                        }
                         `}
                     >
-                        {lang.label}
-                    </button>
+                        <div className="flex items-center justify-between">
+                            <div className="flex flex-col">
+                                <span className="text-lg">{lang.label}</span>
+                                <span className="text-sm text-gray-500 mt-1">{lang.locale}</span>
+                            </div>
+                            {langCode === lang.code && (
+                                <div className="w-5 h-5 rounded-full bg-roomi flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 ))}
+            </div>
+
+            {/* 수정 버튼 */}
+            <div className="mt-8 mb-4">
+                <button
+                    type="button"
+                    onClick={() => handleChangeLanguage(langCode)}
+                    className={`w-full py-4 text-white text-base font-medium rounded-lg transition-colors
+                        ${langCode
+                        ? 'bg-roomi hover:bg-roomi-dark'
+                        : 'bg-gray-300 cursor-not-allowed'
+                    }`}
+                    disabled={!langCode}
+                >
+                    {t('언어 변경하기')}
+                </button>
             </div>
         </div>
     );

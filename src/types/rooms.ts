@@ -89,6 +89,10 @@ export interface RoomData {
     cleaning_time: number;
     breakfast_service: string;
     checkin_service: string;
+    //월 가격 추가
+    month_price : number;
+    deposit_month : number;
+    maintenance_fee_month: number;
 
     // 상세 정보
     description?: string;

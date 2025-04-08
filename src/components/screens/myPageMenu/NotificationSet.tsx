@@ -46,25 +46,14 @@ export default function NotificationSet() {
 
     return (
         <div className="p-4 md:px-8">
-            <div className="flex justify-between items-center mb-4">
-                <button
-                    type="button"
-                    onClick={handleSave}
-                    disabled={isInitialState}  // 초기 상태이면 비활성화
-                    className={`py-2 px-5 text-white text-sm rounded
-                        ${isInitialState ? 'bg-gray-300 cursor-not-allowed' : 'bg-roomi'}
-                    `}
-                >
-                    {t('수정')}
-                </button>
-            </div>
+            {/* Section content first */}
             <div className="flex justify-between p-2 py-4 border-b">
                 <div>
                     <div className="font-bold mb-2">푸시 알림</div>
                     <div className="text-xs text-gray-400 font-bold">이벤트 및 혜택정보 이메일 수신 허용</div>
                 </div>
-                <div className="flex_center">
-                    <ToggleButton checked={alert} onChange={(e: any) => setAlert(e.target.checked)}/>
+                <div className="flex items-center">
+                    <ToggleButton checked={alert} onChange={(e) => setAlert(e.target.checked)}/>
                 </div>
             </div>
             <div className="flex justify-between p-2 py-4 border-b">
@@ -72,8 +61,8 @@ export default function NotificationSet() {
                     <div className="font-bold mb-2">SMS 수신</div>
                     <div className="text-xs text-gray-400 font-bold">이벤트 및 혜택정보 이메일 수신 허용</div>
                 </div>
-                <div className="flex_center">
-                    <ToggleButton checked={SMS} onChange={(e: any) => setSMS(e.target.checked)}/>
+                <div className="flex items-center">
+                    <ToggleButton checked={SMS} onChange={(e) => setSMS(e.target.checked)}/>
                 </div>
             </div>
             <div className="flex justify-between p-2 py-4 border-b">
@@ -81,9 +70,23 @@ export default function NotificationSet() {
                     <div className="font-bold mb-2">이메일 수신</div>
                     <div className="text-xs text-gray-400 font-bold">이벤트 및 혜택정보 이메일 수신 허용</div>
                 </div>
-                <div className="flex_center">
-                    <ToggleButton checked={email} onChange={(e: any) => setEmail(e.target.checked)}/>
+                <div className="flex items-center">
+                    <ToggleButton checked={email} onChange={(e) => setEmail(e.target.checked)}/>
                 </div>
+            </div>
+
+            {/* Save button moved to bottom */}
+            <div className="mt-8 mb-4">
+                <button
+                    type="button"
+                    onClick={handleSave}
+                    disabled={isInitialState}
+                    className={`w-full py-3 text-white rounded-lg text-sm font-medium
+                    ${isInitialState ? 'bg-gray-300 cursor-not-allowed' : 'bg-roomi'}
+                `}
+                >
+                    {t('수정')}
+                </button>
             </div>
         </div>
     );

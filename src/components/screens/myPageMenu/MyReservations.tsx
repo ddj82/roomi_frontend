@@ -232,7 +232,7 @@ export default function MyReservations() {
     };
 
     return (
-        <div className="p-4 md:px-8">
+        <div className="p-4 py-0 md:px-8 relative">
             {/*타이틀*/}
             <div className="flex justify-between items-center mb-4">
                 {reservedDetails ? (
