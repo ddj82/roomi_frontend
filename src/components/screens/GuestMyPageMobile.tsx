@@ -16,6 +16,7 @@ import {
 import {useAuthStore} from "../stores/AuthStore";
 import GuestMyPageMobileContent from "./GuestMyPageMobileContent";
 import "src/css/MyPage.css"
+import MyReservations from "./myPageMenu/MyReservations";
 
 export default function GuestMyPageMobile() {
     const { t } = useTranslation();
@@ -61,7 +62,7 @@ export default function GuestMyPageMobile() {
     // 메뉴 내용 렌더링 로직을 함수로 분리
     const renderMenuContent = () => {
         if (loading) return <div className="flex_center">Loading...</div>;
-        if (!selectedMenu) return <div className="flex_center">메뉴를 선택해주세요.</div>;
+        if (!selectedMenu) return <MyReservations/>;
         if (selectedMenu !== "") {
             return <GuestMyPageMobileContent selectedMenu={selectedMenu}/>
         }
@@ -100,18 +101,18 @@ export default function GuestMyPageMobile() {
                             <div className="font-bold text-xl mb-4">{t("나의 거래")}</div>
                             <div className="">
                                 <div className="my-3">
-                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('예약내역')}>
+                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('예약 내역')}>
                                         <FontAwesomeIcon icon={faRectangleList} className="w-5 h-5 mr-3 "/>
                                         {t("예약 내역")}
                                     </button>
                                 </div>
                                 <div className="my-3">
-                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('관심')}>
+                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('관심 목록')}>
                                         <FontAwesomeIcon icon={faThumbsUp} className="w-5 h-5 mr-3 "/>{t("관심 목록")}
                                     </button>
                                 </div>
                                 <div className="my-3">
-                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('최근본게시물')}>
+                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('최근 본 게시물')}>
                                         <FontAwesomeIcon icon={faEye} className="w-5 h-5 mr-3 "/>{t("최근 본 게시물")}
                                     </button>
                                 </div>
@@ -121,17 +122,17 @@ export default function GuestMyPageMobile() {
                             <div className="font-bold text-xl mb-4">{t("기본 설정")}</div>
                             <div className="">
                                 <div className="my-3">
-                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('알림')}>
+                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('알림 설정')}>
                                         <FontAwesomeIcon icon={faBell} className="w-5 h-5 mr-3 "/>{t("알림 설정")}
                                     </button>
                                 </div>
                                 <div className="my-3">
-                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('언어')}>
+                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('언어 설정')}>
                                         <FontAwesomeIcon icon={faGlobe} className="w-5 h-5 mr-3 "/>{t("언어 설정")}
                                     </button>
                                 </div>
                                 <div className="my-3">
-                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('통화')}>
+                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('통화 설정')}>
                                         <FontAwesomeIcon icon={faDollarSign} className="w-5 h-5 mr-3 "/>{t("통화 설정")}
                                     </button>
                                 </div>
@@ -164,7 +165,7 @@ export default function GuestMyPageMobile() {
                             <div className="font-bold text-xl mb-4">{t("계정 설정")}</div>
                             <div className="">
                                 <div className="my-3">
-                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('내정보')}>
+                                    <button className="w-full text-start p-3 hover:bg-gray-100 rounded-md transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('내 정보')}>
                                         <FontAwesomeIcon icon={faPenToSquare} className="w-5 h-5 mr-3 "/>
                                         {t("내 정보")}
                                     </button>

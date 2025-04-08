@@ -47,7 +47,8 @@ export default function RoomDetailScreen() {
         startDate, setStartDate,
         endDate, setEndDate,
         calUnit, setCalUnit,
-        weekValue, setWeekValue
+        weekValue, setWeekValue,
+        monthValue, setMonthValue
     } = useDateStore();
     const [slideIsOpen, setSlideIsOpen] = useState(false);
     const {createRoom} = useChatStore();
@@ -152,55 +153,54 @@ export default function RoomDetailScreen() {
     const handleDayClick = (date: Date) => {
         const dateString = dayjs(date).format('YYYY-MM-DD');
 
-        // console.log('blockDates', blockDates);
-        // console.log('checkInList', checkInList);
-        // console.log('checkOutList', checkOutList);
-        // console.log('oneDayList', oneDayList);
-
         // checkInList 배열을 돌면서 dateString과 같은 날짜가 있는지 확인
         const isCheckInDate = checkInList.some((checkIn) => checkIn === dateString);
         // checkOutList 배열을 돌면서 dateString과 같은 날짜가 있는지 확인
         const isCheckOutDate = checkOutList.some((checkIn) => checkIn === dateString);
-
         if (calUnit) {
-            if (!startDate || (startDate && endDate)) {
-                if (isCheckInDate) {
-                    alert('선택한 날짜 범위에 예약 불가 날짜가 포함되어 있습니다.');
-                    setStartDate(null);
-                    setEndDate(null);
-                } else {
-                    setStartDate(dateString);
-                    setEndDate(null);
-                }
-            } else if (new Date(dateString) >= new Date(startDate)) {
-                if (isCheckOutDate) {
-                    alert('선택한 날짜 범위에 예약 불가 날짜가 포함되어 있습니다.');
-                    setStartDate(null);
-                    setEndDate(null);
-                } else {
-                    // startDate부터 dateString 사이에 하나라도 blockDates에 있으면 alert 띄우기
-                    const hasBlockedDate = blockDates.some(blockedDate =>
-                        dayjs(blockedDate).isBetween(startDate, dateString, 'day', '[]')
-                    );
-                    const hasBlockedDate2 = oneDayList.some(date =>
-                        dayjs(date).isBetween(dayjs(startDate).add(1, 'day').format('YYYY-MM-DD'), dateString, 'day', '[]')
-                    );
-
-                    if (hasBlockedDate || hasBlockedDate2) {
-                        alert('선택한 날짜 범위에 예약 불가 날짜가 포함되어 있습니다.');
-                        setStartDate(null);
-                        setEndDate(null);
-                    } else {
-                        setEndDate(dateString);
-                    }
-                }
-            } else {
-                setStartDate(dateString);
-                setEndDate(null);
-            }
+            monthDateSet(dateString);
         } else {
             weekDateSet(dateString);
         }
+        // if (calUnit) {
+        //     if (!startDate || (startDate && endDate)) {
+        //         if (isCheckInDate) {
+        //             alert('선택한 날짜 범위에 예약 불가 날짜가 포함되어 있습니다.');
+        //             setStartDate(null);
+        //             setEndDate(null);
+        //         } else {
+        //             setStartDate(dateString);
+        //             setEndDate(null);
+        //         }
+        //     } else if (new Date(dateString) >= new Date(startDate)) {
+        //         if (isCheckOutDate) {
+        //             alert('선택한 날짜 범위에 예약 불가 날짜가 포함되어 있습니다.');
+        //             setStartDate(null);
+        //             setEndDate(null);
+        //         } else {
+        //             // startDate부터 dateString 사이에 하나라도 blockDates에 있으면 alert 띄우기
+        //             const hasBlockedDate = blockDates.some(blockedDate =>
+        //                 dayjs(blockedDate).isBetween(startDate, dateString, 'day', '[]')
+        //             );
+        //             const hasBlockedDate2 = oneDayList.some(date =>
+        //                 dayjs(date).isBetween(dayjs(startDate).add(1, 'day').format('YYYY-MM-DD'), dateString, 'day', '[]')
+        //             );
+        //
+        //             if (hasBlockedDate || hasBlockedDate2) {
+        //                 alert('선택한 날짜 범위에 예약 불가 날짜가 포함되어 있습니다.');
+        //                 setStartDate(null);
+        //                 setEndDate(null);
+        //             } else {
+        //                 setEndDate(dateString);
+        //             }
+        //         }
+        //     } else {
+        //         setStartDate(dateString);
+        //         setEndDate(null);
+        //     }
+        // } else {
+        //     weekDateSet(dateString);
+        // }
     };
 
     // 블록 날짜 범위 검사 함수
@@ -215,6 +215,23 @@ export default function RoomDetailScreen() {
         const startDateObj = new Date(dateString);
         const endDateObj = new Date(dateString);
         endDateObj.setDate(startDateObj.getDate() + (weekValue * 7)); // 주 단위 계산
+        const formattedEndDate = dayjs(endDateObj).format('YYYY-MM-DD');
+
+        // 블록 날짜 범위 검사
+          if (hasBlockedDatesInRange(dateString, formattedEndDate, blockDates)) {
+            alert('선택한 날짜 범위에 예약 불가 날짜가 포함되어 있습니다.');
+            setStartDate(null);
+            setEndDate(null);
+          } else {
+            setStartDate(dateString);
+            setEndDate(formattedEndDate);
+          }
+    };
+
+    const monthDateSet = (dateString: string) => {
+        const startDateObj = new Date(dateString);
+        const endDateObj = new Date(dateString);
+        endDateObj.setDate(startDateObj.getDate() + (monthValue * 30)); // 월 단위 계산
         const formattedEndDate = dayjs(endDateObj).format('YYYY-MM-DD');
 
         // 블록 날짜 범위 검사
@@ -244,6 +261,24 @@ export default function RoomDetailScreen() {
         }
     };
 
+    const handleMonthValue = (value: boolean) => {
+        if (value) {
+            // 플러스 버튼 클릭 시
+            setMonthValue(prev => prev + 1);
+        } else {
+            // 마이너스 버튼 클릭 시
+            if (monthValue === 1) return;
+            setMonthValue(prev => prev - 1);
+        }
+        console.log('monthValue', monthValue);
+
+        // 만약 이미 startDate가 선택되어 있다면, 월(month) 값 변경 후 다시 검사
+        if (startDate) {
+            console.log('startDate', startDate);
+            monthDateSet(startDate);
+        }
+    };
+
     const getTileClassName = ({date}: { date: Date }) => {
         const dateString = dayjs(date).format('YYYY-MM-DD');
         if (dateString === startDate) {
@@ -267,15 +302,18 @@ export default function RoomDetailScreen() {
         return null;
     };
 
-    const dayUnit = () => {
+    const monthUnit = () => {
         setCalUnit(true);
         setWeekValue(1);
+        setMonthValue(1);
         setStartDate(null);
         setEndDate(null);
     };
 
     const weekUnit = () => {
         setCalUnit(false);
+        setWeekValue(1);
+        setMonthValue(1);
         setStartDate(null);
         setEndDate(null);
     };
@@ -285,7 +323,11 @@ export default function RoomDetailScreen() {
         if (startDate && endDate && !calUnit) {
             weekDateSet(startDate);
         }
-    }, [weekValue]);
+        // startDate, endDate 설정이 되어 있으면 monthDateSet 다시
+        if (startDate && endDate && calUnit) {
+            monthDateSet(startDate);
+        }
+    }, [weekValue, monthValue]);
 
     const reservationBtn = () => {
         const isAuthenticated = !!localStorage.getItem("authToken"); // 로그인 여부 확인
@@ -295,18 +337,18 @@ export default function RoomDetailScreen() {
             return;
         }
 
-        // 기본 일간 가격 저장
-        let price = (Number(room?.day_price) || 0);
-        let depositPrice = (Number(room?.deposit) || 0);
-        let maintenancePrice = (Number(room?.maintenance_fee) || 0);
-        let cleaningPrice = (Number(room?.cleaning_fee) || 0);
+        // 기본 주간 가격 저장
+        let price = (Number(room?.week_price) || 0);
+        let depositPrice = (Number(room?.deposit_week) || 0);
+        let maintenancePrice = (Number(room?.maintenance_fee_week) || 0);
+        let cleaningPrice = (Number(room?.cleaning_fee_week) || 0);
 
-        if (!calUnit) {
-            // 주간 가격 저장
-            price = (Number(room?.week_price) || 0);
-            depositPrice = (Number(room?.deposit_week) || 0);
-            maintenancePrice = (Number(room?.maintenance_fee_week) || 0);
-            cleaningPrice = (Number(room?.cleaning_fee_week) || 0);
+        if (calUnit) {
+            // 월간 가격 저장
+            price = (Number(room?.month_price) || 0);
+            depositPrice = (Number(room?.deposit_month) || 0);
+            maintenancePrice = (Number(room?.maintenance_fee_month) || 0);
+            cleaningPrice = (Number(room?.cleaning_fee_month) || 0);
         }
         const allOptionPrice = depositPrice + maintenancePrice + cleaningPrice;
         const thisRoom = room;
@@ -633,11 +675,13 @@ export default function RoomDetailScreen() {
                             : "max-h-0 overflow-hidden opacity-0"}`}
                         >
                             {/* 가격 정보 헤더 */}
+                            {/* calUnit : true = 월 */}
+                            {/* calUnit : false = 주 */}
                             <div className="p-3 border-b border-gray-100">
                                 <h2 className="text-lg font-bold text-gray-800 mb-2">
-                                    {t("원")}{calUnit ? room.day_price?.toLocaleString() : room.week_price?.toLocaleString()}
+                                    {t("원")}{calUnit ? room.month_price?.toLocaleString() : room.week_price?.toLocaleString()}
                                     <span className="text-sm font-normal text-gray-600 ml-1">
-                                        / {calUnit ? t("일") : t("주")}
+                                        / {calUnit ? t("월") : t("주")}
                                     </span>
                                 </h2>
                             </div>
@@ -645,21 +689,21 @@ export default function RoomDetailScreen() {
                             <div className="flex justify-center text-sm bg-roomi-light rounded-lg p-1 mb-6">
                                 <button
                                     className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
-                                    ${calUnit ? "bg-roomi text-white" : "text-gray-700 hover:bg-roomi-000"}`}
-                                    onClick={dayUnit}
-                                >
-                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("일")}
-                                </button>
-                                <button
-                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
                                     ${calUnit ? "text-gray-700 hover:bg-roomi-000" : "bg-roomi text-white"}`}
                                     onClick={weekUnit}
                                 >
                                     <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("주")}
                                 </button>
+                                <button
+                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
+                                    ${calUnit ? "bg-roomi text-white" : "text-gray-700 hover:bg-roomi-000"}`}
+                                    onClick={monthUnit}
+                                >
+                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("월")}
+                                </button>
                             </div>
                             {/* 주 단위 선택기 */}
-                            {!calUnit && (
+                            {!calUnit ? (
                                 <div className="flex_center mb-3 text-sm">
                                     <button
                                         className="w-8 h-8 flex_center rounded-full border border-gray-200 text-roomi"
@@ -671,6 +715,22 @@ export default function RoomDetailScreen() {
                                     <button
                                         className="w-8 h-8 flex_center rounded-full border border-gray-200 text-roomi"
                                         onClick={() => handleWeekValue(true)}
+                                    >
+                                        <LuCirclePlus/>
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex_center mb-3 text-sm">
+                                    <button
+                                        className="w-8 h-8 flex_center rounded-full border border-gray-200 text-roomi"
+                                        onClick={() => handleMonthValue(false)}
+                                    >
+                                        <LuCircleMinus/>
+                                    </button>
+                                    <div className="mx-4 font-semibold">{monthValue} {t("달")}</div>
+                                    <button
+                                        className="w-8 h-8 flex_center rounded-full border border-gray-200 text-roomi"
+                                        onClick={() => handleMonthValue(true)}
                                     >
                                         <LuCirclePlus/>
                                     </button>

@@ -32,9 +32,9 @@ export default function GuestReservationSetScreen() {
         startDate,
         endDate,
         calUnit,
-        weekValue, } = useDateStore();
+        weekValue,
+        monthValue,} = useDateStore();
     const {guestCount, setGuestCount} = useGuestsStore();
-    const [nightVal, setNightVal] = useState(0);
     const navigate = useNavigate();
     const location = useLocation();
     const {
@@ -52,6 +52,7 @@ export default function GuestReservationSetScreen() {
         email: "",
     });
     const [slideIsOpen, setSlideIsOpen] = useState(false);
+    const [fee, setFee] = useState(0);
 
     useEffect(() => {
         setRoom(thisRoom);
@@ -61,6 +62,7 @@ export default function GuestReservationSetScreen() {
         formData.phone = '01012312312';
         formData.email = 'qweqwe@naver.com';
         setGuestCount(prev => 2);
+        setFee((price + maintenancePrice) * 0.08);
     }, [roomId, locale]);
 
     const handleguestValue = (value : boolean) => {
@@ -76,13 +78,14 @@ export default function GuestReservationSetScreen() {
 
     const handleNight = () => {
         if (calUnit) {
-            if (startDate && endDate) {
-                const diffDays = dayjs(endDate).diff(dayjs(startDate), "day"); // 일(day) 단위 차이 계산
-                setNightVal(diffDays);
-                setTotalPrice((price * diffDays) + allOptionPrice);
-            } else {
-                setNightVal(0); // 날짜가 없을 경우 0박으로 설정
-            }
+            // if (startDate && endDate) {
+            //     const diffDays = dayjs(endDate).diff(dayjs(startDate), "day"); // 일(day) 단위 차이 계산
+            //     setNightVal(diffDays);
+            //     setTotalPrice((price * diffDays) + allOptionPrice);
+            // } else {
+            //     setNightVal(0); // 날짜가 없을 경우 0박으로 설정
+            // }
+            setTotalPrice((price * monthValue) + allOptionPrice);
         } else {
             setTotalPrice((price * weekValue) + allOptionPrice);
         }
@@ -101,13 +104,13 @@ export default function GuestReservationSetScreen() {
     const reservationBtn = async (): Promise<void> => {
         // eslint-disable-next-line no-console
         console.log('결제 할 금액 :', totalPrice);
-        let totalNight = nightVal; // 기본 일 단위로 초기화
-        if (!calUnit) {
-            totalNight = weekValue; // 주 단위면 초기화
+        let totalNight = weekValue; // 기본 주 단위로 초기화
+        if (calUnit) {
+            totalNight = monthValue; // 월 단위면 초기화
         }
         try {
             if (startDate && endDate) {
-                const selectionMode = calUnit ? 'daily' : 'weekly';
+                const selectionMode = calUnit ? 'monthly' : 'weekly';
                 const reservation: Reservation = {
                     checkIn: startDate,
                     checkOut: endDate,
@@ -148,7 +151,7 @@ export default function GuestReservationSetScreen() {
         }
     };
 
-// 결제 페이지로 이동하는 함수
+    // 결제 페이지로 이동하는 함수
     const navigateToPayment = (reservationInfo: ReservationHistory): void => {
         // 결제 페이지로 이동
         navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
@@ -156,7 +159,7 @@ export default function GuestReservationSetScreen() {
                 price: reservationInfo.price,
                 depositPrice: reservationInfo.deposit,
                 maintenancePrice: reservationInfo.maintenance_fee,
-                cleaningPrice: reservationInfo.fee,
+                fee: reservationInfo.fee,
                 totalPrice: reservationInfo.total_price,
                 totalNight: reservationInfo.unit,
                 formData,
@@ -166,7 +169,7 @@ export default function GuestReservationSetScreen() {
         });
     };
 
-        // 예약 완료 모달 표시 함수
+    // 예약 완료 모달 표시 함수
     const showReservationCompleteModal = (reservationInfo: ReservationHistory): void => {
         // 모달 표시 로직
         // 예시: 모달 컴포넌트 상태 업데이트 또는 모달 라이브러리 활용
@@ -373,10 +376,10 @@ export default function GuestReservationSetScreen() {
                                 {/*숙박비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="font-medium text-gray-700">
-                                        {t('원')}{price.toLocaleString()} × {calUnit ? (`${nightVal}${t('일')}`) : (`${weekValue}${t('주')}`)}
+                                        {t('원')}{price.toLocaleString()} × {calUnit ? (`${monthValue}${t('달')}`) : (`${weekValue}${t('주')}`)}
                                     </div>
                                     <div className="font-bold text-gray-800">
-                                        {t('원')}{(calUnit ? (price * nightVal) : (price * weekValue)).toLocaleString()}
+                                        {t('원')}{(calUnit ? (price * monthValue) : (price * weekValue)).toLocaleString()}
                                     </div>
                                 </div>
                                 {/*보증금*/}
@@ -392,12 +395,12 @@ export default function GuestReservationSetScreen() {
                                 {/*청소비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("cleaning_fee")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{cleaningPrice.toLocaleString()}</div>
+                                    <div className="font-bold text-gray-800">{t('원')}{fee.toLocaleString()}</div>
                                 </div>
                                 <div className="flex justify-between border-t border-gray-200 mt-3 pt-4">
                                     <div className="text-gray-800 font-medium">{t("총결제금액")}</div>
                                     <div
-                                        className="font-bold text-roomi text-xl">{t("원")}{totalPrice.toLocaleString()}</div>
+                                        className="font-bold text-roomi text-xl">{t("원")}{(totalPrice + fee).toLocaleString()}</div>
                                 </div>
                             </div>
                             <div className="mt-4 text-sm space-y-6 max-w-lg mx-auto">

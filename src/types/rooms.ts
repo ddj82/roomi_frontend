@@ -79,13 +79,18 @@ export interface RoomData {
     min_days?: number;
     week_enabled: boolean;
     week_price?: number;
+    month_enabled: boolean;
+    month_price?: number;
     min_weeks?: number;
     maintenance_fee?: number;
     maintenance_fee_week?: number;
+    maintenance_fee_month?: number;
     cleaning_fee?: number;
     cleaning_fee_week?: number;
+    cleaning_fee_month?: number;
     deposit?: number;
     deposit_week?: number;
+    deposit_month?: number;
     cleaning_time: number;
     breakfast_service: string;
     checkin_service: string;

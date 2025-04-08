@@ -18,19 +18,19 @@ export default function GuestMyPageMobileContent({selectedMenu}: GuestMyPageCont
 
     // 메뉴 내용 렌더링 로직을 함수로 분리
     const renderMenuContent = () => {
-        if (selectedMenu === '내정보') {
+        if (selectedMenu === '내 정보') {
             return <MyInfoEdit/>;
-        } else if (selectedMenu === '예약내역') {
+        } else if (selectedMenu === '예약 내역') {
             return <MyReservations/>;
-        } else if (selectedMenu === '관심') {
+        } else if (selectedMenu === '관심 목록') {
             return <MyFavoriteList/>;
-        } else if (selectedMenu === '최근본게시물') {
+        } else if (selectedMenu === '최근 본 게시물') {
             return <MyHistoryList/>;
-        } else if (selectedMenu === '알림') {
+        } else if (selectedMenu === '알림 설정') {
             return <NotificationSet/>;
-        } else if (selectedMenu === '언어') {
+        } else if (selectedMenu === '언어 설정') {
             return <LanguageSet/>;
-        } else if (selectedMenu === '통화') {
+        } else if (selectedMenu === '통화 설정') {
             return <CurrencySet/>;
         } else if (selectedMenu === '공지사항') {
             return <Notices/>;

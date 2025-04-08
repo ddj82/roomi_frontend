@@ -283,7 +283,7 @@ const Header = () => {
                         )}
 
                         {/* 프로필/로그인 영역 - 기존 코드 유지 */}
-                        <div className="mr-4">
+                        <div className="md:mr-4 mr-1.5">
                             {authToken ? (
                                 <div className="flex">
                                     <div className="relative" ref={dropdownRef}>
@@ -291,7 +291,7 @@ const Header = () => {
                                             className="w-8 h-8 md:w-10 md:h-10
                                              flex items-center justify-center bg-roomi-000 text-roomi rounded-full"
                                             onClick={toggleDropdown}>
-                                            <img src={profileImg} alt="프로필사진" className="rounded-full w-10 h-10"/>
+                                            <img src={profileImg} alt="프로필사진" className="rounded-full md:w-10 md:h-10 w-8 h-8"/>
                                         </button>
                                         {userVisible && (
                                             <div
