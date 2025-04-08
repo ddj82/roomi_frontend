@@ -75,7 +75,13 @@ export default function MyReservations() {
             return renderStatusUI('bg-gray-700', '계약취소');
         } else if (status === 'REJECTED') { // 승인 거절
             return renderStatusUI('bg-gray-700', '승인거절');
-        } else { // 승인 대기, 결제전, 기본값
+        }else if (status === 'IN_USE') { // 승인 거절
+            return renderStatusUI('bg-gray-700', '이용중');
+        }else if (status === 'CHECKED_OUT') { // 승인 거절
+            return renderStatusUI('bg-gray-700', '환급대기');
+        }
+
+        else { // 승인 대기, 결제전, 기본값
             return renderStatusUI('bg-gray-500', '승인대기');
         }
     };
@@ -108,9 +114,15 @@ export default function MyReservations() {
             }
         } else if (status === 'COMPLETED') {
             return { backgroundColor: 'bg-gray-500', message: '계약종료' };
-        } else if (status === 'CANCELLED') {
+        } else if (status === 'IN_USE') {
+            return { backgroundColor: 'bg-gray-700', message: '이용중' };
+        }else if (status === 'CHECKED_OUT') {
+            return { backgroundColor: 'bg-gray-700', message: '환급대기' };
+        }
+        else if (status === 'CANCELLED') {
             return { backgroundColor: 'bg-gray-700', message: '계약취소' };
         }
+
         return { backgroundColor: 'bg-gray-500', message: '승인대기' };
     };
 
@@ -121,7 +133,7 @@ export default function MyReservations() {
             <div
                 key={item.order_id}
                 className="my-4 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all "
-                style={{backgroundColor: '#F5F5F5'}}
+                style={{backgroundColor: '#F7F7F7'}}
                 onClick={() => setReservedDetails(item)}
             >
                 {/* 모바일 버전 - 두 번째 이미지 스타일 */}

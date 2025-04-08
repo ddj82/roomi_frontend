@@ -40,7 +40,10 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
             return renderStatusUI('bg-gray-500', '환불요청');
         } else if (message === '이용중') {
             return renderStatusUI('bg-gray-500', '퇴실요청');
-        } else { // 계약종료, 예약취소
+        }else if (message === '환급대기') {
+            return renderStatusUI('bg-gray-500', '환급대기');
+        }
+        else { // 계약종료, 예약취소
             return renderStatusUI('bg-roomi', '삭제');
         }
     };

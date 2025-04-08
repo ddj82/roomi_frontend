@@ -10,7 +10,7 @@ import {faBell, faEye, faRectangleList, faThumbsUp} from '@fortawesome/free-regu
 import {
     faArrowLeft, faBullhorn,
     faDollarSign,
-    faGlobe, faHeadset,
+    faGlobe, faHeadset, faHome,
     faPenToSquare, faQuestionCircle, faSignOutAlt, faUserMinus,
 } from "@fortawesome/free-solid-svg-icons";
 import {useAuthStore} from "../stores/AuthStore";
@@ -98,7 +98,7 @@ export default function GuestMyPageMobile() {
                 </div>
                 <div className="my-2 mx-4">
                     <div className="w-full">
-                        <div className="border-t border-gray-300 pt-3">
+                        <div className="border-t border-gray-300 pt-3 px-6">
                             <div className="font-bold text-base mb-2">{t("나의 거래")}</div>
                             <div className="">
                                 <div className="my-1">
@@ -125,7 +125,7 @@ export default function GuestMyPageMobile() {
                                 </div>
                             </div>
                         </div>
-                        <div className="border-t border-gray-300 pt-3 mt-3">
+                        <div className="border-t border-gray-300 pt-3 mt-3 px-6">
                             <div className="font-bold text-base mb-2">{t("기본 설정")}</div>
                             <div className="">
                                 <div className="my-1">
@@ -151,7 +151,7 @@ export default function GuestMyPageMobile() {
                                 </div>
                             </div>
                         </div>
-                        <div className="border-t border-gray-300 pt-3 mt-3">
+                        <div className="border-t border-gray-300 pt-3 mt-3 px-6">
                             <div className="font-bold text-base mb-2">{t("고객 지원")}</div>
                             <div>
                                 <div className="my-1">
@@ -180,7 +180,7 @@ export default function GuestMyPageMobile() {
                                 </div>
                             </div>
                         </div>
-                        <div className="border-t border-gray-300 pt-3 mt-3">
+                        <div className="border-t border-gray-300 pt-3 mt-3 px-6">
                             <div className="font-bold text-base mb-2">{t("계정 설정")}</div>
                             <div>
                                 <div className="my-1">
@@ -214,14 +214,28 @@ export default function GuestMyPageMobile() {
 
             {/* 모바일 버전 메뉴 - 그리드 레이아웃 적용 */}
             <div className="guest-mypage-left md:hidden p-4">
-                <div className="flex items-center mb-6">
-                    <div className="relative mr-4">
-                        <img src={profileImg} alt="프로필사진"
-                             className="rounded-full w-16 h-16 object-cover border-2"/>
+                {/* 상단 헤더 영역: 홈 아이콘(왼쪽)과 프로필 정보(오른쪽) */}
+                <div className="flex items-center justify-between mb-6">
+                    {/* 홈 아이콘 - 왼쪽 */}
+                    <div>
+                        <button
+                            onClick={() => window.location.href = '/'}
+                            className="p-3 bg-gray-50 rounded-lg flex items-center justify-center"
+                        >
+                            <FontAwesomeIcon icon={faHome} className="text-xl text-roomi" />
+                        </button>
                     </div>
-                    <div className="flex-1">
-                        <div className="font-semibold text-lg">{localStorage.getItem('userName')}</div>
-                        <div className="text-sm text-gray-600">{localStorage.getItem('userEmail')}</div>
+
+                    {/* 프로필 정보 - 오른쪽 */}
+                    <div className="flex items-center">
+                        <div className="flex-1 text-right mr-4">
+                            <div className="font-semibold text-lg">{localStorage.getItem('userName')}</div>
+                            <div className="text-sm text-gray-600">{localStorage.getItem('userEmail')}</div>
+                        </div>
+                        <div className="relative">
+                            <img src={profileImg} alt="프로필사진"
+                                 className="rounded-full w-16 h-16 object-cover border-2"/>
+                        </div>
                     </div>
                 </div>
 

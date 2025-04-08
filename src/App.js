@@ -24,6 +24,10 @@ import SocialJoinScreen from "./components/screens/SocialJoinScreen";
 import SuccessPage from "./components/toss/SuccessPage";
 import {useHeaderStore, useHeaderVisibility} from "./components/stores/HeaderStore";
 import { useLocation } from "react-router-dom";
+import {useIsHostStore} from "./components/stores/IsHostStore";
+import {useHostHeaderBtnVisibility} from "./components/stores/HostHeaderBtnStore";
+import BottomNavigation from "./components/navigator/BottomNavigator";
+import BottomNavigator from "./components/navigator/BottomNavigator";
 
 export default function App() {
     return (
@@ -37,6 +41,7 @@ function AppContent() {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const location = useLocation();
     const { setVisibility } = useHeaderStore();
+    const isVisibleHostScreen = useHostHeaderBtnVisibility();
 
     // 경로 변경 감지해서 헤더 visible 상태 설정
     useEffect(() => {
@@ -90,6 +95,7 @@ function AppContent() {
                     </Route>
                 </Routes>
             </div>
+            {isVisibleHostScreen && isMobile && <BottomNavigator />}
             <div className="hide-on-mobile">
                 <Footer/>
             </div>

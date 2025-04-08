@@ -22,6 +22,8 @@ export default function FAQ() {
         { id: 4, title: t('주/월 단위 계약이란 무엇인가요?'), content: t('단위계약설명') },
         { id: 5, title: t('루미만의 차별화된 장점은 무엇인가요?'), content: t('장점설명') },
     ];
+
+    // 다른 FAQ 리스트들...
     const faqList2: FAQList[] = [
         { id: 1, title: t('전입신고가 가능한 공간인가요?'), content: t('전입신고내용') },
         { id: 2, title: t('공간을 실제로 보고 계약할 수 있나요?'), content: t('공간내용') },
@@ -74,9 +76,7 @@ export default function FAQ() {
     // 상단 버튼 클릭 시 FAQ 목록 변경
     const setFAQList = (listId: string) => {
         setSelectedTitle(listId);
-        // listsMap에서 해당 listId 키에 맞는 배열을 가져와 상태에 저장
         setList(listsMap[listId] || []);
-        // 아코디언 펼침 상태 초기화
         setExpandedId(null);
     };
 
@@ -86,45 +86,85 @@ export default function FAQ() {
     };
 
     return (
-        <div className="p-4 md:px-8">
-            {/* 상단 버튼들 */}
-            <div className="my-8 grid md:grid-cols-3 grid-cols-2 gap-4">
-                {faqTitles.map((faq) => (
-                    <button
-                        key={faq.id}
-                        type="button"
-                        onClick={() => setFAQList(faq.listId)}
-                        className={`p-3 m-2 rounded-full md:text-sm text-xs font-bold focus:outline-none
-                            ${selectedTitle === faq.listId ? 'text-white bg-roomi' : 'text-roomi bg-roomi-light'}
+        <div className="p-4 md:p-6 max-w-3xl mx-auto">
+            <h2 className="text-xl font-bold mb-6">{t('자주 묻는 질문')}</h2>
+
+            {/* 카테고리 선택 탭 */}
+            <div className="mb-8 overflow-x-auto pb-2 scrollbar-hidden">
+                <div className="flex flex-nowrap md:grid md:grid-cols-3 gap-3">
+                    {faqTitles.map((faq) => (
+                        <button
+                            key={faq.id}
+                            type="button"
+                            onClick={() => setFAQList(faq.listId)}
+                            className={`px-5 py-3 rounded-lg text-sm font-medium whitespace-nowrap transition-all
+                                ${selectedTitle === faq.listId
+                                ? 'text-white bg-roomi shadow-sm'
+                                : 'text-gray-700 bg-gray-100 hover:bg-gray-200'}
                             `}
-                    >
-                        {faq.title}
-                    </button>
-                ))}
+                        >
+                            {faq.title}
+                        </button>
+                    ))}
+                </div>
             </div>
 
-            {/* 아코디언 목록 */}
-            {list.map((faqItem) => {
-                const isOpen = expandedId === faqItem.id;
-                return (
-                    <div key={faqItem.id} className="border-b border-gray-300 mb-2">
-                        {/* 제목 버튼 */}
-                        <button
-                            onClick={() => toggleAccordion(faqItem.id)}
-                            className="w-full text-left p-3 bg-gray-50 cursor-pointer focus:outline-none"
+            {/* FAQ 질문 목록 */}
+            <div className="space-y-3">
+                {list.map((faqItem) => {
+                    const isOpen = expandedId === faqItem.id;
+                    return (
+                        <div
+                            key={faqItem.id}
+                            className="border rounded-lg overflow-hidden transition-all "
                         >
-                            <div className="font-bold">{faqItem.title}</div>
-                        </button>
+                            {/* 질문 버튼 */}
+                            <button
+                                onClick={() => toggleAccordion(faqItem.id)}
+                                className="w-full text-left p-4 bg-white flex items-center justify-between cursor-pointer focus:outline-none"
+                            >
+                                <h3 className="font-medium text-gray-800 pr-8">{faqItem.title}</h3>
+                                <div className="text-gray-400 flex-shrink-0">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className={`h-5 w-5 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </button>
 
-                        {/* 내용 아코디언 */}
-                        <AccordionItem isOpen={isOpen}>
-                            <div className="p-3 text-sm bg-white leading-relaxed whitespace-pre-wrap">
-                                {faqItem.content}
-                            </div>
-                        </AccordionItem>
+                            {/* 답변 내용 */}
+                            <AccordionItem isOpen={isOpen}>
+                                <div className="p-4 border-t border-gray-100 bg-gray-50 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                                    {faqItem.content}
+                                </div>
+                            </AccordionItem>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* 리스트가 비어있을 때 */}
+            {list.length === 0 && (
+                <div className="flex items-center justify-center py-16 text-gray-500 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="text-center">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-10 w-10 mx-auto text-gray-400 mb-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p>{t('질문 목록이 없습니다.')}</p>
                     </div>
-                );
-            })}
+                </div>
+            )}
         </div>
     );
 };
