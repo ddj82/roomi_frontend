@@ -29,13 +29,13 @@ export default function MyReservations() {
                 // 🔥 예약을 nowReserved와 beforeReserved로 분류
                 const nowReservedData = responseJson.data.filter(
                     (reservation: ReservationHistory) =>
-                        dayjs.utc(reservation.check_in_date).format('YYYY-MM-DD') >= today ||
-                        dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') >= today
+                        dayjs.utc(reservation.reservation.check_in_date).format('YYYY-MM-DD') >= today ||
+                        dayjs.utc(reservation.reservation.check_out_date).format('YYYY-MM-DD') >= today
                 );
 
                 const beforeReservedData = responseJson.data.filter(
                     (reservation: ReservationHistory) =>
-                        dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') < today
+                        dayjs.utc(reservation.reservation.check_out_date).format('YYYY-MM-DD') < today
                 );
 
                 setNowReserved(nowReservedData);
@@ -114,7 +114,7 @@ export default function MyReservations() {
     const renderReservationList = (list: ReservationHistory[]) => {
         return (
             list.map((item) => (
-                <div key={item.order_id} className="flex flex-col md:flex-row justify-between md:p-2 bg-gray-100 my-4 rounded-lg relative">
+                <div key={item.reservation.order_id} className="flex flex-col md:flex-row justify-between md:p-2 bg-gray-100 my-4 rounded-lg relative">
                     <div className="md:w-1/4">
                         <div className="md:w-36 md:h-32 md:mr-4">
                             <img
@@ -132,9 +132,9 @@ export default function MyReservations() {
                                         {item.room.title}
                                     </span>
                                     <span className="flex items-end gap-1">
-                                        <span>{dayjs.utc(item.check_in_date).format('YYYY-MM-DD')}</span>
+                                        <span>{dayjs.utc(item.reservation.check_in_date).format('YYYY-MM-DD')}</span>
                                         <span>~</span>
-                                        <span>{dayjs.utc(item.check_out_date).format('YYYY-MM-DD')}</span>
+                                        <span>{dayjs.utc(item.reservation.check_out_date).format('YYYY-MM-DD')}</span>
                                     </span>
                                 </div>
                             </div>
@@ -142,14 +142,14 @@ export default function MyReservations() {
                         <div className="font-normal text-gray-700">{item.room.address}</div>
                         <div className="flex gap-0.5">
                             <div>총 금액 : {t('원')}</div>
-                            <div>{item.total_price.toLocaleString()}</div>
+                            <div>{item.reservation.total_price.toLocaleString()}</div>
                         </div>
                         <div className="md:mt-1 mt-2">
                             {renderStatus(
-                                item.status,
-                                item.payment_status,
-                                dayjs.utc(item.check_in_date).format('YYYY-MM-DD'),
-                                dayjs.utc(item.check_out_date).format('YYYY-MM-DD')
+                                item.reservation.status,
+                                item.reservation.payment_status,
+                                dayjs.utc(item.reservation.check_in_date).format('YYYY-MM-DD'),
+                                dayjs.utc(item.reservation.check_out_date).format('YYYY-MM-DD')
                             )}
                         </div>
                     </div>
@@ -194,10 +194,10 @@ export default function MyReservations() {
                     <MyReservationDetails
                         reserveData={reservedDetails}
                         statusInfo={getStatusMessage(
-                            reservedDetails.status,
-                            reservedDetails.payment_status,
-                            dayjs.utc(reservedDetails.check_in_date).format('YYYY-MM-DD'),
-                            dayjs.utc(reservedDetails.check_out_date).format('YYYY-MM-DD')
+                            reservedDetails.reservation.status,
+                            reservedDetails.reservation.payment_status,
+                            dayjs.utc(reservedDetails.reservation.check_in_date).format('YYYY-MM-DD'),
+                            dayjs.utc(reservedDetails.reservation.check_out_date).format('YYYY-MM-DD')
                         )}
                     />
                 ) : (

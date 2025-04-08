@@ -53,10 +53,12 @@ export default function GuestReservationSetScreen() {
     });
     const [slideIsOpen, setSlideIsOpen] = useState(false);
     const [fee, setFee] = useState(0);
+    const [userCurrency, setUserCurrency] = useState('');
 
     useEffect(() => {
         setRoom(thisRoom);
         handleNight();
+        setUserCurrency(localStorage.getItem('userCurrency') ?? "");
         // 더미데이터
         formData.name = '진유진';
         formData.phone = '01012312312';
@@ -102,8 +104,6 @@ export default function GuestReservationSetScreen() {
     };
 
     const reservationBtn = async (): Promise<void> => {
-        // eslint-disable-next-line no-console
-        console.log('결제 할 금액 :', totalPrice);
         let totalNight = weekValue; // 기본 주 단위로 초기화
         if (calUnit) {
             totalNight = monthValue; // 월 단위면 초기화
@@ -120,14 +120,14 @@ export default function GuestReservationSetScreen() {
                     guestName: formData.name,
                     guestPhone: formData.phone,
                     guestEmail: formData.email,
-                    totalGuests: guestCount
+                    totalGuests: guestCount,
+                    currency: userCurrency,
                 };
                 const response = await bookReservation(reservation);
                 const responseJson = await response.json();
 
                 if (responseJson.success && responseJson.data.reservation) {
-                    const bookData = responseJson.data.reservation as ReservationHistory;
-                    // eslint-disable-next-line no-console
+                    const bookData = responseJson.data as ReservationHistory;
                     console.log('예약 성공:', bookData);
 
                     // 자동 승인 여부에 따라 다른 처리
@@ -139,13 +139,11 @@ export default function GuestReservationSetScreen() {
                         showReservationCompleteModal(bookData);
                     }
                 } else {
-                    // eslint-disable-next-line no-console
                     console.error('예약 응답 오류:', responseJson);
                     alert('예약 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
                 }
             }
         } catch (e) {
-            // eslint-disable-next-line no-console
             console.error('예약하기 실패:', e);
             alert('예약 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
         }
@@ -156,15 +154,21 @@ export default function GuestReservationSetScreen() {
         // 결제 페이지로 이동
         navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
             state: {
-                price: reservationInfo.price,
-                depositPrice: reservationInfo.deposit,
-                maintenancePrice: reservationInfo.maintenance_fee,
-                fee: reservationInfo.fee,
-                totalPrice: reservationInfo.total_price,
-                totalNight: reservationInfo.unit,
+                price: Number(reservationInfo.reservation.price.toFixed(2)),
+                depositPrice: Number(reservationInfo.reservation.deposit.toFixed(2)),
+                maintenancePrice: Number(reservationInfo.reservation.maintenance_fee.toFixed(2)),
+                fee: Number(reservationInfo.reservation.fee.toFixed(2)),
+                totalPrice: Number(reservationInfo.reservation.total_price.toFixed(2)),
+                totalNight: reservationInfo.reservation.unit,
                 formData,
                 thisRoom,
-                bookData: reservationInfo,
+                bookData: {
+                    reservation: reservationInfo.reservation,
+                    room: reservationInfo.room,
+                },
+                JPY: reservationInfo.reservation.yen_price,
+                USD: reservationInfo.reservation.dollar_price,
+
             },
         });
     };
@@ -177,7 +181,7 @@ export default function GuestReservationSetScreen() {
         // 모달에서 확인 버튼 클릭 시 처리할 함수
         const handleConfirm = (): void => {
             // 예약 내역 페이지로 이동
-            window.location.href = `/reservations/${reservationInfo.id}`;
+            window.location.href = `/reservations/${reservationInfo.reservation.id}`;
         };
 
         // 모달에서 메인으로 돌아가기 버튼 클릭 시 처리할 함수
@@ -186,13 +190,13 @@ export default function GuestReservationSetScreen() {
         };
 
         // 여기서는 간단히 alert로 대체하고 예약 내역 페이지로 이동
-        // eslint-disable-next-line no-restricted-globals
-        if (confirm('예약이 완료되었습니다. 예약 내역 페이지로 이동하시겠습니까?')) {
+        if (window.confirm('예약이 완료되었습니다. 예약 내역 페이지로 이동하시겠습니까?')) {
             handleConfirm();
         } else {
             handleGoToMain();
         }
     };
+
     useEffect(() => {
         if (slideIsOpen) {
             document.body.style.overflow = 'hidden';
@@ -379,28 +383,28 @@ export default function GuestReservationSetScreen() {
                                         {t('원')}{price.toLocaleString()} × {calUnit ? (`${monthValue}${t('달')}`) : (`${weekValue}${t('주')}`)}
                                     </div>
                                     <div className="font-bold text-gray-800">
-                                        {t('원')}{(calUnit ? (price * monthValue) : (price * weekValue)).toLocaleString()}
+                                        {t('원')}{(calUnit ? (price * monthValue) : (price * weekValue)).toFixed(2).toLocaleString()}
                                     </div>
                                 </div>
                                 {/*보증금*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("deposit")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{depositPrice.toLocaleString()}</div>
+                                    <div className="font-bold text-gray-800">{t('원')}{depositPrice.toFixed(2).toLocaleString()}</div>
                                 </div>
                                 {/*관리비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("service_charge")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{maintenancePrice.toLocaleString()}</div>
+                                    <div className="font-bold text-gray-800">{t('원')}{maintenancePrice.toFixed(2).toLocaleString()}</div>
                                 </div>
                                 {/*청소비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("cleaning_fee")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{fee.toLocaleString()}</div>
+                                    <div className="font-bold text-gray-800">{t('원')}{fee.toFixed(2).toLocaleString()}</div>
                                 </div>
                                 <div className="flex justify-between border-t border-gray-200 mt-3 pt-4">
                                     <div className="text-gray-800 font-medium">{t("총결제금액")}</div>
                                     <div
-                                        className="font-bold text-roomi text-xl">{t("원")}{(totalPrice + fee).toLocaleString()}</div>
+                                        className="font-bold text-roomi text-xl">{t("원")}{(totalPrice + fee).toFixed(2).toLocaleString()}</div>
                                 </div>
                             </div>
                             <div className="mt-4 text-sm space-y-6 max-w-lg mx-auto">

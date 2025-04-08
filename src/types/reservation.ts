@@ -8,4 +8,5 @@ export interface Reservation {
     guestPhone: string;
     guestEmail: string;
     totalGuests: number;
+    currency: string;
 }

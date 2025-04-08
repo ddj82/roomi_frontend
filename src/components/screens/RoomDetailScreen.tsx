@@ -419,7 +419,7 @@ export default function RoomDetailScreen() {
                         </div>
 
                         {/* 인증 및 설명 */}
-                        <div className="px-1">
+                        <div className={`px-1`}>
                             {room.is_verified && (
                                 <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-roomi mb-4">
                                     <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
