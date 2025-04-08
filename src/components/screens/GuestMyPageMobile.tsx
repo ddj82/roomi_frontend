@@ -195,8 +195,8 @@ export default function GuestMyPageMobile() {
             {/* 모바일에서만 오버레이 표시 */}
             {isMobile && selectedMenu && (
                 <div className="fixed top-0 left-0 w-full h-full bg-white z-50 flex flex-col overflow-hidden">
-                    <div className="flex items-center p-6 border-b border-gray-200 bg-white sticky top-0 z-10">
-                        <button className="mr-4 px-4 py-3 rounded-full bg-gray-100 hover:bg-gray-200 transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('')}>
+                    <div className="flex items-center p-6 bg-white sticky top-0 z-10">
+                        <button className="mr-4 px-4 py-3 rounded-full   transition duration-200 text-lg" onClick={() => handleSetSelectedMenu('')}>
                             <FontAwesomeIcon icon={faArrowLeft} className="w-5 h-5" />
                         </button>
                         <h2 className="text-2xl font-bold">{selectedMenu}</h2>
