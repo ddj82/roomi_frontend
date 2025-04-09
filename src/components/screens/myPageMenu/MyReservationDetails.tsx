@@ -93,19 +93,19 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                     <div className="flex flex-col gap-2 text-sm p-5 text-gray-500">
                         <div className="flex justify-between">
                             <div className="font-bold">예약번호</div>
-                            <div>{reserveData.order_id}</div>
+                            <div>{reserveData.reservation.order_id}</div>
                         </div>
                         <div className="flex justify-between">
                             <div className="font-bold">체크인</div>
-                            <div>{dayjs.utc(reserveData.check_in_date).format('YYYY-MM-DD')}</div>
+                            <div>{dayjs.utc(reserveData.reservation.check_in_date).format('YYYY-MM-DD')}</div>
                         </div>
                         <div className="flex justify-between">
                             <div className="font-bold">체크아웃</div>
-                            <div>{dayjs.utc(reserveData.check_out_date).format('YYYY-MM-DD')}</div>
+                            <div>{dayjs.utc(reserveData.reservation.check_out_date).format('YYYY-MM-DD')}</div>
                         </div>
                         <div className="flex justify-between">
                             <div className="font-bold">게스트</div>
-                            <div>{reserveData.guest_count}{t('명')}</div>
+                            <div>{reserveData.reservation.guest_count}{t('명')}</div>
                         </div>
                         <div className="flex justify-between">
                             <div className="font-bold">예약상태</div>
@@ -113,7 +113,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                         </div>
                         <div className="flex justify-between">
                             <div className="font-bold">예약날짜</div>
-                            <div>{dayjs.utc(reserveData.created_at).format('YYYY-MM-DD')}</div>
+                            <div>{dayjs.utc(reserveData.reservation.created_at).format('YYYY-MM-DD')}</div>
                         </div>
                     </div>
                 </AccodionItem>
@@ -136,7 +136,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                     <div className="flex flex-col gap-2 text-sm p-5 text-gray-500">
                         <div className="flex justify-between">
                             <div className="font-bold">총 요금</div>
-                            <div>{reserveData.total_price.toLocaleString()}</div>
+                            <div>{reserveData.reservation.total_price.toLocaleString()}</div>
                         </div>
                     </div>
                 </AccodionItem>

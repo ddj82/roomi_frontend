@@ -27,7 +27,7 @@ export default function LanguageSet() {
                 window.location.reload();
             }
         } catch (e) {
-            console.error('언어 설정 api 실패:', e);
+            console.error('언어 변경 api 실패:', e);
         }
     };
 

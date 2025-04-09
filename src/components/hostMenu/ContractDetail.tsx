@@ -28,9 +28,9 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
         if (!reservation) return false;
 
         const now = new Date();
-        const status = reservation.status?.toUpperCase();
-        const checkInDate = reservation.check_in_date ? new Date(reservation.check_in_date) : null;
-        const checkOutDate = reservation.check_out_date ? new Date(reservation.check_out_date) : null;
+        const status = reservation.reservation.status?.toUpperCase();
+        const checkInDate = reservation.reservation.check_in_date ? new Date(reservation.reservation.check_in_date) : null;
+        const checkOutDate = reservation.reservation.check_out_date ? new Date(reservation.reservation.check_out_date) : null;
 
         if (status !== 'CONFIRMED' || !checkInDate || !checkOutDate) {
             return false;
@@ -60,13 +60,13 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
     const getStatusBadge = () => {
         if (!reservation) return null;
 
-        const status = reservation.status?.toUpperCase() || '';
-        const paymentStatus = reservation.payment_status?.toUpperCase() || '';
+        const status = reservation.reservation.status?.toUpperCase() || '';
+        const paymentStatus = reservation.reservation.payment_status?.toUpperCase() || '';
 
         const badges = [];
 
         // Checkout request badge
-        if (reservation.is_checkout_requested && !(status === 'COMPLETED')) {
+        if (reservation.reservation.is_checkout_requested && !(status === 'COMPLETED')) {
             badges.push(
                 <div
                     key="checkout"
@@ -127,14 +127,14 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
     const renderActionButtons = () => {
         if (!reservation) return null;
 
-        const status = reservation.status?.toUpperCase() || '';
-        const paymentStatus = reservation.payment_status?.toUpperCase() || '';
+        const status = reservation.reservation.status?.toUpperCase() || '';
+        const paymentStatus = reservation.reservation.payment_status?.toUpperCase() || '';
 
         // Special case for COMPLETED + PENDING - show deposit deduction button
         if (status === 'COMPLETED' && paymentStatus === 'PENDING') {
             return (
                 <button
-                    onClick={() => onRefund && onRefund(reservation.id)}
+                    onClick={() => onRefund && onRefund(reservation.reservation.id)}
                     className="w-full py-3 px-4 flex items-center justify-center text-white bg-orange-600 rounded-lg"
                 >
                     <AlertTriangle className="w-4 h-4 mr-2" />
@@ -148,14 +148,14 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
             return (
                 <div className="flex gap-4">
                     <button
-                        onClick={() => onAccept && onAccept(reservation.id)}
+                        onClick={() => onAccept && onAccept(reservation.reservation.id)}
                         className="flex-1 py-3 px-4 flex items-center justify-center text-white bg-roomi rounded-lg"
                     >
                         <Check className="w-4 h-4 mr-2" />
                         예약 수락
                     </button>
                     <button
-                        onClick={() => onReject && onReject(reservation.id)}
+                        onClick={() => onReject && onReject(reservation.reservation.id)}
                         className="flex-1 py-3 px-4 flex items-center justify-center text-white bg-gray-700 rounded-lg"
                     >
                         <X className="w-4 h-4 mr-2" />
@@ -178,7 +178,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                             메시지 보내기
                         </button>
                         <button
-                            onClick={() => onComplete && onComplete(reservation.id)}
+                            onClick={() => onComplete && onComplete(reservation.reservation.id)}
                             className="flex-1 py-3 px-4 flex items-center justify-center text-white bg-blue-600 rounded-lg"
                         >
                             <CheckCircle className="w-4 h-4 mr-2" />
@@ -198,7 +198,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                             메시지 보내기
                         </button>
                         <button
-                            onClick={() => onCancel && onCancel(reservation.id)}
+                            onClick={() => onCancel && onCancel(reservation.reservation.id)}
                             className="flex-1 py-3 px-4 flex items-center justify-center text-white bg-red-600 rounded-lg"
                         >
                             <X className="w-4 h-4 mr-2" />
@@ -213,7 +213,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
         if (status === 'COMPLETED' || status === 'CANCELLED') {
             return (
                 <button
-                    onClick={() => onDelete && onDelete(reservation.id)}
+                    onClick={() => onDelete && onDelete(reservation.reservation.id)}
                     className="w-full py-3 px-4 flex items-center justify-center text-gray-700 border border-gray-300 rounded-lg"
                 >
                     <X className="w-4 h-4 mr-2" />
@@ -227,7 +227,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
 
     // Render checkout request info if applicable
     const renderCheckoutRequestInfo = () => {
-        if (!reservation || !reservation.is_checkout_requested || !isReservationInProgress()) {
+        if (!reservation || !reservation.reservation.is_checkout_requested || !isReservationInProgress()) {
             return null;
         }
 
@@ -240,7 +240,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
 
                 <div className="flex items-center mb-4">
                     <span className="text-sm text-gray-700 mr-2">요청 시간:</span>
-                    <span className="text-sm">{formatDate(reservation.checkout_requested_at.toString())}</span>
+                    <span className="text-sm">{formatDate(reservation.reservation.checkout_requested_at.toString())}</span>
                 </div>
 
                 <button
@@ -315,27 +315,27 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                                 <tbody>
                                 <tr className="border-b border-gray-100">
                                     <td className="py-2 text-gray-600">예약 번호</td>
-                                    <td className="py-2 text-right">{reservation.order_id || "-"}</td>
+                                    <td className="py-2 text-right">{reservation.reservation.order_id || "-"}</td>
                                 </tr>
                                 <tr className="border-b border-gray-100">
                                     <td className="py-2 text-gray-600">예약 날짜</td>
-                                    <td className="py-2 text-right">{formatDate(reservation.created_at.toString())}</td>
+                                    <td className="py-2 text-right">{formatDate(reservation.reservation.created_at.toString())}</td>
                                 </tr>
                                 <tr className="border-b border-gray-100">
                                     <td className="py-2 text-gray-600">체크인</td>
-                                    <td className="py-2 text-right">{formatDate(reservation.check_in_date.toString())}</td>
+                                    <td className="py-2 text-right">{formatDate(reservation.reservation.check_in_date.toString())}</td>
                                 </tr>
                                 <tr className="border-b border-gray-100">
                                     <td className="py-2 text-gray-600">체크아웃</td>
-                                    <td className="py-2 text-right">{formatDate(reservation.check_out_date.toString())}</td>
+                                    <td className="py-2 text-right">{formatDate(reservation.reservation.check_out_date.toString())}</td>
                                 </tr>
                                 <tr className="border-b border-gray-100">
                                     <td className="py-2 text-gray-600">게스트 수</td>
-                                    <td className="py-2 text-right">{reservation.guest_count || 1}명</td>
+                                    <td className="py-2 text-right">{reservation.reservation.guest_count || 1}명</td>
                                 </tr>
                                 <tr>
                                     <td className="py-2 text-gray-600">결제 상태</td>
-                                    <td className="py-2 text-right">{getPaymentStatusText(reservation.payment_status)}</td>
+                                    <td className="py-2 text-right">{getPaymentStatusText(reservation.reservation.payment_status)}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -363,23 +363,23 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                                 <tbody>
                                 <tr className="border-b border-gray-100">
                                     <td className="py-2 text-gray-600">이용 기간</td>
-                                    <td className="py-2 text-right">{formatDateRange(reservation.check_in_date.toString(), reservation.check_out_date.toString())}</td>
+                                    <td className="py-2 text-right">{formatDateRange(reservation.reservation.check_in_date.toString(), reservation.reservation.check_out_date.toString())}</td>
                                 </tr>
                                 <tr className="border-b border-gray-100">
                                     <td className="py-2 text-gray-600">기본 요금</td>
-                                    <td className="py-2 text-right">{formatPrice(reservation.price)}</td>
+                                    <td className="py-2 text-right">{formatPrice(reservation.reservation.price)}</td>
                                 </tr>
                                 <tr className="border-b border-gray-100">
                                     <td className="py-2 text-gray-600">서비스 비용</td>
-                                    <td className="py-2 text-right">{formatPrice(reservation.maintenance_fee)}</td>
+                                    <td className="py-2 text-right">{formatPrice(reservation.reservation.maintenance_fee)}</td>
                                 </tr>
                                 <tr className="border-b border-gray-100">
                                     <td className="py-2 text-gray-600">보증금</td>
-                                    <td className="py-2 text-right">{formatPrice(reservation.deposit)}</td>
+                                    <td className="py-2 text-right">{formatPrice(reservation.reservation.deposit)}</td>
                                 </tr>
                                 <tr className="border-t border-gray-300">
                                     <td className="py-3 text-gray-800 font-semibold">총 요금</td>
-                                    <td className="py-3 text-right font-bold">{formatPrice(reservation.total_price-reservation.fee)}</td>
+                                    <td className="py-3 text-right font-bold">{formatPrice(reservation.reservation.total_price-reservation.reservation.fee)}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -405,19 +405,19 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                         <div className="p-4 pt-0 border-t border-gray-200">
                             <div className="flex items-start">
                                 <div className="flex-1">
-                                    <h4 className="font-semibold text-base">{reservation.guest?.name || "게스트 정보"}</h4>
+                                    <h4 className="font-semibold text-base">{reservation.reservation.guest?.name || "게스트 정보"}</h4>
 
-                                    {reservation.guest?.email && (
+                                    {reservation.reservation.guest?.email && (
                                         <div className="flex items-center mt-2 text-sm text-gray-600">
                                             <span className="mr-2">이메일:</span>
-                                            <span>{reservation.guest.email}</span>
+                                            <span>{reservation.reservation.guest.email}</span>
                                         </div>
                                     )}
 
-                                    {reservation.guest?.phone && (
+                                    {reservation.reservation.guest?.phone && (
                                         <div className="flex items-center mt-1 text-sm text-gray-600">
                                             <span className="mr-2">전화번호:</span>
-                                            <span>{reservation.guest.phone}</span>
+                                            <span>{reservation.reservation.guest.phone}</span>
                                         </div>
                                     )}
                                 </div>

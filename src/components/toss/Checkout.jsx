@@ -41,8 +41,10 @@ export function CheckoutPage({ paymentData }) {
     setRoom(paymentData.bookData.room);
     setForm(paymentData.formDataState);
     setAmount({
-      currency: paymentData.formDataState.currency,
-      value: paymentData.price,
+      // currency: paymentData.formDataState.currency,
+      currency: 'KRW',
+      // value: paymentData.price,
+      value: Math.round(paymentData.price),
     });
   }, [clientKey, customerKey]);
 
@@ -55,8 +57,10 @@ export function CheckoutPage({ paymentData }) {
       // ------  주문서의 결제 금액 설정 ------
       // TODO: 위젯의 결제금액을 결제하려는 금액으로 초기화하세요.
       setAmount({
-        currency: paymentData.formDataState.currency,
-        value: paymentData.price,
+        // currency: paymentData.formDataState.currency,
+        currency: 'KRW',
+        // value: paymentData.price,
+        value: Math.round(paymentData.price),
       });
       await widgets.setAmount(amount);
 
@@ -107,15 +111,30 @@ export function CheckoutPage({ paymentData }) {
               try {
                 // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
                 // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
-                await widgets.requestPayment({
-                  orderId: reservation.order_id,
-                  orderName: room.title,
-                  successUrl: window.location.origin + "/success",
-                  failUrl: window.location.origin + "/fail",
-                  customerEmail: form.email,
-                  customerName: form.name,
-                  customerMobilePhone: form.phone,
-                });
+                // if (amount.currency === 'KRW') {
+                  await widgets.requestPayment({
+                    orderId: reservation.order_id,
+                    orderName: room.title,
+                    successUrl: window.location.origin + "/success",
+                    failUrl: window.location.origin + "/fail",
+                    customerEmail: form.email,
+                    customerName: form.name,
+                    customerMobilePhone: form.phone,
+                  });
+                // } else {
+                //   await widgets.requestPayment({
+                //     orderId: reservation.order_id,
+                //     orderName: room.title,
+                //     successUrl: window.location.origin + "/success",
+                //     failUrl: window.location.origin + "/fail",
+                //     customerEmail: form.email,
+                //     customerName: form.name,
+                //     customerMobilePhone: form.phone,
+                //     card: {
+                //       useInternationalCardOnly: true,
+                //     },
+                //   });
+                // }
               } catch (error) {
                 // 에러 처리하기
                 console.error(error);

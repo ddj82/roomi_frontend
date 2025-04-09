@@ -1,98 +1,67 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
+import {updateCurrency} from "../../../api/api";
 
-// 지원할 통화 목록 (통화 코드, 라벨, 심볼 추가)
-const CURRENCIES = [
-    { code: 'ko', label: 'KRW', symbol: '₩', name: '대한민국 원' },
-    { code: 'en', label: 'USD', symbol: '$', name: '미국 달러' },
-    { code: 'ja', label: 'JPY', symbol: '¥', name: '일본 엔' },
+// 지원할 언어 목록
+const LANGUAGES = [
+    { code: 'KRW', label: 'KRW' },
+    { code: 'USD', label: 'USD' },
+    { code: 'JPY', label: 'JPY' },
 ];
 
 export default function CurrencySet() {
     const {t} = useTranslation();
-    const [currencyCode, setCurrencyCode] = useState('ko');
+    const [langCode, setLangCode] = useState('');
     const [userCurrency, setUserCurrency] = useState('');
 
     useEffect(() => {
         setUserCurrency(localStorage.getItem('userCurrency') ?? "");
-        console.log('로컬스토리지',localStorage.getItem('userCurrency'));
+        setLangCode(localStorage.getItem('userCurrency') ?? "");
     }, []);
 
-    const handleCurrencyChange = () => {
-        // 통화 변경 처리 로직
-        localStorage.setItem('userCurrency', currencyCode);
-        setUserCurrency(currencyCode);
-        // 필요시 API 호출 등
+    const handleChangeCurrency = async (currency: string) => {
+        console.log('currency', currency);
+        try {
+            const response = await updateCurrency(currency);
+            if (response.ok) {
+                localStorage.setItem('userCurrency', currency);
+                window.location.reload();
+            }
+        } catch (e) {
+            console.error('통화 변경 api 실패:', e);
+        }
     };
 
-    // 현재 선택된 통화
-    const currentCurrency = CURRENCIES.find(currency => currency.code === userCurrency) || CURRENCIES[0];
-
     return (
-        <div className="p-4 md:p-6 max-w-md mx-auto">
-            {/* 현재 통화 섹션 */}
-            <div className="mb-8">
-                <h3 className="text-lg font-bold mb-4">{t('현재 통화')}</h3>
-                <div className="border border-roomi rounded-lg p-5 flex items-center justify-between">
-                    <div className="flex items-center">
-                        <span className="text-lg font-medium mr-2">{currentCurrency.label}</span>
-                        <span className="text-xl mr-3">{currentCurrency.symbol}</span>
-                        <span className="text-sm text-gray-500">{currentCurrency.name}</span>
-                    </div>
-                    <div className="bg-roomi text-white px-3 py-1 rounded-full text-xs">
-                        {t('현재')}
-                    </div>
-                </div>
-                <div className="text-xs text-gray-600 mt-3">
-                    {t('통화설정 가이드')}
-                </div>
-            </div>
-
-            <h3 className="text-lg font-bold mb-4">{t('통화 선택')}</h3>
-            <div className="space-y-3 mb-8">
-                {CURRENCIES.filter(currency => currency.code !== userCurrency).map((currency) => (
-                    <div
-                        key={currency.code}
-                        onClick={() => setCurrencyCode(currency.code)}
-                        className={`border rounded-lg p-5 cursor-pointer transition-all
-                        ${currencyCode === currency.code
-                            ? 'border-roomi bg-roomi-light'
-                            : 'border-gray-200 hover:border-roomi-2'
-                        }
-                    `}
-                    >
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                                <span className="text-lg font-medium mr-2">{currency.label}</span>
-                                <span className="text-xl mr-3">{currency.symbol}</span>
-                                <span className="text-sm text-gray-500">{currency.name}</span>
-                            </div>
-                            {currencyCode === currency.code && (
-                                <div className="w-5 h-5 rounded-full bg-roomi flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                    </svg>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* 변경 버튼 */}
-            <div className="mt-8 mb-4">
+        <div className="p-4 md:px-8">
+            <div className="flex justify-between items-center mb-4">
                 <button
                     type="button"
-                    onClick={handleCurrencyChange}
-                    className={`w-full py-4 text-white text-base font-medium rounded-lg transition-colors
-                        ${currencyCode && currencyCode !== userCurrency
-                        ? 'bg-roomi hover:bg-roomi-dark'
-                        : 'bg-gray-300 cursor-not-allowed'
+                    onClick={() => handleChangeCurrency(langCode)}
+                    className={`py-2 px-5 text-white text-sm rounded
+                    ${langCode === userCurrency
+                        ? 'bg-gray-300 cursor-not-allowed'
+                        : 'bg-roomi hover:bg-roomi'
                     }`}
-                    disabled={!currencyCode || currencyCode === userCurrency}
+                    disabled={langCode === userCurrency}  // 초기 상태이면 비활성화
                 >
-                    {t('통화 변경하기')}
+                    {t('수정')}
                 </button>
+            </div>
+
+            <div className="flex flex-col space-y-2">
+                {/* (2) 나머지 언어 선택 버튼들 */}
+                {LANGUAGES.map((lang) => (
+                    <button
+                        key={lang.code}
+                        onClick={() => setLangCode(lang.code)}
+                        className={`px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 
+                            ${langCode === lang.code && 'bg-roomi hover:bg-roomi text-white'}
+                        `}
+                    >
+                        {lang.label}
+                    </button>
+                ))}
             </div>
         </div>
     );

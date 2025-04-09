@@ -89,13 +89,13 @@ const ContractManagement = () => {
         if (activeTab === "current") {
             // Current: CONFIRMED and PENDING that are not completed or cancelled
             filtered = filtered.filter(res => {
-                const status = res.status?.toUpperCase() || '';
+                const status = res.reservation.status?.toUpperCase() || '';
                 return status !== 'COMPLETED' && status !== 'CANCELLED';
             });
         } else if (activeTab === "past") {
             // Past: COMPLETED or CANCELLED
             filtered = filtered.filter(res => {
-                const status = res.status?.toUpperCase() || '';
+                const status = res.reservation.status?.toUpperCase() || '';
                 return status === 'COMPLETED' || status === 'CANCELLED';
             });
         }
@@ -140,8 +140,8 @@ const ContractManagement = () => {
     };
 
     const getStatusElement = (reservation: ReservationHistory) => {
-        const status = reservation.status?.toUpperCase() || '';
-        const paymentStatus = reservation.payment_status?.toUpperCase() || '';
+        const status = reservation.reservation.status?.toUpperCase() || '';
+        const paymentStatus = reservation.reservation.payment_status?.toUpperCase() || '';
 
         // Status badges mapping
         if (status === 'CONFIRMED' && paymentStatus === 'PAID') {
@@ -339,7 +339,7 @@ const ContractManagement = () => {
                     <div className="mt-6 grid grid-cols-1 gap-6">
                         {filteredReservations.map((reservation) => (
                             <div
-                                key={reservation.id}
+                                key={reservation.reservation.id}
                                 className="bg-white rounded-lg overflow-hidden flex flex-col border border-gray-200 shadow-sm hover:shadow transition-shadow cursor-pointer"
                                 onClick={() => setSelectedReservation(reservation)}
                             >
@@ -366,15 +366,15 @@ const ContractManagement = () => {
                                                     {reservation.room?.address || "No address provided"}
                                                 </p>
                                                 <p className="text-sm text-gray-800">
-                                                    총 금액: {formatPrice(reservation.total_price)}원
+                                                    총 금액: {formatPrice(reservation.reservation.total_price)}원
                                                 </p>
                                             </div>
                                             <div className="ml-2">
                                                 <div className="flex justify-end">
                                                     <span className="text-sm text-gray-500">
                                                         {formatDateRange(
-                                                            reservation.check_in_date?.toString(),
-                                                            reservation.check_out_date?.toString()
+                                                            reservation.reservation.check_in_date?.toString(),
+                                                            reservation.reservation.check_out_date?.toString()
                                                         )}
                                                     </span>
                                                 </div>
@@ -389,13 +389,13 @@ const ContractManagement = () => {
                                 {/* Action button */}
                                 <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 flex justify-end">
                                     <button
-                                        className={`px-3 py-1 ${getButtonColor(reservation.status || '')} text-white text-sm rounded`}
+                                        className={`px-3 py-1 ${getButtonColor(reservation.reservation.status || '')} text-white text-sm rounded`}
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setSelectedReservation(reservation);
                                         }}
                                     >
-                                        {getButtonLabel(reservation.status || '')}
+                                        {getButtonLabel(reservation.reservation.status || '')}
                                     </button>
                                 </div>
                             </div>

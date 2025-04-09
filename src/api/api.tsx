@@ -206,10 +206,15 @@ export const createUser = async (formData: User) => {
     return request(`/users/signUp`, false, 'POST', formData);
 };
 
+// 메인 화면 방 조회 API
 export const mainRoomData = async (swY: number, swX: number, neY: number, neX: number, currentLocale: string) => {
     const authToken = !!localStorage.getItem("authToken");
+    const currency = localStorage.getItem("userCurrency") ?? "";
+
+    console.log('메인 화면 방 조회 API currency', currency);
+
     if (authToken) {
-        return request(`/rooms?swLat=${swY}&swLng=${swX}&neLat=${neY}&neLng=${neX}&locale=${currentLocale}`, true);
+        return request(`/rooms?swLat=${swY}&swLng=${swX}&neLat=${neY}&neLng=${neX}&locale=${currentLocale}&currency=${currency}`, true);
     } else {
         return request(`/rooms?swLat=${swY}&swLng=${swX}&neLat=${neY}&neLng=${neX}&locale=${currentLocale}`, false);
     }
@@ -217,7 +222,11 @@ export const mainRoomData = async (swY: number, swX: number, neY: number, neX: n
 
 // 방 조회 API
 export const fetchRoomData = async (id: number) => {
-    return request(`/rooms/${id}`, false, 'GET', undefined, true);
+    const locale = i18n.language;
+    const currency = localStorage.getItem("userCurrency") ?? "";
+    console.log('locale', locale);
+    console.log('currency', currency);
+    return request(`/rooms/${id}?&locale=${locale}&currency=${currency}`, false, 'GET', undefined);
 };
 
 // host 등록 동의 API
@@ -353,4 +362,9 @@ export const getReservationHistory = async () => {
 // 유저 내 정보 API
 export const getUserById = async (userId: number) => {
     return request(`/users/${userId}`, true);
+};
+
+// 유저 통화 변경 API
+export const updateCurrency = async (currency: string) => {
+    return request(`/users/currency?currency=${currency}`, true, 'POST');
 };

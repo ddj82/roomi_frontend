@@ -6,7 +6,6 @@ import ReactDOMServer from "react-dom/server";
 import ImgCarousel from "../util/ImgCarousel";
 import {createRoot} from "react-dom/client";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-// import {faCircleXmark} from "@fortawesome/free-regular-svg-icons";
 import {faCircleXmark} from "@fortawesome/free-solid-svg-icons";
 
 // naver.maps 타입을 명시적으로 선언
@@ -199,8 +198,8 @@ const NaverMap = ({ onRoomsUpdate }: NaverMapViewProps) => {
     };
 
     const handleRoomMarker = (roomId: number) => {
-        const currentLocale = i18n.language; // 현재 언어 감지
-        window.open(`/detail/${roomId}/${currentLocale}`, '_blank');
+        const locale = i18n.language; // 현재 언어 감지
+        window.open(`/detail/${roomId}/${locale}`, '_blank');
     };
 
     useEffect(() => {
