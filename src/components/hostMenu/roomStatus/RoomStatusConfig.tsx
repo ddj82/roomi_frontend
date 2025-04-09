@@ -53,8 +53,11 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
 
     const generateDaysForMonth = (month: Dayjs) => {
         const firstDayOfMonth = month.startOf('month');
-        const firstDayOfCalendar = firstDayOfMonth.subtract(firstDayOfMonth.day(), 'day');
         const lastDayOfMonth = month.endOf('month');
+
+        // 달력 시작점 (첫째 주 일요일)
+        const firstDayOfCalendar = firstDayOfMonth.subtract(firstDayOfMonth.day(), 'day');
+        // 달력 끝점 (마지막 주 토요일)
         const lastDayOfCalendar = lastDayOfMonth.add(6 - lastDayOfMonth.day(), 'day');
 
         const days = [];
@@ -116,13 +119,19 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
                             </div>
                         ))}
                     </div>
-                    <div className="days-grid grid grid-cols-7" >
+                    <div className="days-grid grid grid-cols-7">
                         {generateDaysForMonth(month).map((dayObj, dayIndex) => {
+                            // 현재 달에 속하지 않은 날짜는 빈 셀로 표시
+                            if (!dayObj.isCurrentMonth) {
+                                return <div key={dayIndex} className="w-full"></div>;
+                            }
+
                             const dateString = dayObj.date.format('YYYY-MM-DD');
                             const isBlocked = blockDates.includes(dateString);
                             const isReserved = reservationDates.includes(dateString);
+                            const isUnavailable = isBlocked || isReserved;
                             const isPast = dayObj.date.isBefore(today, 'day');
-                            const isSelectable = dayObj.isCurrentMonth && !isPast;
+                            const isSelectable = !isPast;
 
                             // 날짜 선택 상태 관련 변수
                             const isStart = isStartDate(dayObj.date);
@@ -133,16 +142,15 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
                                 <div
                                     key={dayIndex}
                                     className={`
-                     w-full flex items-center justify-center
+                    w-full flex items-center justify-center
                     relative transition-all duration-200 ease-in-out text-sm
-                    ${!dayObj.isCurrentMonth ? 'text-gray-200' : isSelectable ? 'text-gray-800' : 'text-gray-400'}
-                    ${isBlocked ? 'bg-gray-100 text-gray-500' : ''}
-                    ${isReserved ? 'bg-red-100 text-red-500' : ''}
+                    ${isSelectable ? 'text-gray-800' : 'text-gray-400'}
+                    ${isReserved ? 'text-red-500' : ''}
                     ${isRange ? 'bg-roomi/10' : ''}
                     ${isStart && endDate ? 'rounded-l-full' : ''}
                     ${isEnd ? 'rounded-r-full' : ''}
-                    ${isSelectable ? 'hover:bg-gray-100 cursor-pointer' : 'cursor-default'}
-                  `}
+                    ${isSelectable ? 'cursor-pointer' : 'cursor-default'}
+                `}
                                     onClick={() => {
                                         if (isSelectable) {
                                             onDateClick?.(dateString);
@@ -160,23 +168,11 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
                                         {dayObj.date.date()}
                                     </div>
 
-                                    {/* 블록된 날짜에 대한 사선 표시 */}
-                                    {isBlocked && (
+                                    {/* 블록된 날짜와 예약된 날짜에 대한 가로 선 표시 */}
+                                    {isUnavailable && (
                                         <div
-                                            className="absolute inset-0 overflow-hidden pointer-events-none z-10"
-                                        >
-                                            <div
-                                                className="absolute bg-red-500"
-                                                style={{
-                                                    width: "140%",
-                                                    height: "2px",
-                                                    transform: "rotate(45deg)",
-                                                    transformOrigin: "0 0",
-                                                    top: "0",
-                                                    left: "0",
-                                                    fontWeight: "bold"
-                                                }}
-                                            ></div>
+                                            className="absolute pointer-events-none z-10 w-full h-full flex items-center justify-center">
+                                            <div className="bg-red-500 w-1/3 h-0.5"></div>
                                         </div>
                                     )}
 
@@ -226,7 +222,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
     const [showModal, setShowModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [isBlockDate, setIsBlockDate] = useState('');
-    const { dataUpdate, toggleDataUpdate } = useDataUpdateStore();
+    const {dataUpdate, toggleDataUpdate} = useDataUpdateStore();
     const [calendarKey, setCalendarKey] = useState(0);
     const [userLocale, setUserLocale] = useState(i18n.language);
 
