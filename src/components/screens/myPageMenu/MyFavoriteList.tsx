@@ -68,9 +68,9 @@ export default function MyFavoriteList() {
                                     </div>
 
                                     <div className="mt-1">
-                                        {(room.month_price > 0) && (
+                                        {(room.month_price! > 0) && (
                                             <div className="text-sm font-bold text-gray-700 mt-1">
-                                                {t('원')}{room.month_price.toLocaleString()} / {t('월')}
+                                                {t('원')}{room.month_price!.toLocaleString()} / {t('월')}
                                             </div>
                                         )}
                                         {(room.week_price! > 0) && (
@@ -116,9 +116,9 @@ export default function MyFavoriteList() {
                                     </div>
 
                                     <div className="mt-1">
-                                        {(room.month_price > 0) && (
+                                        {(room.month_price! > 0) && (
                                             <div className="text-sm text-gray-700 mt-1">
-                                                {t('원')}{room.month_price.toLocaleString()} / {t('월')}
+                                                {t('원')}{room.month_price!.toLocaleString()} / {t('월')}
                                             </div>
                                         )}
                                         {(room.week_price! > 0) && (

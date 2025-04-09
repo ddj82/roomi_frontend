@@ -25,7 +25,7 @@ export default function GuestMyPageMobile() {
     const disconnect = useChatStore((state) => state.disconnect);
     const navigate = useNavigate();
     const { menu } = useParams();
-    const selectedMenu = menu || "";
+    const selectedMenu = menu ?? "예약 내역";
     const [loading] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const {profileImg} = useAuthStore();
@@ -62,7 +62,10 @@ export default function GuestMyPageMobile() {
     // 메뉴 내용 렌더링 로직을 함수로 분리
     const renderMenuContent = () => {
         if (loading) return <div className="flex_center">Loading...</div>;
-        if (!selectedMenu) return <MyReservations/>;
+        if (!selectedMenu) {
+
+            return <MyReservations/>;
+        }
         if (selectedMenu !== "") {
             return <GuestMyPageMobileContent selectedMenu={selectedMenu}/>
         }

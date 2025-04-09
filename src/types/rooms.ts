@@ -80,24 +80,21 @@ export interface RoomData {
     week_enabled: boolean;
     week_price?: number;
     month_enabled: boolean;
-    month_price?: number;
     min_weeks?: number;
     maintenance_fee?: number;
     maintenance_fee_week?: number;
-    maintenance_fee_month?: number;
     cleaning_fee?: number;
     cleaning_fee_week?: number;
     cleaning_fee_month?: number;
     deposit?: number;
     deposit_week?: number;
-    deposit_month?: number;
     cleaning_time: number;
     breakfast_service: string;
     checkin_service: string;
     //월 가격 추가
-    month_price : number;
-    deposit_month : number;
-    maintenance_fee_month: number;
+    month_price?: number;
+    deposit_month?: number;
+    maintenance_fee_month?: number;
 
     // 상세 정보
     description?: string;
@@ -225,6 +222,38 @@ export interface ReservationHistory {
         dollar_price?: number;
         guest: Guest;
     };
+    room: RoomData;
+}
+
+export interface MyReservationHistory {
+    id: number;
+    room_id: number;
+    order_id: string;
+    selection_mode: string; // "weekly", "monthly", etc.
+    check_in_date: Date;
+    check_out_date: Date;
+    status: string; // "CONFIRMED", etc.
+    payment_status: string; // "PAID", "UNPAID", etc.
+    total_price: number;
+    price: number; // Base price
+    maintenance_fee: number;
+    deposit: number;
+    unit: number;
+    is_reviewed: boolean | null;
+    guest_count: number;
+    is_checkout_requested: boolean;
+    checkout_requested_at: Date;
+    request_fee_refund_amount: string;
+    request_fee_refund_reason: string;
+    guest_accepted_fee: boolean;
+    fee: number;
+    created_at: Date;
+    currency: string; // "JPY", etc.
+    is_deposit_returned: boolean;
+    refunded_amount: number;
+    yen_price?: number;
+    dollar_price?: number;
+    guest: Guest;
     room: RoomData;
 }
 

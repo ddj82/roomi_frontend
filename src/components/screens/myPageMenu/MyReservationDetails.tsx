@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
-import {ReservationHistory} from "../../../types/rooms";
+import {MyReservationHistory, ReservationHistory} from "../../../types/rooms";
 import {faAngleDown, faAngleUp} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import AccodionItem from "../../util/AccodionItem";
@@ -10,7 +10,7 @@ import AccodionItem from "../../util/AccodionItem";
 dayjs.extend(utc);
 
 interface MyReservationDetailsProps {
-    reserveData: ReservationHistory,
+    reserveData: MyReservationHistory,
     statusInfo: {
         backgroundColor: string;
         message: string;
@@ -19,7 +19,7 @@ interface MyReservationDetailsProps {
 
 export default function MyReservationDetails({reserveData, statusInfo}: MyReservationDetailsProps) {
     const {t} = useTranslation();
-    const [reservedDetails, setReservedDetails] = useState<ReservationHistory | null>(null);
+    const [reservedDetails, setReservedDetails] = useState<MyReservationHistory | null>(null);
     const [basicOpen, setBasicOpen] = useState(true);
     const [priceOpen, setPriceOpen] = useState(false);
     const [hostOpen, setHostOpen] = useState(false);
@@ -93,19 +93,19 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                     <div className="flex flex-col gap-2 text-sm p-5 text-gray-500">
                         <div className="flex justify-between">
                             <div className="font-bold">예약번호</div>
-                            <div>{reserveData.reservation.order_id}</div>
+                            <div>{reserveData.order_id}</div>
                         </div>
                         <div className="flex justify-between">
                             <div className="font-bold">체크인</div>
-                            <div>{dayjs.utc(reserveData.reservation.check_in_date).format('YYYY-MM-DD')}</div>
+                            <div>{dayjs.utc(reserveData.check_in_date).format('YYYY-MM-DD')}</div>
                         </div>
                         <div className="flex justify-between">
                             <div className="font-bold">체크아웃</div>
-                            <div>{dayjs.utc(reserveData.reservation.check_out_date).format('YYYY-MM-DD')}</div>
+                            <div>{dayjs.utc(reserveData.check_out_date).format('YYYY-MM-DD')}</div>
                         </div>
                         <div className="flex justify-between">
                             <div className="font-bold">게스트</div>
-                            <div>{reserveData.reservation.guest_count}{t('명')}</div>
+                            <div>{reserveData.guest_count}{t('명')}</div>
                         </div>
                         <div className="flex justify-between">
                             <div className="font-bold">예약상태</div>
@@ -113,7 +113,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                         </div>
                         <div className="flex justify-between">
                             <div className="font-bold">예약날짜</div>
-                            <div>{dayjs.utc(reserveData.reservation.created_at).format('YYYY-MM-DD')}</div>
+                            <div>{dayjs.utc(reserveData.created_at).format('YYYY-MM-DD')}</div>
                         </div>
                     </div>
                 </AccodionItem>
@@ -136,7 +136,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                     <div className="flex flex-col gap-2 text-sm p-5 text-gray-500">
                         <div className="flex justify-between">
                             <div className="font-bold">총 요금</div>
-                            <div>{reserveData.reservation.total_price.toLocaleString()}</div>
+                            <div>{reserveData.total_price.toLocaleString()}</div>
                         </div>
                     </div>
                 </AccodionItem>

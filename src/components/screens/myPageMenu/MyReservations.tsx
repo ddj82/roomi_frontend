@@ -1,20 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 import {getReservationHistory} from "../../../api/api";
-import {ReservationHistory} from "../../../types/rooms";
+import {MyReservationHistory, ReservationHistory} from "../../../types/rooms";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import MyReservationDetails from "./MyReservationDetails";
 import {useMediaQuery} from "react-responsive";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faChevronRight} from "@fortawesome/free-solid-svg-icons";
 
 dayjs.extend(utc);
 
 export default function MyReservations() {
     const {t} = useTranslation();
-    const [nowReserved, setNowReserved] = useState<ReservationHistory[] | null>(null);
-    const [beforeReserved, setBeforeReserved] = useState<ReservationHistory[] | null>(null);
+    const [nowReserved, setNowReserved] = useState<MyReservationHistory[] | null>(null);
+    const [beforeReserved, setBeforeReserved] = useState<MyReservationHistory[] | null>(null);
     const [reservedListSet, setReservedListSet] = useState(true);
-    const [reservedDetails, setReservedDetails] = useState<ReservationHistory | null>(null);
+    const [reservedDetails, setReservedDetails] = useState<MyReservationHistory | null>(null);
     const isMobile = useMediaQuery({ maxWidth: 768 }); // 768px 이하를 모바일로 간주
 
     useEffect(() => {
@@ -28,14 +30,14 @@ export default function MyReservations() {
 
                 // 🔥 예약을 nowReserved와 beforeReserved로 분류
                 const nowReservedData = responseJson.data.filter(
-                    (reservation: ReservationHistory) =>
-                        dayjs.utc(reservation.reservation.check_in_date).format('YYYY-MM-DD') >= today ||
-                        dayjs.utc(reservation.reservation.check_out_date).format('YYYY-MM-DD') >= today
+                    (reservation: MyReservationHistory) =>
+                        dayjs.utc(reservation.check_in_date).format('YYYY-MM-DD') >= today ||
+                        dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') >= today
                 );
 
                 const beforeReservedData = responseJson.data.filter(
-                    (reservation: ReservationHistory) =>
-                        dayjs.utc(reservation.reservation.check_out_date).format('YYYY-MM-DD') < today
+                    (reservation: MyReservationHistory) =>
+                        dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') < today
                 );
 
                 setNowReserved(nowReservedData);
@@ -47,7 +49,7 @@ export default function MyReservations() {
         reservationHistory();
     }, []);
 
-    const renderReservationUI = (reservations: ReservationHistory[], emptyMessage: string) => {
+    const renderReservationUI = (reservations: MyReservationHistory[], emptyMessage: string) => {
         if (!reservations || reservations.length === 0) {
             return <div className="flex_center">{emptyMessage}</div>;
         }
@@ -125,7 +127,7 @@ export default function MyReservations() {
     };
 
 
-    const renderReservationList = (list: ReservationHistory[]) => {
+    const renderReservationList = (list: MyReservationHistory[]) => {
         return list.map((item) => (
             // 모바일에서는 세로형, 웹에서는 가로형 레이아웃
             <div
@@ -247,28 +249,24 @@ export default function MyReservations() {
             <div className="flex justify-between items-center mb-4">
                 {reservedDetails ? (
                     /*예약 상세 정보*/
-                    <>
-                        <button type="button" onClick={() => setReservedDetails(null)}
-                                className="py-2 px-4 text-sm rounded font-bold">
-                            목록 보기
-                        </button>
-                    </>
+                    <button type="button" onClick={() => setReservedDetails(null)}
+                            className="py-2 px-4 text-sm rounded font-bold">
+                        목록 보기
+                    </button>
                 ) : (
                     /*예약 내역*/
-                    <>
-                        <div>
-                            <button type="button" onClick={() => setReservedListSet(true)}
-                                    className={`py-2 px-4 text-sm rounded font-bold ${!reservedListSet && 'text-gray-400'}`}
-                            >
-                                현재 예약
-                            </button>
-                            <button type="button" onClick={() => setReservedListSet(false)}
-                                    className={`py-2 px-4 text-sm rounded font-bold ${reservedListSet && 'text-gray-400'}`}
-                            >
-                                지난 예약
-                            </button>
-                        </div>
-                    </>
+                    <div>
+                        <button type="button" onClick={() => setReservedListSet(true)}
+                                className={`py-2 px-4 text-sm rounded font-bold ${!reservedListSet && 'text-gray-400'}`}
+                        >
+                            현재 예약
+                        </button>
+                        <button type="button" onClick={() => setReservedListSet(false)}
+                                className={`py-2 px-4 text-sm rounded font-bold ${reservedListSet && 'text-gray-400'}`}
+                        >
+                            지난 예약
+                        </button>
+                    </div>
                 )}
             </div>
             {/*컨텐츠*/}
