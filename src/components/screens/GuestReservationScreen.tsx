@@ -488,7 +488,7 @@ export default function GuestReservationScreen() {
                                         }
                                     </div>
                                     <div className="font-bold text-gray-800">
-                                        {t('원')}{(price * totalNight).toLocaleString()}
+                                        {t('원')}{(price).toLocaleString()}
                                     </div>
                                 </div>
                                 {/*보증금*/}

@@ -15,7 +15,7 @@ import UserMessage from "./components/screens/UserMessage";
 import 'src/css/Modal.css';
 import 'src/css/Calendar.css';
 import ProtectedAuthRoute from "./api/ProtectedAuthRoute";
-import GuestMyPageMobile from "./components/screens/GuestMyPageMobile";
+import GuestMyPage from "./components/screens/GuestMyPage";
 import HostMyPage from "./components/screens/HostMyPage";
 import ProtectedHostRoute from "./api/ProtectedHostRoute";
 import ProtectedGuestRoute from "./api/ProtectedGuestRoute";
@@ -75,8 +75,8 @@ function AppContent() {
 
                         {/* 로그인 사용자 만 접근 가능 */}
                         <Route element={<ProtectedAuthRoute />}>
-                            <Route path="/myPage" element={<GuestMyPageMobile/>}/>
-                            <Route path="/myPage/:menu" element={<GuestMyPageMobile />} />
+                            <Route path="/myPage" element={<GuestMyPage/>}/>
+                            <Route path="/myPage/:menu" element={<GuestMyPage />} />
                             <Route path="/chat" element={<UserMessage/>}/>
                             <Route path="/detail/:roomId/:locale/reservation" element={<GuestReservationSetScreen/>}/>
                             <Route path="/detail/:roomId/:locale/reservation/payment" element={<GuestReservationScreen/>}/>

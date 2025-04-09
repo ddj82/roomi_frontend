@@ -14,11 +14,11 @@ import {
     faPenToSquare, faQuestionCircle, faSignOutAlt, faUserMinus,
 } from "@fortawesome/free-solid-svg-icons";
 import {useAuthStore} from "../stores/AuthStore";
-import GuestMyPageMobileContent from "./GuestMyPageMobileContent";
+import GuestMyPageContent from "./GuestMyPageContent";
 import "src/css/MyPage.css"
 import MyReservations from "./myPageMenu/MyReservations";
 
-export default function GuestMyPageMobile() {
+export default function GuestMyPage() {
     const { t } = useTranslation();
     const { isHost } = useIsHostStore();
     const { resetUserMode } = useHostModeStore();
@@ -67,7 +67,7 @@ export default function GuestMyPageMobile() {
             return <MyReservations/>;
         }
         if (selectedMenu !== "") {
-            return <GuestMyPageMobileContent selectedMenu={selectedMenu}/>
+            return <GuestMyPageContent selectedMenu={selectedMenu}/>
         }
     };
 

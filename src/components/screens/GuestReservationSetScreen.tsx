@@ -154,11 +154,11 @@ export default function GuestReservationSetScreen() {
         // 결제 페이지로 이동
         navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
             state: {
-                price: Number(reservationInfo.reservation.price.toFixed(2)),
-                depositPrice: Number(reservationInfo.reservation.deposit.toFixed(2)),
-                maintenancePrice: Number(reservationInfo.reservation.maintenance_fee.toFixed(2)),
-                fee: Number(reservationInfo.reservation.fee.toFixed(2)),
-                totalPrice: Number(reservationInfo.reservation.total_price.toFixed(2)),
+                price: Number(reservationInfo.reservation.price),
+                depositPrice: Number(reservationInfo.reservation.deposit),
+                maintenancePrice: Number(reservationInfo.reservation.maintenance_fee),
+                fee: Number(reservationInfo.reservation.fee),
+                totalPrice: Number(reservationInfo.reservation.total_price),
                 totalNight: reservationInfo.reservation.unit,
                 formData,
                 thisRoom,
@@ -383,18 +383,18 @@ export default function GuestReservationSetScreen() {
                                         {t('원')}{price.toLocaleString()} × {calUnit ? (`${monthValue}${t('달')}`) : (`${weekValue}${t('주')}`)}
                                     </div>
                                     <div className="font-bold text-gray-800">
-                                        {t('원')}{(calUnit ? (price * monthValue) : (price * weekValue)).toFixed(2).toLocaleString()}
+                                        {t('원')}{(calUnit ? (price * monthValue) : (price * weekValue)).toLocaleString()}
                                     </div>
                                 </div>
                                 {/*보증금*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("deposit")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{depositPrice.toFixed(2).toLocaleString()}</div>
+                                    <div className="font-bold text-gray-800">{t('원')}{depositPrice.toLocaleString()}</div>
                                 </div>
                                 {/*관리비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("service_charge")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{maintenancePrice.toFixed(2).toLocaleString()}</div>
+                                    <div className="font-bold text-gray-800">{t('원')}{maintenancePrice.toLocaleString()}</div>
                                 </div>
                                 {/*청소비*/}
                                 <div className="flex justify-between py-2">

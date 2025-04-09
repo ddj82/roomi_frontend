@@ -338,19 +338,19 @@ export default function RoomDetailScreen() {
         }
 
         // 기본 주간 가격 저장
-        let price = (Number(room?.week_price) || 0);
-        let depositPrice = (Number(room?.deposit_week) || 0);
-        let maintenancePrice = (Number(room?.maintenance_fee_week) || 0);
-        let cleaningPrice = (Number(room?.cleaning_fee_week) || 0);
+        let price = (Number(room?.week_price!.toFixed(2)) || 0);
+        let depositPrice = (Number(room?.deposit_week!.toFixed(2)) || 0);
+        let maintenancePrice = (Number(room?.maintenance_fee_week!.toFixed(2)) || 0);
+        let cleaningPrice = (Number(room?.cleaning_fee_week!.toFixed(2)) || 0);
 
         if (calUnit) {
             // 월간 가격 저장
-            price = (Number(room?.month_price) || 0);
-            depositPrice = (Number(room?.deposit_month) || 0);
-            maintenancePrice = (Number(room?.maintenance_fee_month) || 0);
-            cleaningPrice = (Number(room?.cleaning_fee_month) || 0);
+            price = (Number(room?.month_price!.toFixed(2)) || 0);
+            depositPrice = (Number(room?.deposit_month!.toFixed(2)) || 0);
+            maintenancePrice = (Number(room?.maintenance_fee_month!.toFixed(2)) || 0);
+            cleaningPrice = (Number(room?.cleaning_fee_month!.toFixed(2)) || 0);
         }
-        const allOptionPrice = depositPrice + maintenancePrice + cleaningPrice;
+        const allOptionPrice = depositPrice + maintenancePrice;
         const thisRoom = room;
         navigate(`/detail/${roomId}/${locale}/reservation`, {
             state: {
