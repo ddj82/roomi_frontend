@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route, useLocation} from 'react-router-dom';
 import Footer from "./components/footer/Footer";
 import Header from "./components/header/Header";
 import MainHome from "./components/screens/MainHome";
@@ -22,11 +22,8 @@ import ProtectedGuestRoute from "./api/ProtectedGuestRoute";
 import KakaoLoginCallback from "./components/util/KakaoLoginCallback";
 import SocialJoinScreen from "./components/screens/SocialJoinScreen";
 import SuccessPage from "./components/toss/SuccessPage";
-import {useHeaderStore, useHeaderVisibility} from "./components/stores/HeaderStore";
-import { useLocation } from "react-router-dom";
-import {useIsHostStore} from "./components/stores/IsHostStore";
+import {useHeaderStore} from "./components/stores/HeaderStore";
 import {useHostHeaderBtnVisibility} from "./components/stores/HostHeaderBtnStore";
-import BottomNavigation from "./components/navigator/BottomNavigator";
 import BottomNavigator from "./components/navigator/BottomNavigator";
 
 export default function App() {
@@ -45,7 +42,7 @@ function AppContent() {
 
     // 경로 변경 감지해서 헤더 visible 상태 설정
     useEffect(() => {
-        const isMyPage = location.pathname.startsWith("/myPage");
+        const isMyPage = location.pathname.startsWith("/myPage") || location.pathname.startsWith("/host");
         setVisibility(!isMobile || !isMyPage);  // 모바일 && myPage면 숨김
     }, [location.pathname, isMobile]); // <- 경로 or 모바일 상태가 바뀔 때마다 재평가
 

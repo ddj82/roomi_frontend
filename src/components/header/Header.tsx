@@ -7,19 +7,9 @@ import GuestsModal from "src/components/modals/GuestsModal";
 import AuthModal from "src/components/modals/AuthModal";
 import {BusinessInfoModal} from "src/components/modals/BusinessInfoModal";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {
-    faSearch,
-    faCalendarDay,
-    faLocationDot,
-    faUserPlus,
-    faUser,
-    faTimes,
-    faChevronDown
-} from '@fortawesome/free-solid-svg-icons';
-import '../../css/Header.css';
-import './SearchModal.css'; // 새로운 CSS 파일 추가
-import {useHeaderBtnVisibility} from "src/components/stores/HeaderBtnStore";
+import {faSearch, faCalendarDay, faLocationDot, faUserPlus, faTimes, faChevronDown} from '@fortawesome/free-solid-svg-icons';
 import HostHeader from "src/components/header/HostHeader";
+import {useHeaderBtnVisibility} from "src/components/stores/HeaderBtnStore";
 import {useHostHeaderBtnVisibility} from "../stores/HostHeaderBtnStore";
 import dayjs from "dayjs";
 import {useDateStore} from "../stores/DateStore";
@@ -32,6 +22,8 @@ import {useChatStore} from "../stores/ChatStore";
 import {useIsHostStore} from "../stores/IsHostStore";
 import i18n from "i18next";
 import AccordionCalendar from "./AccordionCalendar";
+import '../../css/Header.css';
+import './SearchModal.css';
 
 type ModalSection = 'date' | 'location' | 'guests';
 type ModalPosition = { x: number; y: number };
