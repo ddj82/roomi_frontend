@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {bookReservation} from "../../api/api";
-import {ReservationHistory, RoomData} from "../../types/rooms";
+import {MyReservationHistory, RoomData} from "../../types/rooms";
 import {useTranslation} from "react-i18next";
 import {useDateStore} from "../stores/DateStore";
 import ImgCarousel from "../util/ImgCarousel";
@@ -127,7 +127,7 @@ export default function GuestReservationSetScreen() {
                 const responseJson = await response.json();
 
                 if (responseJson.success && responseJson.data.reservation) {
-                    const bookData = responseJson.data as ReservationHistory;
+                    const bookData = responseJson.data as MyReservationHistory;
                     console.log('예약 성공:', bookData);
 
                     // 자동 승인 여부에 따라 다른 처리
@@ -150,7 +150,7 @@ export default function GuestReservationSetScreen() {
     };
 
     // 결제 페이지로 이동하는 함수
-    const navigateToPayment = (reservationInfo: ReservationHistory): void => {
+    const navigateToPayment = (reservationInfo: MyReservationHistory): void => {
         // 결제 페이지로 이동
         navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
             state: {
@@ -174,7 +174,7 @@ export default function GuestReservationSetScreen() {
     };
 
     // 예약 완료 모달 표시 함수
-    const showReservationCompleteModal = (reservationInfo: ReservationHistory): void => {
+    const showReservationCompleteModal = (reservationInfo: MyReservationHistory): void => {
         // 모달 표시 로직
         // 예시: 모달 컴포넌트 상태 업데이트 또는 모달 라이브러리 활용
 

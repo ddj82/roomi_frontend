@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 import {getReservationHistory} from "../../../api/api";
-import {MyReservationHistory, ReservationHistory} from "../../../types/rooms";
+import {ReservationHistory} from "../../../types/rooms";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import MyReservationDetails from "./MyReservationDetails";
@@ -13,10 +13,10 @@ dayjs.extend(utc);
 
 export default function MyReservations() {
     const {t} = useTranslation();
-    const [nowReserved, setNowReserved] = useState<MyReservationHistory[] | null>(null);
-    const [beforeReserved, setBeforeReserved] = useState<MyReservationHistory[] | null>(null);
+    const [nowReserved, setNowReserved] = useState<ReservationHistory[] | null>(null);
+    const [beforeReserved, setBeforeReserved] = useState<ReservationHistory[] | null>(null);
     const [reservedListSet, setReservedListSet] = useState(true);
-    const [reservedDetails, setReservedDetails] = useState<MyReservationHistory | null>(null);
+    const [reservedDetails, setReservedDetails] = useState<ReservationHistory | null>(null);
     const isMobile = useMediaQuery({ maxWidth: 768 }); // 768px 이하를 모바일로 간주
 
     useEffect(() => {
@@ -30,13 +30,13 @@ export default function MyReservations() {
 
                 // 🔥 예약을 nowReserved와 beforeReserved로 분류
                 const nowReservedData = responseJson.data.filter(
-                    (reservation: MyReservationHistory) =>
+                    (reservation: ReservationHistory) =>
                         dayjs.utc(reservation.check_in_date).format('YYYY-MM-DD') >= today ||
                         dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') >= today
                 );
 
                 const beforeReservedData = responseJson.data.filter(
-                    (reservation: MyReservationHistory) =>
+                    (reservation: ReservationHistory) =>
                         dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') < today
                 );
 
@@ -49,7 +49,7 @@ export default function MyReservations() {
         reservationHistory();
     }, []);
 
-    const renderReservationUI = (reservations: MyReservationHistory[], emptyMessage: string) => {
+    const renderReservationUI = (reservations: ReservationHistory[], emptyMessage: string) => {
         if (!reservations || reservations.length === 0) {
             return <div className="flex_center">{emptyMessage}</div>;
         }
@@ -127,7 +127,7 @@ export default function MyReservations() {
     };
 
 
-    const renderReservationList = (list: MyReservationHistory[]) => {
+    const renderReservationList = (list: ReservationHistory[]) => {
         return list.map((item) => (
             // 모바일에서는 세로형, 웹에서는 가로형 레이아웃
             <div

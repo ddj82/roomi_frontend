@@ -25,7 +25,7 @@ export default function GuestMyPageMobile() {
     const disconnect = useChatStore((state) => state.disconnect);
     const navigate = useNavigate();
     const { menu } = useParams();
-    const selectedMenu = menu ?? "예약 내역";
+    const selectedMenu = menu ?? "";
     const [loading] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const {profileImg} = useAuthStore();
@@ -343,7 +343,7 @@ export default function GuestMyPageMobile() {
             <div className="guest-mypage-right md:w-3/4 lg:w-4/5 hidden md:flex flex-col scrollbar-hidden">
                 {/* 제목 고정 */}
                 <div className="px-8 pt-6 pb-2">
-                    <h2 className="text-2xl font-bold">{selectedMenu}</h2>
+                    <h2 className="text-2xl font-bold">{selectedMenu === '' ? '예약 내역' : selectedMenu}</h2>
                 </div>
 
                 {/* 아래 내용만 스크롤되게 */}

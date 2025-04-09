@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
-import {MyReservationHistory, ReservationHistory} from "../../../types/rooms";
+import {ReservationHistory} from "../../../types/rooms";
 import {faAngleDown, faAngleUp} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import AccodionItem from "../../util/AccodionItem";
@@ -10,7 +10,7 @@ import AccodionItem from "../../util/AccodionItem";
 dayjs.extend(utc);
 
 interface MyReservationDetailsProps {
-    reserveData: MyReservationHistory,
+    reserveData: ReservationHistory,
     statusInfo: {
         backgroundColor: string;
         message: string;
@@ -19,7 +19,7 @@ interface MyReservationDetailsProps {
 
 export default function MyReservationDetails({reserveData, statusInfo}: MyReservationDetailsProps) {
     const {t} = useTranslation();
-    const [reservedDetails, setReservedDetails] = useState<MyReservationHistory | null>(null);
+    const [reservedDetails, setReservedDetails] = useState<ReservationHistory | null>(null);
     const [basicOpen, setBasicOpen] = useState(true);
     const [priceOpen, setPriceOpen] = useState(false);
     const [hostOpen, setHostOpen] = useState(false);
