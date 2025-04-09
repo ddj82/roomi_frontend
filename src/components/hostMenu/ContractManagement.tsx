@@ -243,170 +243,107 @@ const ContractManagement = () => {
     };
 
     return (
-        <div className="w-full p-4">
-            <div className="mx-auto my-5 flex flex-col gap-4 w-full">
-                {/* Filter and Search Section - Using MyRooms styling */}
-                <div className="w-full flex flex-col sm:flex-row gap-3">
-                    {/* Search Input */}
-                    <div className="relative flex-grow">
-                        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                            <Search className="w-4 h-4 text-gray-500"/>
-                        </div>
-                        <input
-                            type="search"
-                            className="w-full py-3 pl-10 pr-3 text-base border border-gray-200 rounded-lg
-                            shadow-sm focus:outline-none"
-                            placeholder="제목 또는 주소 입력"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </div>
-
-                    {/* Room Title Dropdown */}
-                    <div className="relative w-full sm:w-1/3" ref={roomDropdownRef}>
-                        <button
-                            type="button"
-                            className="w-full flex items-center justify-between px-3 py-3 text-base
-                            bg-white border border-roomi-0 rounded-lg cursor-pointer"
-                            onClick={() => setIsRoomDropdownOpen(!isRoomDropdownOpen)}
-                        >
-                            <span className="text-gray-700">
-                                {selectedRoomId
-                                    ? rooms.find(room => room.id === selectedRoomId)?.title || '선택된 방'
-                                    : '방 선택'}
-                            </span>
-                            <ChevronDown className="w-5 h-5 text-gray-500" />
-                        </button>
-
-                        {/* Room Dropdown Menu */}
-                        {isRoomDropdownOpen && (
-                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                                <div
-                                    className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
-                                    ${!selectedRoomId ? 'bg-roomi-1' : ''}`}
-                                    onClick={() => {
-                                        setSelectedRoomId(null);
-                                        setIsRoomDropdownOpen(false);
-                                    }}
-                                >
-                                    전체 방
-                                </div>
-                                {rooms.map((room) => (
-                                    <div
-                                        key={room.id}
-                                        className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
-                                        ${selectedRoomId === room.id ? 'bg-roomi-1' : ''}`}
-                                        onClick={() => {
-                                            setSelectedRoomId(room.id || null);
-                                            setIsRoomDropdownOpen(false);
-                                        }}
-                                    >
-                                        {room.title}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Tab Navigation - Simplified to 2 tabs */}
-                <div className="flex border-b mt-4 mb-6">
-                    <button
-                        className={`pb-3 px-6 ${activeTab === "current"
-                            ? "text-black border-b-2 border-black font-medium"
-                            : "text-gray-500"}`}
-                        onClick={() => setActiveTab("current")}
-                    >
-                        현재 예약
+        <div className=" py-0 md:px-8 relative">
+            {/*타이틀*/}
+            <div className="flex justify-between items-center mb-4">
+                {selectedReservation ? (
+                    /*예약 상세 정보*/
+                    <button type="button" onClick={() => setSelectedReservation(null)}
+                            className="py-2 px-4 text-sm rounded font-bold">
+                        목록 보기
                     </button>
-                    <button
-                        className={`pb-3 px-6 ${activeTab === "past"
-                            ? "text-black border-b-2 border-black font-medium"
-                            : "text-gray-500"}`}
-                        onClick={() => setActiveTab("past")}
-                    >
-                        지난 예약
-                    </button>
-                </div>
-
-                {/* Reservation List */}
-                {filteredReservations.length === 0 ? (
-                    <div className="text-center bg-gray-50 rounded-lg p-10 mt-6">
-                        <div className="text-gray-500 text-lg">🔍 검색 결과가 없습니다.</div>
-                        <div className="text-gray-400 mt-2">다른 검색어나 필터를 사용해보세요.</div>
-                    </div>
                 ) : (
-                    <div className="mt-6 grid grid-cols-1 gap-6">
-                        {filteredReservations.map((reservation) => (
-                            <div
-                                key={reservation.id}
-                                className="bg-white rounded-lg overflow-hidden flex flex-col border border-gray-200 shadow-sm hover:shadow transition-shadow cursor-pointer"
-                                onClick={() => setSelectedReservation(reservation)}
-                            >
-                                <div className="flex">
-                                    {/* Thumbnail */}
-                                    <div className="w-32 h-32 bg-gray-200 flex-shrink-0">
-                                        {reservation.room?.detail_urls && reservation.room.detail_urls.length > 0 && (
-                                            <img
-                                                src={reservation.room.detail_urls[0]}
-                                                alt={reservation.room?.title || "Room"}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        )}
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="flex-1 p-4">
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <h3 className="font-medium text-base mb-1">
-                                                    {reservation.room?.title || "Unnamed Room"}
-                                                </h3>
-                                                <p className="text-sm text-gray-600 mb-2">
-                                                    {reservation.room?.address || "No address provided"}
-                                                </p>
-                                                <p className="text-sm text-gray-800">
-                                                    총 금액: {formatPrice(reservation.total_price)}원
-                                                </p>
-                                            </div>
-                                            <div className="ml-2">
-                                                <div className="flex justify-end">
-                                                    <span className="text-sm text-gray-500">
-                                                        {formatDateRange(
-                                                            reservation.check_in_date?.toString(),
-                                                            reservation.check_out_date?.toString()
-                                                        )}
-                                                    </span>
-                                                </div>
-                                                <div className="flex justify-end mt-2">
-                                                    {getStatusElement(reservation)}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Action button */}
-                                <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 flex justify-end">
-                                    <button
-                                        className={`px-3 py-1 ${getButtonColor(reservation.status || '')} text-white text-sm rounded`}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setSelectedReservation(reservation);
-                                        }}
-                                    >
-                                        {getButtonLabel(reservation.status || '')}
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+                    /*예약 내역*/
+                    <div>
+                        <button type="button" onClick={() => setActiveTab("current")}
+                                className={`py-2 px-4 text-sm rounded font-bold ${activeTab !== "current" && 'text-gray-400'}`}
+                        >
+                            현재 예약
+                        </button>
+                        <button type="button" onClick={() => setActiveTab("past")}
+                                className={`py-2 px-4 text-sm rounded font-bold ${activeTab !== "past" && 'text-gray-400'}`}
+                        >
+                            지난 예약
+                        </button>
                     </div>
                 )}
             </div>
 
-            {/* Reservation Detail Modal */}
-            {selectedReservation && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            {/*검색 및 필터 영역 - 상세 보기가 아닐 때만 표시*/}
+            {!selectedReservation && (
+                <div className="mx-auto my-5 flex flex-col gap-4 w-full">
+                    <div className="w-full flex flex-row gap-3">
+                        <div className="w-full flex flex-row gap-3">
+                            {/* 방 선택 드롭다운 */}
+                            <div className="relative w-1/2 sm:w-1/3" ref={roomDropdownRef}>
+                                <button
+                                    type="button"
+                                    className="w-full flex items-center justify-between px-3 py-3 text-base
+                                bg-white border border-gray-200 rounded-lg cursor-pointer"
+                                    onClick={() => setIsRoomDropdownOpen(!isRoomDropdownOpen)}
+                                >
+                                <span className="text-gray-700">
+                                    {selectedRoomId
+                                        ? rooms.find(room => room.id === selectedRoomId)?.title || '선택된 방'
+                                        : '방 선택'}
+                                </span>
+                                    <ChevronDown className="w-5 h-5 text-gray-500" />
+                                </button>
+
+                                {/* 드롭다운 메뉴 */}
+                                {isRoomDropdownOpen && (
+                                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                        <div
+                                            className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
+                                        ${!selectedRoomId ? 'bg-roomi-1' : ''}`}
+                                            onClick={() => {
+                                                setSelectedRoomId(null);
+                                                setIsRoomDropdownOpen(false);
+                                            }}
+                                        >
+                                            전체 방
+                                        </div>
+                                        {rooms.map((room) => (
+                                            <div
+                                                key={room.id}
+                                                className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
+                                            ${selectedRoomId === room.id ? 'bg-roomi-1' : ''}`}
+                                                onClick={() => {
+                                                    setSelectedRoomId(room.id || null);
+                                                    setIsRoomDropdownOpen(false);
+                                                }}
+                                            >
+                                                {room.title}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            {/* 검색창 */}
+                            <div className="relative w-1/2 sm:flex-grow">
+                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                    <Search className="w-4 h-4 text-gray-500"/>
+                                </div>
+                                <input
+                                    type="search"
+                                    className="w-full py-3 pl-10 pr-3 text-base border border-gray-200 rounded-lg
+                                shadow-sm focus:outline-none"
+                                    placeholder="제목 또는 주소 입력"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/*컨텐츠*/}
+            <div>
+                {selectedReservation ? (
+                    /*예약 상세 정보*/
                     <ReservationDetail
                         reservation={selectedReservation}
                         onClose={() => setSelectedReservation(null)}
@@ -417,8 +354,145 @@ const ContractManagement = () => {
                         onDelete={handleDeleteReservation}
                         onRefund={handleRefundDeduction}
                     />
-                </div>
-            )}
+                ) : (
+                    /*예약 내역*/
+                    <div className="h-[calc(100vh-230px)] overflow-y-auto scrollbar-hidden">
+                        {filteredReservations.length === 0 ? (
+                            <div className="text-center py-10">
+                                <div className="text-gray-500 text-lg">
+                                    {activeTab === "current" ? "현재 예약이 없습니다." : "지난 예약이 없습니다."}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 gap-4">
+                                {filteredReservations.map((reservation) => (
+                                    <div
+                                        key={reservation.id}
+                                        className="bg-gray-50 rounded-lg overflow-hidden flex flex-col sm:flex-row cursor-pointer"
+                                        onClick={() => setSelectedReservation(reservation)}
+                                    >
+                                        {/* 모바일 레이아웃 */}
+                                        <div className="w-full sm:hidden">
+                                            {/* 날짜 및 상태 */}
+                                            <div className="flex justify-between items-center p-3 bg-gray-50">
+                                            <span className="text-sm text-gray-600">
+                                                {formatDateRange(
+                                                    reservation.check_in_date?.toString(),
+                                                    reservation.check_out_date?.toString()
+                                                )}
+                                            </span>
+                                                <span className={`text-xs px-2 py-1 rounded text-white ${
+                                                    reservation.status === 'PENDING' ? 'bg-yellow-700' :
+                                                        reservation.status === 'CONFIRMED' ?
+                                                            (reservation.payment_status === 'UNPAID' ? 'bg-orange-700' :
+                                                                reservation.payment_status === 'PAID' ? 'bg-blue-700' : 'bg-blue-700') :
+                                                            reservation.status === 'COMPLETED' ? 'bg-green-700' :
+                                                                reservation.status === 'CANCELED' ? 'bg-gray-700' :
+                                                                    reservation.status === 'IN_USE' ? 'bg-gray-700' :
+                                                                        reservation.status === 'CHECKED_OUT' ? 'bg-gray-700' :
+                                                                            'bg-black'
+                                                }`}>
+{reservation.status === 'CONFIRMED' ?
+    (reservation.payment_status === 'UNPAID' ? '결제대기' :
+        reservation.payment_status === 'PAID' ? '결제완료' : '이용중') :
+    reservation.status === 'COMPLETED' ? '이용 완료' :
+        reservation.status === 'CANCELED' ? '예약 취소' :
+            reservation.status === 'IN_USE' ? '이용중' :
+                reservation.status === 'CHECKED_OUT' ? '퇴실 완료' :
+                    reservation.status === 'PENDING' ? '승인 대기중' : '상태 미정'}
+                                            </span>
+                                            </div>
+
+                                            {/* 방 정보 */}
+                                            <div className="flex p-3 bg-gray-50">
+                                                {/* 썸네일 */}
+                                                <div className="w-20 h-20 bg-gray-200 flex-shrink-0 rounded-md overflow-hidden">
+                                                    {reservation.room?.detail_urls && reservation.room.detail_urls.length > 0 && (
+                                                        <img
+                                                            src={reservation.room.detail_urls[0]}
+                                                            alt={reservation.room?.title || "Room"}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    )}
+                                                </div>
+
+                                                {/* 방 내용 */}
+                                                <div className="ml-3 flex-1">
+                                                    <h3 className="font-medium text-base">
+                                                        {reservation.room?.title || "Unnamed Room"}
+                                                    </h3>
+                                                    <p className="text-xs text-gray-600 mt-1">
+                                                        {reservation.room?.address || "No address provided"}
+                                                    </p>
+                                                    <p className="text-xs text-gray-600 mt-1">
+                                                        {reservation.guest?.name || "No address provided"}
+                                                    </p>
+                                                    <p className="text-sm font-bold mt-1">
+                                                        ￦{formatPrice(reservation.total_price)}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* 데스크톱 레이아웃 - 숨김 처리 */}
+                                        <div className="hidden sm:flex w-full">
+                                            {/* Thumbnail */}
+                                            <div className="w-24 h-24 bg-gray-200 flex-shrink-0 m-6 rounded-md overflow-hidden">
+                                                {reservation.room?.detail_urls && reservation.room.detail_urls.length > 0 && (
+                                                    <img
+                                                        src={reservation.room.detail_urls[0]}
+                                                        alt={reservation.room?.title || "Room"}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                )}
+                                            </div>
+
+                                            {/* Content */}
+                                            <div className="flex-1 p-4 flex flex-col justify-between">
+                                                <div>
+                                                    <div className="flex justify-between items-start">
+                                                        <h3 className="font-medium text-base">
+                                                            {reservation.room?.title || "Unnamed Room"}
+                                                        </h3>
+                                                        <span className="text-sm text-gray-500">
+                                                        {formatDateRange(
+                                                            reservation.check_in_date?.toString(),
+                                                            reservation.check_out_date?.toString()
+                                                        )}
+                                                    </span>
+                                                    </div>
+                                                    <p className="text-sm text-gray-600 mt-1">
+                                                        {reservation.room?.address || "No address provided"}
+                                                    </p>
+                                                    <p className="text-xs text-gray-600 mt-2">
+                                                        {reservation.guest?.name || "No address provided"}
+                                                    </p>
+                                                    <div className="flex justify-between items-center mt-1">
+                                                        <p className="text-sm text-gray-800">
+                                                            총 금액: {formatPrice(reservation.total_price)}원
+                                                        </p>
+                                                        <span className={`text-sm px-2 py-1 rounded ${
+                                                            reservation.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                                                                reservation.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                                                    reservation.status === 'canceled' ? 'bg-gray-100 text-gray-800' :
+                                                                        'bg-yellow-100 text-yellow-800'
+                                                        }`}>
+                                                        {reservation.status === 'confirmed' ? '예약 확정' :
+                                                            reservation.status === 'completed' ? '이용 완료' :
+                                                                reservation.status === 'canceled' ? '예약 취소' :
+                                                                    reservation.status === 'pending' ? '승인 대기중' : '상태 미정'}
+                                                    </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

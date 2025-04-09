@@ -32,7 +32,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
         const checkInDate = reservation.check_in_date ? new Date(reservation.check_in_date) : null;
         const checkOutDate = reservation.check_out_date ? new Date(reservation.check_out_date) : null;
 
-        if (status !== 'CONFIRMED' || !checkInDate || !checkOutDate) {
+        if (status !== 'CONFIRMED' && status !== 'IN_USE' || !checkInDate || !checkOutDate) {
             return false;
         }
 
@@ -66,7 +66,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
         const badges = [];
 
         // Checkout request badge
-        if (reservation.is_checkout_requested && !(status === 'COMPLETED')) {
+        if (reservation.is_checkout_requested && !(status === 'COMPLETED' || status === 'CHECKED_OUT')) {
             badges.push(
                 <div
                     key="checkout"
@@ -78,7 +78,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
         }
 
         // Refund in progress badge
-        if (status === 'COMPLETED' && paymentStatus === 'PENDING') {
+        if ((status === 'COMPLETED' || status === 'CHECKED_OUT') && paymentStatus === 'PENDING') {
             badges.push(
                 <div
                     key="refund"
@@ -90,7 +90,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
         }
 
         // In progress badge
-        if (isReservationInProgress()) {
+        if (isReservationInProgress() || status === 'IN_USE') {
             badges.push(
                 <div
                     key="inProgress"
@@ -106,10 +106,15 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
 
     const getStatusText = (status:string) => {
         status = status?.toUpperCase() || '';
-        if (status === 'CONFIRMED') return '이용중';
+        if (status === 'CONFIRMED') {
+            return reservation.payment_status?.toUpperCase() === 'UNPAID' ? '결제대기' :
+                reservation.payment_status?.toUpperCase() === 'PAID' ? '결제완료' : '이용중';
+        }
         if (status === 'CANCELLED') return '예약 취소';
         if (status === 'PENDING') return '예약 대기';
         if (status === 'COMPLETED') return '이용 완료';
+        if (status === 'IN_USE') return '이용중';
+        if (status === 'CHECKED_OUT') return '퇴실 완료';
         return '결제 대기';
     };
 
@@ -131,7 +136,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
         const paymentStatus = reservation.payment_status?.toUpperCase() || '';
 
         // Special case for COMPLETED + PENDING - show deposit deduction button
-        if (status === 'COMPLETED' && paymentStatus === 'PENDING') {
+        if ((status === 'COMPLETED' || status === 'CHECKED_OUT') && paymentStatus === 'PENDING') {
             return (
                 <button
                     onClick={() => onRefund && onRefund(reservation.id)}
@@ -165,9 +170,9 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
             );
         }
 
-        // Confirmed and in progress
-        if (status === 'CONFIRMED' && paymentStatus === 'PAID') {
-            if (isReservationInProgress()) {
+        // Confirmed/IN_USE and paid
+        if ((status === 'CONFIRMED' || status === 'IN_USE') && paymentStatus === 'PAID') {
+            if (isReservationInProgress() || status === 'IN_USE') {
                 return (
                     <div className="flex gap-4">
                         <button
@@ -209,8 +214,8 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
             }
         }
 
-        // Completed or Cancelled: Delete button
-        if (status === 'COMPLETED' || status === 'CANCELLED') {
+        // Completed, Checked Out, or Cancelled: Delete button
+        if (status === 'COMPLETED' || status === 'CHECKED_OUT' || status === 'CANCELLED') {
             return (
                 <button
                     onClick={() => onDelete && onDelete(reservation.id)}
@@ -227,7 +232,8 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
 
     // Render checkout request info if applicable
     const renderCheckoutRequestInfo = () => {
-        if (!reservation || !reservation.is_checkout_requested || !isReservationInProgress()) {
+        if (!reservation || !reservation.is_checkout_requested ||
+            !(isReservationInProgress() || reservation.status?.toUpperCase() === 'IN_USE')) {
             return null;
         }
 
@@ -252,39 +258,36 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
             </div>
         );
     };
+    function nl2br(str: string ) {
+        const result = [];
+        const lines = str.split('\n');
 
+        for (let i = 0; i < lines.length; i++) {
+            result.push(lines[i]);
+            if (i < lines.length - 1) {
+                result.push(<br key={i} />);
+            }
+        }
+
+        return result;
+    }
     if (!reservation) return null;
 
     return (
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden max-w-2xl w-full mx-auto">
+        <div className="bg-white rounded-lg overflow-hidden max-w-2xl w-full mx-auto ">
             {/* Header */}
             <div className="p-6">
-                <div className="flex justify-between items-start">
-                    <h2 className="text-xl font-bold">예약 상세정보</h2>
-                    <button
-                        onClick={onClose}
-                        className="p-1 rounded-full hover:bg-gray-100"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
-                </div>
+                {/*<div className="flex justify-between items-start">*/}
+                {/*    <button*/}
+                {/*        onClick={onClose}*/}
+                {/*        className="p-1 rounded-full hover:bg-gray-100"*/}
+                {/*    >*/}
+                {/*        <X className="w-5 h-5" />*/}
+                {/*    </button>*/}
+                {/*</div>*/}
 
                 {/* Room Image and Info */}
                 <div className="mt-4">
-                    <div className="rounded-lg overflow-hidden h-48 bg-gray-200">
-                        {reservation.room?.detail_urls && reservation.room.detail_urls.length > 0 ? (
-                            <img
-                                src={reservation.room.detail_urls[0]}
-                                alt={reservation.room?.title || "Room"}
-                                className="w-full h-full object-cover"
-                            />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                                <span className="text-gray-400">이미지 없음</span>
-                            </div>
-                        )}
-                    </div>
-
                     <h3 className="mt-4 text-lg font-semibold">{reservation.room?.title || "방 정보 없음"}</h3>
                     <p className="text-gray-600">{reservation.room?.address || "주소 정보 없음"}</p>
 
@@ -322,16 +325,20 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                                     <td className="py-2 text-right">{formatDate(reservation.created_at.toString())}</td>
                                 </tr>
                                 <tr className="border-b border-gray-100">
-                                    <td className="py-2 text-gray-600">체크인</td>
+                                    <td className="py-2 text-gray-600">입실</td>
                                     <td className="py-2 text-right">{formatDate(reservation.check_in_date.toString())}</td>
                                 </tr>
                                 <tr className="border-b border-gray-100">
-                                    <td className="py-2 text-gray-600">체크아웃</td>
+                                    <td className="py-2 text-gray-600">퇴실</td>
                                     <td className="py-2 text-right">{formatDate(reservation.check_out_date.toString())}</td>
                                 </tr>
                                 <tr className="border-b border-gray-100">
                                     <td className="py-2 text-gray-600">게스트 수</td>
                                     <td className="py-2 text-right">{reservation.guest_count || 1}명</td>
+                                </tr>
+                                <tr className="border-b border-gray-100">
+                                    <td className="py-2 text-gray-600">예약 상태</td>
+                                    <td className="py-2 text-right">{getStatusText(reservation.status)}</td>
                                 </tr>
                                 <tr>
                                     <td className="py-2 text-gray-600">결제 상태</td>
@@ -402,10 +409,10 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                     </button>
 
                     {isGuestInfoExpanded && (
-                        <div className="p-4 pt-0 border-t border-gray-200">
+                        <div className="p-4 pt-0 border-t border-gray-200 ">
                             <div className="flex items-start">
                                 <div className="flex-1">
-                                    <h4 className="font-semibold text-base">{reservation.guest?.name || "게스트 정보"}</h4>
+                                    <h4 className="font-semibold text-base mt-2">{reservation.guest?.name || "게스트 정보"}</h4>
 
                                     {reservation.guest?.email && (
                                         <div className="flex items-center mt-2 text-sm text-gray-600">
@@ -424,7 +431,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
 
                                 <button
                                     onClick={() => {/* Handle message */}}
-                                    className="px-3 py-2 border border-roomi-0 text-roomi rounded-lg flex items-center"
+                                    className="px-3 py-2 border border-roomi-0 text-roomi rounded-lg flex items-center mt-4"
                                 >
                                     <MessageSquare className="w-4 h-4 mr-1" />
                                     메시지
@@ -442,25 +449,31 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                     >
                         <span className="font-semibold">이용 규칙 및 환불 정책</span>
                         {isPoliciesExpanded ? (
-                            <ChevronUp className="w-5 h-5 text-gray-500" />
+                            <ChevronUp className="w-5 h-5 text-gray-500"/>
                         ) : (
-                            <ChevronDown className="w-5 h-5 text-gray-500" />
+                            <ChevronDown className="w-5 h-5 text-gray-500"/>
                         )}
                     </button>
 
                     {isPoliciesExpanded && (
                         <div className="p-4 pt-0 border-t border-gray-200">
-                            <h4 className="font-semibold mb-2">체크인/체크아웃</h4>
+                            <h4 className="font-semibold mb-2 mt-2">입실/퇴실</h4>
                             <p className="text-sm text-gray-700 mb-4">
-                                체크인: {reservation.room?.check_in_time || '15:00'},
-                                체크아웃: {reservation.room?.check_out_time || '11:00'}
+                                입실: {reservation.room?.check_in_time || '15:00'},
+                                퇴실: {reservation.room?.check_out_time || '11:00'}
                             </p>
 
                             <h4 className="font-semibold mb-2">환불 정책</h4>
-                            <p className="text-sm text-gray-700 whitespace-pre-line">
-                                {reservation.room?.refund_policy ||
-                                    '체크인 7일 전까지 취소 시 전액 환불.\n이후 취소 시 환불 불가.'}
-                            </p>
+                            <div className="text-sm text-gray-700 mb-4 whitespace-pre-line">
+                                {reservation.room?.refund_policy
+                                    ? reservation.room.refund_policy.replace(/\\n/g, '\n').split('\n').map((line, index) => (
+                                        <div key={index}>{line}</div>
+                                    ))
+                                    : '유연한 환불 정책\n• 체크인 24시간 전까지 무료 취소\n• 체크인 24시간 전까지: 100% 환불\n• 체크인 24시간 전 ~ 당일: 50% 환불\n• 체크인 이후: 환불 불가'.split('\n').map((line, index) => (
+                                        <div key={index}>{line}</div>
+                                    ))
+                                }
+                            </div>
                         </div>
                     )}
                 </div>
