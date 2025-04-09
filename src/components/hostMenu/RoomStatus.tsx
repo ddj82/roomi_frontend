@@ -1,11 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {useTranslation} from "react-i18next";
-import 'react-calendar/dist/Calendar.css'; // 스타일 파일도 import
+import 'react-calendar/dist/Calendar.css';
 import RoomSet from 'src/components/hostMenu/roomStatus/RoomStatusSet';
 import RoomConfig from 'src/components/hostMenu/roomStatus/RoomStatusConfig';
 import {RoomData} from "src/types/rooms";
 import {myRoomList} from "src/api/api";
 import {useDataUpdateStore} from "../stores/DataUpdateStore";
+import { ChevronDown } from 'lucide-react'; // 추가된 import
 
 const RoomStatus = () => {
     const { t } = useTranslation();
@@ -14,6 +15,26 @@ const RoomStatus = () => {
     const [data, setData] = useState<RoomData[]>([]);
     const [selectedRoom, setSelectedRoom] = useState(0);
     const { dataUpdate } = useDataUpdateStore();
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+    // Find the selected room to display its title
+    const selectedRoomData = data.find(room => room.id === selectedRoom);
+    const displayValue = selectedRoomData ? `${selectedRoomData.title} ${selectedRoomData.id}` : '선택하세요';
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     // 화면 로드시
     useEffect(() => {
@@ -48,8 +69,13 @@ const RoomStatus = () => {
         setSelectedRoom(Number(event.target.value));
     };
 
+    const handleSelectRoom = (roomId: number) => {
+        setSelectedRoom(Number(roomId));
+        setIsDropdownOpen(false);
+    };
+
     return (
-        <div className="min-h-[60vh]">
+        <div className="min-h-[0vh]">
             <div className="flex justify-between my-12 md:flex-row flex-col">
                 <div className="flex flex-wrap gap-4">
                     {tabs.map((tab) => (
@@ -70,16 +96,34 @@ const RoomStatus = () => {
                         </div>
                     ))}
                 </div>
-                <div className="md:w-1/2 md:m-0 mt-4">
-                    <select value={selectedRoom} onChange={handleChange}
-                            className="border border-gray-300 rounded p-2 w-full focus:outline-none"
+
+                {/* 새로운 커스텀 드롭다운 */}
+                <div className="relative md:w-1/2 md:m-0 mt-4" ref={dropdownRef}>
+                    <button
+                        type="button"
+                        className="w-full flex items-center justify-between px-3 py-3 text-base
+                        bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none"
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     >
-                        {data.map((room, index) => (
-                            <option key={room.id} value={room.id}>
-                                {room.title} {room.id}
-                            </option>
-                        ))}
-                    </select>
+                        <span className="text-gray-700">{displayValue}</span>
+                        <ChevronDown className="w-5 h-5 text-gray-500" />
+                    </button>
+
+                    {/* 드롭다운 메뉴 */}
+                    {isDropdownOpen && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+                            {data.map((room) => (
+                                <div
+                                    key={room.id}
+                                    className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 rounded-lg
+                                    ${selectedRoom === room.id ? 'bg-roomi-1' : ''}`}
+                                    onClick={() => handleSelectRoom(room.id)}
+                                >
+                                    {room.title} {room.id}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
             <div>

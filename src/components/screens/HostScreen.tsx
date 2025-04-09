@@ -29,7 +29,7 @@ const HostScreen: React.FC = () => {
     };
 
     return (
-        <div className="my-4 px-8 h-[70vh]">
+        <div className="my-4 px-8 h-[100vh]">
             {components[activeTab] || <div>선택된 탭이 없습니다.</div>}
         </div>
     );

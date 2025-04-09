@@ -17,22 +17,49 @@ const HostHeader: React.FC = () => {
     const { activeTab, setActiveTab } = useHostTabNavigation();
     const tabs = ["my_room", "contract_management", "room_status", "message", "settlement"] as const;
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [isVisible, setIsVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
 
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth < 768);
         };
 
-        // 창 크기 변경 시 이벤트 리스너 등록
+        // Add event listener for window resize
         window.addEventListener("resize", handleResize);
 
-        // 클린업 함수: 컴포넌트가 언마운트될 때 이벤트 제거
+        // Cleanup function: Remove event listener when component unmounts
         return () => {
             window.removeEventListener("resize", handleResize);
         };
     }, []);
 
-    return (
+    useEffect(() => {
+        const handleScroll = () => {
+            if (isMobile) {
+                const currentScrollY = window.scrollY;
+
+                // Show header when scrolling down, hide when scrolling up
+                // We set a threshold of 50px to prevent the header from hiding on small scrolls
+                if (currentScrollY > lastScrollY && isVisible && currentScrollY > 50) {
+                    setIsVisible(false);
+                } else if (currentScrollY < lastScrollY && !isVisible) {
+                    setIsVisible(true);
+                }
+
+                setLastScrollY(currentScrollY);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [isMobile, lastScrollY, isVisible]);
+
+    // Desktop Header Navigation
+    const DesktopNavigation = () => (
         <div className="flex flex-wrap justify-center text-sm font-medium text-center -mt-4" role="tablist">
             {tabs.map((tab) => (
                 <div key={tab} role="presentation" className="mx-2 sm:mx-4 text-base">
@@ -42,18 +69,54 @@ const HostHeader: React.FC = () => {
                             ${activeTab === tab ? "text-roomi border-b-2 border-b-roomi" : "hover:text-roomi"
                         }`}
                         onClick={() => {
-                            setActiveTab(tab); // 다른 탭을 누르면 변경
+                            setActiveTab(tab);
                         }}
                         type="button"
                         role="tab"
                         aria-controls={tab}
                         aria-selected={activeTab === tab}
                     >
-                        {isMobile ? tabIcons[tab] : t(tab)}
+                        {t(tab)}
                     </button>
                 </div>
             ))}
         </div>
+    );
+
+    // Mobile Bottom Navigation - Now standalone with scroll behavior
+    const MobileNavigation = () => (
+        <div
+            className={`fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50 transition-transform duration-300 ${
+                isVisible ? 'transform translate-y-0' : 'transform translate-y-full'
+            }`}
+        >
+            {tabs.map((tab) => (
+                <button
+                    key={tab}
+                    className={`flex flex-col items-center justify-center w-1/5 p-2 ${
+                        activeTab === tab ? "text-roomi" : "text-gray-500"
+                    }`}
+                    onClick={() => {
+                        setActiveTab(tab);
+                    }}
+                    type="button"
+                    role="tab"
+                    aria-controls={tab}
+                    aria-selected={activeTab === tab}
+                >
+                    <div className="text-xl mb-1">{tabIcons[tab]}</div>
+                    <span className="text-xs">{t(tab)}</span>
+                </button>
+            ))}
+        </div>
+    );
+
+    return (
+        <>
+            {isMobile ? <div /> : <DesktopNavigation />}
+            {/* Add padding at the bottom of your content when in mobile to prevent content from being hidden behind the bottom nav */}
+            {isMobile && <div className={`${isVisible ? 'block' : 'hidden'}`}></div>}
+        </>
     );
 };
 

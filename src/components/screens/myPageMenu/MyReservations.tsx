@@ -6,6 +6,8 @@ import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import MyReservationDetails from "./MyReservationDetails";
 import {useMediaQuery} from "react-responsive";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faChevronRight} from "@fortawesome/free-solid-svg-icons";
 
 dayjs.extend(utc);
 
@@ -73,14 +75,22 @@ export default function MyReservations() {
             return renderStatusUI('bg-gray-700', '계약취소');
         } else if (status === 'REJECTED') { // 승인 거절
             return renderStatusUI('bg-gray-700', '승인거절');
-        } else { // 승인 대기, 결제전, 기본값
+        }else if (status === 'IN_USE') { // 승인 거절
+            return renderStatusUI('bg-gray-700', '이용중');
+        }else if (status === 'CHECKED_OUT') { // 승인 거절
+            return renderStatusUI('bg-gray-700', '환급대기');
+        }
+
+        else { // 승인 대기, 결제전, 기본값
             return renderStatusUI('bg-gray-500', '승인대기');
         }
     };
 
     const renderStatusUI = (backgroundColor: string, message: string) => {
         return (
-            <span className={`text-xs text-white p-1 px-2.5 rounded ${backgroundColor}`}>{message}</span>
+            <div className={`text-xs text-white p-1 px-2.5 rounded ${backgroundColor}`}>
+                <span>{message}</span>
+            </div>
         );
     };
 
@@ -104,47 +114,35 @@ export default function MyReservations() {
             }
         } else if (status === 'COMPLETED') {
             return { backgroundColor: 'bg-gray-500', message: '계약종료' };
-        } else if (status === 'CANCELLED') {
+        } else if (status === 'IN_USE') {
+            return { backgroundColor: 'bg-gray-700', message: '이용중' };
+        }else if (status === 'CHECKED_OUT') {
+            return { backgroundColor: 'bg-gray-700', message: '환급대기' };
+        }
+        else if (status === 'CANCELLED') {
             return { backgroundColor: 'bg-gray-700', message: '계약취소' };
         }
+
         return { backgroundColor: 'bg-gray-500', message: '승인대기' };
     };
 
 
     const renderReservationList = (list: ReservationHistory[]) => {
-        return (
-            list.map((item) => (
-                <div key={item.order_id} className="flex flex-col md:flex-row justify-between md:p-2 bg-gray-100 my-4 rounded-lg relative">
-                    <div className="md:w-1/4">
-                        <div className="md:w-36 md:h-32 md:mr-4">
-                            <img
-                                className="object-cover rounded md:rounded-lg w-full h-full"
-                                src={item.room.detail_urls?.[0]}
-                                alt="thumbnail"
-                            />
-                        </div>
-                    </div>
-                    <div className="flex flex-col justify-center md:p-0 p-4 md:w-full">
-                        <button type="button" onClick={() => setReservedDetails(item)} className="text-left">
-                            <div className="mb-2">
-                                <div className="flex md:gap-2 md:flex-row flex-col">
-                                    <span className="text-xl font-bold tracking-tight text-gray-900">
-                                        {item.room.title}
-                                    </span>
-                                    <span className="flex items-end gap-1">
-                                        <span>{dayjs.utc(item.check_in_date).format('YYYY-MM-DD')}</span>
-                                        <span>~</span>
-                                        <span>{dayjs.utc(item.check_out_date).format('YYYY-MM-DD')}</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </button>
-                        <div className="font-normal text-gray-700">{item.room.address}</div>
-                        <div className="flex gap-0.5">
-                            <div>총 금액 : {t('원')}</div>
-                            <div>{item.total_price.toLocaleString()}</div>
-                        </div>
-                        <div className="md:mt-1 mt-2">
+        return list.map((item) => (
+            // 모바일에서는 세로형, 웹에서는 가로형 레이아웃
+            <div
+                key={item.order_id}
+                className="my-4 rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all "
+                style={{backgroundColor: '#F7F7F7'}}
+                onClick={() => setReservedDetails(item)}
+            >
+                {/* 모바일 버전 - 두 번째 이미지 스타일 */}
+                <div className="md:hidden p-4">
+                    {/* 상단 날짜 정보 */}
+                    <div className="text-gray-500 text-sm mb-3">
+                        {dayjs.utc(item.check_in_date).format('YYYY.MM.DD')} - {dayjs.utc(item.check_out_date).format('YYYY.MM.DD')}
+
+                        <div className="inline-block ml-2">
                             {renderStatus(
                                 item.status,
                                 item.payment_status,
@@ -153,19 +151,107 @@ export default function MyReservations() {
                             )}
                         </div>
                     </div>
+
+                    <div className="mt-2">
+
+
+                    </div>
+
+                    {/* 컨텐츠 영역 */}
+                    <div className="flex">
+                        {/* 이미지 - 정사각형 */}
+                        <div className="w-1/4 mr-3">
+                            <div className="relative" style={{paddingBottom: '100%'}}>
+                            <img
+                                    src={item.room.detail_urls?.[0] || '/placeholder-image.jpg'}
+                                    alt="thumbnail"
+                                    className="absolute inset-0 w-full h-full object-cover rounded-md"
+                                />
+                            </div>
+                        </div>
+
+                        {/* 정보 */}
+                        <div className="w-3/4 flex flex-col">
+                            <div className="text-base font-semibold text-gray-900 flex items-center">
+                                {item.room.title}
+                            </div>
+
+                            <div className="text-sm text-gray-600 mt-1">
+                                {item.room.address}
+                            </div>
+
+                            <div className="text-base font-bold mt-2 mb-2">
+                                ₩{item.total_price.toLocaleString()}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {/* 상태 - 좌측 정렬 */}
+
                 </div>
-            ))
-        );
+
+                <div
+                    className="hidden md:flex flex-row items-stretch px-4 py-4 w-full rounded-lg"
+                    style={{backgroundColor: '#F5F5F5'}}
+                >
+                    {/* 썸네일 이미지 */}
+                    <div className="w-32 h-32 flex-shrink-0 mr-5 self-start">
+                        <img
+                            src={item.room.detail_urls?.[0] || '/placeholder-image.jpg'}
+                            alt="thumbnail"
+                            className="w-full h-full object-cover rounded-md"
+                        />
+                    </div>
+
+                    {/* 정보 영역 */}
+                    <div className="flex flex-col justify-start flex-grow py-1">
+                        {/* 위쪽: 제목, 날짜, 주소, 금액 */}
+                        <div>
+                            <div className="text-base font-semibold text-gray-900">
+                                {item.room.title}
+                            </div>
+
+                            <div className="text-sm text-gray-600 mt-1">
+                                {dayjs.utc(item.check_in_date).format('YYYY.MM.DD')} - {dayjs.utc(item.check_out_date).format('YYYY.MM.DD')}
+                            </div>
+
+                            <div className="text-sm text-gray-600 mt-1">{item.room.address}</div>
+
+                            <div className="text-sm text-gray-900 font-bold mt-1">
+                                총 금액: ₩{item.total_price.toLocaleString()}
+                            </div>
+                        </div>
+
+                        {/* 아래쪽: 상태 뱃지 */}
+                        <div className="mt-2 w-fit">
+                            {renderStatus(
+                                item.status,
+                                item.payment_status,
+                                dayjs.utc(item.check_in_date).format('YYYY-MM-DD'),
+                                dayjs.utc(item.check_out_date).format('YYYY-MM-DD')
+                            )}
+                        </div>
+                    </div>
+
+                    {/* 화살표 - 세로 중앙 정렬 */}
+                    <div className="flex items-center pl-3">
+                        <FontAwesomeIcon icon={faChevronRight} className="text-gray-500 text-xl"/>
+                    </div>
+                </div>
+            </div>
+        ));
     };
 
     return (
-        <div className="p-4 md:px-8">
+        <div className="p-4 py-0 md:px-8 relative">
             {/*타이틀*/}
             <div className="flex justify-between items-center mb-4">
                 {reservedDetails ? (
                     /*예약 상세 정보*/
                     <>
-                        <button type="button" onClick={() => setReservedDetails(null)} className="py-2 px-4 text-sm rounded font-bold">
+                        <button type="button" onClick={() => setReservedDetails(null)}
+                                className="py-2 px-4 text-sm rounded font-bold">
                             목록 보기
                         </button>
                     </>

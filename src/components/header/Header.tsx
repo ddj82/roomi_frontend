@@ -249,10 +249,10 @@ const Header = () => {
                                     ref={searchBarRef}
                                     onClick={openSearchModal}
                                     className="h search-bar-row md:h-14 h-12
-        w-full md:max-w-xl lg:max-w-2xl xl:max-w-3xl
-        text-[11px] md:text-sm lg:text-base flex items-center justify-between
-        bg-white border border-gray-200
-        cursor-pointer transition-shadow"
+                                                w-full md:max-w-xl lg:max-w-2xl xl:max-w-3xl
+                                                text-[11px] md:text-sm lg:text-base flex items-center justify-between
+                                                bg-white border border-gray-200
+                                                cursor-pointer transition-shadow"
                                     style={{borderRadius: '9999px', overflow: 'hidden'}}
                                 >
                                     <div className="search-simple-text flex items-center px-4 py-2 flex-1">
