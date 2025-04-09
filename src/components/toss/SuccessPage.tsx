@@ -2,9 +2,20 @@ import React, { useEffect } from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck} from "@fortawesome/free-solid-svg-icons";
 import {useNavigate} from "react-router-dom";
+import {confirmPayment} from "../../api/api";
 
 const SuccessPage: React.FC = () => {
     const navigate = useNavigate();
+
+    // 결제완료 api 호출
+    const handleConfirmPayment = async (paymentKey: string, orderId: string, amount: number) => {
+        try {
+            const response = await confirmPayment(paymentKey, orderId, amount);
+            console.log('결제 완료 api response', response);
+        } catch (e) {
+            console.error('결제 완료 api 에러', e);
+        }
+    };
 
     useEffect(() => {
         const params = getUrlParams();
@@ -32,20 +43,6 @@ const SuccessPage: React.FC = () => {
     };
 
     const redirectToApp = (params: Record<string, string>) => {
-        let deepLink = `com.myno1214.roomi://success`;
-
-        const additionalInfo = {
-            timestamp: new Date().toISOString(),
-            device: navigator.userAgent,
-        };
-
-        const combinedParams = { ...params, ...additionalInfo };
-        const paramString = Object.entries(combinedParams)
-            .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-            .join("&");
-
-        if (paramString) deepLink += `?${paramString}`;
-
         const detailsElement = document.getElementById("payment-details");
         if (detailsElement && params.orderId) {
             detailsElement.innerHTML = `
@@ -62,9 +59,10 @@ const SuccessPage: React.FC = () => {
                 ${params.approvedAt ? 
                         `<p class="flex justify-between"><strong>승인시간:</strong><span>${formatDate(new Date(params.approvedAt))}</span></p>` : ""}
               `;
+            // api 함수 호출
+            console.log('토스리턴', params);
+            handleConfirmPayment(params.paymentKey, params.orderId, parseInt(params.amount));
         }
-
-        window.location.href = deepLink;
     };
 
     const getPaymentMethodName = (method: string): string => {
