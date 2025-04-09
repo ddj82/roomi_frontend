@@ -76,7 +76,7 @@ const RoomStatus = () => {
 
     return (
         <div className="min-h-[0vh]">
-            <div className="flex justify-between my-12 md:flex-row flex-col">
+            <div className="flex justify-between  md:flex-row flex-col">
                 <div className="flex flex-wrap gap-4">
                     {tabs.map((tab) => (
                         <div key={tab} className="text-sm text-center text-black">
