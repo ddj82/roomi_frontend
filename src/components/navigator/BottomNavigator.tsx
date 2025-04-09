@@ -1,77 +1,119 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from "react-i18next";
 import {useHostTabNavigation} from "../stores/HostTabStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendar, faComments, faDollarSign, faFileLines, faHouseChimney} from "@fortawesome/free-solid-svg-icons";
+import {faCalendar, faComments, faFileLines, faHouseChimney} from "@fortawesome/free-solid-svg-icons";
+import {useAuthStore} from "../stores/AuthStore";
+import {useChatStore} from "../stores/ChatStore";
+import {logout} from "../../api/api";
+import {useHostModeStore} from "../stores/HostModeStore";
 
 const tabIcons: Record<string, JSX.Element> = {
     my_room: <FontAwesomeIcon icon={faHouseChimney} />,
     contract_management: <FontAwesomeIcon icon={faFileLines} />,
     room_status: <FontAwesomeIcon icon={faCalendar} />,
     message: <FontAwesomeIcon icon={faComments} />,
-    settlement: <FontAwesomeIcon icon={faDollarSign} />,
 };
 
 const BottomNavigation: React.FC = () => {
     const { t } = useTranslation();
     const { activeTab, setActiveTab } = useHostTabNavigation();
-    const tabs = ["my_room", "contract_management", "room_status", "message", "settlement"] as const;
-    const [isVisible, setIsVisible] = useState(true);
-    const [lastScrollY, setLastScrollY] = useState(0);
+    const tabs = ["my_room", "contract_management", "room_status", "message"] as const;
+    const disconnect = useChatStore((state) => state.disconnect);
+    const [userVisible, setUserVisible] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const {resetUserMode} = useHostModeStore();
+    const {profileImg} = useAuthStore();
+
+    const toggleDropdown = () => {
+        setUserVisible((prev) => !prev);
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+            setUserVisible(false);
+        }
+    };
+
+    const handleSetHostMode = () => {
+        resetUserMode();
+        window.location.href = '/';
+    };
+
+    const handleLogout = async () => {
+        try {
+            const response = await logout();
+            console.log(response);
+            resetUserMode();// hostMode 초기화
+            disconnect(); // 소켓 서버 닫기
+            window.location.reload();
+        } catch (error) {
+            console.error("로그아웃 실패:", error);
+        }
+    };
 
     useEffect(() => {
-        const handleScroll = () => {
-            const currentScrollY = window.scrollY;
-
-            // 스크롤 방향에 따라 표시 여부 결정
-            // 아래로 스크롤 시 숨기기 (50px 이상 스크롤된 경우)
-            if (currentScrollY > lastScrollY && isVisible && currentScrollY > 50) {
-                setIsVisible(false);
-            }
-            // 위로 스크롤 시 표시하기
-            else if (currentScrollY < lastScrollY && !isVisible) {
-                setIsVisible(true);
-            }
-
-            setLastScrollY(currentScrollY);
-        };
-
-        window.addEventListener('scroll', handleScroll, { passive: true });
-
+        if (userVisible) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
         return () => {
-            window.removeEventListener('scroll', handleScroll);
+            document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [lastScrollY, isVisible]);
+    }, [userVisible]);
 
     return (
-        <>
-            <div
-                className={`fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50 transition-transform duration-300 ${
-                    isVisible ? 'transform translate-y-0' : 'transform translate-y-full'
-                }`}
-            >
-                {tabs.map((tab) => (
-                    <button
-                        key={tab}
-                        className={`flex flex-col items-center justify-center w-1/5 p-2 ${
-                            activeTab === tab ? "text-roomi" : "text-gray-500"
-                        }`}
-                        onClick={() => {
-                            setActiveTab(tab);
-                        }}
-                        type="button"
-                        role="tab"
-                        aria-controls={tab}
-                        aria-selected={activeTab === tab}
-                    >
-                        <div className="text-xl mb-1">{tabIcons[tab]}</div>
-                        <span className="text-xs">{t(tab)}</span>
-                    </button>
-                ))}
+        <div
+            className={`fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50`}
+        >
+            {tabs.map((tab) => (
+                <button
+                    key={tab}
+                    className={`flex flex-col items-center justify-center w-1/5 p-2 ${
+                        activeTab === tab ? "text-roomi" : "text-gray-500"
+                    }`}
+                    onClick={() => {
+                        setActiveTab(tab);
+                    }}
+                    type="button"
+                    role="tab"
+                    aria-controls={tab}
+                    aria-selected={activeTab === tab}
+                >
+                    <div className="text-xl mb-1">{tabIcons[tab]}</div>
+                    <span className="text-xs">{t(tab)}</span>
+                </button>
+            ))}
+            <div className="relative" ref={dropdownRef}>
+                <button
+                    className="w-8 h-8 md:w-10 md:h-10 flex_center bg-roomi-000 text-roomi rounded-full"
+                    onClick={toggleDropdown}>
+                    <img src={profileImg} alt="프로필사진" className="rounded-full md:w-10 md:h-10 w-8 h-8"/>
+                </button>
+                {userVisible && (
+                    <div className="absolute -right-3 bottom-12 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-40 z-[2000] border">
+                        <ul className="py-2 text-sm text-gray-700">
+                            <li>
+                                <a href="/host/myPage" className="block px-4 py-2 hover:bg-gray-100">{t('마이페이지')}</a>
+                            </li>
+                            <li>
+                                <button onClick={handleSetHostMode}
+                                        className="w-full text-start block px-4 py-2 hover:bg-gray-100">
+                                    {t("게스트로 전환")}
+                                </button>
+                            </li>
+                        </ul>
+                        <div className="py-2">
+                            <button onClick={handleLogout}
+                                    className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                {t('로그아웃')}
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
-            {/* 하단 네비게이션 높이만큼 패딩 추가 */}
-            <div className={`h-16 ${isVisible ? 'block' : 'hidden'}`}></div>
-        </>
+        </div>
     );
 };
 
