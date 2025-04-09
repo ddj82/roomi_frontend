@@ -368,3 +368,12 @@ export const getUserById = async (userId: number) => {
 export const updateCurrency = async (currency: string) => {
     return request(`/users/currency?currency=${currency}`, true, 'POST');
 };
+
+// 결제 완료 API
+export const confirmPayment = async (paymentKey: string, orderId: string, amount: number) => {
+    return request(`/payment/confirm`, true, 'POST', {
+        paymentKey: paymentKey,
+        orderId: orderId,
+        amount: amount,
+    });
+};
