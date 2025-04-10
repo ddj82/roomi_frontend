@@ -13,7 +13,7 @@ const AccommodationCard = memo(
     ({ item, onClick }: { item: RoomData; onClick: () => void }) => {
         const formatPrice = useCallback((price: number | null) => {
             if (!price) return '가격 정보 없음';
-            return `${t('원')}${price.toLocaleString()}`;
+            return `${item.symbol} ${price.toLocaleString()}`;
         }, []);
 
         const {t} = useTranslation();
@@ -35,12 +35,13 @@ const AccommodationCard = memo(
                 </div>
                 <div className="homeScreen card-content">
                     <div className="homeScreen price-container">
-                        {item.week_enabled && item.week_price && (
-                            <p className="homeScreen price">{formatPrice(item.week_price)} / {t('주')}</p>
-                        )}
                         {item.month_enabled && item.month_price && (
                             <p className="homeScreen price">{formatPrice(item.month_price)} / {t('월')}</p>
                         )}
+                        {item.week_enabled && item.week_price && (
+                            <p className="homeScreen price">{formatPrice(item.week_price)} / {t('주')}</p>
+                        )}
+
                     </div>
                     <h3 className="homeScreen title">{item.title || '제목 없음'}</h3>
                     <p className="homeScreen location">{item.address || '주소 정보 없음'}</p>

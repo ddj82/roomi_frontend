@@ -118,7 +118,7 @@ const DesktopChatView: React.FC<DesktopChatViewProps> = ({
                                                 <div
                                                     className={`py-3 px-4 rounded-2xl break-words ${
                                                         isMyMessage
-                                                            ? "bg-blue-500 text-white"
+                                                            ? "bg-roomi text-white"
                                                             : "bg-white text-gray-800 border border-gray-200"
                                                     } ${consecutive && isMyMessage ? "rounded-tr-md" : ""} ${consecutive && !isMyMessage ? "rounded-tl-md" : ""}`}
                                                 >
@@ -167,7 +167,7 @@ const DesktopChatView: React.FC<DesktopChatViewProps> = ({
                     </button>
                     {input.trim() ? (
                         <button
-                            className="p-2.5 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
+                            className="p-2.5 bg-roomi text-white rounded-full hover:bg-roomi transition-colors"
                             onClick={sendMessage}
                         >
                             <FontAwesomeIcon icon={faPaperPlane} />
