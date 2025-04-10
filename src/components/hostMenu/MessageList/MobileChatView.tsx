@@ -117,7 +117,7 @@ const MobileChatView: React.FC<MobileChatViewProps> = ({
                                                 <div
                                                     className={`py-1.5 px-2.5 rounded-2xl break-words text-sm ${
                                                         isMyMessage
-                                                            ? "bg-blue-500 text-white"
+                                                            ? "bg-roomi text-white"
                                                             : "bg-white text-gray-800 border border-gray-100"
                                                     } ${consecutive && isMyMessage ? "rounded-tr-md" : ""} ${consecutive && !isMyMessage ? "rounded-tl-md" : ""}`}
                                                 >
@@ -163,7 +163,7 @@ const MobileChatView: React.FC<MobileChatViewProps> = ({
                     />
                     {input.trim() ? (
                         <button
-                            className="p-1.5 bg-blue-500 text-white rounded-full"
+                            className="p-1.5 bg-roomi text-white rounded-full"
                             onClick={sendMessage}
                         >
                             <FontAwesomeIcon icon={faPaperPlane} className="text-sm" />

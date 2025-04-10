@@ -21,11 +21,11 @@ interface AirbnbStyleCalendarProps {
     endDate: string | null;
 }
 // 에어비앤비 스타일 캘린더 컴포넌트
+// 에어비앤비 스타일 캘린더 컴포넌트 완전 수정본
 const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
                                                                      blockDates,
                                                                      reservationDates,
                                                                      locale,
-                                                                     // dayPrice,
                                                                      onDateClick,
                                                                      startDate,
                                                                      endDate
@@ -47,6 +47,7 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
         // 컴포넌트 언마운트 시 이벤트 리스너 제거
         return () => window.removeEventListener('resize', checkIfDesktop);
     }, []);
+
     const today = dayjs();
     const months = Array.from({ length: 6 }, (_, i) => today.add(i, 'month'));
     const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
@@ -96,12 +97,23 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
         return date.format('YYYY-MM-DD') === endDate;
     };
 
+    // 날짜 클릭 핸들러 - 예약된 날짜 클릭을 완전히 차단
+    const handleDateClick = (dateString: string) => {
+        // 예약된 날짜는 클릭 불가
+        if (reservationDates.includes(dateString)) {
+            console.log('예약된 날짜는 선택할 수 없습니다.');
+            return;
+        }
+
+        // 날짜 클릭 이벤트 전달
+        onDateClick?.(dateString);
+    };
+
     return (
         <div className="airbnb-calendar-container overflow-auto scrollbar-hidden bg-white p-6 w-full"
              style={{
                  height: 'calc(100vh - 240px)',
-                 // 웹에서는 더 큰 달력 표시
-                 maxWidth: '900px', // 추가: 최대 넓이 강제
+                 maxWidth: '900px',
              }}>
             {months.map((month, monthIndex) => (
                 <div key={monthIndex} className="month-container mb-10 w-full">
@@ -113,7 +125,7 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
                             <div
                                 key={i}
                                 className={`text-center text-sm font-semibold py-2
-                  ${i === 0 ? 'text-red-500' : i === 6 ? 'text-blue-500' : 'text-gray-500'}`}
+                                ${i === 0 ? 'text-red-500' : i === 6 ? 'text-blue-500' : 'text-gray-500'}`}
                             >
                                 {day}
                             </div>
@@ -131,7 +143,9 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
                             const isReserved = reservationDates.includes(dateString);
                             const isUnavailable = isBlocked || isReserved;
                             const isPast = dayObj.date.isBefore(today, 'day');
-                            const isSelectable = !isPast;
+
+                            // 중요: 예약된 날짜는 선택 불가능하게 설정
+                            const isSelectable = !isPast && !isReserved;
 
                             // 날짜 선택 상태 관련 변수
                             const isStart = isStartDate(dayObj.date);
@@ -142,20 +156,22 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
                                 <div
                                     key={dayIndex}
                                     className={`
-                    w-full flex items-center justify-center
-                    relative transition-all duration-200 ease-in-out text-sm
-                    ${isSelectable ? 'text-gray-800' : 'text-gray-400'}
-                    ${isReserved ? 'text-red-500' : ''}
-                    ${isRange ? 'bg-roomi/10' : ''}
-                    ${isStart && endDate ? 'rounded-l-full' : ''}
-                    ${isEnd ? 'rounded-r-full' : ''}
-                    ${isSelectable ? 'cursor-pointer' : 'cursor-default'}
-                `}
+                                    w-full flex items-center justify-center
+                                    relative transition-all duration-200 ease-in-out text-sm
+                                    ${isSelectable ? 'text-gray-800' : 'text-gray-400'}
+                                    ${isReserved ? 'text-red-500' : ''}
+                                    ${isRange ? 'bg-roomi/10' : ''}
+                                    ${isStart && endDate ? 'rounded-l-full' : ''}
+                                    ${isEnd ? 'rounded-r-full' : ''}
+                                    ${isSelectable ? 'cursor-pointer' : 'cursor-not-allowed'}
+                                `}
                                     onClick={() => {
+                                        // 예약된 날짜는 클릭해도 아무런 동작도 하지 않음
                                         if (isSelectable) {
-                                            onDateClick?.(dateString);
+                                            handleDateClick(dateString);
                                         }
                                     }}
+                                    title={isReserved ? '예약된 날짜입니다 (수정 불가)' : isBlocked ? '블록된 날짜입니다 (클릭하여 해제)' : '클릭하여 날짜 선택'}
                                 >
                                     <div
                                         className={`flex items-center justify-center ${isStart || isEnd ? 'bg-roomi text-white rounded-full z-10' : ''}`}
@@ -168,11 +184,11 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
                                         {dayObj.date.date()}
                                     </div>
 
-                                    {/* 블록된 날짜와 예약된 날짜에 대한 가로 선 표시 */}
+                                    {/* 블록된 날짜와 예약된 날짜에 대한 가로 선 표시 - 색상 차이 적용 */}
                                     {isUnavailable && (
                                         <div
                                             className="absolute pointer-events-none z-10 w-full h-full flex items-center justify-center">
-                                            <div className="bg-red-500 w-1/3 h-0.5"></div>
+                                            <div className={`${isReserved ? 'bg-red-500' : 'bg-gray-500'} w-1/3 h-0.5`}></div>
                                         </div>
                                     )}
 
@@ -226,10 +242,19 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
     const [calendarKey, setCalendarKey] = useState(0);
     const [userLocale, setUserLocale] = useState(i18n.language);
 
+    // RoomStatusConfig 컴포넌트 내부의 handleDayClick 함수
     const handleDayClick = (dateString: string) => {
-        // 'BLOCKED' 상태이거나 손님이 예약한 날짜인 경우 클릭 비활성화
-        if (customBlockDatesRSC.includes(dateString) || reservationDatesRSC.includes(dateString)) {
-            // 블락 해제 모달 오픈
+        // 중요: AirbnbStyleCalendar 컴포넌트에서 이미 예약된 날짜 클릭을 필터링하므로
+        // 여기서는 예약된 날짜가 들어오지 않아야 합니다. 하지만 추가 안전장치로 다시 체크합니다.
+        if (reservationDatesRSC.includes(dateString)) {
+            console.log('예약된 날짜는 수정할 수 없습니다:', dateString);
+            return;
+        }
+
+        // 블록된 날짜인지 확인 - 블록 해제 모달 표시
+        if (customBlockDatesRSC.includes(dateString)) {
+            console.log('블록된 날짜 선택됨:', dateString);
+            // 블록 해제 모달 오픈
             setShowModal(true);
             // 블락 일자 업데이트
             setIsBlockDate(dateString);
@@ -239,6 +264,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
             return;
         }
 
+        // 일반 날짜 선택 로직
         if (!startDateRSC || (startDateRSC && endDateRSC)) {
             setStartDateRSC(dateString);
             setEndDateRSC(null);
