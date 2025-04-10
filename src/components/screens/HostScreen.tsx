@@ -27,9 +27,8 @@ const HostScreen: React.FC = () => {
         message: <MessageList />,
         settlement: <Settlement />,
     };
-
     return (
-        <div className="my-4 px-4 h-[80vh]">
+        <div className="my-4 px-8 h-[80vh]">
             {components[activeTab] || <div>선택된 탭이 없습니다.</div>}
             <div className="h-16 md:hidden"></div>
         </div>

@@ -224,7 +224,7 @@ export default function GuestMyPageMobile() {
                     <div>
                         <button
                             onClick={() => window.location.href = '/'}
-                            className="p-3 bg-gray-50 rounded-lg flex items-center justify-center"
+                            className="p-3 rounded-lg flex items-center justify-center"
                         >
                             <FontAwesomeIcon icon={faHome} className="text-xl text-roomi" />
                         </button>

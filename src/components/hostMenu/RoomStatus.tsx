@@ -478,7 +478,7 @@ const RoomStatus = () => {
     };
 
     return (
-        <div className="min-h-[0vh] p-4">
+        <div className="min-h-[0vh]">
             <div className="mb-6">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">{t('room_config')}</h2>
                 {/* 커스텀 드롭다운 */}
@@ -514,7 +514,7 @@ const RoomStatus = () => {
             </div>
 
             {/* RoomStatusConfig 내용을 직접 통합 */}
-            <div className="bg-white rounded-lg shadow p-4">
+            <div className="bg-white rounded-lg ">
                 <div className="flex flex-col md:flex-row gap-6 bg-white rounded-lg shadow-sm p-6"
                      style={{minHeight: 'calc(100vh - 100px)'}}>
                     {/* 캘린더 영역 - 에어비앤비 스타일 */}
