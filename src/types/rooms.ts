@@ -134,6 +134,8 @@ export interface RoomData {
 
     is_favorite: boolean;
     currency: string;
+    //추가된 필드
+    symbol: string;
 }
 
 export interface RoomFormData {
@@ -221,6 +223,11 @@ export interface ReservationHistory {
     dollar_price?: number;
     guest: Guest;
     room: RoomData;
+    //추가된 필드
+    symbol: string;
+    maintenance_per_unit: number,
+    price_per_unit: number,
+
 }
 
 export interface MyReservationHistory {
@@ -253,6 +260,10 @@ export interface MyReservationHistory {
         yen_price?: number;
         dollar_price?: number;
         guest: Guest;
+        //추가된 필드
+        symbol: string;
+        maintenance_per_unit: number,
+        price_per_unit: number,
     },
     room: RoomData;
 }
