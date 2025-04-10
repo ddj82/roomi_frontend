@@ -60,6 +60,9 @@ export default function GuestReservationScreen() {
         },
         JPY = 0,
         USD = 0,
+        unit = 0,
+        maintenancePerUnit = 0,
+        pricePerUnit = 0,
     } = location.state || {};
 
     const [formDataState, setFormDataState] = useState<FormDataType>(formData);

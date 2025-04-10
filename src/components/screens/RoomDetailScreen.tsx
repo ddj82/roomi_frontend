@@ -62,6 +62,7 @@ export default function RoomDetailScreen() {
     const [checkOutList, setCheckOutList] = useState<string[]>([]);
     // 1박2일 날짜들
     const [oneDayList, setOneDayList] = useState<string[]>([]);
+    const [userCurrency, setUserCurrency] = useState(localStorage.getItem('userCurrency') || 'KRW');
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -341,24 +342,38 @@ export default function RoomDetailScreen() {
         let price = (Number(room?.week_price!.toFixed(2)) || 0);
         let depositPrice = (Number(room?.deposit_week!.toFixed(2)) || 0);
         let maintenancePrice = (Number(room?.maintenance_fee_week!.toFixed(2)) || 0);
-        let cleaningPrice = (Number(room?.cleaning_fee_week!.toFixed(2)) || 0);
+        // let feePrice = (Number(room?.cleaning_fee_week!.toFixed(2)) || 0);
 
         if (calUnit) {
             // 월간 가격 저장
             price = (Number(room?.month_price!.toFixed(2)) || 0);
             depositPrice = (Number(room?.deposit_month!.toFixed(2)) || 0);
             maintenancePrice = (Number(room?.maintenance_fee_month!.toFixed(2)) || 0);
-            cleaningPrice = (Number(room?.cleaning_fee_month!.toFixed(2)) || 0);
+            // feePrice = (Number(room?.cleaning_fee_month!.toFixed(2)) || 0);
         }
-        const allOptionPrice = depositPrice + maintenancePrice;
+
+        let feePrice;
+        if (userCurrency === 'USD') {
+            console.log('통화 USD');
+            feePrice = Math.ceil((price + maintenancePrice) * 0.08 * 100) / 100;
+
+        } else if (userCurrency === 'JPY') {
+            console.log('통화 JPY');
+            feePrice = Math.ceil((price + maintenancePrice) * 0.08);
+
+        } else {
+            console.log('통화 기본(KRW)');
+            feePrice = Number(((price + maintenancePrice) * 0.08).toFixed(2));
+        }
+
         const thisRoom = room;
         navigate(`/detail/${roomId}/${locale}/reservation`, {
             state: {
                 price,
                 depositPrice,
                 maintenancePrice,
-                cleaningPrice,
-                allOptionPrice,
+                feePrice,
+                // allOptionPrice,
                 thisRoom
             },
         });

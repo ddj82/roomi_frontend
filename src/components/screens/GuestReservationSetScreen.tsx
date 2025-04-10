@@ -41,8 +41,8 @@ export default function GuestReservationSetScreen() {
         price = 0,
         depositPrice = 0,
         maintenancePrice = 0,
-        cleaningPrice = 0,
-        allOptionPrice = 0,
+        feePrice = 0,
+        // allOptionPrice = 0,
         thisRoom = null,
     } = location.state || {}; // state가 없는 경우 기본값 설정
     const [totalPrice, setTotalPrice] = useState(0);
@@ -52,7 +52,6 @@ export default function GuestReservationSetScreen() {
         email: "",
     });
     const [slideIsOpen, setSlideIsOpen] = useState(false);
-    const [fee, setFee] = useState(0);
     const [userCurrency, setUserCurrency] = useState('');
 
     useEffect(() => {
@@ -64,7 +63,6 @@ export default function GuestReservationSetScreen() {
         formData.phone = '01012312312';
         formData.email = 'qweqwe@naver.com';
         setGuestCount(prev => 2);
-        setFee((price + maintenancePrice) * 0.08);
     }, [roomId, locale]);
 
     const handleguestValue = (value : boolean) => {
@@ -87,9 +85,9 @@ export default function GuestReservationSetScreen() {
             // } else {
             //     setNightVal(0); // 날짜가 없을 경우 0박으로 설정
             // }
-            setTotalPrice((price * monthValue) + allOptionPrice);
+            setTotalPrice(((price + maintenancePrice + feePrice) * monthValue) + depositPrice);
         } else {
-            setTotalPrice((price * weekValue) + allOptionPrice);
+            setTotalPrice(((price + maintenancePrice + feePrice) * weekValue) + depositPrice);
         }
     };
 
@@ -168,7 +166,9 @@ export default function GuestReservationSetScreen() {
                 },
                 JPY: reservationInfo.reservation.yen_price,
                 USD: reservationInfo.reservation.dollar_price,
-
+                unit: reservationInfo.reservation.unit,
+                maintenancePerUnit: reservationInfo.reservation.maintenance_per_unit,
+                pricePerUnit: reservationInfo.reservation.price_per_unit,
             },
         });
     };
@@ -394,17 +394,21 @@ export default function GuestReservationSetScreen() {
                                 {/*관리비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("service_charge")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{maintenancePrice.toLocaleString()}</div>
+                                    <div className="font-bold text-gray-800">
+                                        {t('원')}{(calUnit ? (maintenancePrice * monthValue) : (maintenancePrice * weekValue)).toLocaleString()}
+                                    </div>
                                 </div>
                                 {/*청소비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("cleaning_fee")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{fee.toFixed(2).toLocaleString()}</div>
+                                    <div className="font-bold text-gray-800">
+                                        {t('원')}{(calUnit ? (feePrice * monthValue) : (feePrice * weekValue)).toLocaleString()}
+                                    </div>
                                 </div>
                                 <div className="flex justify-between border-t border-gray-200 mt-3 pt-4">
                                     <div className="text-gray-800 font-medium">{t("총결제금액")}</div>
                                     <div
-                                        className="font-bold text-roomi text-xl">{t("원")}{(totalPrice + fee).toFixed(2).toLocaleString()}</div>
+                                        className="font-bold text-roomi text-xl">{t("원")}{totalPrice.toLocaleString()}</div>
                                 </div>
                             </div>
                             <div className="mt-4 text-sm space-y-6 max-w-lg mx-auto">
