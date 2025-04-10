@@ -60,6 +60,9 @@ export default function GuestReservationScreen() {
         },
         JPY = 0,
         USD = 0,
+        unit = 0,
+        maintenancePerUnit = 0,
+        pricePerUnit = 0,
     } = location.state || {};
 
     const [formDataState, setFormDataState] = useState<FormDataType>(formData);
@@ -483,12 +486,12 @@ export default function GuestReservationScreen() {
                                 <div className="flex justify-between py-2">
                                     <div className="font-medium text-gray-700">
                                         {calUnit
-                                            ? `${t('원')}${price.toLocaleString()} × ${totalNight}${t('달')}`
-                                            : `${t('원')}${price.toLocaleString()} × ${totalNight}${t('주')}`
+                                            ? `${t('원')}${pricePerUnit.toLocaleString()} × ${totalNight}${t('달')}`
+                                            : `${t('원')}${pricePerUnit.toLocaleString()} × ${totalNight}${t('주')}`
                                         }
                                     </div>
                                     <div className="font-bold text-gray-800">
-                                        {t('원')}{(price * totalNight).toLocaleString()}
+                                        {t('원')}{(price).toLocaleString()}
                                     </div>
                                 </div>
                                 {/*보증금*/}

@@ -41,8 +41,8 @@ export default function GuestReservationSetScreen() {
         price = 0,
         depositPrice = 0,
         maintenancePrice = 0,
-        cleaningPrice = 0,
-        allOptionPrice = 0,
+        feePrice = 0,
+        // allOptionPrice = 0,
         thisRoom = null,
     } = location.state || {}; // state가 없는 경우 기본값 설정
     const [totalPrice, setTotalPrice] = useState(0);
@@ -52,7 +52,6 @@ export default function GuestReservationSetScreen() {
         email: "",
     });
     const [slideIsOpen, setSlideIsOpen] = useState(false);
-    const [fee, setFee] = useState(0);
     const [userCurrency, setUserCurrency] = useState('');
 
     useEffect(() => {
@@ -64,7 +63,6 @@ export default function GuestReservationSetScreen() {
         formData.phone = '01012312312';
         formData.email = 'qweqwe@naver.com';
         setGuestCount(prev => 2);
-        setFee((price + maintenancePrice) * 0.08);
     }, [roomId, locale]);
 
     const handleguestValue = (value : boolean) => {
@@ -87,9 +85,9 @@ export default function GuestReservationSetScreen() {
             // } else {
             //     setNightVal(0); // 날짜가 없을 경우 0박으로 설정
             // }
-            setTotalPrice((price * monthValue) + allOptionPrice);
+            setTotalPrice(((price + maintenancePrice + feePrice) * monthValue) + depositPrice);
         } else {
-            setTotalPrice((price * weekValue) + allOptionPrice);
+            setTotalPrice(((price + maintenancePrice + feePrice) * weekValue) + depositPrice);
         }
     };
 
@@ -154,11 +152,11 @@ export default function GuestReservationSetScreen() {
         // 결제 페이지로 이동
         navigate(`/detail/${roomId}/${locale}/reservation/payment`, {
             state: {
-                price: Number(reservationInfo.reservation.price.toFixed(2)),
-                depositPrice: Number(reservationInfo.reservation.deposit.toFixed(2)),
-                maintenancePrice: Number(reservationInfo.reservation.maintenance_fee.toFixed(2)),
-                fee: Number(reservationInfo.reservation.fee.toFixed(2)),
-                totalPrice: Number(reservationInfo.reservation.total_price.toFixed(2)),
+                price: Number(reservationInfo.reservation.price),
+                depositPrice: Number(reservationInfo.reservation.deposit),
+                maintenancePrice: Number(reservationInfo.reservation.maintenance_fee),
+                fee: Number(reservationInfo.reservation.fee),
+                totalPrice: Number(reservationInfo.reservation.total_price),
                 totalNight: reservationInfo.reservation.unit,
                 formData,
                 thisRoom,
@@ -168,7 +166,9 @@ export default function GuestReservationSetScreen() {
                 },
                 JPY: reservationInfo.reservation.yen_price,
                 USD: reservationInfo.reservation.dollar_price,
-
+                unit: reservationInfo.reservation.unit,
+                maintenancePerUnit: reservationInfo.reservation.maintenance_per_unit,
+                pricePerUnit: reservationInfo.reservation.price_per_unit,
             },
         });
     };
@@ -383,28 +383,32 @@ export default function GuestReservationSetScreen() {
                                         {t('원')}{price.toLocaleString()} × {calUnit ? (`${monthValue}${t('달')}`) : (`${weekValue}${t('주')}`)}
                                     </div>
                                     <div className="font-bold text-gray-800">
-                                        {t('원')}{(calUnit ? (price * monthValue) : (price * weekValue)).toFixed(2).toLocaleString()}
+                                        {t('원')}{(calUnit ? (price * monthValue) : (price * weekValue)).toLocaleString()}
                                     </div>
                                 </div>
                                 {/*보증금*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("deposit")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{depositPrice.toFixed(2).toLocaleString()}</div>
+                                    <div className="font-bold text-gray-800">{t('원')}{depositPrice.toLocaleString()}</div>
                                 </div>
                                 {/*관리비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("service_charge")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{maintenancePrice.toFixed(2).toLocaleString()}</div>
+                                    <div className="font-bold text-gray-800">
+                                        {t('원')}{(calUnit ? (maintenancePrice * monthValue) : (maintenancePrice * weekValue)).toLocaleString()}
+                                    </div>
                                 </div>
                                 {/*청소비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("cleaning_fee")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{fee.toFixed(2).toLocaleString()}</div>
+                                    <div className="font-bold text-gray-800">
+                                        {t('원')}{(calUnit ? (feePrice * monthValue) : (feePrice * weekValue)).toLocaleString()}
+                                    </div>
                                 </div>
                                 <div className="flex justify-between border-t border-gray-200 mt-3 pt-4">
                                     <div className="text-gray-800 font-medium">{t("총결제금액")}</div>
                                     <div
-                                        className="font-bold text-roomi text-xl">{t("원")}{(totalPrice + fee).toFixed(2).toLocaleString()}</div>
+                                        className="font-bold text-roomi text-xl">{t("원")}{totalPrice.toLocaleString()}</div>
                                 </div>
                             </div>
                             <div className="mt-4 text-sm space-y-6 max-w-lg mx-auto">

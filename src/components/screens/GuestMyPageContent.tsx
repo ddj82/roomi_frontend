@@ -14,7 +14,7 @@ interface GuestMyPageContentProps {
     selectedMenu?: string
 }
 
-export default function GuestMyPageMobileContent({selectedMenu}: GuestMyPageContentProps) {
+export default function GuestMyPageContent({selectedMenu}: GuestMyPageContentProps) {
 
     // 메뉴 내용 렌더링 로직을 함수로 분리
     const renderMenuContent = () => {
