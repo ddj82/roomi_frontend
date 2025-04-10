@@ -211,8 +211,6 @@ export const mainRoomData = async (swY: number, swX: number, neY: number, neX: n
     const authToken = !!localStorage.getItem("authToken");
     const currency = localStorage.getItem("userCurrency") ?? "";
 
-    console.log('메인 화면 방 조회 API currency', currency);
-
     if (authToken) {
         return request(`/rooms?swLat=${swY}&swLng=${swX}&neLat=${neY}&neLng=${neX}&locale=${currentLocale}&currency=${currency}`, true);
     } else {

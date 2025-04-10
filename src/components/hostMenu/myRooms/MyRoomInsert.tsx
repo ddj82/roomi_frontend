@@ -191,6 +191,511 @@ const MyRoomInsert = () => {
         };
     }, [basic_facilitiesModal, editingFacility]);
 
+    const renderFacilities = (type: string) => {
+        if (type === 'basic') {
+            {/*필수 시설*/}
+            return (
+                <div className="border border-gray-300 rounded p-4 mt-8">
+                    <div className="flex justify-between font-bold">
+                        <div className="flex_center">필수 시설</div>
+                        <button
+                            onClick={() => setBasic_facilitiesModal(true)}
+                            className="p-2 rounded-lg text-roomi text-sm bg-roomi-000"
+                        >
+                            <FontAwesomeIcon icon={faPlus} className="mr-2"/>
+                            커스텀 시설 추가
+                        </button>
+                    </div>
+                    {/*커스텀 시설 추가 모달*/}
+                    <Modal
+                        isOpen={basic_facilitiesModal}
+                        onRequestClose={() => setBasic_facilitiesModal(false)}
+                        className="bg-white p-4 rounded shadow-lg mx-auto w-[400px] h-fit"
+                        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                    >
+                        <div className="font-bold text-lg mb-2">커스텀 시설 추가</div>
+
+                        <div className="mb-2">
+                            <input
+                                type="text"
+                                value={customFacilityName}
+                                placeholder="시설 이름"
+                                onChange={(e) => setCustomFacilityName(e.target.value)}
+                                className="w-full p-2 mt-1 border rounded"
+                            />
+                        </div>
+
+                        <div className="mb-2">
+                            <span className="text-sm text-gray-700">아이콘 선택</span>
+                            <div className="grid grid-cols-6 gap-2 mt-1 max-h-[200px] overflow-y-auto">
+                                {Object.entries(facilityIcons)
+                                    // ✅ 이미 사용된 아이콘 key 제외
+                                    .filter(([key]) => !basicFacilities.some(b => b.key === key))
+                                    .map(([key, icon]) => (
+                                        <button key={key} onClick={() => setSelectedIconKey(key)}>
+                                            <div
+                                                className={`border p-4 rounded cursor-pointer flex_center 
+                                                                ${selectedIconKey === key ? "border-roomi bg-roomi-000" : ""}`}
+                                            >
+                                                <FontAwesomeIcon icon={icon}/>
+                                            </div>
+                                        </button>
+                                    ))}
+
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-4 mt-6">
+                            <button onClick={() => setBasic_facilitiesModal(false)} className="text-roomi px-4 py-2">
+                                취소
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (!customFacilityName || !selectedIconKey) return;
+
+                                    // ✅ key는 icon key로, value는 사용자 입력 이름
+                                    const key = selectedIconKey;
+
+                                    // 중복 방지
+                                    if (addFacilities.some(f => f.key === key)) return;
+
+                                    // 커스텀 시설 목록 추가
+                                    setAddFacilities(prev => [
+                                        ...prev,
+                                        {key, label: customFacilityName, iconKey: selectedIconKey}
+                                    ]);
+
+                                    // ✅ roomFormData에 추가 (key: iconKey, value: label)
+                                    setRoomFormData(prev => ({
+                                        ...prev,
+                                        facilities: {
+                                            ...prev.facilities,
+                                            [key]: customFacilityName
+                                        }
+                                    }));
+
+                                    setCustomFacilityName("");
+                                    setSelectedIconKey(null);
+                                    setBasic_facilitiesModal(false);
+                                }}
+                                className="bg-roomi text-white px-4 py-2 rounded"
+                            >
+                                추가
+                            </button>
+                        </div>
+                    </Modal>
+                    {/*시설 표시*/}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+                        {basicFacilities.map((item) => (
+                            <label
+                                key={item.key}
+                                className={`flex items-center gap-2 border rounded-md p-2 cursor-pointer hover:shadow transition-all 
+                                                ${roomFormData.facilities[item.key] ?
+                                    "bg-roomi-000 border-roomi text-roomi font-bold" :
+                                    "border text-gray-700 hover:bg-gray-100"}
+                                                `}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={roomFormData.facilities[item.key] !== undefined}
+                                    onChange={(e) =>
+                                        setRoomFormData((prev) => {
+                                            const updated = {...prev.facilities};
+                                            if (e.target.checked) {
+                                                updated[item.key] = item.label; // ✅ key: label
+                                            } else {
+                                                delete updated[item.key];
+                                            }
+                                            return {...prev, facilities: updated};
+                                        })
+                                    }
+                                    className="hidden"
+                                />
+                                <FontAwesomeIcon icon={facilityIcons[item.key]}
+                                                 className={`${roomFormData.facilities[item.key] ?
+                                                     "bg-roomi-000" : "text-gray-700 hover:bg-gray-100"}`}
+                                />
+                                <span className="text-sm">{item.label}</span>
+                            </label>
+                        ))}
+                        {addFacilities.map((item) => (
+                            <button
+                                key={item.key}
+                                type="button"
+                                onClick={(e) => {
+                                    // 체크박스 직접 클릭한 경우는 무시
+                                    if ((e.target as HTMLElement).tagName !== "INPUT") {
+                                        setEditingFacility(item);
+                                    }
+                                }}
+                                className={`flex items-center gap-2 border rounded-md p-2 cursor-pointer hover:shadow transition-all w-full text-left
+                                                    ${roomFormData.facilities[item.key]
+                                    ? "bg-roomi-000 border-roomi text-roomi font-bold"
+                                    : "border text-gray-700 hover:bg-gray-100"}`}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={roomFormData.facilities[item.key] !== undefined}
+                                    onChange={(e) =>
+                                        setRoomFormData((prev) => {
+                                            const updated = {...prev.facilities};
+                                            if (e.target.checked) {
+                                                updated[item.key] = item.label; // ✅ key: 사용자 입력값
+                                            } else {
+                                                delete updated[item.key];
+                                            }
+                                            return {...prev, facilities: updated};
+                                        })
+                                    }
+                                    className="hidden"
+                                />
+                                <FontAwesomeIcon icon={facilityIcons[item.iconKey]}/>
+                                <span className="text-sm">{item.label}</span>
+                            </button>
+                        ))}
+                        {editingFacility && (
+                            <Modal
+                                isOpen={!!editingFacility}
+                                onRequestClose={() => setEditingFacility(null)}
+                                className="bg-white p-4 rounded shadow-lg mx-auto w-[400px] h-fit"
+                                overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                            >
+                                <div className="font-bold text-lg mb-2">커스텀 시설 수정</div>
+
+                                <div className="mb-2">
+                                    <input
+                                        type="text"
+                                        value={editingFacility.label}
+                                        onChange={(e) =>
+                                            setEditingFacility({...editingFacility, label: e.target.value})
+                                        }
+                                        className="w-full p-2 mt-1 border rounded"
+                                    />
+                                </div>
+
+                                <div className="mb-2">
+                                    <span className="text-sm text-gray-700">아이콘 선택</span>
+                                    <div className="grid grid-cols-6 gap-2 mt-1 max-h-[200px] overflow-y-auto">
+                                        {Object.entries(facilityIcons)
+                                            // ✅ 기본 시설에 없는 아이콘만 보여줌
+                                            .filter(([key]) => !basicFacilities.some(b => b.key === key))
+                                            .map(([key, icon]) => (
+                                                <button
+                                                    key={key}
+                                                    onClick={() =>
+                                                        setEditingFacility((prev) =>
+                                                            prev ? {...prev, iconKey: key} : prev
+                                                        )
+                                                    }
+                                                >
+                                                    <div
+                                                        className={`border p-4 rounded cursor-pointer flex_center 
+                                                                        ${editingFacility.iconKey === key ? "border-roomi bg-roomi-000" : ""}`}
+                                                    >
+                                                        <FontAwesomeIcon icon={icon}/>
+                                                    </div>
+                                                </button>
+                                            ))}
+
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end gap-4 mt-6">
+                                    {/* 삭제 버튼 */}
+                                    <button
+                                        onClick={() => {
+                                            setAddFacilities((prev) =>
+                                                prev.filter((f) => f.key !== editingFacility.key)
+                                            );
+                                            setRoomFormData((prev) => {
+                                                const newAdditional = {...prev.facilities};
+                                                delete newAdditional[editingFacility.key];
+                                                return {
+                                                    ...prev,
+                                                    facilities: newAdditional,
+                                                };
+                                            });
+                                            setEditingFacility(null);
+                                        }}
+                                        className="text-red-500 px-4 py-2"
+                                    >
+                                        삭제
+                                    </button>
+
+                                    {/* 저장 버튼 */}
+                                    <button
+                                        onClick={() => {
+                                            setAddFacilities((prev) =>
+                                                prev.map((f) =>
+                                                    f.key === editingFacility.key ? editingFacility : f
+                                                )
+                                            );
+                                            setEditingFacility(null);
+                                        }}
+                                        className="bg-roomi text-white px-4 py-2 rounded"
+                                    >
+                                        저장
+                                    </button>
+                                </div>
+                            </Modal>
+                        )}
+                    </div>
+                </div>
+            )
+        } else { // (type === 'additional')
+            {/*추가 시설*/}
+            return (
+                <div className="border border-gray-300 rounded p-4 mt-8">
+                    <div className="flex justify-between font-bold">
+                        <div className="flex_center">추가 시설</div>
+                        <button
+                            onClick={() => setBasic_facilitiesModal(true)}
+                            className="p-2 rounded-lg text-roomi text-sm bg-roomi-000"
+                        >
+                            <FontAwesomeIcon icon={faPlus} className="mr-2"/>
+                            커스텀 시설 추가
+                        </button>
+                    </div>
+                    {/*커스텀 시설 추가 모달*/}
+                    <Modal
+                        isOpen={basic_facilitiesModal}
+                        onRequestClose={() => setBasic_facilitiesModal(false)}
+                        className="bg-white p-4 rounded shadow-lg mx-auto w-[400px] h-fit"
+                        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                    >
+                        <div className="font-bold text-lg mb-2">커스텀 시설 추가</div>
+
+                        <div className="mb-2">
+                            <input
+                                type="text"
+                                value={customFacilityName}
+                                placeholder="시설 이름"
+                                onChange={(e) => setCustomFacilityName(e.target.value)}
+                                className="w-full p-2 mt-1 border rounded"
+                            />
+                        </div>
+
+                        <div className="mb-2">
+                            <span className="text-sm text-gray-700">아이콘 선택</span>
+                            <div className="grid grid-cols-6 gap-2 mt-1 max-h-[200px] overflow-y-auto">
+                                {Object.entries(facilityIcons)
+                                    // ✅ 이미 사용된 아이콘 key 제외
+                                    .filter(([key]) => !basicFacilities.some(b => b.key === key))
+                                    .map(([key, icon]) => (
+                                        <button key={key} onClick={() => setSelectedIconKey(key)}>
+                                            <div
+                                                className={`border p-4 rounded cursor-pointer flex_center 
+                                                                ${selectedIconKey === key ? "border-roomi bg-roomi-000" : ""}`}
+                                            >
+                                                <FontAwesomeIcon icon={icon}/>
+                                            </div>
+                                        </button>
+                                    ))}
+
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-4 mt-6">
+                            <button onClick={() => setBasic_facilitiesModal(false)} className="text-roomi px-4 py-2">
+                                취소
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (!customFacilityName || !selectedIconKey) return;
+
+                                    // ✅ key는 icon key로, value는 사용자 입력 이름
+                                    const key = selectedIconKey;
+
+                                    // 중복 방지
+                                    if (addFacilities.some(f => f.key === key)) return;
+
+                                    // 커스텀 시설 목록 추가
+                                    setAddFacilities(prev => [
+                                        ...prev,
+                                        {key, label: customFacilityName, iconKey: selectedIconKey}
+                                    ]);
+
+                                    // ✅ roomFormData에 추가 (key: iconKey, value: label)
+                                    setRoomFormData(prev => ({
+                                        ...prev,
+                                        facilities: {
+                                            ...prev.facilities,
+                                            [key]: customFacilityName
+                                        }
+                                    }));
+
+                                    setCustomFacilityName("");
+                                    setSelectedIconKey(null);
+                                    setBasic_facilitiesModal(false);
+                                }}
+                                className="bg-roomi text-white px-4 py-2 rounded"
+                            >
+                                추가
+                            </button>
+                        </div>
+                    </Modal>
+                    {/*시설 표시*/}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+                        {basicFacilities.map((item) => (
+                            <label
+                                key={item.key}
+                                className={`flex items-center gap-2 border rounded-md p-2 cursor-pointer hover:shadow transition-all 
+                                                ${roomFormData.facilities[item.key] ?
+                                    "bg-roomi-000 border-roomi text-roomi font-bold" :
+                                    "border text-gray-700 hover:bg-gray-100"}
+                                                `}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={roomFormData.facilities[item.key] !== undefined}
+                                    onChange={(e) =>
+                                        setRoomFormData((prev) => {
+                                            const updated = {...prev.facilities};
+                                            if (e.target.checked) {
+                                                updated[item.key] = item.label; // ✅ key: label
+                                            } else {
+                                                delete updated[item.key];
+                                            }
+                                            return {...prev, facilities: updated};
+                                        })
+                                    }
+                                    className="hidden"
+                                />
+                                <FontAwesomeIcon icon={facilityIcons[item.key]}
+                                                 className={`${roomFormData.facilities[item.key] ?
+                                                     "bg-roomi-000" : "text-gray-700 hover:bg-gray-100"}`}
+                                />
+                                <span className="text-sm">{item.label}</span>
+                            </label>
+                        ))}
+                        {addFacilities.map((item) => (
+                            <button
+                                key={item.key}
+                                type="button"
+                                onClick={(e) => {
+                                    // 체크박스 직접 클릭한 경우는 무시
+                                    if ((e.target as HTMLElement).tagName !== "INPUT") {
+                                        setEditingFacility(item);
+                                    }
+                                }}
+                                className={`flex items-center gap-2 border rounded-md p-2 cursor-pointer hover:shadow transition-all w-full text-left
+                                                    ${roomFormData.facilities[item.key]
+                                    ? "bg-roomi-000 border-roomi text-roomi font-bold"
+                                    : "border text-gray-700 hover:bg-gray-100"}`}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={roomFormData.facilities[item.key] !== undefined}
+                                    onChange={(e) =>
+                                        setRoomFormData((prev) => {
+                                            const updated = {...prev.facilities};
+                                            if (e.target.checked) {
+                                                updated[item.key] = item.label; // ✅ key: 사용자 입력값
+                                            } else {
+                                                delete updated[item.key];
+                                            }
+                                            return {...prev, facilities: updated};
+                                        })
+                                    }
+                                    className="hidden"
+                                />
+                                <FontAwesomeIcon icon={facilityIcons[item.iconKey]}/>
+                                <span className="text-sm">{item.label}</span>
+                            </button>
+                        ))}
+                        {editingFacility && (
+                            <Modal
+                                isOpen={!!editingFacility}
+                                onRequestClose={() => setEditingFacility(null)}
+                                className="bg-white p-4 rounded shadow-lg mx-auto w-[400px] h-fit"
+                                overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                            >
+                                <div className="font-bold text-lg mb-2">커스텀 시설 수정</div>
+
+                                <div className="mb-2">
+                                    <input
+                                        type="text"
+                                        value={editingFacility.label}
+                                        onChange={(e) =>
+                                            setEditingFacility({...editingFacility, label: e.target.value})
+                                        }
+                                        className="w-full p-2 mt-1 border rounded"
+                                    />
+                                </div>
+
+                                <div className="mb-2">
+                                    <span className="text-sm text-gray-700">아이콘 선택</span>
+                                    <div className="grid grid-cols-6 gap-2 mt-1 max-h-[200px] overflow-y-auto">
+                                        {Object.entries(facilityIcons)
+                                            // ✅ 기본 시설에 없는 아이콘만 보여줌
+                                            .filter(([key]) => !basicFacilities.some(b => b.key === key))
+                                            .map(([key, icon]) => (
+                                                <button
+                                                    key={key}
+                                                    onClick={() =>
+                                                        setEditingFacility((prev) =>
+                                                            prev ? {...prev, iconKey: key} : prev
+                                                        )
+                                                    }
+                                                >
+                                                    <div
+                                                        className={`border p-4 rounded cursor-pointer flex_center 
+                                                                        ${editingFacility.iconKey === key ? "border-roomi bg-roomi-000" : ""}`}
+                                                    >
+                                                        <FontAwesomeIcon icon={icon}/>
+                                                    </div>
+                                                </button>
+                                            ))}
+
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end gap-4 mt-6">
+                                    {/* 삭제 버튼 */}
+                                    <button
+                                        onClick={() => {
+                                            setAddFacilities((prev) =>
+                                                prev.filter((f) => f.key !== editingFacility.key)
+                                            );
+                                            setRoomFormData((prev) => {
+                                                const newAdditional = {...prev.facilities};
+                                                delete newAdditional[editingFacility.key];
+                                                return {
+                                                    ...prev,
+                                                    facilities: newAdditional,
+                                                };
+                                            });
+                                            setEditingFacility(null);
+                                        }}
+                                        className="text-red-500 px-4 py-2"
+                                    >
+                                        삭제
+                                    </button>
+
+                                    {/* 저장 버튼 */}
+                                    <button
+                                        onClick={() => {
+                                            setAddFacilities((prev) =>
+                                                prev.map((f) =>
+                                                    f.key === editingFacility.key ? editingFacility : f
+                                                )
+                                            );
+                                            setEditingFacility(null);
+                                        }}
+                                        className="bg-roomi text-white px-4 py-2 rounded"
+                                    >
+                                        저장
+                                    </button>
+                                </div>
+                            </Modal>
+                        )}
+                    </div>
+                </div>
+            )
+        }
+    };
+
+
     return (
         <div className="p-6">
             {/* 페이지 제목 */}
@@ -198,7 +703,7 @@ const MyRoomInsert = () => {
                 <div className="flex_center">
                     {/* 뒤로 가기 버튼 */}
                     <button className="rounded-md p-2 w-10 h-10 sm:p-4 sm:w-14 sm:h-14" onClick={handleBack}>
-                        <FontAwesomeIcon icon={faArrowLeft} />
+                        <FontAwesomeIcon icon={faArrowLeft}/>
                     </button>
                 </div>
                 <div className="mx-4">
@@ -210,7 +715,7 @@ const MyRoomInsert = () => {
             <div className="w-full mb-4">
                 <div className="relative h-2 bg-gray-200 rounded-full">
                     <div className="absolute h-2 bg-roomi rounded-full transition-all duration-300"
-                         style={{ width: `${(currentStep / totalSteps) * 100}%` }}>
+                         style={{width: `${(currentStep / totalSteps) * 100}%`}}>
                     </div>
                 </div>
                 <div className="text-sm text-gray-600 mt-1 ml-2">
@@ -228,9 +733,9 @@ const MyRoomInsert = () => {
                                 {/* 단기임대 */}
                                 <div className="md:w-1/2">
                                     <label htmlFor="LEASE"
-                                        className={`block p-4 border-2 rounded-lg cursor-pointer transition mb-4 md:m-0
-                                        ${roomType === "LEASE" ? 
-                                            "bg-roomi-000 border-roomi" : "border text-gray-700 hover:bg-gray-100"}`}
+                                           className={`block p-4 border-2 rounded-lg cursor-pointer transition mb-4 md:m-0
+                                        ${roomType === "LEASE" ?
+                                               "bg-roomi-000 border-roomi" : "border text-gray-700 hover:bg-gray-100"}`}
                                     >
                                         <div className="flex">
                                             <div className={`flex_center bg-gray-200 p-4 rounded-lg 
@@ -248,8 +753,11 @@ const MyRoomInsert = () => {
                                             </div>
                                         </div>
                                         <div className="flex text-gray-500 md:text-sm text-xs mt-2">
-                                            <div className="p-4"><div className="w-6 h-6"></div></div>
-                                            <div className={`w-full ml-4 p-3 ${roomType === "LEASE" && "bg-gray-50 rounded-lg"}`}>
+                                            <div className="p-4">
+                                                <div className="w-6 h-6"></div>
+                                            </div>
+                                            <div
+                                                className={`w-full ml-4 p-3 ${roomType === "LEASE" && "bg-gray-50 rounded-lg"}`}>
                                                 <div className="my-2">
                                                     <strong> · </strong>주단위/월단위 임대 가능
                                                 </div>
@@ -257,10 +765,13 @@ const MyRoomInsert = () => {
                                                     <strong> · </strong>일반 임대주택
                                                 </div>
                                             </div>
-                                            <div className="md:p-4"><div className="w-6 h-6"></div></div>
+                                            <div className="md:p-4">
+                                                <div className="w-6 h-6"></div>
+                                            </div>
                                         </div>
                                     </label>
-                                    <input type="radio" name="roomType" id="LEASE" value="LEASE" checked={roomType === "LEASE"}
+                                    <input type="radio" name="roomType" id="LEASE" value="LEASE"
+                                           checked={roomType === "LEASE"}
                                            onChange={() => setRoomType("LEASE")} className="hidden"/>
                                 </div>
                                 {/* 숙박업소 */}
@@ -286,8 +797,11 @@ const MyRoomInsert = () => {
                                             </div>
                                         </div>
                                         <div className="flex text-gray-500 md:text-sm text-xs mt-2">
-                                            <div className="p-4"><div className="w-6 h-6"></div></div>
-                                            <div className={`w-full ml-4 p-3 ${roomType === "LODGE" && "bg-gray-50 rounded-lg"}`}>
+                                            <div className="p-4">
+                                                <div className="w-6 h-6"></div>
+                                            </div>
+                                            <div
+                                                className={`w-full ml-4 p-3 ${roomType === "LODGE" && "bg-gray-50 rounded-lg"}`}>
                                                 <div className="my-2">
                                                     <strong> · </strong>단기 거주용 쉐어하우스, 게스트하루스 등
                                                 </div>
@@ -295,7 +809,9 @@ const MyRoomInsert = () => {
                                                     <strong> · </strong>루미 인증 공간
                                                 </div>
                                             </div>
-                                            <div className="md:p-4"><div className="w-6 h-6"></div></div>
+                                            <div className="md:p-4">
+                                                <div className="w-6 h-6"></div>
+                                            </div>
                                         </div>
                                     </label>
                                     <input type="radio" name="roomType" id="LODGE" value="LODGE"
@@ -307,7 +823,7 @@ const MyRoomInsert = () => {
                             <div className="p-4 rounded-lg bg-roomi-000 mt-4">
                                 <div className="flex items-center text-roomi m-2">
                                     <div className="w-5 h-5 flex_center border-2 border-roomi rounded-full">
-                                        <FontAwesomeIcon icon={faInfo} className="w-3 h-3" />
+                                        <FontAwesomeIcon icon={faInfo} className="w-3 h-3"/>
                                     </div>
                                     <div className="ml-4 font-bold">안내사항</div>
                                 </div>
@@ -329,8 +845,13 @@ const MyRoomInsert = () => {
                         /*공간 이름*/
                         <div className="m-2">
                             <div className="">
-                                <input type="text" placeholder="공간 이름"
-                                       className="w-full p-4 border border-gray-300 rounded focus:outline-none"/>
+                                <input
+                                    type="text"
+                                    value={roomFormData.title}
+                                    onChange={(e) => handleChange("title", e.target.value)}
+                                    placeholder="공간 이름"
+                                    className="w-full p-4 border border-gray-300 rounded focus:outline-none"
+                                />
                             </div>
                             <div className="p-4 rounded-lg bg-roomi-000 mt-4">
                                 <div className="flex items-center text-roomi m-2">
@@ -381,7 +902,7 @@ const MyRoomInsert = () => {
                             <input
                                 type="text"
                                 value={roomFormData.address_detail}
-                                onChange={(e) => handleChange("addressDetail", e.target.value)}
+                                onChange={(e) => handleChange("address_detail", e.target.value)}
                                 placeholder="상세 주소"
                                 className="w-full border border-gray-300 rounded p-2 mt-4 focus:outline-none"
                             />
@@ -404,10 +925,11 @@ const MyRoomInsert = () => {
                         /* 건물 정보 */
                         <div>
                             <div>
+                                {/*건물 유형*/}
                                 <div className="mb-4">
                                     <select
                                         value={roomFormData.building_type}
-                                        onChange={(e) => handleChange("buildingType", e.target.value)}
+                                        onChange={(e) => handleChange("building_type", e.target.value)}
                                         className="w-full border border-gray-300 rounded p-2 focus:outline-none text-gray-700"
                                     >
                                         <option value="">건물 유형을 선택해주세요</option>
@@ -464,7 +986,7 @@ const MyRoomInsert = () => {
                                         onChange={(e) =>
                                             setRoomFormData((prev) => ({
                                                 ...prev,
-                                                hasElevator: e.target.checked,
+                                                has_elevator: e.target.checked,
                                             }))
                                         }
                                         className="hidden"
@@ -485,7 +1007,7 @@ const MyRoomInsert = () => {
                                         onChange={(e) =>
                                             setRoomFormData((prev) => ({
                                                 ...prev,
-                                                hasParking: e.target.checked,
+                                                has_parking: e.target.checked,
                                             }))
                                         }
                                         className="hidden"
@@ -510,10 +1032,11 @@ const MyRoomInsert = () => {
                     {currentStep === 5 && (
                         /* 공간 구조 */
                         <div>
+                            {/*구조*/}
                             <div className="mb-4">
                                 <select
                                     value={roomFormData.room_structure}
-                                    onChange={(e) => handleChange("roomStructure", e.target.value)}
+                                    onChange={(e) => handleChange("room_structure", e.target.value)}
                                     className="w-full border border-gray-300 rounded p-2 focus:outline-none text-gray-700"
                                 >
                                     <option value="">구조를 선택해주세요</option>
@@ -585,251 +1108,12 @@ const MyRoomInsert = () => {
                                 </div>
                             </div>
                             {/*필수 시설*/}
-                            <div className="border border-gray-300 rounded p-4 mt-8">
-                                <div className="flex justify-between font-bold">
-                                    <div className="flex_center">필수 시설</div>
-                                    <button 
-                                        onClick={() => setBasic_facilitiesModal(true)}
-                                        className="p-2 rounded-lg text-roomi text-sm bg-roomi-000"
-                                    >
-                                        <FontAwesomeIcon icon={faPlus} className="mr-2" />
-                                        커스텀 시설 추가
-                                    </button>
-                                </div>
-                                {/*커스텀 시설 추가 모달*/}
-                                <Modal
-                                    isOpen={basic_facilitiesModal}
-                                    onRequestClose={() => setBasic_facilitiesModal(false)}
-                                    className="bg-white p-4 rounded shadow-lg mx-auto w-[400px] h-fit"
-                                    overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-                                >
-                                    <div className="font-bold text-lg mb-2">커스텀 시설 추가</div>
-
-                                    <div className="mb-2">
-                                        <input
-                                            type="text"
-                                            value={customFacilityName}
-                                            placeholder="시설 이름"
-                                            onChange={(e) => setCustomFacilityName(e.target.value)}
-                                            className="w-full p-2 mt-1 border rounded"
-                                        />
-                                    </div>
-
-                                    <div className="mb-2">
-                                        <span className="text-sm text-gray-700">아이콘 선택</span>
-                                        <div className="grid grid-cols-6 gap-2 mt-1 max-h-[200px] overflow-y-auto">
-                                            {Object.entries(facilityIcons)
-                                                // ✅ 이미 사용된 아이콘 key 제외
-                                                .filter(([key]) => !basicFacilities.some(b => b.key === key))
-                                                .map(([key, icon]) => (
-                                                    <button key={key} onClick={() => setSelectedIconKey(key)}>
-                                                        <div
-                                                            className={`border p-4 rounded cursor-pointer flex_center 
-                                                            ${selectedIconKey === key ? "border-roomi bg-roomi-000" : ""}`}
-                                                        >
-                                                            <FontAwesomeIcon icon={icon} />
-                                                        </div>
-                                                    </button>
-                                                ))}
-
-                                        </div>
-                                    </div>
-
-                                    <div className="flex justify-end gap-4 mt-6">
-                                        <button onClick={() => setBasic_facilitiesModal(false)} className="text-roomi px-4 py-2">
-                                            취소
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                if (!customFacilityName || !selectedIconKey) return;
-
-                                                // ✅ key는 icon key로, value는 사용자 입력 이름
-                                                const key = selectedIconKey;
-
-                                                // 중복 방지
-                                                if (addFacilities.some(f => f.key === key)) return;
-
-                                                // 커스텀 시설 목록 추가
-                                                setAddFacilities(prev => [
-                                                    ...prev,
-                                                    { key, label: customFacilityName, iconKey: selectedIconKey }
-                                                ]);
-
-                                                // ✅ roomFormData에 추가 (key: iconKey, value: label)
-                                                setRoomFormData(prev => ({
-                                                    ...prev,
-                                                    facilities: {
-                                                        ...prev.facilities,
-                                                        [key]: customFacilityName
-                                                    }
-                                                }));
-
-                                                setCustomFacilityName("");
-                                                setSelectedIconKey(null);
-                                                setBasic_facilitiesModal(false);
-                                            }}
-                                            className="bg-roomi text-white px-4 py-2 rounded"
-                                        >
-                                            추가
-                                        </button>
-                                    </div>
-                                </Modal>
-                                {/*시설 표시*/}
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-                                    {basicFacilities.map((item) => (
-                                        <label
-                                            key={item.key}
-                                            className={`flex items-center gap-2 border rounded-md p-2 cursor-pointer hover:shadow transition-all 
-                                            ${roomFormData.facilities[item.key] ?
-                                                "bg-roomi-000 border-roomi text-roomi font-bold" :
-                                                "border text-gray-700 hover:bg-gray-100"}
-                                            `}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                checked={roomFormData.facilities[item.key] !== undefined}
-                                                onChange={(e) =>
-                                                    setRoomFormData((prev) => {
-                                                        const updated = {...prev.facilities};
-                                                        if (e.target.checked) {
-                                                            updated[item.key] = item.label; // ✅ key: label
-                                                        } else {
-                                                            delete updated[item.key];
-                                                        }
-                                                        return {...prev, facilities: updated};
-                                                    })
-                                                }
-                                                className="hidden"
-                                            />
-                                            <FontAwesomeIcon icon={facilityIcons[item.key]}
-                                                             className={`${roomFormData.facilities[item.key] ?
-                                                                 "bg-roomi-000" : "text-gray-700 hover:bg-gray-100"}`}
-                                            />
-                                            <span className="text-sm">{item.label}</span>
-                                        </label>
-                                    ))}
-                                    {addFacilities.map((item) => (
-                                        <button
-                                            key={item.key}
-                                            type="button"
-                                            onClick={(e) => {
-                                                // 체크박스 직접 클릭한 경우는 무시
-                                                if ((e.target as HTMLElement).tagName !== "INPUT") {
-                                                    setEditingFacility(item);
-                                                }
-                                            }}
-                                            className={`flex items-center gap-2 border rounded-md p-2 cursor-pointer hover:shadow transition-all w-full text-left
-                                                ${roomFormData.facilities[item.key]
-                                                ? "bg-roomi-000 border-roomi text-roomi font-bold"
-                                                : "border text-gray-700 hover:bg-gray-100"}`}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                checked={roomFormData.facilities[item.key] !== undefined}
-                                                onChange={(e) =>
-                                                    setRoomFormData((prev) => {
-                                                        const updated = {...prev.facilities};
-                                                        if (e.target.checked) {
-                                                            updated[item.key] = item.label; // ✅ key: 사용자 입력값
-                                                        } else {
-                                                            delete updated[item.key];
-                                                        }
-                                                        return {...prev, facilities: updated};
-                                                    })
-                                                }
-                                                className="hidden"
-                                            />
-                                            <FontAwesomeIcon icon={facilityIcons[item.iconKey]}/>
-                                            <span className="text-sm">{item.label}</span>
-                                        </button>
-                                    ))}
-                                    {editingFacility && (
-                                        <Modal
-                                            isOpen={!!editingFacility}
-                                            onRequestClose={() => setEditingFacility(null)}
-                                            className="bg-white p-4 rounded shadow-lg mx-auto w-[400px] h-fit"
-                                            overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-                                        >
-                                            <div className="font-bold text-lg mb-2">커스텀 시설 수정</div>
-
-                                            <div className="mb-2">
-                                                <input
-                                                    type="text"
-                                                    value={editingFacility.label}
-                                                    onChange={(e) =>
-                                                        setEditingFacility({ ...editingFacility, label: e.target.value })
-                                                    }
-                                                    className="w-full p-2 mt-1 border rounded"
-                                                />
-                                            </div>
-
-                                            <div className="mb-2">
-                                                <span className="text-sm text-gray-700">아이콘 선택</span>
-                                                <div className="grid grid-cols-6 gap-2 mt-1 max-h-[200px] overflow-y-auto">
-                                                    {Object.entries(facilityIcons)
-                                                        // ✅ 기본 시설에 없는 아이콘만 보여줌
-                                                        .filter(([key]) => !basicFacilities.some(b => b.key === key))
-                                                        .map(([key, icon]) => (
-                                                            <button
-                                                                key={key}
-                                                                onClick={() =>
-                                                                    setEditingFacility((prev) =>
-                                                                        prev ? { ...prev, iconKey: key } : prev
-                                                                    )
-                                                                }
-                                                            >
-                                                                <div
-                                                                    className={`border p-4 rounded cursor-pointer flex_center 
-                                                                    ${editingFacility.iconKey === key ? "border-roomi bg-roomi-000" : ""}`}
-                                                                >
-                                                                    <FontAwesomeIcon icon={icon} />
-                                                                </div>
-                                                            </button>
-                                                        ))}
-
-                                                </div>
-                                            </div>
-
-                                            <div className="flex justify-end gap-4 mt-6">
-                                                {/* 삭제 버튼 */}
-                                                <button
-                                                    onClick={() => {
-                                                        setAddFacilities((prev) =>
-                                                            prev.filter((f) => f.key !== editingFacility.key)
-                                                        );
-                                                        setRoomFormData((prev) => {
-                                                            const newAdditional = { ...prev.facilities };
-                                                            delete newAdditional[editingFacility.key];
-                                                            return {
-                                                                ...prev,
-                                                                facilities: newAdditional,
-                                                            };
-                                                        });
-                                                        setEditingFacility(null);
-                                                    }}
-                                                    className="text-red-500 px-4 py-2"
-                                                >
-                                                    삭제
-                                                </button>
-
-                                                {/* 저장 버튼 */}
-                                                <button
-                                                    onClick={() => {
-                                                        setAddFacilities((prev) =>
-                                                            prev.map((f) =>
-                                                                f.key === editingFacility.key ? editingFacility : f
-                                                            )
-                                                        );
-                                                        setEditingFacility(null);
-                                                    }}
-                                                    className="bg-roomi text-white px-4 py-2 rounded"
-                                                >
-                                                    저장
-                                                </button>
-                                            </div>
-                                        </Modal>
-                                    )}
-                                </div>
+                            <div>
+                                {renderFacilities('basic')}
+                            </div>
+                            {/*추가 시설*/}
+                            <div>
+                                {renderFacilities('additional')}
                             </div>
                             {/*서비스 정보*/}
                             <div className="border border-gray-300 rounded p-4 mt-4">
