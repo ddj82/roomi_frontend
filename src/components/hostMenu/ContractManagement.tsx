@@ -245,6 +245,7 @@ const ContractManagement = () => {
     return (
         <div className=" py-0 md:px-8 relative">
             {/*타이틀*/}
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">{'계약 관리'}</h2>
             <div className="flex justify-between items-center mb-4">
                 {selectedReservation ? (
                     /*예약 상세 정보*/
@@ -287,12 +288,13 @@ const ContractManagement = () => {
                                         ? rooms.find(room => room.id === selectedRoomId)?.title || '선택된 방'
                                         : '방 선택'}
                                 </span>
-                                    <ChevronDown className="w-5 h-5 text-gray-500" />
+                                    <ChevronDown className="w-5 h-5 text-gray-500"/>
                                 </button>
 
                                 {/* 드롭다운 메뉴 */}
                                 {isRoomDropdownOpen && (
-                                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                    <div
+                                        className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                                         <div
                                             className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
                                         ${!selectedRoomId ? 'bg-roomi-1' : ''}`}
@@ -406,7 +408,8 @@ const ContractManagement = () => {
                                             {/* 방 정보 */}
                                             <div className="flex p-3 bg-gray-50">
                                                 {/* 썸네일 */}
-                                                <div className="w-20 h-20 bg-gray-200 flex-shrink-0 rounded-md overflow-hidden">
+                                                <div
+                                                    className="w-20 h-20 bg-gray-200 flex-shrink-0 rounded-md overflow-hidden">
                                                     {reservation.room?.detail_urls && reservation.room.detail_urls.length > 0 && (
                                                         <img
                                                             src={reservation.room.detail_urls[0]}
@@ -437,7 +440,8 @@ const ContractManagement = () => {
                                         {/* 데스크톱 레이아웃 - 숨김 처리 */}
                                         <div className="hidden sm:flex w-full">
                                             {/* Thumbnail */}
-                                            <div className="w-24 h-24 bg-gray-200 flex-shrink-0 m-6 rounded-md overflow-hidden">
+                                            <div
+                                                className="w-24 h-24 bg-gray-200 flex-shrink-0 m-6 rounded-md overflow-hidden">
                                                 {reservation.room?.detail_urls && reservation.room.detail_urls.length > 0 && (
                                                     <img
                                                         src={reservation.room.detail_urls[0]}
@@ -469,19 +473,29 @@ const ContractManagement = () => {
                                                     </p>
                                                     <div className="flex justify-between items-center mt-1">
                                                         <p className="text-sm text-gray-800">
-                                                            총 금액: {formatPrice(reservation.total_price)}원
+                                                            총
+                                                            금액: {formatPrice(reservation.total_price - reservation.fee)}원
                                                         </p>
-                                                        <span className={`text-sm px-2 py-1 rounded ${
-                                                            reservation.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                                                                reservation.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                                    reservation.status === 'canceled' ? 'bg-gray-100 text-gray-800' :
-                                                                        'bg-yellow-100 text-yellow-800'
+                                                        <span className={`text-xs px-2 py-1 rounded text-white ${
+                                                            reservation.status === 'PENDING' ? 'bg-yellow-700' :
+                                                                reservation.status === 'CONFIRMED' ?
+                                                                    (reservation.payment_status === 'UNPAID' ? 'bg-orange-700' :
+                                                                        reservation.payment_status === 'PAID' ? 'bg-blue-700' : 'bg-blue-700') :
+                                                                    reservation.status === 'COMPLETED' ? 'bg-green-700' :
+                                                                        reservation.status === 'CANCELED' ? 'bg-gray-700' :
+                                                                            reservation.status === 'IN_USE' ? 'bg-gray-700' :
+                                                                                reservation.status === 'CHECKED_OUT' ? 'bg-gray-700' :
+                                                                                    'bg-black'
                                                         }`}>
-                                                        {reservation.status === 'confirmed' ? '예약 확정' :
-                                                            reservation.status === 'completed' ? '이용 완료' :
-                                                                reservation.status === 'canceled' ? '예약 취소' :
-                                                                    reservation.status === 'pending' ? '승인 대기중' : '상태 미정'}
-                                                    </span>
+{reservation.status === 'CONFIRMED' ?
+    (reservation.payment_status === 'UNPAID' ? '결제대기' :
+        reservation.payment_status === 'PAID' ? '결제완료' : '이용중') :
+    reservation.status === 'COMPLETED' ? '이용 완료' :
+        reservation.status === 'CANCELED' ? '예약 취소' :
+            reservation.status === 'IN_USE' ? '이용중' :
+                reservation.status === 'CHECKED_OUT' ? '퇴실 완료' :
+                    reservation.status === 'PENDING' ? '승인 대기중' : '상태 미정'}
+                                            </span>
                                                     </div>
                                                 </div>
                                             </div>

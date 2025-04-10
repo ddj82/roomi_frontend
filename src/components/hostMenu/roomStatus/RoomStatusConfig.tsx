@@ -419,7 +419,7 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
              style={{minHeight: 'calc(100vh - 100px)'}}>
             {/* 캘린더 영역 - 에어비앤비 스타일 */}
             <div className="md:w-2/3 w-full flex flex-col">
-                <h3 className="text-xl font-semibold mb-4 text-gray-800">날짜 관리</h3>
+                {/*<h3 className="text-xl font-semibold mb-4 text-gray-800">날짜 관리</h3>*/}
                 {/* 웹에서 더 큰 달력을 위한 스타일 수정 */}
                 <div className=" rounded-lg overflow-hidden">
                     <AirbnbStyleCalendar

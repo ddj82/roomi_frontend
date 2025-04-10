@@ -91,16 +91,19 @@ const MyRooms = () => {
     };
 
     return (
-        <div className="w-full">
-            <div className="mx-auto my-5 flex flex-col gap-4 w-full">
-                {/* 모바일/웹 공통 레이아웃 - 드롭다운, 검색창, 버튼 배치 */}
+        <div className="w-full h-screen flex flex-col">
+            {/* 고정될 상단 부분 */}
+            <div className="mx-auto py-5 flex flex-col gap-4 w-full bg-white z-10">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">{'나의 방'}</h2>
+
+                {/* 모바일/웹 공통 레이아웃 - 상단에 고정 */}
                 <div className="w-full flex flex-col sm:flex-row gap-3">
-                    {/* 등록 버튼 - 모바일/웹 모두 오른쪽에 배치 */}
+                    {/* 등록 버튼 - 모바일에서는 상단에 고정 */}
                     <div className="w-full sm:w-1/6 order-last sm:order-last">
                         <button
                             type="button"
                             className="w-full py-3 px-4 text-base font-medium text-white bg-roomi rounded-lg
-                    focus:outline-none flex items-center justify-center"
+                                focus:outline-none flex items-center justify-center"
                             onClick={handleInsertBtn}
                         >
                             <span className="mr-1">+</span> 방 등록
@@ -114,7 +117,7 @@ const MyRooms = () => {
                             <button
                                 type="button"
                                 className="w-full flex items-center justify-between px-3 py-3 text-base
-                          bg-white border rounded-lg cursor-pointer"
+                                    bg-white border rounded-lg cursor-pointer"
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                             >
                                 <span className="text-gray-700">{displayValue}</span>
@@ -129,7 +132,7 @@ const MyRooms = () => {
                                         <div
                                             key={condition.value || 'empty'}
                                             className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 rounded-lg
-                                        ${roomCondition === condition.value ? 'bg-roomi-1' : ''}`}
+                                                ${roomCondition === condition.value ? 'bg-roomi-1' : ''}`}
                                             onClick={() => {
                                                 setRoomCondition(condition.value);
                                                 setIsDropdownOpen(false);
@@ -150,7 +153,7 @@ const MyRooms = () => {
                             <input
                                 type="search"
                                 className="w-full py-3 pl-10 pr-3 text-base border border-gray-200 rounded-lg
-                          shadow-sm focus:outline-none"
+                                    shadow-sm focus:outline-none"
                                 placeholder="제목 또는 주소 입력"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -165,7 +168,7 @@ const MyRooms = () => {
                             <button
                                 type="button"
                                 className="w-full flex items-center justify-between px-3 py-3 text-base
-                          bg-white border rounded-lg cursor-pointer"
+                                    bg-white border rounded-lg cursor-pointer"
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                             >
                                 <span className="text-gray-700">{displayValue}</span>
@@ -180,7 +183,7 @@ const MyRooms = () => {
                                         <div
                                             key={condition.value || 'empty'}
                                             className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 rounded-lg
-                                        ${roomCondition === condition.value ? 'bg-roomi-1' : ''}`}
+                                                ${roomCondition === condition.value ? 'bg-roomi-1' : ''}`}
                                             onClick={() => {
                                                 setRoomCondition(condition.value);
                                                 setIsDropdownOpen(false);
@@ -201,7 +204,7 @@ const MyRooms = () => {
                             <input
                                 type="search"
                                 className="w-full py-3 pl-10 pr-3 text-base border border-gray-200 rounded-lg
-                          shadow-sm focus:outline-none"
+                                    shadow-sm focus:outline-none"
                                 placeholder="제목 또는 주소 입력"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -216,63 +219,66 @@ const MyRooms = () => {
                 </div>
             </div>
 
-            {/* 필터링된 방 목록 */}
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredData.length > 0 ? (
-                    filteredData.map((room, index) => (
-                        <div
-                            key={index}
-                            className="flex flex-col border border-gray-200 rounded-lg p-3 hover:shadow-sm transition-shadow duration-300"
-                        >
-                            <div className="w-full h-64 rounded-md overflow-hidden mb-3">
-                                <img
-                                    className="object-cover w-full h-full"
-                                    src={room.detail_urls?.[0]}
-                                    alt="thumbnail"
-                                />
-                            </div>
-
-                            <div className="flex-1 flex flex-col justify-between w-full">
-                                <div>
-                                <span
-                                    className={`inline-block px-2 py-1 text-xs font-semibold rounded 
-                                    ${getRoomStatus(room) === "활성"
-                                        ? "bg-blue-100 text-blue-700"
-                                        : getRoomStatus(room) === "비활성"
-                                            ? "bg-gray-100 text-gray-700"
-                                            : getRoomStatus(room) === "승인거절"
-                                                ? "bg-red-100 text-red-700"
-                                                : "bg-yellow-100 text-yellow-800"
-                                    }`}
-                                >
-                                    {getRoomStatus(room)}
-                                </span>
-                                    <div className="mt-1 text-base font-semibold text-gray-900">
-                                        {room.title}
-                                    </div>
-                                    <div className="text-sm text-gray-500">{room.address}</div>
-                                    <div className="text-sm text-gray-500">
-                                        ￦{room.week_price?.toLocaleString()}/주
-                                    </div>
+            {/* 스크롤될 리스트 부분 */}
+            <div className="flex-1 overflow-y-auto px-4 scrollbar-hidden">
+                {/* 필터링된 방 목록 */}
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
+                    {filteredData.length > 0 ? (
+                        filteredData.map((room, index) => (
+                            <div
+                                key={index}
+                                className="flex flex-col border border-gray-200 rounded-lg p-3 hover:shadow-sm transition-shadow duration-300"
+                            >
+                                <div className="w-full h-64 rounded-md overflow-hidden mb-3">
+                                    <img
+                                        className="object-cover w-full h-full"
+                                        src={room.detail_urls?.[0]}
+                                        alt="thumbnail"
+                                    />
                                 </div>
 
-                                <div className="mt-3 flex space-x-2">
-                                    <button className="text-xs px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 transition">
-                                        삭제
-                                    </button>
-                                    <button className="text-xs px-3 py-1 border border-blue-300 text-blue-700 rounded hover:bg-blue-50 transition">
-                                        수정
-                                    </button>
+                                <div className="flex-1 flex flex-col justify-between w-full">
+                                    <div>
+                                    <span
+                                        className={`inline-block px-2 py-1 text-xs font-semibold rounded 
+                                            ${getRoomStatus(room) === "활성"
+                                            ? "bg-blue-100 text-blue-700"
+                                            : getRoomStatus(room) === "비활성"
+                                                ? "bg-gray-100 text-gray-700"
+                                                : getRoomStatus(room) === "승인거절"
+                                                    ? "bg-red-100 text-red-700"
+                                                    : "bg-yellow-100 text-yellow-800"
+                                        }`}
+                                    >
+                                        {getRoomStatus(room)}
+                                    </span>
+                                        <div className="mt-1 text-base font-semibold text-gray-900">
+                                            {room.title}
+                                        </div>
+                                        <div className="text-sm text-gray-500">{room.address}</div>
+                                        <div className="text-sm text-gray-500">
+                                            ￦{room.week_price?.toLocaleString()}/주
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-3 flex space-x-2">
+                                        <button className="text-xs px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 transition">
+                                            삭제
+                                        </button>
+                                        <button className="text-xs px-3 py-1 border border-blue-300 text-blue-700 rounded hover:bg-blue-50 transition">
+                                            수정
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+                        ))
+                    ) : (
+                        <div className="text-center bg-gray-50 rounded-lg p-10 mt-6 col-span-full">
+                            <div className="text-gray-500 text-lg">🔍 검색 결과가 없습니다.</div>
+                            <div className="text-gray-400 mt-2">다른 검색어나 필터를 사용해보세요.</div>
                         </div>
-                    ))
-                ) : (
-                    <div className="text-center bg-gray-50 rounded-lg p-10 mt-6 col-span-full">
-                        <div className="text-gray-500 text-lg">🔍 검색 결과가 없습니다.</div>
-                        <div className="text-gray-400 mt-2">다른 검색어나 필터를 사용해보세요.</div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         </div>
     );
