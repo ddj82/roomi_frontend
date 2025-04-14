@@ -54,6 +54,7 @@ export interface RoomData {
     detail_urls?: string[];
     created_at?: Date;
     updated_at?: Date;
+    room_type: string;
 
     // 숙소 기본 정보 추가
     accommodation_type?: string;
@@ -139,14 +140,17 @@ export interface RoomData {
 }
 
 export interface RoomFormData {
+    room_type: string;
     title: string;
     address: string;
     address_detail: string;
+    detail_urls: string[];
     has_elevator: boolean;
     has_parking: boolean;
     building_type: string;
     room_structure: string;
     facilities: Record<string, string>;
+    additional_facilities: Record<string, string>;
     is_auto_accepted: boolean;
     hour_enabled: boolean;
     day_enabled: boolean;
@@ -154,28 +158,13 @@ export interface RoomFormData {
     cleaning_time: number;
     breakfast_service: string;
     checkin_service: string;
-    additional_facilities: Record<string, string>;
-}
-
-export interface FacilityItem {
-    key: string;
-    label: string;
-    icon: IconProp;
-}
-
-
-export interface CreateRoomData {
-    roomData: RoomData,
-
-    discounts: Discounts[],
-
-    business_number: string,
-    business_name: string,
-    business_representative: string,
-    business_address: string,
-    business_additional_address: string,
-    business_license_type: string,
-
+    tags: string[];
+    prohibitions: string[];
+    floor_area: number;
+    floor: number;
+    room_count: number;
+    bathroom_count: number;
+    max_guests: number;
 }
 
 export interface Schedules {
@@ -272,4 +261,10 @@ export interface Discounts {
     type: string,
     days: number,
     percentage: number,
+}
+
+// 업로드할 이미지 파일 정보를 위한 인터페이스 선언
+export interface ImageItem {
+    file: File;
+    previewUrl: string;
 }

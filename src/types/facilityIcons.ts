@@ -77,7 +77,6 @@ export const facilityIcons: Record<string, IconDefinition> = {
     'pets': faPaw,
     'smoking': faSmoking,
     'smoke_free': faSmokingBan,
-    'fitness': faDumbbell,
     'grill': faFire,
     'business': faBriefcase,
     'restaurant': faUtensils,
