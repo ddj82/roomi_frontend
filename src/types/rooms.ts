@@ -163,7 +163,6 @@ export interface FacilityItem {
     icon: IconProp;
 }
 
-
 export interface CreateRoomData {
     roomData: RoomData,
 

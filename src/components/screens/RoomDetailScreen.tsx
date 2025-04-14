@@ -519,6 +519,142 @@ export default function RoomDetailScreen() {
                                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap ml-1">{room.description}</p>
                             </div>
 
+                            <div className="mb-10">
+                                <h2 className="text-xl font-semibold text-gray-800">
+                                    {/*<span className="w-1.5 h-6 bg-roomi rounded-full mr-2"></span>*/}
+                                    {t("room_info")}
+                                </h2>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                    {room.accommodation_type && (
+                                        <div className="flex items-center">
+                                            <div
+                                                className="w-10 h-10 rounded-full flex_center text-gray-700 mr-3">
+                                                <FontAwesomeIcon icon={faHome}/>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-500">{t("숙소유형")}</p>
+                                                <p className="font-medium">{room.accommodation_type}</p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {room.building_type && (
+                                        <div className="flex items-center">
+                                            <div
+                                                className="w-10 h-10 rounded-full  flex_center text-gray-700 mr-3">
+                                                <FontAwesomeIcon icon={faBuilding}/>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-500">{t("건물유형")}</p>
+                                                <p className="font-medium">{room.building_type}</p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {room.room_structure && (
+                                        <div className="flex items-center">
+                                            <div
+                                                className="w-10 h-10 rounded-full  flex_center text-gray-700 mr-3">
+                                                <FontAwesomeIcon icon={faVectorSquare}/>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-500">{t("방구조")}</p>
+                                                <p className="font-medium">{room.room_structure}</p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-gray-700 mr-3">
+                                            <FontAwesomeIcon icon={faVectorSquare}/>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("면적")}</p>
+                                            <p className="font-medium">{`${room.floor_area ?? 0}m²`}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-gray-700 mr-3">
+                                            <FontAwesomeIcon icon={faLayerGroup}/>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("층수")}</p>
+                                            <p className="font-medium">{`${room.floor ?? 0}`}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-gray-700 mr-3">
+                                            <FontAwesomeIcon icon={faDoorOpen}/>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("방개수")}</p>
+                                            <p className="font-medium">{`${room.room_count ?? 0}`}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-gray-700 mr-3">
+                                            <FontAwesomeIcon icon={faBath}/>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("욕실개수")}</p>
+                                            <p className="font-medium">{`${room.bathroom_count ?? 0}`}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-gray-700 mr-3">
+                                            <FontAwesomeIcon icon={faElevator}/>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("엘리베이터")}</p>
+                                            <p className="font-medium">{room.has_elevator ? "\u2714" : "\u274C"}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-gray-700 mr-3">
+                                            <FontAwesomeIcon icon={faSquareParking}/>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("주차가능")}</p>
+                                            <p className="font-medium">{room.has_parking ? "\u2714" : "\u274C"}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-gray-700 mr-3">
+                                            <FontAwesomeIcon icon={faUsers}/>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("최대이용인원")}</p>
+                                            <p className="font-medium">{`${room.max_guests ?? 0}${t('guest_unit')}`}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <div
+                                            className="w-10 h-10 rounded-full  flex_center text-gray-700 mr-3">
+                                            <FontAwesomeIcon icon={faClock}/>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500">{t("check_in/out")}</p>
+                                            <p className="font-medium">{`${room.check_in_time ?? "0"} / ${room.check_out_time ?? "0"}`}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* 제공 서비스 */}
                             <div className="space-y-4 pb-6 border-b border-gray-200">
                                 <h2 className="text-xl font-semibold text-gray-800">{t("제공 서비스")}</h2>
