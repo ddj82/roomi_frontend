@@ -35,15 +35,23 @@
         pg: urlParams.get('pg') || "html5_inicis"
     };
 
+    let paymentStarted = false;
+
     function initPayment() {
         if (!window.IMP) {
             addDebugInfo('아임포트 SDK 로딩 대기 중...');
-            setTimeout(initPayment, 1000);
+            setTimeout(initPayment, 500);
             return;
         }
 
+        if (paymentStarted) {
+            addDebugInfo("이미 결제 시작됨. 중복 방지");
+            return;
+        }
+        paymentStarted = true;
+
         const IMP = window.IMP;
-        IMP.init("imp19424728");  // ✅ 여기에 본인의 '가맹점 식별 코드(userCode)' 입력
+        IMP.init("imp19424728"); // 가맹점 코드
 
         addDebugInfo('아임포트 결제 요청 시작...');
 
@@ -59,12 +67,7 @@
             buyer_tel: params.buyerTel,
             buyer_addr: params.buyerAddr,
             buyer_postcode: "06018",
-            m_redirect_url: "example://payment-success" // ✅ 모바일 결제 후 리디렉션될 URL,
-            // 특정 카드사만 노출 (display 옵션 활용)
-            // display: {
-            //     card_quota: [2, 3, 6], // 할부 개월 수 제한
-            //     accept_card_corp: ["삼성", "현대", "KB국민"] // 허용할 카드사 지정
-            // }
+            m_redirect_url: "https://roomi.co.kr/success.html" // 모바일 전용
         }, function (rsp) {
             if (rsp.success) {
                 addDebugInfo('결제 성공 ✅: ' + JSON.stringify(rsp));
