@@ -42,7 +42,6 @@
 
         return null;
     };
-
     async function getFgkey() {
         try {
             const productData = JSON.parse(params.product);
@@ -54,7 +53,7 @@
                     currency: params.currency,
                     amount: params.amount,
                     lang: "KR",
-                    payment_method: "P115"
+                    //payment_method: "P115"
                 },
                 merchant: {
                     mid: params.mid
@@ -124,7 +123,7 @@
                     currency: params.currency,
                     amount: params.amount,
                     lang: "KR",
-                    payment_method: "P115"  // 현대카드
+                    // payment_method: "P115"  // 현대카드
                 },
                 merchant: {
                     mid: params.mid
