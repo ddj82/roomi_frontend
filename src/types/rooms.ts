@@ -127,7 +127,7 @@ export interface RoomData {
     is_deleted: boolean;
     host_id?: number;
     unavailable_dates: UnavailableDates;
-    discounts?: any[];
+    discounts?: Discounts[];
     reviews?: any[];
     host: Host;
     host_name: string;
@@ -151,10 +151,8 @@ export interface RoomFormData {
     room_structure: string;
     facilities: Record<string, string>;
     additional_facilities: Record<string, string>;
-    is_auto_accepted: boolean;
-    hour_enabled: boolean;
-    day_enabled: boolean;
     week_enabled: boolean;
+    month_enabled: boolean;
     cleaning_time: number;
     breakfast_service: string;
     checkin_service: string;
@@ -165,6 +163,20 @@ export interface RoomFormData {
     room_count: number;
     bathroom_count: number;
     max_guests: number;
+    description: string;
+    house_rules: string;
+    transportation_info: string;
+    check_in_time: string;
+    check_out_time: string;
+    week_price: number;
+    deposit_week: number;
+    maintenance_fee_week: number;
+    month_price: number;
+    deposit_month: number;
+    maintenance_fee_month: number;
+    discounts: Discounts[];
+    is_auto_accepted: boolean;
+    refund_policy: string;
 }
 
 export interface Schedules {

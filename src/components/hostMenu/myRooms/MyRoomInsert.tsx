@@ -1,15 +1,15 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faBuilding} from "@fortawesome/free-regular-svg-icons";
+import {faCheckCircle, faCircle, faBuilding} from "@fortawesome/free-regular-svg-icons";
 import {
-    faArrowLeft,
+    faArrowLeft, faCheck,
     faElevator, faHashtag,
     faImages,
     faInfo,
     faMagnifyingGlass,
     faP,
-    faPlus, faX
+    faPlus, faWonSign, faX
 } from "@fortawesome/free-solid-svg-icons";
 import DaumPostcode from 'react-daum-postcode';
 import Modal from "react-modal";
@@ -21,7 +21,8 @@ const MyRoomInsert = () => {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false); // 모달 상태
     const [currentStep, setCurrentStep] = useState(1); // 현재 단계 (1~16)
-    const totalSteps = 15; // 전체 단계 수
+
+    // 주소 모달
     const [daumAddressModal, setDaumAddressModal] = useState(false);
 
     // 오류 메시지 상태 추가
@@ -40,9 +41,8 @@ const MyRoomInsert = () => {
         facilities : {},
         additional_facilities: {},
         is_auto_accepted: false,
-        hour_enabled: false,
-        day_enabled: false,
-        week_enabled: false,
+        week_enabled: true,
+        month_enabled: false,
         cleaning_time: 0,
         breakfast_service: "",
         checkin_service: "",
@@ -53,7 +53,34 @@ const MyRoomInsert = () => {
         room_count: 0,
         bathroom_count: 0,
         max_guests: 0,
+        description: "",
+        house_rules: "",
+        transportation_info: "",
+        check_in_time: "",
+        check_out_time: "",
+        week_price: 0,
+        deposit_week: 0,
+        maintenance_fee_week: 0,
+        month_price: 0,
+        deposit_month: 0,
+        maintenance_fee_month: 0,
+        discounts: [
+            { type: "weekly", days: 14, percentage: 0 },
+            { type: "weekly", days: 28, percentage: 0 },
+            { type: "weekly", days: 84, percentage: 0 },
+            { type: "monthly", days: 30, percentage: 0 },
+            { type: "monthly", days: 90, percentage: 0 },
+            { type: "monthly", days: 180, percentage: 0 },
+        ],
+        refund_policy: "",
     });
+
+    // 전체 단계 수
+    const totalSteps = useMemo(() => {
+        if (roomFormData.room_type === "LODGE") return 15;
+        if (roomFormData.room_type === "LEASE") return 14;
+        return 15; // 기본값
+    }, [roomFormData.room_type]);
 
     // 기본시설
     const basicFacilities = [
@@ -105,6 +132,13 @@ const MyRoomInsert = () => {
         "추가 인원 금지",
     ];
 
+    useEffect(() => {
+        if (currentStep > totalSteps) {
+            setCurrentStep(totalSteps);
+        }
+    }, [totalSteps]);
+
+
     const handleBack = () => {
         setShowModal(true); // 모달 열기
     };
@@ -122,7 +156,7 @@ const MyRoomInsert = () => {
         }
     };
 
-    const handleChange = (field: string, value: string) => {
+    const handleChange = (field: string, value: any) => {
         setRoomFormData(prev => ({ ...prev, [field]: value }));
     };
 
@@ -663,7 +697,7 @@ const MyRoomInsert = () => {
         }
     };
 
-    // ============사진 파일 관련=========================
+    /*사진 파일 관련*/
     // 숨겨진 파일 input 클릭 트리거
     const handleInputFileSet = () => {
         fileInputRef.current?.click();
@@ -712,9 +746,8 @@ const MyRoomInsert = () => {
             return prev.filter((_, i) => i !== index);
         });
     };
-    // ============사진 파일 관련=========================
 
-    // ============태그 관련=========================
+    /*태그 관련*/
     // 중복 태그 추가 방지 로직 포함 태그 추가 함수
     const handleAddTag = () => {
         const newTag = tagInput.trim();
@@ -745,8 +778,110 @@ const MyRoomInsert = () => {
             };
         });
     };
-    // ============태그 관련=========================
 
+    /*입 퇴실 시간 선택 함수*/
+    const generateTimeOptions = () => {
+        const times = [];
+        for (let h = 1; h <= 24; h++) {
+            if (h === 24) {
+                times.push('24:00');
+                continue;
+            }
+            const hour = h.toString().padStart(2, '0');
+            times.push(`${hour}:00`);
+        }
+        return times;
+    };
+    const timeOptions = generateTimeOptions();
+
+    /*요금 설정 함수*/
+    const renderSetPriceInput = (unit: boolean, field: string, placeholder: string) => {
+        const value = roomFormData[field as keyof RoomFormData];
+        const isEmpty = value === 0 || value === null || value === undefined;
+        let placeholderUnit;
+
+        if (placeholder === "기본 요금") { // 기본 요금
+            placeholderUnit = unit ? "월 기본 요금" : "주 기본 요금";
+        } else if (placeholder === "보증금") { // 보증금
+            placeholderUnit = unit ? "월 보증금" : "주 보증금";
+        } else if (placeholder === "관리비") { // 관리비
+            placeholderUnit = unit ? "월 관리비" : "주 관리비";
+        }
+
+        return (
+            <div className="relative mb-2">
+                <div className="absolute left-3.5 top-2 pointer-events-none">
+                    <FontAwesomeIcon icon={faWonSign} className="w-4 h-4 text-gray-400"/>
+                </div>
+                <input
+                    type="text"
+                    inputMode="numeric"
+                    id={field}
+                    name={field}
+                    placeholder={placeholderUnit}
+                    value={isEmpty ? "" : formatWithComma(value as number)}
+                    onChange={(e) => {
+                        const raw = e.target.value.replace(/,/g, ''); // 콤마 제거
+                        handleChange(field, raw);
+                    }}
+                    className="w-full border border-gray-300 rounded p-2 pl-10 focus:outline-none appearance-none"
+                />
+            </div>
+        );
+    };
+    // 천 단위 콤마 포맷 함수
+    const formatWithComma = (value: string | number) => {
+        const numStr = value.toString().replace(/[^0-9]/g, '');
+        if (!numStr) return '';
+        return Number(numStr).toLocaleString();
+    };
+
+    /*할인 설정 함수*/
+    const renderDiscountsSet = (type: string, dayUnit: number) => {
+        const isWeekly = type === "weekly";
+        const days = isWeekly ? dayUnit * 7 : dayUnit * 30;
+        const discountLabel = `${dayUnit}${isWeekly ? "주" : "개월"} 이상`;
+
+        return (
+            <div className="flex flex-col">
+                <div>{discountLabel}</div>
+                <div className="relative">
+                    <input
+                        type="number"
+                        min="0"
+                        value={getDiscountValue(type, days)}
+                        onChange={(e) => handleDiscountsChange(e, type, days)}
+                        className="w-full border border-gray-300 rounded p-2 pr-10 focus:outline-none appearance-none"
+                    />
+                    <span
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 text-sm font-bold">
+                        %
+                    </span>
+                </div>
+            </div>
+        );
+    };
+    const handleDiscountsChange = (e: React.ChangeEvent<HTMLInputElement>, type: string, days: number) => {
+        const value = Number(e.target.value);
+
+        setRoomFormData((prev) => ({
+            ...prev,
+            discounts: prev.discounts.map((item) =>
+                item.type === type && item.days === days
+                    ? {...item, percentage: value}
+                    : item
+            ),
+        }));
+    };
+    const getDiscountValue = (type: string, days: number): string | number => {
+        const discount = roomFormData.discounts.find(
+            (d) => d.type === type && d.days === days
+        );
+        return !discount || discount.percentage === 0 ? "" : discount.percentage;
+    };
+
+
+    // 폼 데이터 단계별 렌더링 함수 
     const renderStepTitle = (currentStep: number) => {
         let stepTitle;
         let stepContent;
@@ -797,35 +932,43 @@ const MyRoomInsert = () => {
                 break;
             }
             case 10: {
-                stepTitle = '100';
-                stepContent = '100.';
+                stepTitle = '체크인/체크아웃';
+                stepContent = '체크인/체크아웃 시간을 설정해주세요.';
                 break;
             }
             case 11: {
-                stepTitle = '110';
-                stepContent = '110.';
+                stepTitle = '요금 설정';
+                stepContent = '기본 요금과 보증금을 설정해주세요.';
                 break;
             }
             case 12: {
-                stepTitle = '120';
-                stepContent = '120.';
+                stepTitle = '할인 설정';
+                stepContent = '장기 이용, 등의 할인을 설정해주세요.';
                 break;
             }
             case 13: {
-                stepTitle = '130';
-                stepContent = '130.';
+                stepTitle = '예약 규정';
+                stepContent = '예약 방식과 환불 규정을 선택해주세요.';
                 break;
             }
             case 14: {
-                stepTitle = '140';
-                stepContent = '140.';
+                if (roomFormData.room_type === "LEASE") {
+                    stepTitle = '미리보기';
+                    stepContent = '입력한 내용을 확인해주세요.';
+                } else if (roomFormData.room_type === "LODGE") {
+                    stepTitle = '추가 정보';
+                    stepContent = '사업자 공간의 추가 정보를 입력해주세요.';
+                }
                 break;
             }
             case 15: {
-                stepTitle = '150';
-                stepContent = '150.';
+                if (roomFormData.room_type === "LODGE") {
+                    stepTitle = '미리보기';
+                    stepContent = '입력한 내용을 확인해주세요.';
+                }
                 break;
             }
+
         }
         return (
             <>
@@ -868,7 +1011,27 @@ const MyRoomInsert = () => {
                     {currentStep === 1 && (
                         /*공간 유형*/
                         <div>
-                            <div className="md:flex">
+                            {/*안내*/}
+                            <div className="p-4 rounded-lg bg-roomi-000">
+                                <div className="flex items-center text-roomi m-2">
+                                    <div className="w-5 h-5 flex_center border-2 border-roomi rounded-full">
+                                        <FontAwesomeIcon icon={faInfo} className="w-3 h-3"/>
+                                    </div>
+                                    <div className="ml-4 font-bold">안내사항</div>
+                                </div>
+                                <div className="text-gray-500 text-sm">
+                                    <div className="p-1 px-2">
+                                        <strong> · </strong>불법 숙박업소 운영 시 관련법에 따라 처벌 될 수 있습니다.
+                                    </div>
+                                    <div className="p-1 px-2">
+                                        <strong> · </strong>선택하신 유형에 따라 필요한 서류가 요청 될 수 있습니다.
+                                    </div>
+                                    <div className="p-1 px-2">
+                                        <strong> · </strong>허위로 공간 유형을 선택 할 경우 계정이 제한 될 수 있습니다.
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="md:flex mt-4">
                                 {/* 단기임대 */}
                                 <div className="md:w-1/2">
                                     <label htmlFor="LEASE"
@@ -970,42 +1133,13 @@ const MyRoomInsert = () => {
                                     />
                                 </div>
                             </div>
-                            {/*안내*/}
-                            <div className="p-4 rounded-lg bg-roomi-000 mt-4">
-                                <div className="flex items-center text-roomi m-2">
-                                    <div className="w-5 h-5 flex_center border-2 border-roomi rounded-full">
-                                        <FontAwesomeIcon icon={faInfo} className="w-3 h-3"/>
-                                    </div>
-                                    <div className="ml-4 font-bold">안내사항</div>
-                                </div>
-                                <div className="text-gray-500 text-sm">
-                                    <div className="p-1 px-2">
-                                        <strong> · </strong>불법 숙박업소 운영 시 관련법에 따라 처벌 될 수 있습니다.
-                                    </div>
-                                    <div className="p-1 px-2">
-                                        <strong> · </strong>선택하신 유형에 따라 필요한 서류가 요청 될 수 있습니다.
-                                    </div>
-                                    <div className="p-1 px-2">
-                                        <strong> · </strong>허위로 공간 유형을 선택 할 경우 계정이 제한 될 수 있습니다.
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     )}
                     {currentStep === 2 && (
                         /*공간 이름*/
-                        <div className="m-2">
-                            <div className="">
-                                <input
-                                    type="text"
-                                    value={roomFormData.title}
-                                    onChange={(e) => handleChange("title", e.target.value)}
-                                    placeholder="공간 이름"
-                                    className="w-full p-4 border border-gray-300 rounded focus:outline-none"
-                                />
-                            </div>
+                        <div>
                             {/*안내*/}
-                            <div className="p-4 rounded-lg bg-roomi-000 mt-4">
+                            <div className="p-4 rounded-lg bg-roomi-000">
                                 <div className="flex items-center text-roomi m-2">
                                     <div className="w-5 h-5 flex_center border-2 border-roomi rounded-full">
                                         <FontAwesomeIcon icon={faInfo} className="w-3 h-3"/>
@@ -1024,42 +1158,23 @@ const MyRoomInsert = () => {
                                     </div>
                                 </div>
                             </div>
+                            {/*이름*/}
+                            <div className="mt-4">
+                                <input
+                                    type="text"
+                                    value={roomFormData.title}
+                                    onChange={(e) => handleChange("title", e.target.value)}
+                                    placeholder="공간 이름"
+                                    className="w-full p-4 border border-gray-300 rounded focus:outline-none"
+                                />
+                            </div>
                         </div>
                     )}
                     {currentStep === 3 && (
                         /* 위치 정보 */
-                        <div className="relative">
-                            <input
-                                type="text"
-                                value={roomFormData.address}
-                                readOnly
-                                onClick={() => setDaumAddressModal(true)}
-                                placeholder="주소"
-                                className="w-full border border-gray-300 rounded p-2 pr-10 cursor-pointer focus:outline-none"
-                            />
-                            <div className="absolute right-3.5 top-2 text-roomi pointer-events-none">
-                                <FontAwesomeIcon icon={faMagnifyingGlass} className="w-4 h-4"/>
-                            </div>
-                            <Modal
-                                isOpen={daumAddressModal}
-                                onRequestClose={() => setDaumAddressModal(false)}
-                                className="bg-white p-4 rounded shadow-lg mx-auto"
-                                overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-                            >
-                                <DaumPostcode
-                                    style={{width: 400, height: 600}}
-                                    onComplete={handleAddress}
-                                />
-                            </Modal>
-                            <input
-                                type="text"
-                                value={roomFormData.address_detail}
-                                onChange={(e) => handleChange("address_detail", e.target.value)}
-                                placeholder="상세 주소"
-                                className="w-full border border-gray-300 rounded p-2 mt-4 focus:outline-none"
-                            />
+                        <div>
                             {/*안내*/}
-                            <div className="p-4 rounded-lg bg-roomi-000 mt-4">
+                            <div className="p-4 rounded-lg bg-roomi-000">
                                 <div className="flex items-center text-roomi m-2">
                                     <div className="w-5 h-5 flex_center border-2 border-roomi rounded-full">
                                         <FontAwesomeIcon icon={faInfo} className="w-3 h-3"/>
@@ -1072,12 +1187,59 @@ const MyRoomInsert = () => {
                                     </div>
                                 </div>
                             </div>
+                            {/*주소*/}
+                            <div className="mt-4 relative">
+                                <input
+                                    type="text"
+                                    value={roomFormData.address}
+                                    readOnly
+                                    onClick={() => setDaumAddressModal(true)}
+                                    placeholder="주소"
+                                    className="w-full border border-gray-300 rounded p-2 pr-10 cursor-pointer focus:outline-none"
+                                />
+                                <div className="absolute right-3.5 top-2 text-roomi pointer-events-none">
+                                    <FontAwesomeIcon icon={faMagnifyingGlass} className="w-4 h-4"/>
+                                </div>
+                                <Modal
+                                    isOpen={daumAddressModal}
+                                    onRequestClose={() => setDaumAddressModal(false)}
+                                    className="bg-white p-4 rounded shadow-lg mx-auto"
+                                    overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                                >
+                                    <DaumPostcode
+                                        style={{width: 400, height: 600}}
+                                        onComplete={handleAddress}
+                                    />
+                                </Modal>
+                                <input
+                                    type="text"
+                                    value={roomFormData.address_detail}
+                                    onChange={(e) => handleChange("address_detail", e.target.value)}
+                                    placeholder="상세 주소"
+                                    className="w-full border border-gray-300 rounded p-2 mt-4 focus:outline-none"
+                                />
+                            </div>
                         </div>
                     )}
                     {currentStep === 4 && (
                         /* 건물 정보 */
                         <div>
-                            <div>
+                            {/*안내*/}
+                            <div className="p-4 rounded-lg bg-roomi-000">
+                                <div className="flex items-center text-roomi m-2">
+                                    <div className="w-5 h-5 flex_center border-2 border-roomi rounded-full">
+                                        <FontAwesomeIcon icon={faInfo} className="w-3 h-3"/>
+                                    </div>
+                                    <div className="ml-4 font-bold">단기 임대 공간 정보</div>
+                                </div>
+                                <div className="text-gray-500 text-sm">
+                                    <div className="p-1 px-2">
+                                        <strong> · </strong>단기 임대로 운영 되는 주거 공간에 적합한 건물 유형을 선택해주세요.
+                                    </div>
+                                </div>
+                            </div>
+                            {/*건물*/}
+                            <div className="mt-4">
                                 {/*건물 유형*/}
                                 <div className="mb-4">
                                     <select
@@ -1127,7 +1289,7 @@ const MyRoomInsert = () => {
                                         </span>
                                     </div>
                                 </div>
-
+                                {/*엘베 주차*/}
                                 <div className="flex gap-4">
                                     <label htmlFor="hasElevator"
                                            className={`flex_center flex-col gap-2 border-2 rounded-lg w-32 h-24 text-gray-500
@@ -1169,20 +1331,6 @@ const MyRoomInsert = () => {
                                         }
                                         className="hidden"
                                     />
-                                </div>
-                            </div>
-                            {/*안내*/}
-                            <div className="p-4 rounded-lg bg-roomi-000 mt-4">
-                                <div className="flex items-center text-roomi m-2">
-                                    <div className="w-5 h-5 flex_center border-2 border-roomi rounded-full">
-                                        <FontAwesomeIcon icon={faInfo} className="w-3 h-3"/>
-                                    </div>
-                                    <div className="ml-4 font-bold">단기 임대 공간 정보</div>
-                                </div>
-                                <div className="text-gray-500 text-sm">
-                                    <div className="p-1 px-2">
-                                        <strong> · </strong>단기 임대로 운영 되는 주거 공간에 적합한 건물 유형을 선택해주세요.
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1286,6 +1434,8 @@ const MyRoomInsert = () => {
                                 <div className="mt-2">
                                     <label htmlFor="checkin_service" className="text-sm font-bold">입실 안내</label>
                                     <textarea
+                                        value={roomFormData.checkin_service}
+                                        onChange={(e) => handleChange("checkin_service", e.target.value)}
                                         name="checkin_service"
                                         id="checkin_service"
                                         cols={30}
@@ -1295,6 +1445,8 @@ const MyRoomInsert = () => {
                                 <div className="mt-2">
                                     <label htmlFor="breakfast_service" className="text-sm font-bold">식사 정보</label>
                                     <textarea
+                                        value={roomFormData.breakfast_service}
+                                        onChange={(e) => handleChange("breakfast_service", e.target.value)}
                                         name="breakfast_service"
                                         id="breakfast_service"
                                         cols={30}
@@ -1386,8 +1538,10 @@ const MyRoomInsert = () => {
                                     <div className="font-bold">공간 소개</div>
                                     <div className="mt-2">
                                         <textarea
-                                            name=""
-                                            id=""
+                                            value={roomFormData.description}
+                                            onChange={(e) => handleChange('description', e.target.value)}
+                                            name="description"
+                                            id="description"
                                             cols={30}
                                             rows={5}
                                             className="w-full mt-1 p-2 border border-gray-300 rounded focus:outline-none resize-none"></textarea>
@@ -1461,17 +1615,21 @@ const MyRoomInsert = () => {
                         /* 이용 안내 */
                         <div>
                             <div className="border border-gray-300 rounded p-4">
+                                {/*이용 규칙*/}
                                 <div>
                                     <div className="font-bold">이용 규칙</div>
                                     <div className="mt-2">
                                         <textarea
-                                            name=""
-                                            id=""
+                                            value={roomFormData.house_rules}
+                                            onChange={(e) => handleChange('house_rules', e.target.value)}
+                                            name="house_rules"
+                                            id="house_rules"
                                             cols={30}
                                             rows={5}
                                             className="w-full mt-1 p-2 border border-gray-300 rounded focus:outline-none resize-none"></textarea>
                                     </div>
                                 </div>
+                                {/*금지 사항*/}
                                 <div className="mt-4">
                                     <div className="font-bold">금지 사항 선택</div>
                                     <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mt-4">
@@ -1513,12 +1671,15 @@ const MyRoomInsert = () => {
                                         ))}
                                     </div>
                                 </div>
+                                {/*교통 안내*/}
                                 <div className="mt-4">
                                     <div className="font-bold">교통 안내</div>
                                     <div className="mt-2">
                                         <textarea
-                                            name=""
-                                            id=""
+                                            value={roomFormData.transportation_info}
+                                            onChange={(e) => handleChange('transportation_info', e.target.value)}
+                                            name="transportation_info"
+                                            id="transportation_info"
                                             cols={30}
                                             rows={5}
                                             className="w-full mt-1 p-2 border border-gray-300 rounded focus:outline-none resize-none"></textarea>
@@ -1527,10 +1688,463 @@ const MyRoomInsert = () => {
                             </div>
                         </div>
                     )}
-                    {/*{currentStep === 10 && ()}*/}
-                    {/*{currentStep === 11 && ()}*/}
-                    {/*{currentStep === 12 && ()}*/}
-                    {/*{currentStep === 13 && ()}*/}
+                    {currentStep === 10 && (
+                        /* 체크인/체크아웃 */
+                        <div>
+                            <div className="border border-gray-300 rounded p-4">
+                                {/*안내*/}
+                                <div className="p-4 rounded-lg bg-roomi-000">
+                                    <div className="flex items-center text-roomi m-2">
+                                        <div className="w-5 h-5 flex_center border-2 border-roomi rounded-full">
+                                            <FontAwesomeIcon icon={faInfo} className="w-3 h-3"/>
+                                        </div>
+                                        <div className="ml-4 font-bold">안내사항</div>
+                                    </div>
+                                    <div className="text-gray-500 text-sm">
+                                        <div className="p-1 px-2">
+                                            <strong> · </strong>입실/퇴실 시간은 게스트에게 중요한 정보입니다.
+                                        </div>
+                                        <div className="p-1 px-2">
+                                            <strong> · </strong>청소 및 정리 시간을 고려하여 설정해주시기 바랍니다.
+                                        </div>
+                                        <div className="p-1 px-2">
+                                            <strong> · </strong>시간이 변경되는 경우에는 게스트와 협의해주시기 바랍니다.
+                                        </div>
+                                    </div>
+                                </div>
+                                {/*입/퇴실 시간*/}
+                                <div className="mt-4">
+                                    {/*입실 시간*/}
+                                    <div className="flex flex-col md:flex-row md:gap-8">
+                                        <div className="font-bold flex_center">입실 시간</div>
+                                        <div className="w-1/3 mt-4 md:mt-0 flex_center rounded">
+                                            <select
+                                                id="check_in_time"
+                                                value={roomFormData.check_in_time}
+                                                onChange={(e) => handleChange('check_in_time', e.target.value)}
+                                                className="w-full border border-gray-300 rounded p-2 focus:outline-none"
+                                            >
+                                                <option value="">선택하세요</option>
+                                                {timeOptions.map((time) => (
+                                                    <option key={`in-${time}`} value={time}>
+                                                        {time}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    {/*퇴실 시간*/}
+                                    <div className="mt-4 flex flex-col md:flex-row md:gap-8">
+                                        <div className="font-bold flex_center">퇴실 시간</div>
+                                        <div className="w-1/3 mt-4 md:mt-0 flex_center rounded">
+                                            <select
+                                                id="check_out_time"
+                                                value={roomFormData.check_out_time}
+                                                onChange={(e) => handleChange('check_out_time', e.target.value)}
+                                                className="w-full border border-gray-300 rounded p-2 focus:outline-none"
+                                            >
+                                                <option value="">선택하세요</option>
+                                                {timeOptions.map((time) => (
+                                                    <option key={`out-${time}`} value={time}>
+                                                        {time}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {currentStep === 11 && (
+                        /* 요금 설정 */
+                        <div>
+                            {/*안내*/}
+                            <div className="p-4 rounded-lg bg-roomi-000">
+                                <div className="flex items-center text-roomi m-2">
+                                    <div className="w-5 h-5 flex_center border-2 border-roomi rounded-full">
+                                        <FontAwesomeIcon icon={faInfo} className="w-3 h-3"/>
+                                    </div>
+                                    <div className="ml-4 font-bold">요금 설정 팁</div>
+                                </div>
+                                <div className="text-gray-500 text-sm">
+                                    <div className="p-1 px-2">
+                                        <strong> · </strong>주변 시세를 참고하여 설정하면 좋습니다.
+                                    </div>
+                                    <div className="p-1 px-2">
+                                        <strong> · </strong>관리 비용은 주 또는 월 단위로 청구됩니다.
+                                    </div>
+                                </div>
+                            </div>
+                            {/*기본 요금 설정*/}
+                            <div className="mt-4">
+                                <div className="font-bold">
+                                    <div className="font-bold">기본 요금 설정</div>
+                                    <div className="flex gap-4 mt-2">
+                                        <label htmlFor="week_enabled"
+                                               className={`flex_center gap-2 border-2 rounded-lg p-2 px-4 text-gray-500
+                                               ${roomFormData.week_enabled && "border-roomi text-roomi bg-roomi-light px-2"}`}
+                                        >
+                                            {roomFormData.week_enabled &&
+                                                <FontAwesomeIcon icon={faCheck} className="text-lg"/>}
+                                            <span className="text-sm">주</span>
+                                        </label>
+                                        <input
+                                            id="week_enabled"
+                                            name="week_enabled"
+                                            type="checkbox"
+                                            checked={roomFormData.week_enabled}
+                                            onChange={(e) =>
+                                                setRoomFormData((prev) => ({
+                                                    ...prev,
+                                                    week_enabled: e.target.checked,
+                                                }))
+                                            }
+                                            className="hidden"
+                                        />
+                                        <label htmlFor="month_enabled"
+                                               className={`flex_center gap-2 border-2 rounded-lg p-2 px-4 text-gray-500
+                                               ${roomFormData.month_enabled && "border-roomi text-roomi bg-roomi-light px-2"}`}
+                                        >
+                                            {roomFormData.month_enabled &&
+                                                <FontAwesomeIcon icon={faCheck} className="text-lg"/>}
+                                            <span className="text-sm">월</span>
+                                        </label>
+                                        <input
+                                            id="month_enabled"
+                                            type="checkbox"
+                                            checked={roomFormData.month_enabled}
+                                            onChange={(e) =>
+                                                setRoomFormData((prev) => ({
+                                                    ...prev,
+                                                    month_enabled: e.target.checked,
+                                                }))
+                                            }
+                                            className="hidden"
+                                        />
+                                    </div>
+                                </div>
+                                {roomFormData.week_enabled && (
+                                    <div className="mt-4">
+                                        <div className="font-bold">주 단위 요금</div>
+                                        <div className="mt-2">
+                                            {renderSetPriceInput(false, 'week_price', '기본 요금')}
+                                            {renderSetPriceInput(false, 'deposit_week', '보증금')}
+                                            {renderSetPriceInput(false, 'maintenance_fee_week', '관리비')}
+                                        </div>
+                                    </div>
+                                )}
+                                {roomFormData.month_enabled && (
+                                    <div className="mt-4">
+                                        <div className="font-bold">월 단위 요금</div>
+                                        <div className="mt-2">
+                                            {renderSetPriceInput(true, 'month_price', '기본 요금')}
+                                            {renderSetPriceInput(true, 'deposit_month', '보증금')}
+                                            {renderSetPriceInput(true, 'maintenance_fee_month', '관리비')}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                    {currentStep === 12 && (
+                        /* 할인 설정 */
+                        <div>
+                            {/*안내*/}
+                            <div className="p-4 rounded-lg bg-roomi-000">
+                                <div className="flex items-center text-roomi m-2">
+                                    <div className="w-5 h-5 flex_center border-2 border-roomi rounded-full">
+                                        <FontAwesomeIcon icon={faInfo} className="w-3 h-3"/>
+                                    </div>
+                                    <div className="ml-4 font-bold">할인/할증 설정 팁</div>
+                                </div>
+                                <div className="text-gray-500 text-sm">
+                                    <div className="p-1 px-2">
+                                        <strong> · </strong>장기 이용 할인은 게스트의 장기 예약을 유도 할 수 있어요.
+                                    </div>
+                                    <div className="p-1 px-2">
+                                        <strong> · </strong>성수기 할증은 수요가 많은 기간에 적용됩니다.
+                                    </div>
+                                    <div className="p-1 px-2">
+                                        <strong> · </strong>적절한 할인률 설정으로 예약률을 높일 수 있어요.
+                                    </div>
+                                </div>
+                            </div>
+                            {/*할인*/}
+                            <div className="mt-4">
+                                {roomFormData.week_enabled && (
+                                    <div className="mt-4">
+                                        <div className="font-bold">주 단위 장기 숙박 할인</div>
+                                        <div className="text-gray-500 text-sm">2주 이상 예약 시 할인률을 설정해주세요.</div>
+                                        <div className="mt-2 flex gap-8">
+                                            {renderDiscountsSet("weekly", 2)}
+                                            {renderDiscountsSet("weekly", 4)}
+                                            {renderDiscountsSet("weekly", 12)}
+                                        </div>
+                                    </div>
+                                )}
+                                {roomFormData.month_enabled && (
+                                    <div className="mt-4">
+                                        <div className="font-bold">월 단위 장기 이용 할인</div>
+                                        <div className="text-gray-500 text-sm">월 단위 예약 시 할인률을 설정해주세요.</div>
+                                        <div className="mt-2 flex gap-8">
+                                            {renderDiscountsSet("monthly", 1)}
+                                            {renderDiscountsSet("monthly", 3)}
+                                            {renderDiscountsSet("monthly", 6)}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                    {currentStep === 13 && (
+                        /* 예약 규정 */
+                        <div>
+                            <div className="">
+                                <div className="font-bold">예약 방식</div>
+                                <div className="md:flex mt-4">
+                                    {/* 즉시 예약 */}
+                                    <div className="md:w-1/2">
+                                        <label htmlFor="auto_true"
+                                               className={`block p-4 border-2 rounded-lg cursor-pointer transition mb-4 md:m-0 
+                                               ${roomFormData.is_auto_accepted ? 
+                                                   "bg-roomi-000 border-roomi" : "border text-gray-700 hover:bg-gray-100"}`}
+                                        >
+                                            <div className="flex">
+                                                <div
+                                                    className={`flex_center p-2 text-gray-300
+                                                    ${roomFormData.is_auto_accepted && "text-roomi"}`}
+                                                >
+                                                    {roomFormData.is_auto_accepted ? (
+                                                        <FontAwesomeIcon icon={faCheckCircle} className="w-6 h-6"/>
+                                                    ) : (
+                                                        <FontAwesomeIcon icon={faCircle} className="w-6 h-6"/>
+                                                    )}
+                                                </div>
+                                                <div className="w-full ml-4">
+                                                    <div
+                                                        className={`font-bold 
+                                                    ${roomFormData.is_auto_accepted && "text-roomi"}`}
+                                                    >
+                                                        즉시 예약
+                                                    </div>
+                                                    <div className="text-gray-500 md:text-sm text-xs mt-1">
+                                                        게스트가 바로 예약 할 수 있습니다.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="radio" name="is_auto_accepted" id="auto_true"
+                                                   checked={roomFormData.is_auto_accepted}
+                                                   onChange={() => handleChange("is_auto_accepted", true)}
+                                                   className="hidden"
+                                            />
+                                        </label>
+                                    </div>
+                                    {/* 승인 필요 */}
+                                    <div className="md:w-1/2">
+                                        <label htmlFor="auto_false"
+                                               className={`block p-4 border-2 rounded-lg cursor-pointer transition 
+                                               ${!roomFormData.is_auto_accepted ? 
+                                                   "bg-roomi-000 border-roomi" : "border text-gray-700 hover:bg-gray-100"}`}
+                                        >
+                                            <div className="flex">
+                                                <div
+                                                    className={`flex_center p-2 text-gray-300
+                                                    ${!roomFormData.is_auto_accepted && "text-roomi"}`}
+                                                >
+                                                    {!roomFormData.is_auto_accepted ? (
+                                                        <FontAwesomeIcon icon={faCheckCircle} className="w-6 h-6"/>
+                                                    ) : (
+                                                        <FontAwesomeIcon icon={faCircle} className="w-6 h-6"/>
+                                                    )}
+                                                </div>
+                                                <div className="w-full ml-4">
+                                                    <div
+                                                        className={`font-bold 
+                                                    ${!roomFormData.is_auto_accepted && "text-roomi"}`}
+                                                    >
+                                                        승인 필요
+                                                    </div>
+                                                    <div className="text-gray-500 md:text-sm text-xs mt-1">
+                                                        호스트가 예약을 승인 해야 합니다.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="radio" name="is_auto_accepted" id="auto_false"
+                                                   checked={!roomFormData.is_auto_accepted}
+                                                   onChange={() => handleChange("is_auto_accepted", false)}
+                                                   className="hidden"
+                                            />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mt-4">
+                                <div className="font-bold">환불 규정</div>
+                                <div className="mt-4">
+                                    {/* 유연한 */}
+                                    <div className="mb-2">
+                                        <label htmlFor="policy_easy"
+                                               className={`block p-4 border-2 rounded-lg cursor-pointer transition mb-4 md:m-0 
+                                               ${roomFormData.refund_policy === '3' ?
+                                                   "bg-roomi-000 border-roomi" : "border text-gray-700 hover:bg-gray-100"}`}
+                                        >
+                                            <div className="flex">
+                                                <div
+                                                    className={`flex_center p-2 text-gray-300
+                                                    ${roomFormData.refund_policy === '3' && "text-roomi"}`}
+                                                >
+                                                    {roomFormData.refund_policy === '3' ? (
+                                                        <FontAwesomeIcon icon={faCheckCircle} className="w-6 h-6"/>
+                                                    ) : (
+                                                        <FontAwesomeIcon icon={faCircle} className="w-6 h-6"/>
+                                                    )}
+                                                </div>
+                                                <div className="w-full ml-4">
+                                                    <div
+                                                        className={`font-bold 
+                                                    ${roomFormData.refund_policy === '3' && "text-roomi"}`}
+                                                    >
+                                                        유연한 환불 정책
+                                                    </div>
+                                                    <div className="text-gray-500 md:text-sm text-xs mt-1">
+                                                        체크인 24시간 전까지 무료 취소
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="radio" name="refund_policy" id="policy_easy"
+                                                   checked={roomFormData.refund_policy === '3'}
+                                                   onChange={() => handleChange("refund_policy", '3')}
+                                                   className="hidden"
+                                            />
+                                            <div className="flex text-gray-500 md:text-sm text-xs mt-2">
+                                                <div
+                                                    className={`w-full ml-4 p-3 
+                                                    ${roomFormData.refund_policy === '3' && "bg-gray-50 rounded-lg"}`}
+                                                >
+                                                    <div className="my-2">
+                                                        • 체크인 24시간 전까지: 100% 환불
+                                                    </div>
+                                                    <div className="my-2">
+                                                        • 체크인 24시간 전 ~ 당일: 50% 환불
+                                                    </div>
+                                                    <div className="my-2">
+                                                        • 체크인 이후: 환불 불가
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    {/* 일반 */}
+                                    <div className="mb-2">
+                                        <label htmlFor="policy_basic"
+                                               className={`block p-4 border-2 rounded-lg cursor-pointer transition mb-4 md:m-0 
+                                               ${roomFormData.refund_policy === '4' ?
+                                                   "bg-roomi-000 border-roomi" : "border text-gray-700 hover:bg-gray-100"}`}
+                                        >
+                                            <div className="flex">
+                                                <div
+                                                    className={`flex_center p-2 text-gray-300
+                                                    ${roomFormData.refund_policy === '4' && "text-roomi"}`}
+                                                >
+                                                    {roomFormData.refund_policy === '4' ? (
+                                                        <FontAwesomeIcon icon={faCheckCircle} className="w-6 h-6"/>
+                                                    ) : (
+                                                        <FontAwesomeIcon icon={faCircle} className="w-6 h-6"/>
+                                                    )}
+                                                </div>
+                                                <div className="w-full ml-4">
+                                                    <div
+                                                        className={`font-bold 
+                                                    ${roomFormData.refund_policy === '4' && "text-roomi"}`}
+                                                    >
+                                                        일반 환불 정책
+                                                    </div>
+                                                    <div className="text-gray-500 md:text-sm text-xs mt-1">
+                                                        체크인 3일 전까지 무료 취소
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="radio" name="refund_policy" id="policy_basic"
+                                                   checked={roomFormData.refund_policy === '4'}
+                                                   onChange={() => handleChange("refund_policy", '4')}
+                                                   className="hidden"
+                                            />
+                                            <div className="flex text-gray-500 md:text-sm text-xs mt-2">
+                                                <div
+                                                    className={`w-full ml-4 p-3 
+                                                    ${roomFormData.refund_policy === '4' && "bg-gray-50 rounded-lg"}`}
+                                                >
+                                                    <div className="my-2">
+                                                        • 체크인 3일 전까지: 100% 환불
+                                                    </div>
+                                                    <div className="my-2">
+                                                        • 체크인 3일 전 ~ 당일: 50% 환불
+                                                    </div>
+                                                    <div className="my-2">
+                                                        • 체크인 이후: 환불 불가
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    {/* 엄격한 */}
+                                    <div className="">
+                                        <label htmlFor="policy_strict"
+                                               className={`block p-4 border-2 rounded-lg cursor-pointer transition mb-4 md:m-0 
+                                               ${roomFormData.refund_policy === '5' ?
+                                                   "bg-roomi-000 border-roomi" : "border text-gray-700 hover:bg-gray-100"}`}
+                                        >
+                                            <div className="flex">
+                                                <div
+                                                    className={`flex_center p-2 text-gray-300
+                                                    ${roomFormData.refund_policy === '5' && "text-roomi"}`}
+                                                >
+                                                    {roomFormData.refund_policy === '5' ? (
+                                                        <FontAwesomeIcon icon={faCheckCircle} className="w-6 h-6"/>
+                                                    ) : (
+                                                        <FontAwesomeIcon icon={faCircle} className="w-6 h-6"/>
+                                                    )}
+                                                </div>
+                                                <div className="w-full ml-4">
+                                                    <div
+                                                        className={`font-bold 
+                                                    ${roomFormData.refund_policy === '5' && "text-roomi"}`}
+                                                    >
+                                                        엄격한 환불 정책
+                                                    </div>
+                                                    <div className="text-gray-500 md:text-sm text-xs mt-1">
+                                                        체크인 7일 전까지 50% 환불
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="radio" name="refund_policy" id="policy_strict"
+                                                   checked={roomFormData.refund_policy === '5'}
+                                                   onChange={() => handleChange("refund_policy", '5')}
+                                                   className="hidden"
+                                            />
+                                            <div className="flex text-gray-500 md:text-sm text-xs mt-2">
+                                                <div
+                                                    className={`w-full ml-4 p-3 
+                                                    ${roomFormData.refund_policy === '5' && "bg-gray-50 rounded-lg"}`}
+                                                >
+                                                    <div className="my-2">
+                                                        • 체크인 7일 전까지: 50% 환불
+                                                    </div>
+                                                    <div className="my-2">
+                                                        • 체크인 7일 전 ~ 당일: 환불 불가
+                                                    </div>
+                                                    <div className="my-2">
+                                                        • 체크인 이후: 환불 불가
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     {/*{currentStep === 14 && ()}*/}
                     {/*{currentStep === 15 && ()}*/}
                 </div>
