@@ -140,34 +140,36 @@ export interface RoomData {
 }
 
 export interface RoomFormData {
+    detail: {
+        checkin_service: string;
+        breakfast_service: string;
+        description: string;
+        transportation_info: string;
+        house_rules: string;
+        room_structure: string;
+        room_count: number;
+        bathroom_count: number;
+        floor: number;
+        floor_area: number;
+        max_guests: number;
+        check_in_time: string;
+        check_out_time: string;
+        facilities: Record<string, string>;
+        additional_facilities: Record<string, string>;
+        tags: string[];
+        prohibitions: string[];
+    };
+
     room_type: string;
     title: string;
     address: string;
     address_detail: string;
-    detail_urls: string[];
+    detail_urls: File[];
     has_elevator: boolean;
     has_parking: boolean;
     building_type: string;
-    room_structure: string;
-    facilities: Record<string, string>;
-    additional_facilities: Record<string, string>;
     week_enabled: boolean;
     month_enabled: boolean;
-    cleaning_time: number;
-    breakfast_service: string;
-    checkin_service: string;
-    tags: string[];
-    prohibitions: string[];
-    floor_area: number;
-    floor: number;
-    room_count: number;
-    bathroom_count: number;
-    max_guests: number;
-    description: string;
-    house_rules: string;
-    transportation_info: string;
-    check_in_time: string;
-    check_out_time: string;
     week_price: number;
     deposit_week: number;
     maintenance_fee_week: number;
@@ -177,6 +179,17 @@ export interface RoomFormData {
     discounts: Discounts[];
     is_auto_accepted: boolean;
     refund_policy: string;
+
+    //사업자정보 및 사진들
+    business_number: string;
+    business_name: string;
+    business_representative: string;
+    business_address: string;
+    business_additionalAddress: string;
+    business_licenseNumber: string;
+    business_licenseFile: File | null;
+    business_identificationFile: File | null;
+    business_licenseType: string;
 }
 
 export interface Schedules {

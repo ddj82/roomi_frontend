@@ -1,6 +1,6 @@
 // api.tsx
 import i18n from "src/i18n";
-import {Schedules} from "../types/rooms";
+import {RoomFormData, Schedules} from "../types/rooms";
 import {User} from "../types/user";
 import {Reservation} from "../types/reservation";
 
@@ -374,4 +374,57 @@ export const confirmPayment = async (paymentKey: string, orderId: string, amount
         orderId: orderId,
         amount: amount,
     });
+};
+
+// 호스트 방 추가 API
+export const createRoom = async (roomFormData: RoomFormData, detailImageFiles: File[]) => {
+    const formData = new FormData();
+
+    const {
+        business_licenseFile,
+        business_identificationFile,
+        ...rest
+    } = roomFormData;
+
+    let dataToSend = { ...rest };
+
+    if (roomFormData.room_type === "LEASE") {
+        // LEASE면 business 관련 필드 제거
+        Object.keys(dataToSend).forEach((key) => {
+            if (key.startsWith("business_")) {
+                delete (dataToSend as any)[key];
+            }
+        });
+    }
+
+    // 1. JSON 데이터
+    formData.append("data", JSON.stringify(dataToSend));
+
+    // 2. detail_urls → 서버의 files 필드로
+    detailImageFiles.forEach((file) => {
+        formData.append("files", file);
+    });
+
+    if (roomFormData.room_type === "LODGE") {
+        // 3. 사업자등록증 → 서버의 business_license
+        if (business_licenseFile) {
+            formData.append("business_license", business_licenseFile);
+        }
+        // 4. 신분증 사본 → 서버의 business_registration
+        if (business_identificationFile) {
+            formData.append("business_registration", business_identificationFile);
+        }
+    }
+
+    const token = getAuthToken();
+    let API_URL = BASE_URL + `/rooms`;
+    const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+            Authorization: token ?? "",
+        },
+        body: formData,
+    });
+
+    return response;
 };

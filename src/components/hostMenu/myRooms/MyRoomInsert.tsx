@@ -3,8 +3,8 @@ import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle, faCircle, faBuilding} from "@fortawesome/free-regular-svg-icons";
 import {
-    faArrowLeft, faCheck,
-    faElevator, faHashtag,
+    faArrowLeft, faArrowUpFromBracket, faCheck,
+    faElevator, faFileImage, faHashtag,
     faImages,
     faInfo,
     faMagnifyingGlass,
@@ -13,14 +13,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DaumPostcode from 'react-daum-postcode';
 import Modal from "react-modal";
-import { buildingTypes, roomStructures } from "src/types/roomOptions";
+import {buildingTypes, businessLicenseType, roomStructures} from "src/types/roomOptions";
 import {facilityIcons} from "src/types/facilityIcons";
 import {ImageItem, RoomFormData} from "../../../types/rooms";
+import {createRoom} from "../../../api/api";
 
 const MyRoomInsert = () => {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false); // 모달 상태
-    const [currentStep, setCurrentStep] = useState(1); // 현재 단계 (1~16)
+    const [currentStep, setCurrentStep] = useState(1); // 현재 단계
 
     // 주소 모달
     const [daumAddressModal, setDaumAddressModal] = useState(false);
@@ -37,27 +38,28 @@ const MyRoomInsert = () => {
         has_elevator: false,
         has_parking: false,
         building_type: "",
-        room_structure: "",
-        facilities : {},
-        additional_facilities: {},
         is_auto_accepted: false,
         week_enabled: true,
         month_enabled: false,
-        cleaning_time: 0,
-        breakfast_service: "",
-        checkin_service: "",
-        tags: [],
-        prohibitions: [],
-        floor_area: 0,
-        floor: 0,
-        room_count: 0,
-        bathroom_count: 0,
-        max_guests: 0,
-        description: "",
-        house_rules: "",
-        transportation_info: "",
-        check_in_time: "",
-        check_out_time: "",
+        detail: {
+            room_structure: "",
+            facilities : {},
+            additional_facilities: {},
+            breakfast_service: "",
+            checkin_service: "",
+            tags: [],
+            prohibitions: [],
+            floor_area: 0,
+            floor: 0,
+            room_count: 0,
+            bathroom_count: 0,
+            max_guests: 0,
+            description: "",
+            house_rules: "",
+            transportation_info: "",
+            check_in_time: "",
+            check_out_time: "",
+        },
         week_price: 0,
         deposit_week: 0,
         maintenance_fee_week: 0,
@@ -73,6 +75,15 @@ const MyRoomInsert = () => {
             { type: "monthly", days: 180, percentage: 0 },
         ],
         refund_policy: "",
+        business_number: "",
+        business_name: "",
+        business_representative: "",
+        business_address: "",
+        business_additionalAddress: "",
+        business_licenseFile: null,
+        business_licenseNumber: "",
+        business_identificationFile: null,
+        business_licenseType: "",
     });
 
     // 전체 단계 수
@@ -82,7 +93,7 @@ const MyRoomInsert = () => {
         return 15; // 기본값
     }, [roomFormData.room_type]);
 
-    // 기본시설
+    // 기본시설 목록
     const basicFacilities = [
         { key: "wifi", label: "와이파이" },
         { key: "tv", label: "테레비" },
@@ -93,13 +104,14 @@ const MyRoomInsert = () => {
         { key: "medical_services", label: "구급상자" },
         { key: "fire_extinguisher", label: "소화기" },
     ];
+
     const [basic_facilitiesModal, setBasic_facilitiesModal] = useState(false);
     const [addFacilities, setAddFacilities] = useState<{ key: string; label: string; iconKey: string }[]>([]);
     const [customFacilityName, setCustomFacilityName] = useState("");
     const [selectedIconKey, setSelectedIconKey] = useState<string | null>(null);
     const [editingFacility, setEditingFacility] = useState<{ key: string; label: string; iconKey: string } | null>(null);
 
-    // 추가시설
+    // 추가시설 목록
     const additionalFacilities = [
         { key: "gym", label: "헬스장" },
         { key: "pool", label: "수영장" },
@@ -110,6 +122,7 @@ const MyRoomInsert = () => {
         { key: "weekend", label: "라운지" },
         { key: "cctv", label: "CCTV" },
     ];
+
     const [additional_facilitiesModal, setAdditional_facilitiesModal] = useState(false);
     const [addAdditionalFacilities, setAddAdditionalFacilities] = useState<{ key: string; label: string; iconKey: string }[]>([]);
     const [customAdditionalFacilityName, setCustomAdditionalFacilityName] = useState("");
@@ -132,12 +145,28 @@ const MyRoomInsert = () => {
         "추가 인원 금지",
     ];
 
+    // 사업자 신고 관련
+    type UploadType = 'business_licenseFile' | 'business_identificationFile';
+    const businessFileInputRef = {
+        business_licenseFile: useRef<HTMLInputElement>(null),
+        business_identificationFile: useRef<HTMLInputElement>(null),
+    };
+
+    const [businessPreviewImages, setBusinessPreviewImages] = useState<{
+        business_licenseFile: ImageItem | null;
+        business_identificationFile: ImageItem | null;
+    }>({
+        business_licenseFile: null,
+        business_identificationFile: null,
+    });
+
+
+
     useEffect(() => {
         if (currentStep > totalSteps) {
             setCurrentStep(totalSteps);
         }
     }, [totalSteps]);
-
 
     const handleBack = () => {
         setShowModal(true); // 모달 열기
@@ -149,7 +178,6 @@ const MyRoomInsert = () => {
     };
 
     const handleNext = () => {
-        console.log('폼데이터 확인', roomFormData);
         // 유효성 검사 errors 이용
         if (currentStep < totalSteps) {
             setCurrentStep(prev => prev + 1);
@@ -157,7 +185,21 @@ const MyRoomInsert = () => {
     };
 
     const handleChange = (field: string, value: any) => {
-        setRoomFormData(prev => ({ ...prev, [field]: value }));
+        if (field.startsWith("detail.")) {
+            const key = field.replace("detail.", "");
+            setRoomFormData(prev => ({
+                ...prev,
+                detail: {
+                    ...prev.detail,
+                    [key]: value,
+                },
+            }));
+        } else {
+            setRoomFormData(prev => ({
+                ...prev,
+                [field]: value,
+            }));
+        }
     };
 
     const handlePrev = () => {
@@ -168,6 +210,15 @@ const MyRoomInsert = () => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        console.log('폼데이터123', roomFormData);
+        try {
+            const response = await createRoom(roomFormData, selectedImages.map(img => img.file));
+            const responseJson = response.json();
+            console.log('api갔다왔냐?',responseJson);
+        } catch (e) {
+            console.error('방추가 api 실패', e);
+        }
+
     };
 
     const handleAddress = (data: any) => {
@@ -196,7 +247,7 @@ const MyRoomInsert = () => {
                 <div className="border border-gray-300 rounded p-4 mt-4">
                     <div className="flex justify-between font-bold">
                         <div className="flex_center">필수 시설</div>
-                        <button
+                        <button type="button"
                             onClick={() => setBasic_facilitiesModal(true)}
                             className="p-2 rounded-lg text-roomi text-sm bg-roomi-000"
                         >
@@ -230,7 +281,7 @@ const MyRoomInsert = () => {
                                     // ✅ 이미 사용된 아이콘 key 제외
                                     .filter(([key]) => !basicFacilities.some(b => b.key === key))
                                     .map(([key, icon]) => (
-                                        <button key={key} onClick={() => setSelectedIconKey(key)}>
+                                        <button type="button" key={key} onClick={() => setSelectedIconKey(key)}>
                                             <div
                                                 className={`border p-4 rounded cursor-pointer flex_center 
                                                                 ${selectedIconKey === key ? "border-roomi bg-roomi-000" : ""}`}
@@ -244,10 +295,10 @@ const MyRoomInsert = () => {
                         </div>
 
                         <div className="flex justify-end gap-4 mt-6">
-                            <button onClick={() => setBasic_facilitiesModal(false)} className="text-roomi px-4 py-2">
+                            <button type="button" onClick={() => setBasic_facilitiesModal(false)} className="text-roomi px-4 py-2">
                                 취소
                             </button>
-                            <button
+                            <button type="button"
                                 onClick={() => {
                                     if (!customFacilityName || !selectedIconKey) return;
 
@@ -266,10 +317,13 @@ const MyRoomInsert = () => {
                                     // ✅ roomFormData에 추가 (key: iconKey, value: label)
                                     setRoomFormData(prev => ({
                                         ...prev,
-                                        facilities: {
-                                            ...prev.facilities,
-                                            [key]: customFacilityName
-                                        }
+                                        detail: {
+                                            ...prev.detail,
+                                            facilities: {
+                                                ...prev.detail.facilities,
+                                                [key]: customFacilityName,
+                                            },
+                                        },
                                     }));
 
                                     setCustomFacilityName("");
@@ -288,29 +342,35 @@ const MyRoomInsert = () => {
                             <label
                                 key={item.key}
                                 className={`flex items-center gap-2 border rounded-md p-2 cursor-pointer hover:shadow transition-all 
-                                                ${roomFormData.facilities[item.key] ?
+                                                ${roomFormData.detail.facilities[item.key] ?
                                     "bg-roomi-000 border-roomi text-roomi font-bold" :
                                     "border text-gray-700 hover:bg-gray-100"}
                                                 `}
                             >
                                 <input
                                     type="checkbox"
-                                    checked={roomFormData.facilities[item.key] !== undefined}
+                                    checked={roomFormData.detail.facilities[item.key] !== undefined}
                                     onChange={(e) =>
                                         setRoomFormData((prev) => {
-                                            const updated = {...prev.facilities};
+                                            const updated = { ...prev.detail.facilities };
                                             if (e.target.checked) {
-                                                updated[item.key] = item.label; // ✅ key: label
+                                                updated[item.key] = item.label;
                                             } else {
                                                 delete updated[item.key];
                                             }
-                                            return {...prev, facilities: updated};
+                                            return {
+                                                ...prev,
+                                                detail: {
+                                                    ...prev.detail,
+                                                    facilities: updated,
+                                                },
+                                            };
                                         })
                                     }
                                     className="hidden"
                                 />
                                 <FontAwesomeIcon icon={facilityIcons[item.key]}
-                                                 className={`${roomFormData.facilities[item.key] ?
+                                                 className={`${roomFormData.detail.facilities[item.key] ?
                                                      "bg-roomi-000" : "text-gray-700 hover:bg-gray-100"}`}
                                 />
                                 <span className="text-sm">{item.label}</span>
@@ -327,22 +387,28 @@ const MyRoomInsert = () => {
                                     }
                                 }}
                                 className={`flex items-center gap-2 border rounded-md p-2 cursor-pointer hover:shadow transition-all w-full text-left
-                                                    ${roomFormData.facilities[item.key]
+                                                    ${roomFormData.detail.facilities[item.key]
                                     ? "bg-roomi-000 border-roomi text-roomi font-bold"
                                     : "border text-gray-700 hover:bg-gray-100"}`}
                             >
                                 <input
                                     type="checkbox"
-                                    checked={roomFormData.facilities[item.key] !== undefined}
+                                    checked={roomFormData.detail.facilities[item.key] !== undefined}
                                     onChange={(e) =>
                                         setRoomFormData((prev) => {
-                                            const updated = {...prev.facilities};
+                                            const updated = { ...prev.detail.facilities };
                                             if (e.target.checked) {
-                                                updated[item.key] = item.label; // ✅ key: 사용자 입력값
+                                                updated[item.key] = item.label;
                                             } else {
                                                 delete updated[item.key];
                                             }
-                                            return {...prev, facilities: updated};
+                                            return {
+                                                ...prev,
+                                                detail: {
+                                                    ...prev.detail,
+                                                    facilities: updated,
+                                                },
+                                            };
                                         })
                                     }
                                     className="hidden"
@@ -378,7 +444,7 @@ const MyRoomInsert = () => {
                                             // ✅ 기본 시설에 없는 아이콘만 보여줌
                                             .filter(([key]) => !basicFacilities.some(b => b.key === key))
                                             .map(([key, icon]) => (
-                                                <button
+                                                <button type="button"
                                                     key={key}
                                                     onClick={() =>
                                                         setEditingFacility((prev) =>
@@ -400,17 +466,20 @@ const MyRoomInsert = () => {
 
                                 <div className="flex justify-end gap-4 mt-6">
                                     {/* 삭제 버튼 */}
-                                    <button
+                                    <button type="button"
                                         onClick={() => {
                                             setAddFacilities((prev) =>
                                                 prev.filter((f) => f.key !== editingFacility.key)
                                             );
                                             setRoomFormData((prev) => {
-                                                const newAdditional = {...prev.facilities};
-                                                delete newAdditional[editingFacility.key];
+                                                const updated = { ...prev.detail.facilities };
+                                                delete updated[editingFacility.key];
                                                 return {
                                                     ...prev,
-                                                    facilities: newAdditional,
+                                                    detail: {
+                                                        ...prev.detail,
+                                                        facilities: updated,
+                                                    },
                                                 };
                                             });
                                             setEditingFacility(null);
@@ -421,7 +490,7 @@ const MyRoomInsert = () => {
                                     </button>
 
                                     {/* 저장 버튼 */}
-                                    <button
+                                    <button type="button"
                                         onClick={() => {
                                             setAddFacilities((prev) =>
                                                 prev.map((f) =>
@@ -446,7 +515,7 @@ const MyRoomInsert = () => {
                 <div className="border border-gray-300 rounded p-4 mt-4">
                     <div className="flex justify-between font-bold">
                         <div className="flex_center">추가 시설</div>
-                        <button
+                        <button type="button"
                             onClick={() => setAdditional_facilitiesModal(true)}
                             className="p-2 rounded-lg text-roomi text-sm bg-roomi-000"
                         >
@@ -480,7 +549,7 @@ const MyRoomInsert = () => {
                                     // ✅ 이미 사용된 아이콘 key 제외
                                     .filter(([key]) => !additionalFacilities.some(b => b.key === key))
                                     .map(([key, icon]) => (
-                                        <button key={key} onClick={() => setSelectedAdditionalIconKey(key)}>
+                                        <button type="button" key={key} onClick={() => setSelectedAdditionalIconKey(key)}>
                                             <div
                                                 className={`border p-4 rounded cursor-pointer flex_center 
                                                                 ${selectedAdditionalIconKey === key ? "border-roomi bg-roomi-000" : ""}`}
@@ -494,11 +563,11 @@ const MyRoomInsert = () => {
                         </div>
 
                         <div className="flex justify-end gap-4 mt-6">
-                            <button onClick={() => setAdditional_facilitiesModal(false)}
+                            <button type="button" onClick={() => setAdditional_facilitiesModal(false)}
                                     className="text-roomi px-4 py-2">
                                 취소
                             </button>
-                            <button
+                            <button type="button"
                                 onClick={() => {
                                     if (!customAdditionalFacilityName || !selectedAdditionalIconKey) return;
 
@@ -517,9 +586,12 @@ const MyRoomInsert = () => {
                                     // ✅ roomFormData에 추가 (key: iconKey, value: label)
                                     setRoomFormData(prev => ({
                                         ...prev,
-                                        additional_facilities: {
-                                            ...prev.additional_facilities,
-                                            [key]: customAdditionalFacilityName
+                                        detail: {
+                                            ...prev.detail,
+                                            additional_facilities: {
+                                                ...prev.detail.additional_facilities,
+                                                [key]: customAdditionalFacilityName
+                                            }
                                         }
                                     }));
 
@@ -539,29 +611,36 @@ const MyRoomInsert = () => {
                             <label
                                 key={item.key}
                                 className={`flex items-center gap-2 border rounded-md p-2 cursor-pointer hover:shadow transition-all 
-                                                ${roomFormData.additional_facilities[item.key] ?
+                                                ${roomFormData.detail.additional_facilities[item.key] ?
                                     "bg-roomi-000 border-roomi text-roomi font-bold" :
                                     "border text-gray-700 hover:bg-gray-100"}
                                                 `}
                             >
                                 <input
                                     type="checkbox"
-                                    checked={roomFormData.additional_facilities[item.key] !== undefined}
+                                    checked={roomFormData.detail.additional_facilities[item.key] !== undefined}
                                     onChange={(e) =>
                                         setRoomFormData((prev) => {
-                                            const updated = {...prev.additional_facilities};
+                                            const updated = { ...prev.detail.additional_facilities };
                                             if (e.target.checked) {
-                                                updated[item.key] = item.label; // ✅ key: label
+                                                updated[item.key] = item.label;
                                             } else {
                                                 delete updated[item.key];
                                             }
-                                            return {...prev, additional_facilities: updated};
+                                            return {
+                                                ...prev,
+                                                detail: {
+                                                    ...prev.detail,
+                                                    additional_facilities: updated,
+                                                },
+                                            };
                                         })
                                     }
+
                                     className="hidden"
                                 />
                                 <FontAwesomeIcon icon={facilityIcons[item.key]}
-                                                 className={`${roomFormData.additional_facilities[item.key] ?
+                                                 className={`${roomFormData.detail.additional_facilities[item.key] ?
                                                      "bg-roomi-000" : "text-gray-700 hover:bg-gray-100"}`}
                                 />
                                 <span className="text-sm">{item.label}</span>
@@ -578,16 +657,16 @@ const MyRoomInsert = () => {
                                     }
                                 }}
                                 className={`flex items-center gap-2 border rounded-md p-2 cursor-pointer hover:shadow transition-all w-full text-left
-                                                    ${roomFormData.additional_facilities[item.key]
+                                                    ${roomFormData.detail.additional_facilities[item.key]
                                     ? "bg-roomi-000 border-roomi text-roomi font-bold"
                                     : "border text-gray-700 hover:bg-gray-100"}`}
                             >
                                 <input
                                     type="checkbox"
-                                    checked={roomFormData.additional_facilities[item.key] !== undefined}
+                                    checked={roomFormData.detail.additional_facilities[item.key] !== undefined}
                                     onChange={(e) =>
                                         setRoomFormData((prev) => {
-                                            const updated = {...prev.additional_facilities};
+                                            const updated = {...prev.detail.additional_facilities};
                                             if (e.target.checked) {
                                                 updated[item.key] = item.label; // ✅ key: 사용자 입력값
                                             } else {
@@ -632,7 +711,7 @@ const MyRoomInsert = () => {
                                             // ✅ 기본 시설에 없는 아이콘만 보여줌
                                             .filter(([key]) => !additionalFacilities.some(b => b.key === key))
                                             .map(([key, icon]) => (
-                                                <button
+                                                <button type="button"
                                                     key={key}
                                                     onClick={() =>
                                                         setEditingAdditionalFacility((prev) =>
@@ -654,19 +733,23 @@ const MyRoomInsert = () => {
 
                                 <div className="flex justify-end gap-4 mt-6">
                                     {/* 삭제 버튼 */}
-                                    <button
+                                    <button type="button"
                                         onClick={() => {
                                             setAddAdditionalFacilities((prev) =>
                                                 prev.filter((f) => f.key !== editingAdditionalFacility.key)
                                             );
                                             setRoomFormData((prev) => {
-                                                const newAdditional = {...prev.additional_facilities};
+                                                const newAdditional = { ...prev.detail.additional_facilities };
                                                 delete newAdditional[editingAdditionalFacility.key];
                                                 return {
                                                     ...prev,
-                                                    additional_facilities: newAdditional,
+                                                    detail: {
+                                                        ...prev.detail,
+                                                        additional_facilities: newAdditional,
+                                                    },
                                                 };
                                             });
+
                                             setEditingAdditionalFacility(null);
                                         }}
                                         className="text-red-500 px-4 py-2"
@@ -675,7 +758,7 @@ const MyRoomInsert = () => {
                                     </button>
 
                                     {/* 저장 버튼 */}
-                                    <button
+                                    <button type="button"
                                         onClick={() => {
                                             setAddAdditionalFacilities((prev) =>
                                                 prev.map((f) =>
@@ -726,12 +809,12 @@ const MyRoomInsert = () => {
         // 상태 업데이트
         setSelectedImages((prev) => [...prev, ...newImages]);
 
-        // 폼 데이터의 detail_urls 필드에 업로드된 previewUrl만 배열에 담아서 저장
+        // 폼 데이터의 detail_urls 필드에 업로드된 file만 배열에 담아서 저장
         setRoomFormData((prev) => ({
             ...prev,
             detail_urls: [
                 ...(prev.detail_urls || []),
-                ...newImages.map((image) => image.previewUrl),
+                ...newImages.map((image) => image.file),
             ],
         }));
 
@@ -753,31 +836,38 @@ const MyRoomInsert = () => {
         const newTag = tagInput.trim();
         if (!newTag) return;
 
-        // 중복된 태그가 있다면 추가하지 않음
-        if (roomFormData.tags && roomFormData.tags.includes(newTag)) {
+        if (roomFormData.detail.tags && roomFormData.detail.tags.includes(newTag)) {
             alert("이미 추가된 태그입니다.");
-            setTagInput(""); // 입력값 초기화
+            setTagInput("");
             return;
         }
 
         setRoomFormData((prev) => ({
             ...prev,
-            tags: [...(prev.tags || []), newTag],
+            detail: {
+                ...prev.detail,
+                tags: [...(prev.detail.tags || []), newTag],
+            },
         }));
-        setTagInput(""); // 입력 후 입력창 초기화
+        setTagInput("");
     };
+
     // 태그 삭제 함수
     const handleRemoveTag = (index: number) => {
         setRoomFormData((prev) => {
-            if (!prev.tags) return prev;
-            const updatedTags = [...prev.tags];
+            if (!prev.detail.tags) return prev;
+            const updatedTags = [...prev.detail.tags];
             updatedTags.splice(index, 1);
             return {
                 ...prev,
-                tags: updatedTags,
+                detail: {
+                    ...prev.detail,
+                    tags: updatedTags,
+                },
             };
         });
     };
+
 
     /*입 퇴실 시간 선택 함수*/
     const generateTimeOptions = () => {
@@ -863,7 +953,6 @@ const MyRoomInsert = () => {
     };
     const handleDiscountsChange = (e: React.ChangeEvent<HTMLInputElement>, type: string, days: number) => {
         const value = Number(e.target.value);
-
         setRoomFormData((prev) => ({
             ...prev,
             discounts: prev.discounts.map((item) =>
@@ -880,8 +969,114 @@ const MyRoomInsert = () => {
         return !discount || discount.percentage === 0 ? "" : discount.percentage;
     };
 
+    /*사업자 신고 함수*/
+    // 사업장 주소
+    const handleBusinessAddress = (data: any) => {
+        console.log('다음 주소', data.address);
+        handleChange("business_address", data.address);
+        setDaumAddressModal(false);
+    };
+    // 사업자 등록증 업로드 트리거
+    const handleBusinessFileSet = (type: UploadType) => {
+        businessFileInputRef[type].current?.click();
+    };
+    // 파일 선택 시 실행될 함수
+    const handleBusinessFileChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        type: UploadType
+    ) => {
+        if (!e.target.files || e.target.files.length === 0) return;
 
-    // 폼 데이터 단계별 렌더링 함수 
+        const file = e.target.files[0];
+        if (!file.type.startsWith("image/")) {
+            alert("이미지 파일만 업로드 가능합니다.");
+            return;
+        }
+
+        // 기존 미리보기 정리
+        if (businessPreviewImages[type]?.previewUrl) {
+            URL.revokeObjectURL(businessPreviewImages[type]!.previewUrl);
+        }
+
+        const previewUrl = URL.createObjectURL(file);
+        const image = { file, previewUrl };
+
+        setBusinessPreviewImages(prev => ({
+            ...prev,
+            [type]: image,
+        }));
+
+        setRoomFormData(prev => ({
+            ...prev,
+            [type]: file,
+        }));
+
+        e.target.value = "";
+    };
+    // 랜더링 함수
+    const renderBusinessUploadSection = (
+        title: string,
+        description: string,
+        type: UploadType
+    ) => (
+        <div className="mt-4">
+            <div className="text-sm text-gray-500 font-bold">{title}</div>
+            <div className="mt-1">
+                <div className="flex_center flex-col text-gray-400 font-bold bg-gray-100 border-2 rounded h-56">
+                    {businessPreviewImages[type] ? (
+                        <div className="relative">
+                            <img
+                                src={businessPreviewImages[type]!.previewUrl}
+                                alt={`${title} 미리보기`}
+                                className="h-48 object-contain"
+                            />
+                            <button type="button"
+                                onClick={() => {
+                                    URL.revokeObjectURL(businessPreviewImages[type]!.previewUrl);
+                                    setBusinessPreviewImages(prev => ({
+                                        ...prev,
+                                        [type]: null,
+                                    }));
+                                    setRoomFormData(prev => ({
+                                        ...prev,
+                                        [type]: "",
+                                    }));
+                                }}
+                                className="absolute top-0 right-0 bg-gray-500 text-white text-xxs rounded-full w-5 h-5 flex_center"
+                            >
+                                <FontAwesomeIcon icon={faX}/>
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="text-center">
+                            <FontAwesomeIcon icon={faArrowUpFromBracket} className="h-12 mb-2"/>
+                            <div>{description}</div>
+                        </div>
+                    )}
+                </div>
+                <div className="flex_center mt-4">
+                    <button
+                        type="button"
+                        onClick={() => handleBusinessFileSet(type)}
+                        className="w-1/3 rounded bg-roomi text-white text-sm p-4 flex_center gap-2"
+                    >
+                        <FontAwesomeIcon icon={faFileImage}/>
+                        {title} 업로드
+                    </button>
+                    <input
+                        ref={businessFileInputRef[type]}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleBusinessFileChange(e, type)}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+
+
+    // 폼 데이터 단계별 렌더링 함수
     const renderStepTitle = (currentStep: number) => {
         let stepTitle;
         let stepContent;
@@ -954,17 +1149,17 @@ const MyRoomInsert = () => {
             case 14: {
                 if (roomFormData.room_type === "LEASE") {
                     stepTitle = '미리보기';
-                    stepContent = '입력한 내용을 확인해주세요.';
+                    stepContent = '등록하기 전 최종 확인해주세요.';
                 } else if (roomFormData.room_type === "LODGE") {
-                    stepTitle = '추가 정보';
-                    stepContent = '사업자 공간의 추가 정보를 입력해주세요.';
+                    stepTitle = '사업자 신고증';
+                    stepContent = '사업자 등록 추가 서류를 등록해주세요.';
                 }
                 break;
             }
             case 15: {
                 if (roomFormData.room_type === "LODGE") {
                     stepTitle = '미리보기';
-                    stepContent = '입력한 내용을 확인해주세요.';
+                    stepContent = '등록하기 전 최종 확인해주세요.';
                 }
                 break;
             }
@@ -984,7 +1179,7 @@ const MyRoomInsert = () => {
             <div className="mb-6 p-4 border rounded-md flex">
                 <div className="flex_center">
                     {/* 뒤로 가기 버튼 */}
-                    <button className="rounded-md p-2 w-10 h-10 sm:p-4 sm:w-14 sm:h-14" onClick={handleBack}>
+                    <button type="button" className="rounded-md p-2 w-10 h-10 sm:p-4 sm:w-14 sm:h-14" onClick={handleBack}>
                         <FontAwesomeIcon icon={faArrowLeft}/>
                     </button>
                 </div>
@@ -1005,7 +1200,7 @@ const MyRoomInsert = () => {
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form>
                 {/* 페이지 컨텐츠 */}
                 <div className="mb-6 p-4 border rounded-md">
                     {currentStep === 1 && (
@@ -1260,11 +1455,11 @@ const MyRoomInsert = () => {
                                     {/* 전용 면적 */}
                                     <div className="relative w-1/3">
                                         <input
-                                            value={roomFormData.floor_area === 0 ? "" : roomFormData.floor_area}
+                                            value={roomFormData.detail.floor_area === 0 ? "" : roomFormData.detail.floor_area}
                                             type="number"
                                             min="0"
                                             placeholder="전용 면적"
-                                            onChange={(e) => handleChange("floor_area", e.target.value)}
+                                            onChange={(e) => handleChange("detail.floor_area", e.target.value)}
                                             className="w-full border border-gray-300 rounded p-2 pr-10 focus:outline-none appearance-none"
                                         />
                                         <span
@@ -1276,11 +1471,11 @@ const MyRoomInsert = () => {
                                     {/* 해당 층수 */}
                                     <div className="relative w-1/3">
                                         <input
-                                            value={roomFormData.floor === 0 ? "" : roomFormData.floor}
+                                            value={roomFormData.detail.floor === 0 ? "" : roomFormData.detail.floor}
                                             type="number"
                                             min="0"
                                             placeholder="해당 층수"
-                                            onChange={(e) => handleChange("floor", e.target.value)}
+                                            onChange={(e) => handleChange("detail.floor", e.target.value)}
                                             className="w-full border border-gray-300 rounded p-2 pr-10 focus:outline-none appearance-none"
                                         />
                                         <span
@@ -1341,8 +1536,8 @@ const MyRoomInsert = () => {
                             {/*구조*/}
                             <div className="mb-4">
                                 <select
-                                    value={roomFormData.room_structure}
-                                    onChange={(e) => handleChange("room_structure", e.target.value)}
+                                    value={roomFormData.detail.room_structure}
+                                    onChange={(e) => handleChange("detail.room_structure", e.target.value)}
                                     className="w-full border border-gray-300 rounded p-2 focus:outline-none text-gray-700"
                                 >
                                     <option value="">구조를 선택해주세요</option>
@@ -1358,11 +1553,11 @@ const MyRoomInsert = () => {
                                 {/* 전용 면적 */}
                                 <div className="relative w-1/3">
                                     <input
-                                        value={roomFormData.room_count === 0 ? "" : roomFormData.room_count}
+                                        value={roomFormData.detail.room_count === 0 ? "" : roomFormData.detail.room_count}
                                         type="number"
                                         min="0"
                                         placeholder="방 개수"
-                                        onChange={(e) => handleChange("room_count", e.target.value)}
+                                        onChange={(e) => handleChange("detail.room_count", e.target.value)}
                                         className="w-full border border-gray-300 rounded p-2 pr-10 focus:outline-none appearance-none"
                                     />
                                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
@@ -1373,11 +1568,11 @@ const MyRoomInsert = () => {
                                 {/* 화장실 개수 */}
                                 <div className="relative w-1/3">
                                     <input
-                                        value={roomFormData.bathroom_count === 0 ? "" : roomFormData.bathroom_count}
+                                        value={roomFormData.detail.bathroom_count === 0 ? "" : roomFormData.detail.bathroom_count}
                                         type="number"
                                         min="0"
                                         placeholder="화장실 개수"
-                                        onChange={(e) => handleChange("bathroom_count", e.target.value)}
+                                        onChange={(e) => handleChange("detail.bathroom_count", e.target.value)}
                                         className="w-full border border-gray-300 rounded p-2 pr-10 focus:outline-none appearance-none"
                                     />
                                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
@@ -1388,11 +1583,11 @@ const MyRoomInsert = () => {
                                 {/* 최대 수용 인원 */}
                                 <div className="relative w-1/3">
                                     <input
-                                        value={roomFormData.max_guests === 0 ? "" : roomFormData.max_guests}
+                                        value={roomFormData.detail.max_guests === 0 ? "" : roomFormData.detail.max_guests}
                                         type="number"
                                         min="0"
                                         placeholder="최대 수용 인원"
-                                        onChange={(e) => handleChange("max_guests", e.target.value)}
+                                        onChange={(e) => handleChange("detail.max_guests", e.target.value)}
                                         className="w-full border border-gray-300 rounded p-2 pr-10 focus:outline-none appearance-none"
                                     />
                                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
@@ -1434,8 +1629,8 @@ const MyRoomInsert = () => {
                                 <div className="mt-2">
                                     <label htmlFor="checkin_service" className="text-sm font-bold">입실 안내</label>
                                     <textarea
-                                        value={roomFormData.checkin_service}
-                                        onChange={(e) => handleChange("checkin_service", e.target.value)}
+                                        value={roomFormData.detail.checkin_service}
+                                        onChange={(e) => handleChange("detail.checkin_service", e.target.value)}
                                         name="checkin_service"
                                         id="checkin_service"
                                         cols={30}
@@ -1445,8 +1640,8 @@ const MyRoomInsert = () => {
                                 <div className="mt-2">
                                     <label htmlFor="breakfast_service" className="text-sm font-bold">식사 정보</label>
                                     <textarea
-                                        value={roomFormData.breakfast_service}
-                                        onChange={(e) => handleChange("breakfast_service", e.target.value)}
+                                        value={roomFormData.detail.breakfast_service}
+                                        onChange={(e) => handleChange("detail.breakfast_service", e.target.value)}
                                         name="breakfast_service"
                                         id="breakfast_service"
                                         cols={30}
@@ -1538,8 +1733,8 @@ const MyRoomInsert = () => {
                                     <div className="font-bold">공간 소개</div>
                                     <div className="mt-2">
                                         <textarea
-                                            value={roomFormData.description}
-                                            onChange={(e) => handleChange('description', e.target.value)}
+                                            value={roomFormData.detail.description}
+                                            onChange={(e) => handleChange('detail.description', e.target.value)}
                                             name="description"
                                             id="description"
                                             cols={30}
@@ -1589,19 +1784,19 @@ const MyRoomInsert = () => {
                                             onChange={(e) => setTagInput(e.target.value)}
                                             className="w-2/3 p-2 border rounded focus:outline-none"
                                         />
-                                        <button onClick={handleAddTag} className="w-1/4 text-white bg-roomi rounded p-2">
+                                        <button type="button" onClick={handleAddTag} className="w-1/4 text-white bg-roomi rounded p-2">
                                             추가
                                         </button>
                                     </div>
                                     {/* 태그 목록 표시 영역 */}
                                     <div className="flex flex-wrap mt-6 gap-2">
-                                        {roomFormData.tags?.map((tag, index) => (
+                                        {roomFormData.detail.tags?.map((tag, index) => (
                                             <div
                                                 key={index}
                                                 className="flex items-center p-2 px-3 rounded text-sm text-roomi border border-roomi"
                                             >
                                                 <span className="mr-2">{tag}</span>
-                                                <button onClick={() => handleRemoveTag(index)}>
+                                                <button type="button" onClick={() => handleRemoveTag(index)}>
                                                     <FontAwesomeIcon icon={faX}/>
                                                 </button>
                                             </div>
@@ -1620,8 +1815,8 @@ const MyRoomInsert = () => {
                                     <div className="font-bold">이용 규칙</div>
                                     <div className="mt-2">
                                         <textarea
-                                            value={roomFormData.house_rules}
-                                            onChange={(e) => handleChange('house_rules', e.target.value)}
+                                            value={roomFormData.detail.house_rules}
+                                            onChange={(e) => handleChange('detail.house_rules', e.target.value)}
                                             name="house_rules"
                                             id="house_rules"
                                             cols={30}
@@ -1637,7 +1832,7 @@ const MyRoomInsert = () => {
                                             <label
                                                 key={item}
                                                 className={`flex items-center gap-2 border rounded-md p-2 cursor-pointer hover:shadow transition-all 
-                                                    ${roomFormData.prohibitions.includes(item)
+                                                    ${roomFormData.detail.prohibitions.includes(item)
                                                         ? "bg-roomi-000 border-roomi text-roomi font-bold"
                                                         : "border text-gray-700 hover:bg-gray-100"
                                                     }
@@ -1645,19 +1840,19 @@ const MyRoomInsert = () => {
                                             >
                                                 <input
                                                     type="checkbox"
-                                                    checked={roomFormData.prohibitions.includes(item)}
+                                                    checked={roomFormData.detail.prohibitions.includes(item)}
                                                     onChange={(e) =>
                                                         setRoomFormData((prev) => {
                                                             // 체크 시 금지사항 배열에 추가, 아니면 배열에서 제거
                                                             if (e.target.checked) {
                                                                 return {
                                                                     ...prev,
-                                                                    prohibitions: [...prev.prohibitions, item],
+                                                                    prohibitions: [...prev.detail.prohibitions, item],
                                                                 };
                                                             } else {
                                                                 return {
                                                                     ...prev,
-                                                                    prohibitions: prev.prohibitions.filter(
+                                                                    prohibitions: prev.detail.prohibitions.filter(
                                                                         (prohibition) => prohibition !== item
                                                                     ),
                                                                 };
@@ -1676,8 +1871,8 @@ const MyRoomInsert = () => {
                                     <div className="font-bold">교통 안내</div>
                                     <div className="mt-2">
                                         <textarea
-                                            value={roomFormData.transportation_info}
-                                            onChange={(e) => handleChange('transportation_info', e.target.value)}
+                                            value={roomFormData.detail.transportation_info}
+                                            onChange={(e) => handleChange('detail.transportation_info', e.target.value)}
                                             name="transportation_info"
                                             id="transportation_info"
                                             cols={30}
@@ -1720,7 +1915,7 @@ const MyRoomInsert = () => {
                                         <div className="w-1/3 mt-4 md:mt-0 flex_center rounded">
                                             <select
                                                 id="check_in_time"
-                                                value={roomFormData.check_in_time}
+                                                value={roomFormData.detail.check_in_time}
                                                 onChange={(e) => handleChange('check_in_time', e.target.value)}
                                                 className="w-full border border-gray-300 rounded p-2 focus:outline-none"
                                             >
@@ -1739,7 +1934,7 @@ const MyRoomInsert = () => {
                                         <div className="w-1/3 mt-4 md:mt-0 flex_center rounded">
                                             <select
                                                 id="check_out_time"
-                                                value={roomFormData.check_out_time}
+                                                value={roomFormData.detail.check_out_time}
                                                 onChange={(e) => handleChange('check_out_time', e.target.value)}
                                                 className="w-full border border-gray-300 rounded p-2 focus:outline-none"
                                             >
@@ -2145,26 +2340,155 @@ const MyRoomInsert = () => {
                             </div>
                         </div>
                     )}
-                    {/*{currentStep === 14 && ()}*/}
-                    {/*{currentStep === 15 && ()}*/}
+                    {currentStep === 14 && roomFormData.room_type === 'LODGE' && (
+                        /* 사업자 신고증 */
+                        <div>
+                            {/*안내*/}
+                            <div className="p-4 rounded-lg bg-roomi-000">
+                                <div className="flex items-center text-roomi m-2">
+                                    <div className="w-5 h-5 flex_center border-2 border-roomi rounded-full">
+                                        <FontAwesomeIcon icon={faInfo} className="w-3 h-3"/>
+                                    </div>
+                                    <div className="ml-4 font-bold">안내사항</div>
+                                </div>
+                                <div className="text-gray-500 text-sm">
+                                    <div className="p-1 px-2">
+                                        <strong> · </strong>관할 기관에서 발급한 공식 서류만 인정됩니다.
+                                    </div>
+                                    <div className="p-1 px-2">
+                                        <strong> · </strong>서류 정보가 명확하게 보이도록 업로드해주시기 바랍니다.
+                                    </div>
+                                    <div className="p-1 px-2">
+                                        <strong> · </strong>서류의 정보와 입력하신 정보가 일치해야 합니다.
+                                    </div>
+                                    <div className="p-1 px-2">
+                                        <strong> · </strong>인증 심사는 영업일 기준 1~3일이 소요됩니다.
+                                    </div>
+                                </div>
+                            </div>
+                            {/*사업자 정보*/}
+                            <div className="mt-4">
+                                <div className="font-bold">사업자 정보</div>
+                                <div className="mt-2">
+                                    <input
+                                        type="text"
+                                        value={roomFormData.business_representative}
+                                        onChange={(e) => handleChange("business_representative", e.target.value)}
+                                        placeholder="대표자명"
+                                        className="w-full border border-gray-300 rounded p-2 focus:outline-none"
+                                    />
+                                </div>
+                                <div className="mt-2">
+                                    <input
+                                        type="text"
+                                        value={roomFormData.business_number}
+                                        onChange={(e) => handleChange("business_number", e.target.value)}
+                                        placeholder="사업자 등록번호"
+                                        className="w-full border border-gray-300 rounded p-2 focus:outline-none"
+                                    />
+                                </div>
+                                <div className="mt-2">
+                                    <input
+                                        type="text"
+                                        value={roomFormData.business_name}
+                                        onChange={(e) => handleChange("business_name", e.target.value)}
+                                        placeholder="상호명"
+                                        className="w-full border border-gray-300 rounded p-2 focus:outline-none"
+                                    />
+                                </div>
+                                {/*사업장 주소*/}
+                                <div className="mt-2 relative">
+                                    <input
+                                        type="text"
+                                        value={roomFormData.business_address}
+                                        readOnly
+                                        onClick={() => setDaumAddressModal(true)}
+                                        placeholder="주소"
+                                        className="w-full border border-gray-300 rounded p-2 pr-10 cursor-pointer focus:outline-none"
+                                    />
+                                    <div className="absolute right-3.5 top-2 text-roomi pointer-events-none">
+                                        <FontAwesomeIcon icon={faMagnifyingGlass} className="w-4 h-4"/>
+                                    </div>
+                                    <Modal
+                                        isOpen={daumAddressModal}
+                                        onRequestClose={() => setDaumAddressModal(false)}
+                                        className="bg-white p-4 rounded shadow-lg mx-auto"
+                                        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                                    >
+                                        <DaumPostcode
+                                            style={{width: 400, height: 600}}
+                                            onComplete={handleBusinessAddress}
+                                        />
+                                    </Modal>
+                                    <input
+                                        type="text"
+                                        value={roomFormData.business_additionalAddress}
+                                        onChange={(e) => handleChange("business_additionalAddress", e.target.value)}
+                                        placeholder="상세 주소"
+                                        className="w-full border border-gray-300 rounded p-2 mt-2 focus:outline-none"
+                                    />
+                                </div>
+                                {/*사업장 종류*/}
+                                <div className="mt-2">
+                                    <select
+                                        value={roomFormData.business_licenseType}
+                                        onChange={(e) => handleChange("business_licenseType", e.target.value)}
+                                        className="w-full border border-gray-300 rounded p-2 focus:outline-none text-gray-700"
+                                    >
+                                        <option value="">사업장 종류를 선택해주세요</option>
+                                        {businessLicenseType.map((type) => (
+                                            <option key={type} value={type}>
+                                                {type}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                            {/*사업자 등록증*/}
+                            <div className="mt-4">
+                                <div className="font-bold">사업자 등록증</div>
+                                <div className="text-gray-600 text-sm mt-1">
+                                    정확한 서류를 업로드하고 사업자 정보를 입력해야 인증을 받을 수 있습니다.
+                                </div>
+                                {renderBusinessUploadSection(
+                                    "사업자 등록증",
+                                    "사업자 등록증을 업로드 해주세요.",
+                                    "business_licenseFile"
+                                )}
+
+                                {renderBusinessUploadSection(
+                                    "신분증 사본",
+                                    "사업자 등록증에 기재 된 대표자 명의의 신분증 사본을 업로드 해주세요.",
+                                    "business_identificationFile"
+                                )}
+                            </div>
+                        </div>
+                    )}
+                    {((currentStep === 14 && roomFormData.room_type === 'LEASE') ||
+                        (currentStep === 15 && roomFormData.room_type === 'LODGE')) && (
+                        /* 미리보기 */
+                        <div>
+                            미리보기
+                        </div>
+                    )}
                 </div>
 
                 {/* 이전/다음 버튼 */}
                 <div className="flex justify-between">
                     {currentStep > 1 ? (
-                        <button className="px-4 py-2 rounded-md text-roomi" onClick={handlePrev}>이전</button>
+                        <button className="px-4 py-2 rounded-md text-roomi" type="button" onClick={handlePrev}>이전</button>
                     ) : (
                         <div></div>
                     )}
                     {currentStep === totalSteps ? (
-                        <button className={`px-4 py-2 bg-roomi text-white rounded-md`} type="submit">등록</button>
+                        <button className={`px-4 py-2 bg-roomi text-white rounded-md`} type="button" onClick={handleSubmit}>등록</button>
                     ) : (
-                        <button className={`px-4 py-2 bg-roomi text-white rounded-md`} onClick={handleNext}>다음</button>
+                        <button className={`px-4 py-2 bg-roomi text-white rounded-md`} type="button" onClick={handleNext}>다음</button>
                     )}
                 </div>
             </form>
 
-            {/* 모달 */}
+            {/* 종료 모달 */}
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50">
                     <div className="bg-white p-6 rounded-md shadow-md">
@@ -2172,10 +2496,10 @@ const MyRoomInsert = () => {
                             방 등록을 종료하시겠습니까?
                         </div>
                         <div className="flex justify-end">
-                            <button className="px-4 py-2 bg-gray-300 rounded-md" onClick={() => setShowModal(false)}>
+                            <button type="button" className="px-4 py-2 bg-gray-300 rounded-md" onClick={() => setShowModal(false)}>
                                 취소
                             </button>
-                            <button className="px-4 py-2 mr-2 bg-red-500 text-white rounded-md" onClick={confirmBack}>
+                            <button type="button" className="px-4 py-2 mr-2 bg-red-500 text-white rounded-md" onClick={confirmBack}>
                                 나가기
                             </button>
                         </div>
