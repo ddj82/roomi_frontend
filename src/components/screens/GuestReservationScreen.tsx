@@ -566,12 +566,12 @@ export default function GuestReservationScreen() {
                                             </div>
                                         </div>
                                         <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
-        개인정보 수집 및 이용에 동의합니다. (필수)
-        <a href="https://roomi.co.kr/api/policies/privacy-policy" target="_blank" rel="noopener noreferrer"
-           className="text-roomi underline ml-2">
-          [상세보기]
-        </a>
-      </span>
+    환불 규정에 동의합니다. (필수)
+    <a href="https://roomi.co.kr/api/policies/refund-policy" target="_blank" rel="noopener noreferrer"
+       className="text-roomi underline ml-2">
+      [상세보기]
+    </a>
+  </span>
                                     </label>
 
                                     {/* 3. 개인정보 제3자 제공 */}
