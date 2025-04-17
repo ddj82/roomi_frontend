@@ -612,36 +612,38 @@ export default function GuestReservationScreen() {
                     </div>
                 </div>
             )}
-            <Modal
-                isOpen={showToss}
-                onRequestClose={() => setShowToss(false)}
-                contentLabel="토스 결제 모달"
-                bodyOpenClassName="toss-modal"
-                style={{
-                    content: {
-                        width: "600px",
-                        maxWidth: "90%",
-                        margin: "auto",
-                        inset: "50% 0px -200px 50%",
-                        transform: "translate(-50%, -50%)",
-                        borderRadius: "8px",
-                        overflowY: "auto",
-                    },
-                    overlay: {
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        zIndex: 9999,
-                    },
-                }}
-            >
-                <div className="flex justify-end">
-                    <button
-                        onClick={() => setShowToss(false)}
-                        className="px-4 py-1">
-                        <FontAwesomeIcon icon={faXmark} />
-                    </button>
-                </div>
-                <CheckoutPage paymentData={paymentData as PaymentData}/>
-            </Modal>
+            {/*기존 토스페이먼츠 모달*/}
+            {/*<Modal*/}
+            {/*    isOpen={showToss}*/}
+            {/*    onRequestClose={() => setShowToss(false)}*/}
+            {/*    contentLabel="토스 결제 모달"*/}
+            {/*    bodyOpenClassName="toss-modal"*/}
+            {/*    style={{*/}
+            {/*        content: {*/}
+            {/*            width: "600px",*/}
+            {/*            maxWidth: "90%",*/}
+            {/*            margin: "auto",*/}
+            {/*            inset: "50% 0px -200px 50%",*/}
+            {/*            transform: "translate(-50%, -50%)",*/}
+            {/*            borderRadius: "8px",*/}
+            {/*            overflowY: "auto",*/}
+            {/*        },*/}
+            {/*        overlay: {*/}
+            {/*            backgroundColor: "rgba(0, 0, 0, 0.5)",*/}
+            {/*            zIndex: 9999,*/}
+            {/*        },*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    <div className="flex justify-end">*/}
+            {/*        <button*/}
+            {/*            onClick={() => setShowToss(false)}*/}
+            {/*            className="px-4 py-1">*/}
+            {/*            <FontAwesomeIcon icon={faXmark} />*/}
+            {/*        </button>*/}
+            {/*    </div>*/}
+            {/*    <CheckoutPage paymentData={paymentData as PaymentData}/>*/}
+            {/*</Modal>*/}
+            <CheckoutPage paymentData={paymentData as PaymentData}/>
         </div>
     );
 }
