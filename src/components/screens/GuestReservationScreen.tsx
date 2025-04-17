@@ -516,6 +516,7 @@ export default function GuestReservationScreen() {
                             </div>
                             <div className="mt-6 text-sm space-y-6 max-w-lg mx-auto">
                                 <div className="space-y-4">
+                                    {/* 1. 전자금융거래 이용약관 */}
                                     <label className="flex items-start gap-3 cursor-pointer group">
                                         <div className="relative flex items-center justify-center mt-0.5">
                                             <input
@@ -535,33 +536,16 @@ export default function GuestReservationScreen() {
                                                 )}
                                             </div>
                                         </div>
-                                        <span
-                                            className="text-gray-600 group-hover:text-gray-800 transition-colors">{t('방 예약 내용을 확인했습니다. (필수)')}</span>
+                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
+        전자금융거래 이용약관에 동의합니다. (필수)
+        <a href="https://roomi.co.kr/api/policies/e-terms" target="_blank" rel="noopener noreferrer"
+           className="text-roomi underline ml-2">
+          [상세보기]
+        </a>
+      </span>
                                     </label>
 
-
-                                    <label className="flex items-start gap-3 cursor-pointer group">
-                                        <div className="relative flex items-center justify-center mt-0.5">
-                                            <input
-                                                type="checkbox"
-                                                checked={isChecked3}
-                                                onChange={() => setIsChecked3(!isChecked3)}
-                                                className="sr-only peer"
-                                            />
-                                            <div
-                                                className="w-5 h-5 border-2 border-roomi rounded transition-all peer-checked:bg-roomi flex items-center justify-center">
-                                                {isChecked3 && (
-                                                    <svg className="w-3.5 h-3.5 text-white" fill="none"
-                                                         stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round"
-                                                              strokeWidth="3" d="M5 13l4 4L19 7"></path>
-                                                    </svg>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <span
-                                            className="text-gray-600 group-hover:text-gray-800 transition-colors">{t('마케팅 이메일 수신에 동의합니다. (선택)')}</span>
-                                    </label>
+                                    {/* 2. 개인정보 수집 및 이용 */}
                                     <label className="flex items-start gap-3 cursor-pointer group">
                                         <div className="relative flex items-center justify-center mt-0.5">
                                             <input
@@ -581,14 +565,79 @@ export default function GuestReservationScreen() {
                                                 )}
                                             </div>
                                         </div>
-                                        <span
-                                            className="text-gray-600 group-hover:text-gray-800 transition-colors">{t('서비스 약관, 결제 서비스 약관, 개인정보 처리방침에 동의합니다. (필수)')}</span>
+                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
+        개인정보 수집 및 이용에 동의합니다. (필수)
+        <a href="https://roomi.co.kr/api/policies/privacy-policy" target="_blank" rel="noopener noreferrer"
+           className="text-roomi underline ml-2">
+          [상세보기]
+        </a>
+      </span>
+                                    </label>
+
+                                    {/* 3. 개인정보 제3자 제공 */}
+                                    <label className="flex items-start gap-3 cursor-pointer group">
+                                        <div className="relative flex items-center justify-center mt-0.5">
+                                            <input
+                                                type="checkbox"
+                                                checked={isChecked3}
+                                                onChange={() => setIsChecked3(!isChecked3)}
+                                                className="sr-only peer"
+                                            />
+                                            <div
+                                                className="w-5 h-5 border-2 border-roomi rounded transition-all peer-checked:bg-roomi flex items-center justify-center">
+                                                {isChecked3 && (
+                                                    <svg className="w-3.5 h-3.5 text-white" fill="none"
+                                                         stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round"
+                                                              strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                                                    </svg>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
+        개인정보 제3자 제공에 동의합니다. (필수)
+        <a href="https://roomi.co.kr/api/policies/third-party" target="_blank" rel="noopener noreferrer"
+           className="text-roomi underline ml-2">
+          [상세보기]
+        </a>
+      </span>
+                                    </label>
+
+                                    {/* 4. 마케팅 수신 동의 (선택) */}
+                                    <label className="flex items-start gap-3 cursor-pointer group">
+                                        <div className="relative flex items-center justify-center mt-0.5">
+                                            <input
+                                                type="checkbox"
+                                                checked={isChecked3}
+                                                onChange={() => setIsChecked3(!isChecked3)}
+                                                className="sr-only peer"
+                                            />
+                                            <div
+                                                className="w-5 h-5 border-2 border-roomi rounded transition-all peer-checked:bg-roomi flex items-center justify-center">
+                                                {isChecked3 && (
+                                                    <svg className="w-3.5 h-3.5 text-white" fill="none"
+                                                         stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round"
+                                                              strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                                                    </svg>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
+        마케팅 이메일 수신에 동의합니다. (선택)
+        <a href="https://roomi.co.kr/api/policies/marketing-policy" target="_blank" rel="noopener noreferrer"
+           className="text-roomi underline ml-2">
+          [상세보기]
+        </a>
+      </span>
                                     </label>
                                 </div>
 
+                                {/* 결제하기 버튼 */}
                                 <button
                                     className="w-full py-3 px-4 bg-roomi hover:bg-roomi-3 text-white font-medium rounded-lg transition-colors"
-                                    onClick={paymentBtn}>
+                                    onClick={paymentBtn}
+                                >
                                     {t("결제하기")}
                                 </button>
                             </div>
@@ -643,7 +692,7 @@ export default function GuestReservationScreen() {
             {/*    </div>*/}
             {/*    <CheckoutPage paymentData={paymentData as PaymentData}/>*/}
             {/*</Modal>*/}
-            <CheckoutPage paymentData={paymentData as PaymentData}/>
+            {paymentData && <CheckoutPage paymentData={paymentData}/>}
         </div>
     );
 }

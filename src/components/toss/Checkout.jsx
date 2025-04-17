@@ -162,7 +162,9 @@ import { useEffect } from "react";
 export function CheckoutPage({ paymentData }) {
   useEffect(() => {
     const runPayment = () => {
-      const { IMP } = window;
+      console.log("paymentData", paymentData);
+
+        const { IMP } = window;
       if (!IMP) {
         console.error("❌ IMP가 아직 로드되지 않았습니다.");
         return;
