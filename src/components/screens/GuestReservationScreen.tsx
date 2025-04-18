@@ -566,7 +566,7 @@ export default function GuestReservationScreen() {
                                             </div>
                                         </div>
                                         <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
-    환불 규정에 동의합니다. (필수)
+    결제 취소 및 환불 규정에 동의합니다. (필수)
     <a href="https://roomi.co.kr/api/policies/refund-policy" target="_blank" rel="noopener noreferrer"
        className="text-roomi underline ml-2">
       [상세보기]

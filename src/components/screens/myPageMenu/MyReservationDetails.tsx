@@ -135,8 +135,24 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                 <AccodionItem isOpen={priceOpen}>
                     <div className="flex flex-col gap-2 text-sm p-5 text-gray-500">
                         <div className="flex justify-between">
-                            <div className="font-bold">총 요금</div>
-                            <div>{reserveData.total_price.toLocaleString()}</div>
+                            <div className="font-bold">이용요금</div>
+                            <div>{reserveData.symbol}{(reserveData.price_per_unit * reserveData.unit).toLocaleString()}</div>
+                        </div>
+                        <div className="flex justify-between">
+                            <div className="font-bold">보증금</div>
+                            <div>{reserveData.symbol}{reserveData.deposit.toLocaleString()}</div>
+                        </div>
+                        <div className="flex justify-between">
+                            <div className="font-bold">관리비</div>
+                            <div>{reserveData.symbol}{(reserveData.maintenance_per_unit * reserveData.unit).toLocaleString()}</div>
+                        </div>
+                        <div className="flex justify-between">
+                            <div className="font-bold">수수료</div>
+                            <div>{reserveData.symbol}{(reserveData.fee).toLocaleString()}</div>
+                        </div>
+                        <div className="flex justify-between">
+                            <div className="font-bold">총 결제 금액</div>
+                            <div>{reserveData.symbol}{reserveData.total_price.toLocaleString()}</div>
                         </div>
                     </div>
                 </AccodionItem>

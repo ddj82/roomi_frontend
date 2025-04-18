@@ -180,8 +180,9 @@ export default function MyReservations() {
                                 {item.room.address}
                             </div>
 
+
                             <div className="text-base font-bold mt-2 mb-2">
-                                ₩{item.total_price.toLocaleString()}
+                                {item.symbol}{item.total_price.toLocaleString()}
                             </div>
                         </div>
 
@@ -219,7 +220,7 @@ export default function MyReservations() {
                             <div className="text-sm text-gray-600 mt-1">{item.room.address}</div>
 
                             <div className="text-sm text-gray-900 font-bold mt-1">
-                                총 금액: ₩{item.total_price.toLocaleString()}
+                                총 금액: {item.symbol}{item.total_price.toLocaleString()}
                             </div>
                         </div>
 

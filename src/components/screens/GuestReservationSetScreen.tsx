@@ -400,7 +400,7 @@ export default function GuestReservationSetScreen() {
                                 </div>
                                 {/*청소비*/}
                                 <div className="flex justify-between py-2">
-                                    <div className="text-gray-700">{t("cleaning_fee")}</div>
+                                    <div className="text-gray-700">관리비</div>
                                     <div className="font-bold text-gray-800">
                                         {t('원')}{(calUnit ? (feePrice * monthValue) : (feePrice * weekValue)).toLocaleString()}
                                     </div>

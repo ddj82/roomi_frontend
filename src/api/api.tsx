@@ -209,12 +209,12 @@ export const createUser = async (formData: User) => {
 // 메인 화면 방 조회 API
 export const mainRoomData = async (swY: number, swX: number, neY: number, neX: number, currentLocale: string) => {
     const authToken = !!localStorage.getItem("authToken");
-    const currency = localStorage.getItem("userCurrency") ?? "";
+    const currency = localStorage.getItem("userCurrency") ?? "KRW"; // 임시로 KRW
 
     if (authToken) {
         return request(`/rooms?swLat=${swY}&swLng=${swX}&neLat=${neY}&neLng=${neX}&locale=${currentLocale}&currency=${currency}`, true);
     } else {
-        return request(`/rooms?swLat=${swY}&swLng=${swX}&neLat=${neY}&neLng=${neX}&locale=${currentLocale}`, false);
+        return request(`/rooms?swLat=${swY}&swLng=${swX}&neLat=${neY}&neLng=${neX}&locale=${currentLocale}&currency=${currency}`, false);
     }
 };
 
