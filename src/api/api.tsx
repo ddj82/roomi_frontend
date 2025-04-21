@@ -399,7 +399,9 @@ export const checkOut = async (reservationId: string) => {
 };
 // 중도 퇴실 신청 (새로운 체크아웃 날짜로)
 export const earlyCheckOut = async (reservationId: string,newCheckoutDate:Date) => {
-    return request(`/book/early-checkout?reservationId=${reservationId}&type=early`, true, 'PUT');
+    return request(`/book/early-checkout?reservationId=${reservationId}&type=early`, true, 'PUT',{
+        newCheckoutDate : newCheckoutDate
+    });
 };
 export const processPartialRefund = async (reservationId: string) => {
     return request(`/book/accept-fee?reservationId=${reservationId}&approved=true`, true, 'PUT');

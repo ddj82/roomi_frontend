@@ -122,7 +122,7 @@ export default function GuestReservationScreen() {
 
     useEffect(() => {
         console.log('paymentData :', paymentData);
-        console.log(bookData.room)
+
     }, [paymentData]);
 
     const handlePayment = () => {
@@ -301,16 +301,21 @@ export default function GuestReservationScreen() {
             {room ? (
                 <div className="flex flex-col md:flex-row gap-8">
                     {/* 메인 콘텐츠 영역 */}
-                    <div className="md:w-3/5 w-full">
+                    <div className="px-4 md:w-3/5 w-full">
                         <div className="mb-8 text-xl font-bold text-gray-800">{t("결제하기")}</div>
                         <div className="md:flex md:p-6 border border-gray-200 rounded-xl shadow-sm mb-6 bg-white">
                             <div className="md:w-3/5">
                                 {room.detail_urls && room.detail_urls.length > 0 ? (
-                                    <ImgCarousel images={room.detail_urls}
-                                                 customClass="md:rounded-xl h-72 md:h-64 object-cover"/>
+                                    <ImgCarousel
+                                        images={room.detail_urls}
+                                        customClass="rounded-xl h-72 md:h-64 object-cover"
+                                    />
                                 ) : (
-                                    <img src="/default-image.jpg" alt="thumbnail"
-                                         className="w-full md:h-64 h-72 rounded-xl object-cover"/>
+                                    <img
+                                        src="/default-image.jpg"
+                                        alt="thumbnail"
+                                        className="w-full h-72 md:h-64 object-cover rounded-xl"
+                                    />
                                 )}
                             </div>
                             <div className="md:w-2/5 md:ml-6 md:my-auto p-4">
@@ -319,9 +324,9 @@ export default function GuestReservationScreen() {
                                     {room.is_verified ? (
                                         <span
                                             className="inline-flex items-center text-sm font-medium py-0.5 text-roomi mr-2">
-                                            <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
+                <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
                                             {t('[인증숙박업소]')}
-                                        </span>
+            </span>
                                     ) : ('')}
                                 </div>
                                 <div className="my-3 flex items-center text-gray-600 text-sm">
@@ -380,7 +385,7 @@ export default function GuestReservationScreen() {
                                     ({bookData?.room.detail?.check_in_time || location.state.bookData?.reservation?.room.detail.check_in_time})
                                 </div>
                             </div>
-                            <div className="p-4 rounded-lg bg-roomi-light">
+                            <div className="mt-4 p-4 rounded-lg bg-roomi-light">
                                 <div className="text-sm text-gray-500">{t("체크아웃날짜")}</div>
                                 <div className="font-bold text-gray-800 mt-1 flex items-center">
                                     <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>

@@ -31,13 +31,18 @@ export default function MyReservations() {
                 // 🔥 예약을 nowReserved와 beforeReserved로 분류
                 const nowReservedData = responseJson.data.filter(
                     (reservation: ReservationHistory) =>
-                        dayjs.utc(reservation.check_in_date).format('YYYY-MM-DD') >= today ||
-                        dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') >= today
+                        (
+                            dayjs.utc(reservation.check_in_date).format('YYYY-MM-DD') >= today ||
+                            dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') >= today
+                        ) &&
+                        reservation.status !== 'CANCELLED' &&
+                        reservation.status !== 'CHECKED_OUT'
                 );
 
                 const beforeReservedData = responseJson.data.filter(
                     (reservation: ReservationHistory) =>
-                        dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') < today
+                        dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') < today ||
+                        reservation.status === 'CANCELLED'
                 );
 
                 setNowReserved(nowReservedData);
