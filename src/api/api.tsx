@@ -351,7 +351,14 @@ export const bookReservation = async (reservation: Reservation) => {
         true
     );
 };
+export const getReservation = async (reservationId: number) => {
+    return request(
+        `/book/reservation?reservationId=${reservationId}`,
+        true,
+        'GET'
 
+    );
+};
 // 게스트 예약내역 API
 export const getReservationHistory = async () => {
     return request(`/rooms/my/history`, true, 'GET', undefined, true);
@@ -375,3 +382,29 @@ export const confirmPayment = async (paymentKey: string, orderId: string, amount
         amount: amount,
     });
 };
+
+// 예약내역 처리 API
+
+// 예약취소(결제전)
+export const confirmReservation = async (reservationId: string) => {
+    return request(`/book?reservationId=${reservationId}`, true, 'DELETE');
+};
+// 보증금 삭제(디스플레이 삭제 게스트용)
+export const guestDeleteReservation = async (reservationId: string) => {
+    return request(`/book?reservationId=${reservationId}`, true, 'DELETE');
+};
+// 일반 퇴실 신청
+export const checkOut = async (reservationId: string) => {
+    return request(`/book/checkout?reservationId=${reservationId}&type=normal`, true, 'PUT');
+};
+// 중도 퇴실 신청 (새로운 체크아웃 날짜로)
+export const earlyCheckOut = async (reservationId: string,newCheckoutDate:Date) => {
+    return request(`/book/early-checkout?reservationId=${reservationId}&type=early`, true, 'PUT');
+};
+export const processPartialRefund = async (reservationId: string) => {
+    return request(`/book/accept-fee?reservationId=${reservationId}&approved=true`, true, 'PUT');
+};
+
+
+
+

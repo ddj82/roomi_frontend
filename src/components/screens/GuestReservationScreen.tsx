@@ -19,6 +19,7 @@ import {
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
 import {BookData, CheckoutPage, FormDataState} from "src/components/toss/Checkout.jsx";
 import Modal from "react-modal";
+import dayjs from "dayjs";
 
 interface FormDataType {
     name: string;
@@ -41,7 +42,7 @@ export default function GuestReservationScreen() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const {
+    var {
         price = 0,
         depositPrice = 0,
         maintenancePrice = 0,
@@ -63,6 +64,8 @@ export default function GuestReservationScreen() {
         unit = 0,
         maintenancePerUnit = 0,
         pricePerUnit = 0,
+        checkIn = "",
+        checkOut = "",
     } = location.state || {};
 
     const [formDataState, setFormDataState] = useState<FormDataType>(formData);
@@ -119,6 +122,7 @@ export default function GuestReservationScreen() {
 
     useEffect(() => {
         console.log('paymentData :', paymentData);
+        console.log(bookData.room)
     }, [paymentData]);
 
     const handlePayment = () => {
@@ -368,20 +372,20 @@ export default function GuestReservationScreen() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 rounded-lg bg-roomi-light">
-                                    <div className="text-sm text-gray-500">{t("체크인날짜")}</div>
-                                    <div className="font-bold text-gray-800 mt-1 flex items-center">
-                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
-                                        {startDate}
-                                    </div>
+                            <div className="p-4 rounded-lg bg-roomi-light">
+                                <div className="text-sm text-gray-500">{t("체크인날짜")}</div>
+                                <div className="font-bold text-gray-800 mt-1 flex items-center">
+                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
+                                    { dayjs(bookData?.reservation?.check_in_date).format("YYYY-MM-DD") || checkIn || dayjs(location.state.bookData?.reservation?.reservation.check_in_date).format("YYYY-MM-DD") || '날짜 없음'}
+                                    ({bookData?.room.detail?.check_in_time || location.state.bookData?.reservation?.room.detail.check_in_time})
                                 </div>
-                                <div className="p-4 rounded-lg bg-roomi-light">
-                                    <div className="text-sm text-gray-500">{t("체크아웃날짜")}</div>
-                                    <div className="font-bold text-gray-800 mt-1 flex items-center">
-                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
-                                        {endDate}
-                                    </div>
+                            </div>
+                            <div className="p-4 rounded-lg bg-roomi-light">
+                                <div className="text-sm text-gray-500">{t("체크아웃날짜")}</div>
+                                <div className="font-bold text-gray-800 mt-1 flex items-center">
+                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
+                                    { dayjs(bookData?.reservation?.check_out_date).format("YYYY-MM-DD") || checkOut || dayjs(location.state.bookData?.reservation?.reservation.check_out_date).format("YYYY-MM-DD") || '날짜 없음'}
+                                    ({ bookData?.room.detail?.check_out_time || location.state.bookData?.reservation?.room.detail.check_out_time })
                                 </div>
                             </div>
                             <div className="mt-4 p-4 rounded-lg bg-roomi-light">

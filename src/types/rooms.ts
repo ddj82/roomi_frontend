@@ -212,7 +212,7 @@ export interface ReservationHistory {
     guest_count: number;
     is_checkout_requested: boolean;
     checkout_requested_at: Date;
-    request_fee_refund_amount: string;
+    request_fee_refund_amount: number;
     request_fee_refund_reason: string;
     guest_accepted_fee: boolean;
     fee: number;
@@ -266,6 +266,10 @@ export interface MyReservationHistory {
         symbol: string;
         maintenance_per_unit: number,
         price_per_unit: number,
+        //예약자 정보
+        guest_name : string,
+        guest_phone : string,
+        guest_email : string
     },
     room: RoomData;
 }
