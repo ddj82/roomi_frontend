@@ -8,7 +8,13 @@ interface HostHeaderBtnState {
 }
 
 // 허용할 경로
-const ALLOWED_PREFIX = "/host";
+const BLOCKED_KEYWORDS = [
+    "/host/teb",
+];
+const BLOCKED_PREFIXES = [
+    "/host",
+
+];
 
 export const useHostHeaderBtnStore = create<HostHeaderBtnState>((set) => ({
     isVisibleHostScreen: false,
@@ -21,8 +27,8 @@ export const useHostHeaderBtnVisibility = () => {
     const { setVisibility } = useHostHeaderBtnStore();
 
     React.useEffect(() => {
-        // const isVisibleHostScreen = location.pathname.startsWith(ALLOWED_PREFIX);
-        const isVisibleHostScreen = location.pathname === ALLOWED_PREFIX;
+        const isVisibleHostScreen =
+            BLOCKED_PREFIXES.some(prefix => location.pathname === prefix) || BLOCKED_KEYWORDS.some(prefix => location.pathname.startsWith(prefix));
         setVisibility(isVisibleHostScreen);
     }, [location.pathname]); // URL 변경 감지하여 상태 업데이트
 

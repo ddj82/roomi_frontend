@@ -25,6 +25,7 @@ import SuccessPage from "./components/toss/SuccessPage";
 import {useHeaderStore} from "./components/stores/HeaderStore";
 import {useHostHeaderBtnVisibility} from "./components/stores/HostHeaderBtnStore";
 import BottomNavigator from "./components/navigator/BottomNavigator";
+import MyRoomUpdate from "./components/hostMenu/myRooms/MyRoomUpdate";
 
 export default function App() {
     return (
@@ -87,7 +88,9 @@ function AppContent() {
                     {/* hostMode === false 일 때 /host/* 페이지 차단 */}
                     <Route element={<ProtectedHostRoute />}>
                         <Route path="/host" element={<HostScreen/>}/>
+                        <Route path="/host/teb/:menu" element={<HostScreen/>}/>
                         <Route path="/host/insert" element={<MyRoomInsert/>}/>
+                        <Route path="/host/update/:roomId" element={<MyRoomUpdate/>}/>
                         <Route path="/host/myPage" element={<HostMyPage/>}/>
                     </Route>
                 </Routes>

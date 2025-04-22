@@ -138,6 +138,17 @@ export interface RoomData {
     currency: string;
     //추가된 필드
     symbol: string;
+
+    //사업자정보 및 사진들
+    business_number?: string;
+    business_name?: string;
+    business_representative?: string;
+    business_address?: string;
+    business_additionalAddress?: string;
+    business_licenseNumber?: string;
+    business_licenseFile?: File | null;
+    business_identificationFile?: File | null;
+    business_licenseType?: string;
 }
 
 export interface RoomFormData {

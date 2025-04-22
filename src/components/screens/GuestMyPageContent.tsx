@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import MyInfoEdit from "./myPageMenu/MyInfoEdit";
 import MyReservations from "./myPageMenu/MyReservations";
 import MyFavoriteList from "./myPageMenu/MyFavoriteList";

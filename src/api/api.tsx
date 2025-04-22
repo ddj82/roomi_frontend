@@ -221,7 +221,7 @@ export const mainRoomData = async (swY: number, swX: number, neY: number, neX: n
 // 방 조회 API
 export const fetchRoomData = async (id: number) => {
     const locale = i18n.language;
-    const currency = localStorage.getItem("userCurrency") ?? "";
+    const currency = localStorage.getItem("userCurrency") ?? "KRW";
     console.log('locale', locale);
     console.log('currency', currency);
     return request(`/rooms/${id}?&locale=${locale}&currency=${currency}`, false, 'GET', undefined);

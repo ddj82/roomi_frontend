@@ -3,6 +3,7 @@ import {useTranslation} from "react-i18next";
 import {useHostTabNavigation} from "../stores/HostTabStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendar, faComments, faDollarSign, faFileLines, faHouseChimney} from "@fortawesome/free-solid-svg-icons";
+import {useNavigate} from "react-router-dom";
 
 const tabIcons: Record<string, JSX.Element> = {
     my_room: <FontAwesomeIcon icon={faHouseChimney} />,
@@ -19,6 +20,7 @@ const HostHeader: React.FC = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleResize = () => {
@@ -58,6 +60,10 @@ const HostHeader: React.FC = () => {
         };
     }, [isMobile, lastScrollY, isVisible]);
 
+    const handleSetSelectedMenu = (selectMenu: string) => {
+        navigate(`/host/teb/${selectMenu}`);
+    };
+
     // Desktop Header Navigation
     const DesktopNavigation = () => (
         <div className="flex flex-wrap justify-center text-sm font-medium text-center -mt-4" role="tablist">
@@ -65,11 +71,12 @@ const HostHeader: React.FC = () => {
                 <div key={tab} role="presentation" className="mx-2 sm:mx-4 text-base">
                     <button
                         className={`
-                            inline-block p-4 relative -top-2
+                            inline-block p-4 relative
                             ${activeTab === tab ? "text-roomi border-b-2 border-b-roomi" : "hover:text-roomi"
                         }`}
                         onClick={() => {
                             setActiveTab(tab);
+                            handleSetSelectedMenu(tab);
                         }}
                         type="button"
                         role="tab"

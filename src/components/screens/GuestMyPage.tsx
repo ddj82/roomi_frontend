@@ -63,7 +63,6 @@ export default function GuestMyPage() {
     const renderMenuContent = () => {
         if (loading) return <div className="flex_center">Loading...</div>;
         if (!selectedMenu) {
-
             return <MyReservations/>;
         }
         if (selectedMenu !== "") {

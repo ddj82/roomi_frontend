@@ -90,6 +90,15 @@ const MyRooms = () => {
         navigate("/host/insert");
     };
 
+    const handleRoomUpdateBtn = (roomId: number) => {
+        const room = data.find((item) => item.id === roomId);
+        if (!room) return;
+
+        console.log('방수정 클릭 해당 방', room);
+
+        navigate(`/host/update/${roomId}`, { state: { room } });
+    };
+
     return (
         <div className="w-full h-screen flex flex-col">
             {/* 고정될 상단 부분 */}
@@ -265,7 +274,10 @@ const MyRooms = () => {
                                         <button className="text-xs px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 transition">
                                             삭제
                                         </button>
-                                        <button className="text-xs px-3 py-1 border border-blue-300 text-blue-700 rounded hover:bg-blue-50 transition">
+                                        <button
+                                            className="text-xs px-3 py-1 border border-blue-300 text-blue-700 rounded hover:bg-blue-50 transition"
+                                            onClick={() => handleRoomUpdateBtn(room.id)}
+                                        >
                                             수정
                                         </button>
                                     </div>

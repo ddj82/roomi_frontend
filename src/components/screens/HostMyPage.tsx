@@ -9,7 +9,6 @@ import {
     faArrowLeft, faBullhorn, faHome, faHeadset, faSignOutAlt, faUserMinus,
     faPenToSquare, faChartLine, faReceipt, faQuestionCircle
 } from "@fortawesome/free-solid-svg-icons";
-import {faRectangleList, faThumbsUp, faEye, faBell} from '@fortawesome/free-regular-svg-icons';
 import Notices from "./myPageMenu/Notices";
 import FAQ from "./myPageMenu/FAQ";
 import HelpCenter from "./myPageMenu/HelpCenter";
