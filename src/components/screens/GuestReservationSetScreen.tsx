@@ -214,28 +214,34 @@ export default function GuestReservationSetScreen() {
             {room ? (
                 <div className="flex flex-col md:flex-row gap-8">
                     {/* 메인 콘텐츠 영역 */}
-                    <div className="md:w-3/5 w-full">
+                    <div className="px-4 md:w-3/5 w-full">
                         <div className="mb-8 text-xl font-bold text-gray-800">{t("예약확인")}</div>
-                        <div className="md:flex md:p-6 border border-gray-200 rounded-xl shadow-sm mb-6 bg-white">
-                            <div className="md:w-3/5">
+                        <div
+                            className="flex flex-col md:flex-row md:p-6 border border-gray-200 rounded-xl shadow-sm mb-6 bg-white overflow-hidden">
+                            <div className="md:w-3/5 overflow-hidden">
                                 {room.detail_urls && room.detail_urls.length > 0 ? (
-                                    <ImgCarousel images={room.detail_urls}
-                                                 customClass="md:rounded-xl h-72 md:h-64 object-cover"/>
+                                    <ImgCarousel
+                                        images={room.detail_urls}
+                                        customClass="rounded-xl h-72 md:h-64 object-cover"
+                                    />
                                 ) : (
-                                    <img src="/default-image.jpg" alt="thumbnail"
-                                         className="w-full md:h-64 h-72 rounded-xl object-cover"/>
+                                    <img
+                                        src="/default-image.jpg"
+                                        alt="thumbnail"
+                                        className="w-full h-72 md:h-64 object-cover rounded-xl"
+                                    />
                                 )}
                             </div>
-                            <div className="md:w-2/5 md:ml-6 md:my-auto p-4">
+                            <div className="w-full md:w-2/5 md:ml-6 p-4 flex flex-col justify-center">
                                 <div className="text-xl font-semibold text-gray-800 my-3">{room.title}</div>
                                 <div className="my-3 flex items-center text-roomi">
-                                    {room.is_verified ? (
+                                    {room.is_verified && (
                                         <span
                                             className="inline-flex items-center text-sm font-medium py-0.5 text-roomi mr-2">
-                                            <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
+          <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
                                             {t('[인증숙박업소]')}
-                                        </span>
-                                    ) : ('')}
+        </span>
+                                    )}
                                 </div>
                                 <div className="my-3 flex items-center text-gray-600 text-sm">
                                     <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2"/>
@@ -262,7 +268,7 @@ export default function GuestReservationSetScreen() {
                             </div>
                         </div>
                         <div className="p-6 border border-gray-200 rounded-xl shadow-sm mb-6 bg-white">
-                            <div className="font-bold text-gray-800 mb-4">
+                        <div className="font-bold text-gray-800 mb-4">
                                 {t("예약정보")}
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -358,7 +364,8 @@ export default function GuestReservationSetScreen() {
                         border border-gray-200 shadow-sm md:p-6 p-4 break-words bg-white
                         w-full fixed bottom-0 z-[100]">
                         {/* 모바일 전용 아코디언 버튼 */}
-                        <div className="md:hidden w-full items-center p-4 rounded-lg cursor-pointer bg-roomi text-white">
+                        <div
+                            className="md:hidden w-full items-center p-4 rounded-lg cursor-pointer bg-roomi text-white">
                             <button type="button" className="w-full flex justify-between items-center"
                                     onClick={() => setSlideIsOpen(!slideIsOpen)}>
                                 <span className="font-bold">{t("price_info")}</span>
@@ -400,7 +407,7 @@ export default function GuestReservationSetScreen() {
                                 </div>
                                 {/*청소비*/}
                                 <div className="flex justify-between py-2">
-                                    <div className="text-gray-700">{t("cleaning_fee")}</div>
+                                    <div className="text-gray-700">관리비</div>
                                     <div className="font-bold text-gray-800">
                                         {t('원')}{(calUnit ? (feePrice * monthValue) : (feePrice * weekValue)).toLocaleString()}
                                     </div>
@@ -417,6 +424,7 @@ export default function GuestReservationSetScreen() {
                                 </div>
 
                                 <div className="space-y-4">
+                                    {/* 1. 방 예약 내용을 확인했습니다 */}
                                     <label className="flex items-start gap-3 cursor-pointer group">
                                         <div className="relative flex items-center justify-center mt-0.5">
                                             <input
@@ -431,36 +439,17 @@ export default function GuestReservationSetScreen() {
                                                     <svg className="w-3.5 h-3.5 text-white" fill="none"
                                                          stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round"
-                                                              strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                                                              strokeWidth="3" d="M5 13l4 4L19 7"/>
                                                     </svg>
                                                 )}
                                             </div>
                                         </div>
-                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">방 예약 내용을 확인했습니다.</span>
+                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
+      방 예약 내용을 확인했습니다.
+    </span>
                                     </label>
 
-
-                                    <label className="flex items-start gap-3 cursor-pointer group">
-                                        <div className="relative flex items-center justify-center mt-0.5">
-                                            <input
-                                                type="checkbox"
-                                                checked={isChecked3}
-                                                onChange={() => setIsChecked3(!isChecked3)}
-                                                className="sr-only peer"
-                                            />
-                                            <div
-                                                className="w-5 h-5 border-2 border-roomi rounded transition-all peer-checked:bg-roomi flex items-center justify-center">
-                                                {isChecked3 && (
-                                                    <svg className="w-3.5 h-3.5 text-white" fill="none"
-                                                         stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round"
-                                                              strokeWidth="3" d="M5 13l4 4L19 7"></path>
-                                                    </svg>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">마케팅 이메일 수신에 동의합니다. (선택 사항)</span>
-                                    </label>
+                                    {/* 2. 서비스 약관에 동의합니다 */}
                                     <label className="flex items-start gap-3 cursor-pointer group">
                                         <div className="relative flex items-center justify-center mt-0.5">
                                             <input
@@ -475,14 +464,22 @@ export default function GuestReservationSetScreen() {
                                                     <svg className="w-3.5 h-3.5 text-white" fill="none"
                                                          stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round"
-                                                              strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                                                              strokeWidth="3" d="M5 13l4 4L19 7"/>
                                                     </svg>
                                                 )}
                                             </div>
                                         </div>
                                         <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
-                                            서비스 약관, 결제 서비스 약관, 개인정보 처리방침에 동의합니다.
-                                        </span>
+      서비스 약관에 동의합니다.
+      <a
+          href="https://roomi.co.kr/api/policies/terms-of-use"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-roomi underline ml-2"
+      >
+        [상세보기]
+      </a>
+    </span>
                                     </label>
                                 </div>
 

@@ -19,6 +19,7 @@ import {
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
 import {BookData, CheckoutPage, FormDataState} from "src/components/toss/Checkout.jsx";
 import Modal from "react-modal";
+import dayjs from "dayjs";
 
 interface FormDataType {
     name: string;
@@ -41,7 +42,7 @@ export default function GuestReservationScreen() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const {
+    var {
         price = 0,
         depositPrice = 0,
         maintenancePrice = 0,
@@ -63,6 +64,8 @@ export default function GuestReservationScreen() {
         unit = 0,
         maintenancePerUnit = 0,
         pricePerUnit = 0,
+        checkIn = "",
+        checkOut = "",
     } = location.state || {};
 
     const [formDataState, setFormDataState] = useState<FormDataType>(formData);
@@ -119,6 +122,7 @@ export default function GuestReservationScreen() {
 
     useEffect(() => {
         console.log('paymentData :', paymentData);
+
     }, [paymentData]);
 
     const handlePayment = () => {
@@ -297,16 +301,21 @@ export default function GuestReservationScreen() {
             {room ? (
                 <div className="flex flex-col md:flex-row gap-8">
                     {/* 메인 콘텐츠 영역 */}
-                    <div className="md:w-3/5 w-full">
+                    <div className="px-4 md:w-3/5 w-full">
                         <div className="mb-8 text-xl font-bold text-gray-800">{t("결제하기")}</div>
                         <div className="md:flex md:p-6 border border-gray-200 rounded-xl shadow-sm mb-6 bg-white">
                             <div className="md:w-3/5">
                                 {room.detail_urls && room.detail_urls.length > 0 ? (
-                                    <ImgCarousel images={room.detail_urls}
-                                                 customClass="md:rounded-xl h-72 md:h-64 object-cover"/>
+                                    <ImgCarousel
+                                        images={room.detail_urls}
+                                        customClass="rounded-xl h-72 md:h-64 object-cover"
+                                    />
                                 ) : (
-                                    <img src="/default-image.jpg" alt="thumbnail"
-                                         className="w-full md:h-64 h-72 rounded-xl object-cover"/>
+                                    <img
+                                        src="/default-image.jpg"
+                                        alt="thumbnail"
+                                        className="w-full h-72 md:h-64 object-cover rounded-xl"
+                                    />
                                 )}
                             </div>
                             <div className="md:w-2/5 md:ml-6 md:my-auto p-4">
@@ -315,9 +324,9 @@ export default function GuestReservationScreen() {
                                     {room.is_verified ? (
                                         <span
                                             className="inline-flex items-center text-sm font-medium py-0.5 text-roomi mr-2">
-                                            <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
+                <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
                                             {t('[인증숙박업소]')}
-                                        </span>
+            </span>
                                     ) : ('')}
                                 </div>
                                 <div className="my-3 flex items-center text-gray-600 text-sm">
@@ -368,20 +377,20 @@ export default function GuestReservationScreen() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 rounded-lg bg-roomi-light">
-                                    <div className="text-sm text-gray-500">{t("체크인날짜")}</div>
-                                    <div className="font-bold text-gray-800 mt-1 flex items-center">
-                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
-                                        {startDate}
-                                    </div>
+                            <div className="p-4 rounded-lg bg-roomi-light">
+                                <div className="text-sm text-gray-500">{t("체크인날짜")}</div>
+                                <div className="font-bold text-gray-800 mt-1 flex items-center">
+                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
+                                    { dayjs(bookData?.reservation?.check_in_date).format("YYYY-MM-DD") || checkIn || dayjs(location.state.bookData?.reservation?.reservation.check_in_date).format("YYYY-MM-DD") || '날짜 없음'}
+                                    ({bookData?.room.detail?.check_in_time || location.state.bookData?.reservation?.room.detail.check_in_time})
                                 </div>
-                                <div className="p-4 rounded-lg bg-roomi-light">
-                                    <div className="text-sm text-gray-500">{t("체크아웃날짜")}</div>
-                                    <div className="font-bold text-gray-800 mt-1 flex items-center">
-                                        <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
-                                        {endDate}
-                                    </div>
+                            </div>
+                            <div className="mt-4 p-4 rounded-lg bg-roomi-light">
+                                <div className="text-sm text-gray-500">{t("체크아웃날짜")}</div>
+                                <div className="font-bold text-gray-800 mt-1 flex items-center">
+                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
+                                    { dayjs(bookData?.reservation?.check_out_date).format("YYYY-MM-DD") || checkOut || dayjs(location.state.bookData?.reservation?.reservation.check_out_date).format("YYYY-MM-DD") || '날짜 없음'}
+                                    ({ bookData?.room.detail?.check_out_time || location.state.bookData?.reservation?.room.detail.check_out_time })
                                 </div>
                             </div>
                             <div className="mt-4 p-4 rounded-lg bg-roomi-light">
@@ -516,6 +525,7 @@ export default function GuestReservationScreen() {
                             </div>
                             <div className="mt-6 text-sm space-y-6 max-w-lg mx-auto">
                                 <div className="space-y-4">
+                                    {/* 1. 전자금융거래 이용약관 */}
                                     <label className="flex items-start gap-3 cursor-pointer group">
                                         <div className="relative flex items-center justify-center mt-0.5">
                                             <input
@@ -535,33 +545,16 @@ export default function GuestReservationScreen() {
                                                 )}
                                             </div>
                                         </div>
-                                        <span
-                                            className="text-gray-600 group-hover:text-gray-800 transition-colors">{t('방 예약 내용을 확인했습니다. (필수)')}</span>
+                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
+        전자금융거래 이용약관에 동의합니다. (필수)
+        <a href="https://roomi.co.kr/api/policies/e-terms" target="_blank" rel="noopener noreferrer"
+           className="text-roomi underline ml-2">
+          [상세보기]
+        </a>
+      </span>
                                     </label>
 
-
-                                    <label className="flex items-start gap-3 cursor-pointer group">
-                                        <div className="relative flex items-center justify-center mt-0.5">
-                                            <input
-                                                type="checkbox"
-                                                checked={isChecked3}
-                                                onChange={() => setIsChecked3(!isChecked3)}
-                                                className="sr-only peer"
-                                            />
-                                            <div
-                                                className="w-5 h-5 border-2 border-roomi rounded transition-all peer-checked:bg-roomi flex items-center justify-center">
-                                                {isChecked3 && (
-                                                    <svg className="w-3.5 h-3.5 text-white" fill="none"
-                                                         stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round"
-                                                              strokeWidth="3" d="M5 13l4 4L19 7"></path>
-                                                    </svg>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <span
-                                            className="text-gray-600 group-hover:text-gray-800 transition-colors">{t('마케팅 이메일 수신에 동의합니다. (선택)')}</span>
-                                    </label>
+                                    {/* 2. 개인정보 수집 및 이용 */}
                                     <label className="flex items-start gap-3 cursor-pointer group">
                                         <div className="relative flex items-center justify-center mt-0.5">
                                             <input
@@ -581,14 +574,79 @@ export default function GuestReservationScreen() {
                                                 )}
                                             </div>
                                         </div>
-                                        <span
-                                            className="text-gray-600 group-hover:text-gray-800 transition-colors">{t('서비스 약관, 결제 서비스 약관, 개인정보 처리방침에 동의합니다. (필수)')}</span>
+                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
+    결제 취소 및 환불 규정에 동의합니다. (필수)
+    <a href="https://roomi.co.kr/api/policies/refund-policy" target="_blank" rel="noopener noreferrer"
+       className="text-roomi underline ml-2">
+      [상세보기]
+    </a>
+  </span>
+                                    </label>
+
+                                    {/* 3. 개인정보 제3자 제공 */}
+                                    <label className="flex items-start gap-3 cursor-pointer group">
+                                        <div className="relative flex items-center justify-center mt-0.5">
+                                            <input
+                                                type="checkbox"
+                                                checked={isChecked3}
+                                                onChange={() => setIsChecked3(!isChecked3)}
+                                                className="sr-only peer"
+                                            />
+                                            <div
+                                                className="w-5 h-5 border-2 border-roomi rounded transition-all peer-checked:bg-roomi flex items-center justify-center">
+                                                {isChecked3 && (
+                                                    <svg className="w-3.5 h-3.5 text-white" fill="none"
+                                                         stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round"
+                                                              strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                                                    </svg>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
+        개인정보 제3자 제공에 동의합니다. (필수)
+        <a href="https://roomi.co.kr/api/policies/third-party" target="_blank" rel="noopener noreferrer"
+           className="text-roomi underline ml-2">
+          [상세보기]
+        </a>
+      </span>
+                                    </label>
+
+                                    {/* 4. 마케팅 수신 동의 (선택) */}
+                                    <label className="flex items-start gap-3 cursor-pointer group">
+                                        <div className="relative flex items-center justify-center mt-0.5">
+                                            <input
+                                                type="checkbox"
+                                                checked={isChecked3}
+                                                onChange={() => setIsChecked3(!isChecked3)}
+                                                className="sr-only peer"
+                                            />
+                                            <div
+                                                className="w-5 h-5 border-2 border-roomi rounded transition-all peer-checked:bg-roomi flex items-center justify-center">
+                                                {isChecked3 && (
+                                                    <svg className="w-3.5 h-3.5 text-white" fill="none"
+                                                         stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round"
+                                                              strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                                                    </svg>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
+        마케팅 이메일 수신에 동의합니다. (선택)
+        <a href="https://roomi.co.kr/api/policies/marketing-policy" target="_blank" rel="noopener noreferrer"
+           className="text-roomi underline ml-2">
+          [상세보기]
+        </a>
+      </span>
                                     </label>
                                 </div>
 
+                                {/* 결제하기 버튼 */}
                                 <button
                                     className="w-full py-3 px-4 bg-roomi hover:bg-roomi-3 text-white font-medium rounded-lg transition-colors"
-                                    onClick={paymentBtn}>
+                                    onClick={paymentBtn}
+                                >
                                     {t("결제하기")}
                                 </button>
                             </div>
@@ -612,36 +670,38 @@ export default function GuestReservationScreen() {
                     </div>
                 </div>
             )}
-            <Modal
-                isOpen={showToss}
-                onRequestClose={() => setShowToss(false)}
-                contentLabel="토스 결제 모달"
-                bodyOpenClassName="toss-modal"
-                style={{
-                    content: {
-                        width: "600px",
-                        maxWidth: "90%",
-                        margin: "auto",
-                        inset: "50% 0px -200px 50%",
-                        transform: "translate(-50%, -50%)",
-                        borderRadius: "8px",
-                        overflowY: "auto",
-                    },
-                    overlay: {
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        zIndex: 9999,
-                    },
-                }}
-            >
-                <div className="flex justify-end">
-                    <button
-                        onClick={() => setShowToss(false)}
-                        className="px-4 py-1">
-                        <FontAwesomeIcon icon={faXmark} />
-                    </button>
-                </div>
-                <CheckoutPage paymentData={paymentData as PaymentData}/>
-            </Modal>
+            {/*기존 토스페이먼츠 모달*/}
+            {/*<Modal*/}
+            {/*    isOpen={showToss}*/}
+            {/*    onRequestClose={() => setShowToss(false)}*/}
+            {/*    contentLabel="토스 결제 모달"*/}
+            {/*    bodyOpenClassName="toss-modal"*/}
+            {/*    style={{*/}
+            {/*        content: {*/}
+            {/*            width: "600px",*/}
+            {/*            maxWidth: "90%",*/}
+            {/*            margin: "auto",*/}
+            {/*            inset: "50% 0px -200px 50%",*/}
+            {/*            transform: "translate(-50%, -50%)",*/}
+            {/*            borderRadius: "8px",*/}
+            {/*            overflowY: "auto",*/}
+            {/*        },*/}
+            {/*        overlay: {*/}
+            {/*            backgroundColor: "rgba(0, 0, 0, 0.5)",*/}
+            {/*            zIndex: 9999,*/}
+            {/*        },*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    <div className="flex justify-end">*/}
+            {/*        <button*/}
+            {/*            onClick={() => setShowToss(false)}*/}
+            {/*            className="px-4 py-1">*/}
+            {/*            <FontAwesomeIcon icon={faXmark} />*/}
+            {/*        </button>*/}
+            {/*    </div>*/}
+            {/*    <CheckoutPage paymentData={paymentData as PaymentData}/>*/}
+            {/*</Modal>*/}
+            {paymentData && <CheckoutPage paymentData={paymentData}/>}
         </div>
     );
 }

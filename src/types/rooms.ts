@@ -92,6 +92,7 @@ export interface RoomData {
     cleaning_time: number;
     breakfast_service: string;
     checkin_service: string;
+
     //월 가격 추가
     month_price?: number;
     deposit_month?: number;
@@ -115,7 +116,7 @@ export interface RoomData {
     prohibitions?: string[];
     house_rules?: string;
     additional_facilities?: Record<string, any>;
-
+    refund_policy_rules?: RefundPolicyRule;
     // 인증 관련 추가
     business_license_url?: string;
     is_verified: boolean;
@@ -192,6 +193,12 @@ export interface RoomFormData {
     business_licenseType: string;
 }
 
+export interface RefundPolicyRule {
+    after_checkin : number,
+    before_24h: number,
+    within_24h: number,
+
+}
 export interface Schedules {
     date: Date;
     dayPrice: number | null;
@@ -225,7 +232,7 @@ export interface ReservationHistory {
     guest_count: number;
     is_checkout_requested: boolean;
     checkout_requested_at: Date;
-    request_fee_refund_amount: string;
+    request_fee_refund_amount: number;
     request_fee_refund_reason: string;
     guest_accepted_fee: boolean;
     fee: number;
@@ -241,6 +248,7 @@ export interface ReservationHistory {
     symbol: string;
     maintenance_per_unit: number,
     price_per_unit: number,
+
 
 }
 
@@ -278,6 +286,10 @@ export interface MyReservationHistory {
         symbol: string;
         maintenance_per_unit: number,
         price_per_unit: number,
+        //예약자 정보
+        guest_name : string,
+        guest_phone : string,
+        guest_email : string
     },
     room: RoomData;
 }

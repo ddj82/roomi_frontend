@@ -31,13 +31,18 @@ export default function MyReservations() {
                 // 🔥 예약을 nowReserved와 beforeReserved로 분류
                 const nowReservedData = responseJson.data.filter(
                     (reservation: ReservationHistory) =>
-                        dayjs.utc(reservation.check_in_date).format('YYYY-MM-DD') >= today ||
-                        dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') >= today
+                        (
+                            dayjs.utc(reservation.check_in_date).format('YYYY-MM-DD') >= today ||
+                            dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') >= today
+                        ) &&
+                        reservation.status !== 'CANCELLED' &&
+                        reservation.status !== 'CHECKED_OUT'
                 );
 
                 const beforeReservedData = responseJson.data.filter(
                     (reservation: ReservationHistory) =>
-                        dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') < today
+                        dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') < today ||
+                        reservation.status === 'CANCELLED'
                 );
 
                 setNowReserved(nowReservedData);
@@ -61,7 +66,7 @@ export default function MyReservations() {
 
         if (status === 'CONFIRMED') { // 승인 완료
             if (paymentStatus === 'UNPAID') { // 승인 완료, 결제전
-                return renderStatusUI('bg-gray-700', '결제대기');
+                return renderStatusUI('bg-roomi-0', '결제대기');
             } else if (paymentStatus === 'PAID') { // 승인 완료, 결제 완료
                 if (checkOut >= today && checkIn <= today) { // 이용중
                     return renderStatusUI('bg-green-500', '이용중');
@@ -70,15 +75,15 @@ export default function MyReservations() {
             }
         } else if (status === 'COMPLETED') { // 계약 종료
             // 보증금환불여부 확인
-            return renderStatusUI('bg-gray-500', '계약종료');
+            return renderStatusUI('bg-black', '계약종료');
         } else if (status === 'CANCELLED') { // 취소
             return renderStatusUI('bg-gray-700', '계약취소');
         } else if (status === 'REJECTED') { // 승인 거절
             return renderStatusUI('bg-gray-700', '승인거절');
         }else if (status === 'IN_USE') { // 승인 거절
-            return renderStatusUI('bg-gray-700', '이용중');
+            return renderStatusUI('bg-green-500', '이용중');
         }else if (status === 'CHECKED_OUT') { // 승인 거절
-            return renderStatusUI('bg-gray-700', '환급대기');
+            return renderStatusUI('bg-roomi', '환급대기');
         }
 
         else { // 승인 대기, 결제전, 기본값
@@ -115,7 +120,7 @@ export default function MyReservations() {
         } else if (status === 'COMPLETED') {
             return { backgroundColor: 'bg-gray-500', message: '계약종료' };
         } else if (status === 'IN_USE') {
-            return { backgroundColor: 'bg-gray-700', message: '이용중' };
+            return { backgroundColor: 'bg-green-500', message: '이용중' };
         }else if (status === 'CHECKED_OUT') {
             return { backgroundColor: 'bg-gray-700', message: '환급대기' };
         }
@@ -180,8 +185,9 @@ export default function MyReservations() {
                                 {item.room.address}
                             </div>
 
+
                             <div className="text-base font-bold mt-2 mb-2">
-                                ₩{item.total_price.toLocaleString()}
+                                {item.symbol}{item.total_price.toLocaleString()}
                             </div>
                         </div>
 
@@ -219,7 +225,7 @@ export default function MyReservations() {
                             <div className="text-sm text-gray-600 mt-1">{item.room.address}</div>
 
                             <div className="text-sm text-gray-900 font-bold mt-1">
-                                총 금액: ₩{item.total_price.toLocaleString()}
+                                총 금액: {item.symbol}{item.total_price.toLocaleString()}
                             </div>
                         </div>
 

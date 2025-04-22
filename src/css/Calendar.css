@@ -167,3 +167,76 @@
     /*background-color: #3498db;*/
     border-radius: 50%;
 }
+.dateModal .react-calendar .react-calendar__tile--active {
+    background: #f47366 !important;
+    color: white !important;
+}
+
+.dateModal .react-calendar .react-calendar__tile--active:enabled:hover abbr,
+.dateModal .react-calendar .react-calendar__tile--active:enabled:focus abbr {
+    background-color: #f47366 !important;
+    color: white !important;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin: auto;
+}
+
+.dateModal .react-calendar .selected-date abbr {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f47366 !important;
+    color: white !important;
+    font-weight: bold;
+
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    margin: auto;
+}
+
+.dateModal .react-calendar .today-date {
+    background-color: #e0f2fe !important;
+    color: #0369a1 !important;
+    font-weight: bold;
+}
+
+.dateModal .react-calendar .original-checkout-date abbr {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffc7c2 !important;
+    color: #92400e !important;
+    font-weight: bold;
+
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    margin: auto;
+}
+.dateModal .react-calendar .original-checkin-date abbr {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffc7c2 !important;
+    color: #92400e !important;
+    font-weight: bold;
+
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    margin: auto;
+}
+.dateModal .react-calendar .selectable-date:enabled:hover,
+.dateModal .react-calendar .selectable-date:enabled:focus {
+    background-color: #fee2e2 !important;
+}
+
+.dateModal .react-calendar .disabled-date {
+    color: #d1d5db !important;
+    cursor: not-allowed !important;
+}
