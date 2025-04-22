@@ -83,6 +83,7 @@ const MyRooms = () => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
+
     }, []);
 
     const handleInsertBtn = () => {

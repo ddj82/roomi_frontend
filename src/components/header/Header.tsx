@@ -282,7 +282,8 @@ const Header = () => {
                                         <button
                                             className="w-8 h-8 md:w-10 md:h-10
                                              flex items-center justify-center bg-roomi-000 text-roomi rounded-full"
-                                            onClick={toggleDropdown}>
+                                            onClick={toggleDropdown}
+                                        >
                                             <img src={profileImg} alt="프로필사진" className="rounded-full md:w-10 md:h-10 w-8 h-8"/>
                                         </button>
                                         {userVisible && (
