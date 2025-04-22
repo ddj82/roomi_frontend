@@ -389,24 +389,45 @@ export const confirmPayment = async (paymentKey: string, orderId: string, amount
 export const confirmReservation = async (reservationId: string) => {
     return request(`/book?reservationId=${reservationId}`, true, 'DELETE');
 };
-// 보증금 삭제(디스플레이 삭제 게스트용)
-export const guestDeleteReservation = async (reservationId: string) => {
-    return request(`/book?reservationId=${reservationId}`, true, 'DELETE');
-};
 // 일반 퇴실 신청
 export const checkOut = async (reservationId: string) => {
     return request(`/book/checkout?reservationId=${reservationId}&type=normal`, true, 'PUT');
 };
-// 중도 퇴실 신청 (새로운 체크아웃 날짜로)
+// 중도 퇴실 신청 [새로운 체크아웃 날짜로]
 export const earlyCheckOut = async (reservationId: string,newCheckoutDate:Date) => {
     return request(`/book/early-checkout?reservationId=${reservationId}&type=early`, true, 'PUT',{
         newCheckoutDate : newCheckoutDate
     });
 };
+// 중도 퇴실 이용요금 금액 수락 [게스트 -> 호스트]
 export const processPartialRefund = async (reservationId: string) => {
     return request(`/book/accept-fee?reservationId=${reservationId}&approved=true`, true, 'PUT');
 };
+//게스트 예약내역 (소프트) 삭제
+export const guestSoftDeleteReservation = async (reservationId: number) => {
+    return request(`/book/guest/delete?reservationId=${reservationId}`, true, 'DELETE');
+};
 
+//호스트 예약 정보 요청 API
+
+//예약 수락
+export const hostAcceptReservation = async (reservationId: number) => {
+    return request(`/book/host/accept?reservationId=${reservationId}`, true, 'PUT');
+};
+//예약 거절
+export const hostRejectReservation = async (reservationId: number) => {
+    return request(`/book/host/reject?reservationId=${reservationId}`, true, 'PUT');
+};
+
+
+// 중도 퇴실 이용요금 환불 요청 [호스트 -> 게스트]
+export const requestPartialRefundFee = async (reservationId: number,deductionAmount: number,reason : string) => {
+    return request(`/book/host/deduction?reservationId=${reservationId}&deductionAmount=${deductionAmount ?? 0}&reason=${reason}`, true, 'PUT');
+};
+// 호스트 소프트 삭제
+export const hostSoftDeleteReservation = async (reservationId: number) => {
+    return request(`/book/host/delete?reservationId=${reservationId}`, true, 'DELETE');
+};
 
 
 

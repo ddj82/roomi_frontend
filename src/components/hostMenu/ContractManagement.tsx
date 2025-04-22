@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from "react-i18next";
-import { myContractList, myRoomList } from "../../api/api";
+import {hostAcceptReservation, hostRejectReservation, myContractList, myRoomList} from "../../api/api";
 import { ReservationHistory, RoomData } from "../../types/rooms";
 import { Search, ChevronDown, X } from 'lucide-react';
 import ReservationDetail from './ContractDetail';
@@ -90,13 +90,13 @@ const ContractManagement = () => {
             // Current: CONFIRMED and PENDING that are not completed or cancelled
             filtered = filtered.filter(res => {
                 const status = res.status.toUpperCase() || '';
-                return status !== 'COMPLETED' && status !== 'CANCELLED';
+                return status !== 'COMPLETED' && status !== 'CANCELLED' && status !== 'CHECKED_OUT' && status !== 'REJECTED';
             });
         } else if (activeTab === "past") {
-            // Past: COMPLETED or CANCELLED
+            // Past: COMPLETED or CANCELLED or CHECKED_OUT
             filtered = filtered.filter(res => {
-                const status = res.status.toUpperCase() || '';
-                return status === 'COMPLETED' || status === 'CANCELLED';
+                const status = res.status?.toUpperCase() || '';
+                return status === 'COMPLETED' || status === 'CANCELLED' || status === 'CHECKED_OUT' || status === 'REJECTED';
             });
         }
 
@@ -147,7 +147,7 @@ const ContractManagement = () => {
         if (status === 'CONFIRMED' && paymentStatus === 'PAID') {
             return <span className="text-sm font-medium px-3 py-1 bg-green-100 text-green-800 rounded-full">이용중</span>;
         } else if (status === 'CANCELLED') {
-            return <span className="text-sm font-medium px-3 py-1 bg-red-100 text-red-800 rounded-full">예약 취소</span>;
+            return <span className="text-sm font-medium px-3 py-1 bg-red-100 text-red-800 rounded-full">예약 거절</span>;
         } else if (status === 'PENDING') {
             return <span className="text-sm font-medium px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full">예약 대기</span>;
         } else if (status === 'COMPLETED') {
@@ -204,24 +204,53 @@ const ContractManagement = () => {
     }
 
     // Handlers for reservation actions
-    const handleAcceptReservation = (id: number) => {
-        console.log('Accept reservation', id);
-        // Implement API call to accept reservation
-        // After successful API call, refresh reservations
-        // fetchReservations();
-        setSelectedReservation(null);
+    const handleAcceptReservation = async (id: number) => {
+        try {
+            console.log('Accept reservation', id);
+            await hostAcceptReservation(id);
+            window.location.reload(); // ✅ 수락 후 새로고침
+        } catch (e) {
+            console.error('수락 중 오류 발생:', e);
+            alert('예약 수락에 실패했습니다.');
+        } finally {
+            setSelectedReservation(null);
+        }
     };
 
-    const handleRejectReservation = (id: number) => {
+    const handleRejectReservation = async (id: number) => {
         console.log('Reject reservation', id);
-        // Implement API call
-        setSelectedReservation(null);
+
+        const confirmed = window.confirm('정말 이 예약을 거절하시겠습니까?');
+        if (!confirmed) return;
+
+        try {
+            console.log('Reject reservation', id);
+            await hostRejectReservation(id);
+            window.location.reload(); // ✅ 새로고침
+        } catch (e) {
+            console.error('거절 중 오류 발생:', e);
+            alert('예약 거절에 실패했습니다.');
+        } finally {
+            setSelectedReservation(null);
+        }
     };
 
-    const handleCancelReservation = (id: number) => {
+    const handleCancelReservation = async (id: number) => {
         console.log('Cancel reservation', id);
-        // Implement API call
-        setSelectedReservation(null);
+
+        // const confirmed = window.confirm('정말 이 예약을 거절하시겠습니까?');
+        // if (!confirmed) return;
+        //
+        // try {
+        //     console.log('Reject reservation', id);
+        //     await hostRejectReservation(id);
+        //     window.location.reload(); // ✅ 새로고침
+        // } catch (e) {
+        //     console.error('거절 중 오류 발생:', e);
+        //     alert('예약 거절에 실패했습니다.');
+        // } finally {
+        //     setSelectedReservation(null);
+        // }
     };
 
     const handleCompleteReservation = (id: number) => {
@@ -383,25 +412,50 @@ const ContractManagement = () => {
                                                     reservation.check_out_date?.toString()
                                                 )}
                                             </span>
-                                                <span className={`text-xs px-2 py-1 rounded text-white ${
-                                                    reservation.status === 'PENDING' ? 'bg-yellow-700' :
-                                                        reservation.status === 'CONFIRMED' ?
-                                                            (reservation.payment_status === 'UNPAID' ? 'bg-orange-700' :
-                                                                reservation.payment_status === 'PAID' ? 'bg-blue-700' : 'bg-blue-700') :
-                                                            reservation.status === 'COMPLETED' ? 'bg-green-700' :
-                                                                reservation.status === 'CANCELED' ? 'bg-gray-700' :
-                                                                    reservation.status === 'IN_USE' ? 'bg-gray-700' :
-                                                                        reservation.status === 'CHECKED_OUT' ? 'bg-gray-700' :
-                                                                            'bg-black'
-                                                }`}>
-{reservation.status === 'CONFIRMED' ?
-    (reservation.payment_status === 'UNPAID' ? '결제대기' :
-        reservation.payment_status === 'PAID' ? '결제완료' : '이용중') :
-    reservation.status === 'COMPLETED' ? '이용 완료' :
-        reservation.status === 'CANCELED' ? '예약 취소' :
-            reservation.status === 'IN_USE' ? '이용중' :
-                reservation.status === 'CHECKED_OUT' ? '퇴실 완료' :
-                    reservation.status === 'PENDING' ? '승인 대기중' : '상태 미정'}
+                                                <span
+                                                    className={`text-xs px-2 py-1 rounded text-white ${
+                                                        reservation.status === 'PENDING'
+                                                            ? 'bg-yellow-700'
+                                                            : reservation.status === 'CONFIRMED'
+                                                                ? reservation.payment_status === 'UNPAID'
+                                                                    ? 'bg-roomi'
+                                                                    : reservation.payment_status === 'PAID'
+                                                                        ? 'bg-blue-700'
+                                                                        : 'bg-blue-700'
+                                                                : reservation.status === 'COMPLETED'
+                                                                    ? 'bg-green-700'
+                                                                    : reservation.status === 'CANCELLED' // ✅ 오타 수정: CANCELED → CANCELLED
+                                                                        ? 'bg-gray-700'
+                                                                        : reservation.status === 'IN_USE'
+                                                                            ? 'bg-gray-700'
+                                                                            : reservation.status === 'CHECKED_OUT'
+                                                                                ? 'bg-gray-700'
+                                                                                : reservation.status === 'REJECTED'
+                                                                                    ? 'bg-red-700'
+                                                                                    : 'bg-black'
+                                                    }`}
+                                                >
+{
+    reservation.status === 'CONFIRMED'
+        ? reservation.payment_status === 'UNPAID'
+            ? '결제대기'
+            : reservation.payment_status === 'PAID'
+                ? '결제완료'
+                : '이용중'
+        : reservation.status === 'COMPLETED'
+            ? '이용 완료'
+            : reservation.status === 'CANCELLED'
+                ? '예약 취소'
+                : reservation.status === 'IN_USE'
+                    ? '이용중'
+                    : reservation.status === 'CHECKED_OUT'
+                        ? '퇴실 완료'
+                        : reservation.status === 'PENDING'
+                            ? '승인 대기중'
+                            : reservation.status === 'REJECTED'
+                                ? '거절됨'
+                                : '상태 미정'
+}
                                             </span>
                                             </div>
 
@@ -431,7 +485,7 @@ const ContractManagement = () => {
                                                         {reservation.guest?.name || "No address provided"}
                                                     </p>
                                                     <p className="text-sm font-bold mt-1">
-                                                        ￦{formatPrice(reservation.total_price)}
+                                                        {reservation.symbol}{formatPrice(reservation.price + reservation.deposit+reservation.maintenance_fee)}
                                                     </p>
                                                 </div>
                                             </div>
@@ -474,27 +528,52 @@ const ContractManagement = () => {
                                                     <div className="flex justify-between items-center mt-1">
                                                         <p className="text-sm text-gray-800">
                                                             총
-                                                            금액: {formatPrice(reservation.total_price - reservation.fee)}원
+                                                            금액: {reservation.symbol}{formatPrice(reservation.price + reservation.deposit+reservation.maintenance_fee)}
                                                         </p>
-                                                        <span className={`text-xs px-2 py-1 rounded text-white ${
-                                                            reservation.status === 'PENDING' ? 'bg-yellow-700' :
-                                                                reservation.status === 'CONFIRMED' ?
-                                                                    (reservation.payment_status === 'UNPAID' ? 'bg-orange-700' :
-                                                                        reservation.payment_status === 'PAID' ? 'bg-blue-700' : 'bg-blue-700') :
-                                                                    reservation.status === 'COMPLETED' ? 'bg-green-700' :
-                                                                        reservation.status === 'CANCELED' ? 'bg-gray-700' :
-                                                                            reservation.status === 'IN_USE' ? 'bg-gray-700' :
-                                                                                reservation.status === 'CHECKED_OUT' ? 'bg-gray-700' :
-                                                                                    'bg-black'
-                                                        }`}>
-{reservation.status === 'CONFIRMED' ?
-    (reservation.payment_status === 'UNPAID' ? '결제대기' :
-        reservation.payment_status === 'PAID' ? '결제완료' : '이용중') :
-    reservation.status === 'COMPLETED' ? '이용 완료' :
-        reservation.status === 'CANCELED' ? '예약 취소' :
-            reservation.status === 'IN_USE' ? '이용중' :
-                reservation.status === 'CHECKED_OUT' ? '퇴실 완료' :
-                    reservation.status === 'PENDING' ? '승인 대기중' : '상태 미정'}
+                                                        <span
+                                                            className={`text-xs px-2 py-1 rounded text-white ${
+                                                                reservation.status === 'PENDING'
+                                                                    ? 'bg-yellow-700'
+                                                                    : reservation.status === 'CONFIRMED'
+                                                                        ? reservation.payment_status === 'UNPAID'
+                                                                            ? 'bg-roomi'
+                                                                            : reservation.payment_status === 'PAID'
+                                                                                ? 'bg-blue-700'
+                                                                                : 'bg-blue-700'
+                                                                        : reservation.status === 'COMPLETED'
+                                                                            ? 'bg-green-700'
+                                                                            : reservation.status === 'CANCELLED' // ✅ 오타 수정: CANCELED → CANCELLED
+                                                                                ? 'bg-gray-700'
+                                                                                : reservation.status === 'IN_USE'
+                                                                                    ? 'bg-gray-700'
+                                                                                    : reservation.status === 'CHECKED_OUT'
+                                                                                        ? 'bg-gray-700'
+                                                                                        : reservation.status === 'REJECTED'
+                                                                                            ? 'bg-red-700'
+                                                                                            : 'bg-black'
+                                                            }`}
+                                                        >
+{
+    reservation.status === 'CONFIRMED'
+        ? reservation.payment_status === 'UNPAID'
+            ? '결제대기'
+            : reservation.payment_status === 'PAID'
+                ? '결제완료'
+                : '이용중'
+        : reservation.status === 'COMPLETED'
+            ? '이용 완료'
+            : reservation.status === 'CANCELLED'
+                ? '예약 취소'
+                : reservation.status === 'IN_USE'
+                    ? '이용중'
+                    : reservation.status === 'CHECKED_OUT'
+                        ? '퇴실 완료'
+                        : reservation.status === 'PENDING'
+                            ? '승인 대기중'
+                            : reservation.status === 'REJECTED'
+                                ? '거절됨'
+                                : '상태 미정'
+}
                                             </span>
                                                     </div>
                                                 </div>
