@@ -100,100 +100,110 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
     };
 
     return (
-        <div className="airbnb-calendar-container overflow-auto scrollbar-hidden bg-white p-6 w-full"
-             style={{
-                 height: 'calc(100vh - 240px)',
-                 // 웹에서는 더 큰 달력 표시
-                 maxWidth: '900px', // 추가: 최대 넓이 강제
-             }}>
-            {months.map((month, monthIndex) => (
-                <div key={monthIndex} className="month-container mb-10 w-full">
-                    <div className="month-header text-xl font-bold mb-6 text-gray-800 pl-2 border-l-4 border-roomi">
-                        {month.format('YYYY년 M월')}
-                    </div>
-                    <div className="weekday-header grid grid-cols-7 mb-4">
-                        {weekdays.map((day, i) => (
-                            <div
-                                key={i}
-                                className={`text-center text-sm font-semibold py-2
-                  ${i === 0 ? 'text-red-500' : i === 6 ? 'text-blue-500' : 'text-gray-500'}`}
-                            >
-                                {day}
+        <div className="w-full h-screen flex flex-col">
+            {/* 고정될 상단 부분 */}
+            <div className="mx-auto py-5 flex flex-col gap-4 w-full bg-white z-10">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">{'일정 관리'}</h2>
+
+                {/* 필요한 경우 여기에 필터 또는 추가 컨트롤을 배치할 수 있습니다 */}
+            </div>
+
+            {/* 스크롤될 캘린더 부분 */}
+            <div className="flex-1 overflow-y-auto px-4 scrollbar-hidden">
+                <div className="airbnb-calendar-container bg-white p-6 w-full mx-auto"
+                     style={{
+                         maxWidth: '900px', // 최대 넓이 강제
+                     }}>
+                    {months.map((month, monthIndex) => (
+                        <div key={monthIndex} className="month-container mb-10 w-full">
+                            <div className="month-header text-xl font-bold mb-6 text-gray-800 pl-2 border-l-4 border-roomi">
+                                {month.format('YYYY년 M월')}
                             </div>
-                        ))}
-                    </div>
-                    <div className="days-grid grid grid-cols-7">
-                        {generateDaysForMonth(month).map((dayObj, dayIndex) => {
-                            // 현재 달에 속하지 않은 날짜는 빈 셀로 표시
-                            if (!dayObj.isCurrentMonth) {
-                                return <div key={dayIndex} className="w-full"></div>;
-                            }
-
-                            const dateString = dayObj.date.format('YYYY-MM-DD');
-                            const isBlocked = blockDates.includes(dateString);
-                            const isReserved = reservationDates.includes(dateString);
-                            const isUnavailable = isBlocked || isReserved;
-                            const isPast = dayObj.date.isBefore(today, 'day');
-                            const isSelectable = !isPast;
-
-                            // 날짜 선택 상태 관련 변수
-                            const isStart = isStartDate(dayObj.date);
-                            const isEnd = isEndDate(dayObj.date);
-                            const isRange = isInRange(dayObj.date);
-
-                            return (
-                                <div
-                                    key={dayIndex}
-                                    className={`
-                    w-full flex items-center justify-center
-                    relative transition-all duration-200 ease-in-out text-sm
-                    ${isSelectable ? 'text-gray-800' : 'text-gray-400'}
-                    ${isReserved ? 'text-red-500' : ''}
-                    ${isRange ? 'bg-roomi/10' : ''}
-                    ${isStart && endDate ? 'rounded-l-full' : ''}
-                    ${isEnd ? 'rounded-r-full' : ''}
-                    ${isSelectable ? 'cursor-pointer' : 'cursor-default'}
-                `}
-                                    onClick={() => {
-                                        if (isSelectable) {
-                                            onDateClick?.(dateString);
-                                        }
-                                    }}
-                                >
+                            <div className="weekday-header grid grid-cols-7 mb-4">
+                                {weekdays.map((day, i) => (
                                     <div
-                                        className={`flex items-center justify-center ${isStart || isEnd ? 'bg-roomi text-white rounded-full z-10' : ''}`}
-                                        style={{
-                                            height: isDesktop ? '40px' : '32px',
-                                            width: isDesktop ? '40px' : '32px',
-                                            fontSize: isDesktop ? '1.1rem' : '0.9rem'
-                                        }}
+                                        key={i}
+                                        className={`text-center text-sm font-semibold py-2
+                                        ${i === 0 ? 'text-red-500' : i === 6 ? 'text-blue-500' : 'text-gray-500'}`}
                                     >
-                                        {dayObj.date.date()}
+                                        {day}
                                     </div>
+                                ))}
+                            </div>
+                            <div className="days-grid grid grid-cols-7">
+                                {generateDaysForMonth(month).map((dayObj, dayIndex) => {
+                                    // 현재 달에 속하지 않은 날짜는 빈 셀로 표시
+                                    if (!dayObj.isCurrentMonth) {
+                                        return <div key={dayIndex} className="w-full"></div>;
+                                    }
 
-                                    {/* 블록된 날짜와 예약된 날짜에 대한 가로 선 표시 */}
-                                    {isUnavailable && (
+                                    const dateString = dayObj.date.format('YYYY-MM-DD');
+                                    const isBlocked = blockDates.includes(dateString);
+                                    const isReserved = reservationDates.includes(dateString);
+                                    const isUnavailable = isBlocked || isReserved;
+                                    const isPast = dayObj.date.isBefore(today, 'day');
+                                    const isSelectable = !isPast;
+
+                                    // 날짜 선택 상태 관련 변수
+                                    const isStart = isStartDate(dayObj.date);
+                                    const isEnd = isEndDate(dayObj.date);
+                                    const isRange = isInRange(dayObj.date);
+
+                                    return (
                                         <div
-                                            className="absolute pointer-events-none z-10 w-full h-full flex items-center justify-center">
-                                            <div className="bg-red-500 w-1/3 h-0.5"></div>
+                                            key={dayIndex}
+                                            className={`
+                                                w-full flex items-center justify-center
+                                                relative transition-all duration-200 ease-in-out text-sm
+                                                ${isSelectable ? 'text-gray-800' : 'text-gray-400'}
+                                                ${isReserved ? 'text-red-500' : ''}
+                                                ${isRange ? 'bg-roomi/10' : ''}
+                                                ${isStart && endDate ? 'rounded-l-full' : ''}
+                                                ${isEnd ? 'rounded-r-full' : ''}
+                                                ${isSelectable ? 'cursor-pointer' : 'cursor-default'}
+                                            `}
+                                            onClick={() => {
+                                                if (isSelectable) {
+                                                    onDateClick?.(dateString);
+                                                }
+                                            }}
+                                        >
+                                            <div
+                                                className={`flex items-center justify-center ${isStart || isEnd ? 'bg-roomi text-white rounded-full z-10' : ''}`}
+                                                style={{
+                                                    height: isDesktop ? '40px' : '32px',
+                                                    width: isDesktop ? '40px' : '32px',
+                                                    fontSize: isDesktop ? '1.1rem' : '0.9rem'
+                                                }}
+                                            >
+                                                {dayObj.date.date()}
+                                            </div>
+
+                                            {/* 블록된 날짜와 예약된 날짜에 대한 가로 선 표시 */}
+                                            {isUnavailable && (
+                                                <div
+                                                    className="absolute pointer-events-none z-10 w-full h-full flex items-center justify-center">
+                                                    <div className="bg-red-500 w-1/3 h-0.5"></div>
+                                                </div>
+                                            )}
+
+                                            {/* 시작일 후의 연결선 */}
+                                            {isStart && endDate && (
+                                                <div className="absolute right-0 top-0 h-full w-1/2 bg-roomi/10"></div>
+                                            )}
+
+                                            {/* 종료일 전의 연결선 */}
+                                            {isEnd && (
+                                                <div className="absolute left-0 top-0 h-full w-1/2 bg-roomi/10"></div>
+                                            )}
                                         </div>
-                                    )}
-
-                                    {/* 시작일 후의 연결선 */}
-                                    {isStart && endDate && (
-                                        <div className="absolute right-0 top-0 h-full w-1/2 bg-roomi/10"></div>
-                                    )}
-
-                                    {/* 종료일 전의 연결선 */}
-                                    {isEnd && (
-                                        <div className="absolute left-0 top-0 h-full w-1/2 bg-roomi/10"></div>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
                 </div>
-            ))}
+            </div>
         </div>
     );
 };
