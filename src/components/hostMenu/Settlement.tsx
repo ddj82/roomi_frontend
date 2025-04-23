@@ -109,7 +109,7 @@ const Settlement: React.FC = () => {
                             type="search"
                             className="w-full py-3 pl-10 pr-3 text-base border border-gray-200 rounded-lg
                                 shadow-sm focus:outline-none"
-                            placeholder={"검색어를 입력하세요" || "검색어를 입력하세요"}
+                            placeholder={"검색어를 입력하세요"}
                             value={searchQuery}
                             onChange={handleSearchChange}
                             aria-label="검색"
