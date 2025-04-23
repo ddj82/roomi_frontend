@@ -271,66 +271,68 @@ const ContractManagement = () => {
         setSelectedReservation(null);
     };
 
-    return (
-        <div className=" py-0 md:px-8 relative">
-            {/*타이틀*/}
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">{'계약 관리'}</h2>
-            <div className="flex justify-between items-center mb-4">
-                {selectedReservation ? (
-                    /*예약 상세 정보*/
-                    <button type="button" onClick={() => setSelectedReservation(null)}
-                            className="py-2 px-4 text-sm rounded font-bold">
-                        목록 보기
-                    </button>
-                ) : (
-                    /*예약 내역*/
-                    <div>
-                        <button type="button" onClick={() => setActiveTab("current")}
-                                className={`py-2 px-4 text-sm rounded font-bold ${activeTab !== "current" && 'text-gray-400'}`}
-                        >
-                            현재 예약
-                        </button>
-                        <button type="button" onClick={() => setActiveTab("past")}
-                                className={`py-2 px-4 text-sm rounded font-bold ${activeTab !== "past" && 'text-gray-400'}`}
-                        >
-                            지난 예약
-                        </button>
-                    </div>
-                )}
-            </div>
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value);
+    };
 
-            {/*검색 및 필터 영역 - 상세 보기가 아닐 때만 표시*/}
-            {!selectedReservation && (
-                <div className="mx-auto my-5 flex flex-col gap-4 w-full">
-                    <div className="w-full flex flex-row gap-3">
-                        <div className="w-full flex flex-row gap-3">
+    return (
+        <div className="w-full h-screen flex flex-col">
+            {/* 고정될 상단 부분 */}
+            <div className="mx-auto py-5 flex flex-col gap-4 w-full bg-white z-10">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">{'계약 관리'}</h2>
+
+                {!selectedReservation && (
+                    <>
+                        {/* 탭 버튼 */}
+                        <div className="w-full">
+                            <div className="flex">
+                                <button type="button" onClick={() => setActiveTab("current")}
+                                        className={`py-2 px-4 text-sm rounded font-bold ${activeTab !== "current" && 'text-gray-400'}`}
+                                >
+                                    현재 예약
+                                </button>
+                                <button type="button" onClick={() => setActiveTab("past")}
+                                        className={`py-2 px-4 text-sm rounded font-bold ${activeTab !== "past" && 'text-gray-400'}`}
+                                >
+                                    지난 예약
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* 검색 및 필터링 영역 */}
+                        <div className="w-full flex flex-col sm:flex-row gap-3">
                             {/* 방 선택 드롭다운 */}
-                            <div className="relative w-1/2 sm:w-1/3" ref={roomDropdownRef}>
+                            <div className="relative w-full sm:w-1/6" ref={roomDropdownRef}>
                                 <button
                                     type="button"
                                     className="w-full flex items-center justify-between px-3 py-3 text-base
-                                bg-white border border-gray-200 rounded-lg cursor-pointer"
+                                    bg-white border border-gray-200 rounded-lg cursor-pointer"
                                     onClick={() => setIsRoomDropdownOpen(!isRoomDropdownOpen)}
+                                    aria-haspopup="true"
+                                    aria-expanded={isRoomDropdownOpen}
                                 >
-                                <span className="text-gray-700">
-                                    {selectedRoomId
-                                        ? rooms.find(room => room.id === selectedRoomId)?.title || '선택된 방'
-                                        : '방 선택'}
-                                </span>
+                                    <span className="text-gray-700">
+                                        {selectedRoomId
+                                            ? rooms.find(room => room.id === selectedRoomId)?.title || '선택된 방'
+                                            : '방 선택'}
+                                    </span>
                                     <ChevronDown className="w-5 h-5 text-gray-500"/>
                                 </button>
 
                                 {/* 드롭다운 메뉴 */}
                                 {isRoomDropdownOpen && (
                                     <div
-                                        className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                        className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                                        role="menu"
+                                    >
                                         <div
                                             className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
-                                        ${!selectedRoomId ? 'bg-roomi-1' : ''}`}
+                                            ${!selectedRoomId ? 'bg-roomi-1' : ''}`}
                                             onClick={() => {
                                                 setSelectedRoomId(null);
                                                 setIsRoomDropdownOpen(false);
                                             }}
+                                            role="menuitem"
                                         >
                                             전체 방
                                         </div>
@@ -338,11 +340,12 @@ const ContractManagement = () => {
                                             <div
                                                 key={room.id}
                                                 className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
-                                            ${selectedRoomId === room.id ? 'bg-roomi-1' : ''}`}
+                                                ${selectedRoomId === room.id ? 'bg-roomi-1' : ''}`}
                                                 onClick={() => {
                                                     setSelectedRoomId(room.id || null);
                                                     setIsRoomDropdownOpen(false);
                                                 }}
+                                                role="menuitem"
                                             >
                                                 {room.title}
                                             </div>
@@ -350,29 +353,41 @@ const ContractManagement = () => {
                                     </div>
                                 )}
                             </div>
+
                             {/* 검색창 */}
-                            <div className="relative w-1/2 sm:flex-grow">
+                            <div className="relative w-full sm:w-2/6">
                                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                                    <Search className="w-4 h-4 text-gray-500"/>
+                                    <Search className="w-4 h-4 text-gray-500" aria-hidden="true" />
                                 </div>
                                 <input
                                     type="search"
                                     className="w-full py-3 pl-10 pr-3 text-base border border-gray-200 rounded-lg
-                                shadow-sm focus:outline-none"
+                                    shadow-sm focus:outline-none"
                                     placeholder="제목 또는 주소 입력"
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={handleSearchChange}
+                                    aria-label="검색"
                                 />
                             </div>
 
-
+                            {/* 추가 공간 (정산 페이지와 일관성 유지) */}
+                            <div className="w-full sm:w-3/6">
+                                {/* 여기에 필요한 추가 요소들 */}
+                            </div>
                         </div>
-                    </div>
-                </div>
-            )}
+                    </>
+                )}
+
+                {selectedReservation && (
+                    <button type="button" onClick={() => setSelectedReservation(null)}
+                            className="py-2 px-4 text-sm rounded font-bold">
+                        목록 보기
+                    </button>
+                )}
+            </div>
 
             {/*컨텐츠*/}
-            <div>
+            <div className="flex-1 overflow-y-auto px-4 scrollbar-hidden">
                 {selectedReservation ? (
                     /*예약 상세 정보*/
                     <ReservationDetail
@@ -389,9 +404,12 @@ const ContractManagement = () => {
                     /*예약 내역*/
                     <div className="h-[calc(100vh-230px)] overflow-y-auto scrollbar-hidden">
                         {filteredReservations.length === 0 ? (
-                            <div className="text-center py-10">
+                            <div className="text-center py-10" role="status" aria-live="polite">
                                 <div className="text-gray-500 text-lg">
                                     {activeTab === "current" ? "현재 예약이 없습니다." : "지난 예약이 없습니다."}
+                                </div>
+                                <div className="text-gray-400 mt-2">
+                                    {activeTab === "current" ? "예약이 생성되면 이곳에 표시됩니다." : "지난 예약 내역이 없습니다."}
                                 </div>
                             </div>
                         ) : (
@@ -406,12 +424,12 @@ const ContractManagement = () => {
                                         <div className="w-full sm:hidden">
                                             {/* 날짜 및 상태 */}
                                             <div className="flex justify-between items-center p-3 bg-gray-50">
-                                            <span className="text-sm text-gray-600">
-                                                {formatDateRange(
-                                                    reservation.check_in_date?.toString(),
-                                                    reservation.check_out_date?.toString()
-                                                )}
-                                            </span>
+                                                <span className="text-sm text-gray-600">
+                                                    {formatDateRange(
+                                                        reservation.check_in_date?.toString(),
+                                                        reservation.check_out_date?.toString()
+                                                    )}
+                                                </span>
                                                 <span
                                                     className={`text-xs px-2 py-1 rounded text-white ${
                                                         reservation.status === 'PENDING'
@@ -424,7 +442,7 @@ const ContractManagement = () => {
                                                                         : 'bg-blue-700'
                                                                 : reservation.status === 'COMPLETED'
                                                                     ? 'bg-green-700'
-                                                                    : reservation.status === 'CANCELLED' // ✅ 오타 수정: CANCELED → CANCELLED
+                                                                    : reservation.status === 'CANCELLED'
                                                                         ? 'bg-gray-700'
                                                                         : reservation.status === 'IN_USE'
                                                                             ? 'bg-gray-700'
@@ -435,28 +453,28 @@ const ContractManagement = () => {
                                                                                     : 'bg-black'
                                                     }`}
                                                 >
-{
-    reservation.status === 'CONFIRMED'
-        ? reservation.payment_status === 'UNPAID'
-            ? '결제대기'
-            : reservation.payment_status === 'PAID'
-                ? '결제완료'
-                : '이용중'
-        : reservation.status === 'COMPLETED'
-            ? '이용 완료'
-            : reservation.status === 'CANCELLED'
-                ? '예약 취소'
-                : reservation.status === 'IN_USE'
-                    ? '이용중'
-                    : reservation.status === 'CHECKED_OUT'
-                        ? '퇴실 완료'
-                        : reservation.status === 'PENDING'
-                            ? '승인 대기중'
-                            : reservation.status === 'REJECTED'
-                                ? '거절됨'
-                                : '상태 미정'
-}
-                                            </span>
+                                                    {
+                                                        reservation.status === 'CONFIRMED'
+                                                            ? reservation.payment_status === 'UNPAID'
+                                                                ? '결제대기'
+                                                                : reservation.payment_status === 'PAID'
+                                                                    ? '결제완료'
+                                                                    : '이용중'
+                                                            : reservation.status === 'COMPLETED'
+                                                                ? '이용 완료'
+                                                                : reservation.status === 'CANCELLED'
+                                                                    ? '예약 취소'
+                                                                    : reservation.status === 'IN_USE'
+                                                                        ? '이용중'
+                                                                        : reservation.status === 'CHECKED_OUT'
+                                                                            ? '퇴실 완료'
+                                                                            : reservation.status === 'PENDING'
+                                                                                ? '승인 대기중'
+                                                                                : reservation.status === 'REJECTED'
+                                                                                    ? '거절됨'
+                                                                                    : '상태 미정'
+                                                    }
+                                                </span>
                                             </div>
 
                                             {/* 방 정보 */}
@@ -542,7 +560,7 @@ const ContractManagement = () => {
                                                                                 : 'bg-blue-700'
                                                                         : reservation.status === 'COMPLETED'
                                                                             ? 'bg-green-700'
-                                                                            : reservation.status === 'CANCELLED' // ✅ 오타 수정: CANCELED → CANCELLED
+                                                                            : reservation.status === 'CANCELLED'
                                                                                 ? 'bg-gray-700'
                                                                                 : reservation.status === 'IN_USE'
                                                                                     ? 'bg-gray-700'
@@ -553,28 +571,28 @@ const ContractManagement = () => {
                                                                                             : 'bg-black'
                                                             }`}
                                                         >
-{
-    reservation.status === 'CONFIRMED'
-        ? reservation.payment_status === 'UNPAID'
-            ? '결제대기'
-            : reservation.payment_status === 'PAID'
-                ? '결제완료'
-                : '이용중'
-        : reservation.status === 'COMPLETED'
-            ? '이용 완료'
-            : reservation.status === 'CANCELLED'
-                ? '예약 취소'
-                : reservation.status === 'IN_USE'
-                    ? '이용중'
-                    : reservation.status === 'CHECKED_OUT'
-                        ? '퇴실 완료'
-                        : reservation.status === 'PENDING'
-                            ? '승인 대기중'
-                            : reservation.status === 'REJECTED'
-                                ? '거절됨'
-                                : '상태 미정'
-}
-                                            </span>
+                                                        {
+                                                            reservation.status === 'CONFIRMED'
+                                                                ? reservation.payment_status === 'UNPAID'
+                                                                    ? '결제대기'
+                                                                    : reservation.payment_status === 'PAID'
+                                                                        ? '결제완료'
+                                                                        : '이용중'
+                                                                : reservation.status === 'COMPLETED'
+                                                                    ? '이용 완료'
+                                                                    : reservation.status === 'CANCELLED'
+                                                                        ? '예약 취소'
+                                                                        : reservation.status === 'IN_USE'
+                                                                            ? '이용중'
+                                                                            : reservation.status === 'CHECKED_OUT'
+                                                                                ? '퇴실 완료'
+                                                                                : reservation.status === 'PENDING'
+                                                                                    ? '승인 대기중'
+                                                                                    : reservation.status === 'REJECTED'
+                                                                                        ? '거절됨'
+                                                                                        : '상태 미정'
+                                                        }
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
