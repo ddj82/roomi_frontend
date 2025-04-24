@@ -93,7 +93,9 @@ export default function KakaoLoginCallback() {
                 const socialEmail = data.kakao_account.email || '';
                 const socialName = data.properties.nickname;
                 const socialProfileImage = data.properties.profile_image || '';
-
+                localStorage.setItem("email", socialEmail);
+                localStorage.setItem("name", socialName);
+                localStorage.setItem("profileImg", socialProfileImage);
                 navigate('/join/social', {
                     state : {
                         socialEmail,

@@ -8,12 +8,14 @@ import { useTranslation } from "react-i18next";
 import {useChatStore} from "../../stores/ChatStore";
 import {handleLogin, SocialLogin} from "../../util/authUtils";
 import {validateUser} from "../../../api/api";
+import {useSignUpChannelStore} from "../../stores/SignUpChannelStore";
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { setAuthToken } = useAuthStore();
   const { setIsHost } = useIsHostStore();
+  const { setSignUpChannel } = useSignUpChannelStore();
   const connect = useChatStore((state) => state.connect);
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -73,32 +75,35 @@ const LoginPage = () => {
         if (!window.Kakao) return;
         loginResult = await SocialAuth.kakaoLogin();
         console.log("카카오 loginResult:", loginResult);
-        const kakaoData = loginResult?.data ?? loginResult;
-        if (kakaoData) {
-          try {
-            // statusCode = await validateUser(kakaoData.socialId, kakaoData.provider);
-            // socialEmail = kakaoData.email;
-            // socialName = kakaoData.name;
-            // socialChannelUid = kakaoData.socialId;
-            // socialChannel = kakaoData.provider;
 
-            if (statusCode === 409) {
-              navigate('/join/social', {
-                state: {
-                  socialEmail,
-                  socialName,
-                  socialChannel,
-                  socialChannelUid,
-                },
-              });
-            } else if (statusCode === 200) {
-              //await SocialLogin(socialChannelUid, socialChannel, setAuthToken, setIsHost, connect);
-              window.location.reload();
-            }
-          } catch (e) {
-            console.error("카카오 로그인 처리 오류:", e);
+        const isLoggined = localStorage.getItem("isConnected");
+        if (isLoggined) {
+          const isHost = localStorage.getItem("userIsHost") === "false";
+          if(isHost) {
+            navigate('/host/insert');
+          }else{
+            navigate('/host/hostAgree');
           }
+        } else {
+          // 회원가입
+          const socialEmail = localStorage.getItem(email) || '';
+          const socialName = localStorage.getItem("name");
+          const socialProfileImage = localStorage.getItem("profileImg") || '';
+          const socialChannelUid = localStorage.getItem("channelUid") || '';
+          const socialChannel = localStorage.getItem("channel") || '';
+
+          navigate('/join/social', {
+            state : {
+              socialEmail,
+              socialName,
+              socialProfileImage,
+              socialChannel,
+              socialChannelUid,
+            },
+          })
+
         }
+        //onClose();
         break;
       }
       case 'Line':

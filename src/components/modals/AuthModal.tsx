@@ -22,7 +22,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
 
     useEffect(() => {
         if (window.Kakao && !window.Kakao.isInitialized()) {
-            window.Kakao.init('7e84a0bfbb21e40d283ad5d48d3d9d6c'); // 카카오 JavaScript 키로 초기화
+            window.Kakao.init('b78ae2925790c4c5606a66f8d79dd7b0'); // 카카오 JavaScript 키로 초기화
             console.log('✅ Kakao SDK initialized');
         }
         // 토스 결제 심사 목적
