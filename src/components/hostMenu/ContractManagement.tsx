@@ -279,20 +279,25 @@ const ContractManagement = () => {
         <div className="w-full h-screen flex flex-col">
             {/* 고정될 상단 부분 */}
             <div className="mx-auto py-5 flex flex-col gap-4 w-full bg-white z-10">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">{'계약 관리'}</h2>
 
                 {!selectedReservation && (
                     <>
-                        {/* 탭 버튼 */}
+                        {/* 탭 버튼 (MyRooms 스타일로) */}
                         <div className="w-full">
-                            <div className="flex">
-                                <button type="button" onClick={() => setActiveTab("current")}
-                                        className={`py-2 px-4 text-sm rounded font-bold ${activeTab !== "current" && 'text-gray-400'}`}
+                            <div className="flex space-x-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveTab("current")}
+                                    className={`px-4 py-2 text-sm font-medium rounded-lg transition 
+                                        ${activeTab === "current" ? "bg-roomi text-white shadow" : "bg-gray-100 text-gray-700"}`}
                                 >
                                     현재 예약
                                 </button>
-                                <button type="button" onClick={() => setActiveTab("past")}
-                                        className={`py-2 px-4 text-sm rounded font-bold ${activeTab !== "past" && 'text-gray-400'}`}
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveTab("past")}
+                                    className={`px-4 py-2 text-sm font-medium rounded-lg transition 
+                                        ${activeTab === "past" ? "bg-roomi text-white shadow" : "bg-gray-100 text-gray-700"}`}
                                 >
                                     지난 예약
                                 </button>
@@ -305,8 +310,8 @@ const ContractManagement = () => {
                             <div className="relative w-full sm:w-1/6" ref={roomDropdownRef}>
                                 <button
                                     type="button"
-                                    className="w-full flex items-center justify-between px-3 py-3 text-base
-                                    bg-white border border-gray-200 rounded-lg cursor-pointer"
+                                    className="w-full flex items-center justify-between px-4 py-2.5 text-sm
+                                        bg-white border border-gray-300 rounded-lg transition shadow-sm hover:ring-1 hover:ring-roomi"
                                     onClick={() => setIsRoomDropdownOpen(!isRoomDropdownOpen)}
                                     aria-haspopup="true"
                                     aria-expanded={isRoomDropdownOpen}
@@ -322,7 +327,7 @@ const ContractManagement = () => {
                                 {/* 드롭다운 메뉴 */}
                                 {isRoomDropdownOpen && (
                                     <div
-                                        className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                                        className="absolute z-10 w-full mt-1 bg-white rounded-lg border border-gray-200 shadow-lg max-h-60 overflow-y-auto"
                                         role="menu"
                                     >
                                         <div

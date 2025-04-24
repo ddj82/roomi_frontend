@@ -37,7 +37,7 @@
 }
 
 .authModal.submit-button, .authModal.cancel-button {
-    padding: 16px;
+    padding: 10px 16px;
     font-size: 16px;
     border-radius: 8px;
     margin-bottom: 8px;
@@ -72,28 +72,50 @@
 
 .authModal.social-buttons {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 12px;
+    justify-content: center;
+    align-items: stretch;
+    width: 100%;
 }
 
 .authModal.social-button {
-    flex: 1 1 calc(50% - 6px); /* 50% 너비에서 gap의 절반을 뺀 크기 */
-    max-width: calc(50% - 6px); /* 버튼이 한 줄에 2개씩 배치 */
+    width: 100%;
     display: flex;
     align-items: center;
-    padding: 12px;
+    justify-content: center;
+    padding: 10px;
     font-size: 14px;
     border: 1px solid #E5E7EB;
     border-radius: 8px;
-    justify-content: center;
     cursor: pointer;
-    @media screen and (max-width: 768px) {
-        font-size: 10px;
-    }
+    transition: all 0.2s ease;
 }
 
 .authModal.social-icon {
     width: 24px;
     height: 24px;
     margin-right: 8px;
+}
+@media screen and (max-width: 480px) {
+    .authModal.auth-modal-container {
+        padding: 16px;
+        max-height: 85vh;
+    }
+
+    .authInput {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .authModal.submit-button,
+    .authModal.cancel-button {
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    .authModal.social-button {
+        font-size: 13px;
+        padding: 10px 8px;
+    }
 }

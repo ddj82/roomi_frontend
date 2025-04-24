@@ -74,6 +74,7 @@ const BottomNavigation: React.FC = () => {
                         activeTab === tab ? "text-roomi" : "text-gray-500"
                     }`}
                     onClick={() => {
+                        console.log('탭 클릭됨:', tab); // 탭 명 찍기
                         setActiveTab(tab);
                     }}
                     type="button"

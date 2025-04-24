@@ -66,7 +66,7 @@ const HostHeader: React.FC = () => {
 
     // Desktop Header Navigation
     const DesktopNavigation = () => (
-        <div className="flex flex-wrap justify-center text-sm font-medium text-center -mt-4" role="tablist">
+        <div className="flex flex-wrap justify-center text-sm font-medium text-center -mt-12" role="tablist">
             {tabs.map((tab) => (
                 <div key={tab} role="presentation" className="mx-2 sm:mx-4 text-base">
                     <button

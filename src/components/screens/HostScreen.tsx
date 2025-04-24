@@ -21,7 +21,7 @@ export default function HostScreen() {
         /* /host/:menu 에서 menu 추출 */
         const currentTab = menu ?? "";
         if (currentTab && currentTab !== activeTab) {
-            setActiveTab(currentTab); // Zustand 갱신
+            setActiveTab(activeTab); // Zustand 갱신
         }
     }, [menu, activeTab, setActiveTab]);
 
@@ -36,7 +36,7 @@ export default function HostScreen() {
     };
 
     return (
-        <div className="my-4 px-8 h-[80vh]">
+        <div className="my-4 px-6 h-[80vh]">
             {renderMenu()}
             <div className="h-16 md:hidden"></div>
         </div>

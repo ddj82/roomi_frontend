@@ -100,7 +100,7 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
     };
 
     return (
-        <div className="w-full h-screen flex flex-col">
+        <div className="w-full flex flex-col px-2 sm:px-4 md:px-8">
             {/* 고정될 상단 부분 */}
             <div className="mx-auto py-5 flex flex-col gap-4 w-full bg-white z-10">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">{'일정 관리'}</h2>
@@ -110,10 +110,12 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
 
             {/* 스크롤될 캘린더 부분 */}
             <div className="flex-1 overflow-y-auto px-4 scrollbar-hidden">
-                <div className="airbnb-calendar-container bg-white p-6 w-full mx-auto"
-                     style={{
-                         maxWidth: '900px', // 최대 넓이 강제
-                     }}>
+                <div
+                    className="airbnb-calendar-container bg-white px-3 pt-6 pb-12 w-full mx-auto sm:rounded-lg"
+                    style={{
+                        maxWidth: '100%',
+                        minHeight: 'calc(100vh - 220px)'
+                    }}>
                     {months.map((month, monthIndex) => (
                         <div key={monthIndex} className="month-container mb-10 w-full">
                             <div className="month-header text-xl font-bold mb-6 text-gray-800 pl-2 border-l-4 border-roomi">
@@ -531,14 +533,20 @@ const RoomStatus = () => {
                     <div className="md:w-2/3 w-full flex flex-col">
                         {/* 웹에서 더 큰 달력을 위한 스타일 수정 */}
                         <div className="rounded-lg overflow-hidden">
-                            <AirbnbStyleCalendar
-                                blockDates={customBlockDatesRSC}
-                                reservationDates={reservationDatesRSC}
-                                locale={userLocale}
-                                onDateClick={handleDayClick}
-                                startDate={startDateRSC}
-                                endDate={endDateRSC}
-                            />
+                            {/* 모바일에서 달력 컨테이너 스타일 변경 */}
+                            <div
+                                className="airbnb-calendar-container bg-white px-3 pt-4 pb-6 w-full mx-auto"
+                                style={{ maxWidth: '100%' }}
+                            >
+                                <AirbnbStyleCalendar
+                                    blockDates={customBlockDatesRSC}
+                                    reservationDates={reservationDatesRSC}
+                                    locale={userLocale}
+                                    onDateClick={handleDayClick}
+                                    startDate={startDateRSC}
+                                    endDate={endDateRSC}
+                                />
+                            </div>
                         </div>
 
                         <div className="flex flex-wrap gap-6 mt-6 justify-center">
@@ -569,9 +577,46 @@ const RoomStatus = () => {
                                 <span className="text-base text-gray-600">선택 범위</span>
                             </div>
                         </div>
+
+                        {/* 모바일에서만 보이는 블록 날짜 설정 영역 */}
+                        { !isDesktop && (
+                            <div className="w-full mt-4 px-3">
+                                <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                                    <h3 className="text-base font-semibold mb-3 text-gray-800">선택 정보</h3>
+                                    <div className="text-sm text-gray-600 mb-2">
+                                        {startDateRSC && endDateRSC ? `${startDateRSC} ~ ${endDateRSC}` : '날짜를 선택해주세요'}
+                                    </div>
+                                    <div className="flex items-center mb-3">
+                                        <input
+                                            id="mobileBlockRadio"
+                                            type="checkbox"
+                                            className="w-4 h-4 accent-roomi"
+                                            checked={isReasonChk}
+                                            onChange={(e) => setIsReasonChk(e.target.checked)}
+                                            disabled={!startDateRSC || !endDateRSC}
+                                        />
+                                        <label htmlFor="mobileBlockRadio" className="ml-2 text-sm">사용불가 처리</label>
+                                    </div>
+                                    {isReasonChk && (
+                                        <input
+                                            type="text"
+                                            placeholder="사유 입력"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                                        />
+                                    )}
+                                    <button
+                                        className="w-full mt-3 py-2 bg-roomi text-white rounded-lg text-sm font-medium"
+                                        onClick={() => setShowUpdateModal(true)}
+                                        disabled={!startDateRSC || !endDateRSC || !isReasonChk}
+                                    >
+                                        완료
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
-                    <div className="md:w-1/3 w-full">
+                    <div className="md:w-1/3 w-full hidden md:block">
                         <h3 className="text-xl font-semibold mb-4 text-gray-800">선택 정보</h3>
                         <div className="p-6 bg-gray-50 rounded-lg shadow-sm">
                             <div className="mb-6">
@@ -622,6 +667,40 @@ const RoomStatus = () => {
                         </div>
                     </div>
                 </div>
+                {/* 모바일 고정 하단 패널 */}
+                { !isDesktop && (
+                  <div className="fixed bottom-4 right-4 left-4 z-50 bg-white border border-gray-200 rounded-xl shadow-md p-4">
+                    <h3 className="text-base font-semibold mb-2 text-gray-800">선택 정보</h3>
+                    <div className="text-sm text-gray-600 mb-1">
+                      {startDateRSC && endDateRSC ? `${startDateRSC} ~ ${endDateRSC}` : '날짜를 선택해주세요'}
+                    </div>
+                    <div className="flex items-center mb-2">
+                      <input
+                        id="mobileBlockCheckbox"
+                        type="checkbox"
+                        className="w-4 h-4 accent-roomi"
+                        checked={isReasonChk}
+                        onChange={(e) => setIsReasonChk(e.target.checked)}
+                        disabled={!startDateRSC || !endDateRSC}
+                      />
+                      <label htmlFor="mobileBlockCheckbox" className="ml-2 text-sm">사용불가 처리</label>
+                    </div>
+                    {isReasonChk && (
+                      <input
+                        type="text"
+                        placeholder="사유 입력"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm mb-2"
+                      />
+                    )}
+                    <button
+                      className="w-full py-2 bg-roomi text-white rounded-md text-sm font-medium"
+                      onClick={() => setShowUpdateModal(true)}
+                      disabled={!startDateRSC || !endDateRSC || !isReasonChk}
+                    >
+                      완료
+                    </button>
+                  </div>
+                )}
             </div>
 
             {/* 블록 해제 모달 */}

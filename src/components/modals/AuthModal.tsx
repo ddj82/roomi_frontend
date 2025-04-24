@@ -139,6 +139,14 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
         };
     }, [visible]);
 
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const platforms = ['Kakao', 'Google', 'Line', 'Facebook', 'Apple', 'WeChat'];
+
+    const visiblePlatforms = isIOS
+        ? platforms.filter(p => ['Kakao', 'Google', 'Line', 'Apple'].includes(p))
+        : platforms.filter(p => ['Kakao', 'Google', 'Line'].includes(p)); // Apple 제외
+
     return (
         <Modal
             isOpen={visible}
@@ -179,7 +187,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                     <div className="authModal social-login-container">
                         <h4>{t('소셜로그인')}</h4>
                         <div className="authModal social-buttons">
-                            {['Kakao', 'Google', 'Line','Facebook','Apple','WeChat'].map((channel) => (
+                            {visiblePlatforms.map((channel) => (
                                 <button
                                     key={channel}
                                     className="authModal social-button"

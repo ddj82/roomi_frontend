@@ -335,9 +335,10 @@ const Header = () => {
                                 </div>
                             ) : (
                                 <button
-                                    className="p-2 bg-roomi hover:bg-roomi-4 text-white text-xs md:text-sm rounded-md"
-                                    onClick={() => setAuthModalVisible(true)}>
-                                    {t('로그인')}
+                                    className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center bg-roomi hover:bg-roomi-4 text-white rounded-full shadow-md transition duration-200"
+                                    onClick={() => setAuthModalVisible(true)}
+                                >
+                                    <FontAwesomeIcon icon={faUserPlus} className="text-white text-lg" />
                                 </button>
                             )}
                         </div>

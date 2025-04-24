@@ -220,11 +220,11 @@ const UserJoinScreen = () => {
     };
 
     return (
-        <div className="p-6">
-            <div className="mb-6 p-4 border rounded-md flex">
+        <div className="p-4 max-w-md mx-auto">
+            <div className="mb-6 p-5 bg-white shadow-lg rounded-2xl border border-gray-100 flex">
                 <div className="flex_center">
                     {/* 뒤로 가기 버튼 */}
-                    <button className="rounded-md p-2 w-10 h-10 sm:p-4 sm:w-14 sm:h-14" onClick={handleBack}>
+                    <button className="rounded-lg p-2 w-10 h-10 sm:p-4 sm:w-14 sm:h-14" onClick={handleBack}>
                         <FontAwesomeIcon icon={faArrowLeft}/>
                     </button>
                 </div>
@@ -235,7 +235,7 @@ const UserJoinScreen = () => {
 
             {/* 단계 진행 바 */}
             <div className="w-full mb-4">
-                <div className="relative h-2 bg-gray-200 rounded-full mx-1">
+                <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden mx-1 shadow-inner">
                     <div className="absolute h-2 bg-roomi rounded-full transition-all duration-300"
                          style={{width: `${(currentStep / totalSteps) * 100}%`}}>
                     </div>
@@ -247,61 +247,91 @@ const UserJoinScreen = () => {
 
             <form onSubmit={handleSubmit}>
                 {/* 페이지 컨텐츠 */}
-                <div className="mb-6 p-4 border rounded-md">
+                <div className="mb-6 p-5 bg-white shadow-lg rounded-2xl border border-gray-100">
                     {currentStep === 1 && (
                         <div>
                             <label htmlFor="email">{t("이메일")}</label>
-                            <div className="flex md:flex-row flex-col w-full">
-                                <input id="email" type="email" placeholder={t("이메일")} value={formData.email}
-                                       onChange={(e) => handleChange("email", e.target.value)}
-                                       className="border p-2 w-full"
-                                       disabled={isVerified} // ✅ 인증 완료 시 이메일 수정 불가능
+                            <div className="flex flex-col md:flex-row gap-2">
+                              <div className="flex-1">
+                                <input
+                                  id="email"
+                                  type="email"
+                                  placeholder={t("이메일")}
+                                  value={formData.email}
+                                  onChange={(e) => handleChange("email", e.target.value)}
+                                  className="border border-gray-200 rounded-xl px-4 py-3 text-sm shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-roomi"
+                                  disabled={isVerified}
                                 />
+                              </div>
+                              <div className="w-full md:w-auto">
                                 {!sendSeccess ? (
-                                    <button type="button"
-                                            className="bg-roomi text-white rounded md:p-2 p-1 md:ml-4 md:w-[30%]"
-                                            onClick={handleSendEmail}
-                                            disabled={isVerified} // ✅ 인증 완료 시 발송 버튼 숨김
-                                    >
-                                        인증번호 발송
-                                    </button>
+                                  <button
+                                    type="button"
+                                    className="w-full md:w-auto px-4 py-2.5 bg-roomi text-white font-medium rounded-xl shadow-md hover:bg-roomi-dark transition-all duration-200"
+                                    onClick={handleSendEmail}
+                                    disabled={isVerified}
+                                  >
+                                    인증번호 발송
+                                  </button>
                                 ) : (
-                                    <button type="button"
-                                            className={`border border-roomi text-roomi rounded p-2 ml-4 w-[30%] 
-                                                        ${isResendDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
-                                            onClick={handleSendEmail}
-                                            disabled={isResendDisabled || isVerified} // ✅ 인증 성공 시 재발송 불가능
-                                    >
-                                        재발송
-                                    </button>
+                                  <button
+                                    type="button"
+                                    className={`w-full md:w-auto px-4 py-2.5 border border-roomi text-roomi font-medium rounded-xl shadow-md transition-all duration-200
+                                      ${isResendDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                                    onClick={handleSendEmail}
+                                    disabled={isResendDisabled || isVerified}
+                                  >
+                                    재발송
+                                  </button>
                                 )}
+                              </div>
                             </div>
                             {errors.email && <p className="font-bold text-red-500 text-sm">{errors.email}</p>}
                             <div>
                                 {sendSeccess && (
                                     <div>
-                                        <div>
-                                            <input id="code" type="text" placeholder="인증번호 입력" className="border p-1"
-                                                   value={inputAuthCode}
-                                                   onChange={(e) => setInputAuthCode(e.target.value)}/>
-                                            <button type="button" className="border border-roomi text-roomi rounded p-1 ml-2"
-                                                    onClick={handleVerification}>확인</button>
-                                            <span className="text-red-500 p-2">{dayjs.duration(remainingTime, "seconds").format("mm:ss")}</span>
+                                        <div className="flex items-center mt-2">
+                                            <input
+                                                id="code"
+                                                type="text"
+                                                placeholder="인증번호 입력"
+                                                className="border border-gray-200 rounded-xl px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-roomi"
+                                                value={inputAuthCode}
+                                                onChange={(e) => setInputAuthCode(e.target.value)}
+                                            />
+                                            <button
+                                                type="button"
+                                                className="px-6 py-3 border border-roomi text-roomi font-medium rounded-xl shadow-md transition-all duration-200 ml-2"
+                                                onClick={handleVerification}
+                                            >
+                                                확인
+                                            </button>
+                                            <span className="text-red-500 p-2 font-bold">{dayjs.duration(remainingTime, "seconds").format("mm:ss")}</span>
                                         </div>
                                     </div>
                                 )}
                             </div>
 
-                            <label htmlFor="password">{t("비밀번호")}</label>
-                            <input id="password" type="password" placeholder={t("비밀번호")} value={formData.password}
-                                   onChange={(e) => handleChange("password", e.target.value)}
-                                   className="border p-2 w-full"/>
+                            <label htmlFor="password" className="mt-4 block">{t("비밀번호")}</label>
+                            <input
+                                id="password"
+                                type="password"
+                                placeholder={t("비밀번호")}
+                                value={formData.password}
+                                onChange={(e) => handleChange("password", e.target.value)}
+                                className="border border-gray-200 rounded-xl px-4 py-3 text-sm shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-roomi"
+                            />
                             {errors.password && <p className="font-bold text-red-500 text-sm">{errors.password}</p>}
 
-                            <label htmlFor="phone">{t("전화번호")}</label>
-                            <input id="phone" type="tel" placeholder={t("전화번호")} value={formData.phone}
-                                   onChange={(e) => handleChange("phone", e.target.value)}
-                                   className="border p-2 w-full"/>
+                            <label htmlFor="phone" className="mt-4 block">{t("전화번호")}</label>
+                            <input
+                                id="phone"
+                                type="tel"
+                                placeholder={t("전화번호")}
+                                value={formData.phone}
+                                onChange={(e) => handleChange("phone", e.target.value)}
+                                className="border border-gray-200 rounded-xl px-4 py-3 text-sm shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-roomi"
+                            />
                             {errors.phone && <p className="font-bold text-red-500 text-sm">{errors.phone}</p>}
                         </div>
                     )}
@@ -309,29 +339,43 @@ const UserJoinScreen = () => {
                     {currentStep === 2 && (
                         <div>
                             <label htmlFor="name">{t("이름")}</label>
-                            <input id="name" type="text" placeholder={t("이름")} value={formData.name}
-                                   onChange={(e) => handleChange("name", e.target.value)}
-                                   className="border p-2 w-full"/>
+                            <input
+                                id="name"
+                                type="text"
+                                placeholder={t("이름")}
+                                value={formData.name}
+                                onChange={(e) => handleChange("name", e.target.value)}
+                                className="border border-gray-200 rounded-xl px-4 py-3 text-sm shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-roomi"
+                            />
                             {errors.name && <p className="font-bold text-red-500 text-sm">{errors.name}</p>}
 
-                            <label htmlFor="birth">{t("생년월일")}</label>
-                            <input id="birth" type="date" value={formData.birth}
-                                   onChange={(e) => handleChange("birth", e.target.value)}
-                                   onFocus={(e) => e.target.showPicker?.()}
-                                   min="1900-01-01"
-                                   max={new Date().toISOString().split("T")[0]} // 현재 날짜까지 입력 가능
-                                   className="border p-2 w-full"/>
+                            <label htmlFor="birth" className="mt-4 block">{t("생년월일")}</label>
+                            <input
+                                id="birth"
+                                type="date"
+                                value={formData.birth}
+                                onChange={(e) => handleChange("birth", e.target.value)}
+                                onFocus={(e) => e.target.showPicker?.()}
+                                min="1900-01-01"
+                                max={new Date().toISOString().split("T")[0]}
+                                className="border border-gray-200 rounded-xl px-4 py-3 text-sm shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-roomi"
+                            />
                             {errors.birth && <p className="font-bold text-red-500 text-sm">{errors.birth}</p>}
 
                             <div className="my-2 flex items-center gap-4">
                                 <div>
                                     <label htmlFor="radioMALE" className="flex items-center mb-2 w-fit">
-                                        <input id="radioMALE" type="radio" name="gender" value="MALE"
-                                               checked={formData.gender === "MALE"}
-                                               onChange={(e) => handleChange("gender", e.target.value)}
-                                               className="accent-roomi focus:outline-none appearance-none"/>
-                                        <div className={`w-4 h-4 mr-1 flex_center border border-gray-400 rounded-full 
-                                                ${formData.gender === 'MALE' && 'bg-roomi border-none'}`}>
+                                        <input
+                                            id="radioMALE"
+                                            type="radio"
+                                            name="gender"
+                                            value="MALE"
+                                            checked={formData.gender === "MALE"}
+                                            onChange={(e) => handleChange("gender", e.target.value)}
+                                            className="accent-roomi focus:outline-none appearance-none"
+                                        />
+                                        <div className={`w-5 h-5 mr-2 flex_center border border-gray-300 rounded-md 
+                                            ${formData.gender === 'MALE' && 'bg-roomi border-none'}`}>
                                             {formData.gender === 'MALE' && (
                                                 <FontAwesomeIcon icon={faCheck} className="text-xs text-white"/>
                                             )}
@@ -341,12 +385,17 @@ const UserJoinScreen = () => {
                                 </div>
                                 <div>
                                     <label htmlFor="radioFEMALE" className="flex items-center mb-2 w-fit">
-                                        <input id="radioFEMALE" type="radio" name="gender" value="FEMALE"
-                                               checked={formData.gender === "FEMALE"}
-                                               onChange={(e) => handleChange("gender", e.target.value)}
-                                               className="accent-roomi focus:outline-none appearance-none"/>
-                                        <div className={`w-4 h-4 mr-1 flex_center border border-gray-400 rounded-full 
-                                                ${formData.gender === 'FEMALE' && 'bg-roomi border-none'}`}>
+                                        <input
+                                            id="radioFEMALE"
+                                            type="radio"
+                                            name="gender"
+                                            value="FEMALE"
+                                            checked={formData.gender === "FEMALE"}
+                                            onChange={(e) => handleChange("gender", e.target.value)}
+                                            className="accent-roomi focus:outline-none appearance-none"
+                                        />
+                                        <div className={`w-5 h-5 mr-2 flex_center border border-gray-300 rounded-md 
+                                            ${formData.gender === 'FEMALE' && 'bg-roomi border-none'}`}>
                                             {formData.gender === 'FEMALE' && (
                                                 <FontAwesomeIcon icon={faCheck} className="text-xs text-white"/>
                                             )}
@@ -356,12 +405,17 @@ const UserJoinScreen = () => {
                                 </div>
                                 <div>
                                     <label htmlFor="radioOTHER" className="flex items-center mb-2 w-fit">
-                                        <input id="radioOTHER" type="radio" name="gender" value="OTHER"
-                                               checked={formData.gender === "OTHER"}
-                                               onChange={(e) => handleChange("gender", e.target.value)}
-                                               className="accent-roomi focus:outline-none appearance-none"/>
-                                        <div className={`w-4 h-4 mr-1 flex_center border border-gray-400 rounded-full 
-                                                ${formData.gender === 'OTHER' && 'bg-roomi border-none'}`}>
+                                        <input
+                                            id="radioOTHER"
+                                            type="radio"
+                                            name="gender"
+                                            value="OTHER"
+                                            checked={formData.gender === "OTHER"}
+                                            onChange={(e) => handleChange("gender", e.target.value)}
+                                            className="accent-roomi focus:outline-none appearance-none"
+                                        />
+                                        <div className={`w-5 h-5 mr-2 flex_center border border-gray-300 rounded-md 
+                                            ${formData.gender === 'OTHER' && 'bg-roomi border-none'}`}>
                                             {formData.gender === 'OTHER' && (
                                                 <FontAwesomeIcon icon={faCheck} className="text-xs text-white"/>
                                             )}
@@ -376,20 +430,37 @@ const UserJoinScreen = () => {
 
                     {currentStep === 3 && (
                         <div>
-                            {checkboxList.map((item, index) => (
-                                <label key={index} className="flex items-center mb-2 w-fit">
-                                    <div className={`w-4 h-4 flex_center border border-gray-400 rounded 
-                                        ${formData.checkboxes[index] && 'bg-roomi border-none'}`}>
-                                        {formData.checkboxes[index] && (
-                                            <FontAwesomeIcon icon={faCheck} className="text-xs text-white"/>
-                                        )}
-                                    </div>
-                                    <input type="checkbox" checked={formData.checkboxes[index]}
-                                           onChange={() => handleCheckboxChange(index)}
-                                           className="mr-2 focus:outline-none appearance-none"/>
-                                    {`${t(item.label)} (${t(item.required ? `${t("필수")}` : `${t("선택")}`)})`}
-                                </label>
-                            ))}
+                          {checkboxList.map((item, index) => (
+                            <div key={index} className="flex items-center justify-between w-full mb-2">
+                              <label className="flex items-center">
+                                <div className={`w-5 h-5 mr-2 flex_center border border-gray-300 rounded-md 
+                                  ${formData.checkboxes[index] && 'bg-roomi border-none'}`}>
+                                  {formData.checkboxes[index] && (
+                                    <FontAwesomeIcon icon={faCheck} className="text-xs text-white"/>
+                                  )}
+                                </div>
+                                <input
+                                  type="checkbox"
+                                  checked={formData.checkboxes[index]}
+                                  onChange={() => handleCheckboxChange(index)}
+                                  className="focus:outline-none appearance-none"
+                                />
+                                {`${t(item.label)} (${t(item.required ? '필수' : '선택')})`}
+                              </label>
+                              <a
+                                href={
+                                  item.label.includes('개인정보') ? 'https://roomi.co.kr/api/policies/privacy-policy' :
+                                  item.label.includes('약관') ? 'https://roomi.co.kr/api/policies/terms-of-use' :
+                                  item.label.includes('마케팅') ? 'https://roomi.co.kr/api/policies/marketing-policy' : '#'
+                                }
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-roomi text-sm underline ml-2"
+                              >
+                                상세보기
+                              </a>
+                            </div>
+                          ))}
                         </div>
                     )}
                 </div>
@@ -397,20 +468,29 @@ const UserJoinScreen = () => {
                 {/* 이전/다음 버튼 */}
                 <div className="flex justify-between">
                     {currentStep > 1 ? (
-                        <button className="px-4 py-2 rounded-md text-roomi" onClick={handlePrev}>
+                        <button
+                            className="px-6 py-3 text-roomi font-medium rounded-xl shadow-md hover:bg-gray-100 transition-all duration-200"
+                            onClick={handlePrev}
+                        >
                             이전
                         </button>
                     ) : (
                         <div></div>
                     )}
                     {currentStep === 3 ? (
-                        <button type="submit"
-                            className={`px-4 py-2 rounded-md text-white ${requiredChecked ? "bg-roomi" : "bg-gray-300 cursor-not-allowed"}`}
-                            disabled={!requiredChecked}>
+                        <button
+                            type="submit"
+                            className={`px-6 py-3 font-medium rounded-xl shadow-md text-white transition-all duration-200 ${requiredChecked ? "bg-roomi hover:bg-roomi-dark" : "bg-gray-300 cursor-not-allowed"}`}
+                            disabled={!requiredChecked}
+                        >
                             등록
                         </button>
                     ) : (
-                        <button type="button" className="px-4 py-2 bg-roomi text-white rounded-md" onClick={handleNext}>
+                        <button
+                            type="button"
+                            className="px-6 py-3 bg-roomi text-white font-medium rounded-xl shadow-md hover:bg-roomi-dark transition-all duration-200"
+                            onClick={handleNext}
+                        >
                             다음
                         </button>
                     )}
@@ -419,16 +499,22 @@ const UserJoinScreen = () => {
 
             {/* 모달 */}
             {showModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50">
-                    <div className="bg-white p-6 rounded-md shadow-md">
+                <div className="fixed inset-0 flex items-end justify-center bg-black bg-opacity-40">
+                    <div className="bg-white w-full max-w-md p-6 rounded-t-3xl shadow-2xl">
                         <div className="mb-4">
-                        회원가입을 종료하시겠습니까?
+                            회원가입을 종료하시겠습니까?
                         </div>
-                        <div className="flex justify-end">
-                            <button className="px-4 py-2 bg-gray-400 text-white rounded-md" onClick={() => setShowModal(false)}>
+                        <div className="flex justify-end gap-2">
+                            <button
+                                className="px-6 py-3 bg-gray-400 text-white font-medium rounded-xl shadow-md hover:bg-gray-500 transition-all duration-200"
+                                onClick={() => setShowModal(false)}
+                            >
                                 {t("취소")}
                             </button>
-                            <button className="px-4 py-2 bg-roomi text-white rounded-md" onClick={confirmBack}>
+                            <button
+                                className="px-6 py-3 bg-roomi text-white font-medium rounded-xl shadow-md hover:bg-roomi-dark transition-all duration-200"
+                                onClick={confirmBack}
+                            >
                                 예
                             </button>
                         </div>

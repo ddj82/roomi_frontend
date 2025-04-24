@@ -102,128 +102,63 @@ const MyRooms = () => {
 
     return (
         <div className="w-full h-screen flex flex-col">
-            {/* 고정될 상단 부분 */}
-            <div className="mx-auto py-5 flex flex-col gap-4 w-full bg-white z-10">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">{'나의 방'}</h2>
+            <div className="bg-white border-b border-gray-100 px-4 py-4 sm:px-5">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 sm:gap-4">
 
-                {/* 모바일/웹 공통 레이아웃 - 상단에 고정 */}
-                <div className="w-full flex flex-col sm:flex-row gap-3">
-                    {/* 등록 버튼 - 모바일에서는 상단에 고정 */}
-                    <div className="w-full sm:w-1/6 order-last sm:order-last">
-                        <button
-                            type="button"
-                            className="w-full py-3 px-4 text-base font-medium text-white bg-roomi rounded-lg
-                                focus:outline-none flex items-center justify-center"
-                            onClick={handleInsertBtn}
-                        >
-                            <span className="mr-1">+</span> 방 등록
-                        </button>
-                    </div>
+                    <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                        <div className="flex flex-row gap-3 w-full sm:w-auto">
+                            <div className="relative w-full sm:w-40" ref={dropdownRef}>
+                                <button
+                                    type="button"
+                                    className="w-full flex items-center justify-between px-4 py-2.5 text-sm
+                                        bg-white border border-gray-300 rounded-lg transition shadow-sm hover:ring-1 hover:ring-roomi transition"
+                                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                >
+                                    <span className="text-gray-700">{displayValue}</span>
+                                    <ChevronDown className="w-4 h-4 text-gray-500"/>
+                                </button>
+                                {isDropdownOpen && (
+                                    <div className="absolute z-10 w-full mt-1 bg-white rounded-lg border border-gray-200 rounder-lg shadow-lg">
+                                        {conditions.map((condition) => (
+                                            <div
+                                                key={condition.value || 'empty'}
+                                                className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 
+                                                  ${roomCondition === condition.value ? 'bg-gray-100 font-medium text-roomi' : ''}`}
+                                                onClick={() => {
+                                                    setRoomCondition(condition.value);
+                                                    setIsDropdownOpen(false);
+                                                }}
+                                            >
+                                                {condition.label}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
 
-                    {/* 모바일 뷰에서만 보이는 드롭다운과 검색창 레이아웃 */}
-                    <div className="flex flex-row gap-3 w-full sm:hidden">
-                        {/* 커스텀 드롭다운 - 모바일에서 1/3 차지 */}
-                        <div className="relative w-1/3" ref={dropdownRef}>
+                            <div className="relative w-full sm:w-60">
+                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                    <Search className="w-4 h-4 text-gray-500"/>
+                                </div>
+                                <input
+                                    type="search"
+                                    className="w-full py-2.5 pl-10 pr-3 text-sm border border-gray-300 rounded-lg
+                                        shadow-sm focus:outline-none focus:ring-1 focus:ring-roomi transition"
+                                    placeholder="제목 또는 주소 입력"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="w-full sm:w-auto">
                             <button
                                 type="button"
-                                className="w-full flex items-center justify-between px-3 py-3 text-base
-                                    bg-white border rounded-lg cursor-pointer"
-                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                className="w-full sm:w-auto px-4 py-2.5 text-sm font-medium text-white bg-roomi rounded-lg shadow hover:bg-roomi-dark transition"
+                                onClick={handleInsertBtn}
                             >
-                                <span className="text-gray-700">{displayValue}</span>
-                                <ChevronDown className="w-5 h-5 text-gray-500"/>
+                                <span className="mr-1 text-base">＋</span> 방 등록
                             </button>
-
-                            {/* 드롭다운 메뉴 */}
-                            {isDropdownOpen && (
-                                <div
-                                    className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
-                                    {conditions.map((condition) => (
-                                        <div
-                                            key={condition.value || 'empty'}
-                                            className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 rounded-lg
-                                                ${roomCondition === condition.value ? 'bg-roomi-1' : ''}`}
-                                            onClick={() => {
-                                                setRoomCondition(condition.value);
-                                                setIsDropdownOpen(false);
-                                            }}
-                                        >
-                                            {condition.label}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* 검색창 - 모바일에서 2/3 차지 */}
-                        <div className="relative w-2/3">
-                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                                <Search className="w-4 h-4 text-gray-500"/>
-                            </div>
-                            <input
-                                type="search"
-                                className="w-full py-3 pl-10 pr-3 text-base border border-gray-200 rounded-lg
-                                    shadow-sm focus:outline-none"
-                                placeholder="제목 또는 주소 입력"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-                    {/* 웹 뷰에서만 보이는 드롭다운과 검색창 레이아웃 */}
-                    <div className="hidden sm:flex sm:flex-row sm:gap-3 sm:w-5/6">
-                        {/* 커스텀 드롭다운 - 웹에서 1/6 차지 */}
-                        <div className="relative w-1/6" ref={dropdownRef}>
-                            <button
-                                type="button"
-                                className="w-full flex items-center justify-between px-3 py-3 text-base
-                                    bg-white border rounded-lg cursor-pointer"
-                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            >
-                                <span className="text-gray-700">{displayValue}</span>
-                                <ChevronDown className="w-5 h-5 text-gray-500"/>
-                            </button>
-
-                            {/* 드롭다운 메뉴 */}
-                            {isDropdownOpen && (
-                                <div
-                                    className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
-                                    {conditions.map((condition) => (
-                                        <div
-                                            key={condition.value || 'empty'}
-                                            className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 rounded-lg
-                                                ${roomCondition === condition.value ? 'bg-roomi-1' : ''}`}
-                                            onClick={() => {
-                                                setRoomCondition(condition.value);
-                                                setIsDropdownOpen(false);
-                                            }}
-                                        >
-                                            {condition.label}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* 검색창 - 웹에서 2/6 차지 */}
-                        <div className="relative w-2/6">
-                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                                <Search className="w-4 h-4 text-gray-500"/>
-                            </div>
-                            <input
-                                type="search"
-                                className="w-full py-3 pl-10 pr-3 text-base border border-gray-200 rounded-lg
-                                    shadow-sm focus:outline-none"
-                                placeholder="제목 또는 주소 입력"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-
-                        {/* 추가 공간 - 웹에서 2/6 차지 */}
-                        <div className="relative w-2/6">
-                            {/* 추가 필요한 요소 */}
                         </div>
                     </div>
                 </div>
