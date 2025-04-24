@@ -100,21 +100,18 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
     };
 
     return (
-        <div className="w-full flex flex-col px-2 sm:px-4 md:px-8">
-            {/* 고정될 상단 부분 */}
-            <div className="mx-auto py-5 flex flex-col gap-4 w-full bg-white z-10">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">{'일정 관리'}</h2>
-
-                {/* 필요한 경우 여기에 필터 또는 추가 컨트롤을 배치할 수 있습니다 */}
-            </div>
-
+        <div className="w-full flex flex-col px-1 sm:px-2 md:px-4">
             {/* 스크롤될 캘린더 부분 */}
             <div className="flex-1 overflow-y-auto px-4 scrollbar-hidden">
                 <div
-                    className="airbnb-calendar-container bg-white px-3 pt-6 pb-12 w-full mx-auto sm:rounded-lg"
+                    className="airbnb-calendar-container w-full"
                     style={{
                         maxWidth: '100%',
-                        minHeight: 'calc(100vh - 220px)'
+                        width: '100%',
+                        backgroundColor: 'transparent',
+                        boxShadow: 'none',
+                        border: 'none',
+                        minHeight: 'calc(100vh - 150px)'
                     }}>
                     {months.map((month, monthIndex) => (
                         <div key={monthIndex} className="month-container mb-10 w-full">
@@ -199,7 +196,7 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
                                                 <div className="absolute left-0 top-0 h-full w-1/2 bg-roomi/10"></div>
                                             )}
                                         </div>
-                                    );
+                                    );;
                                 })}
                             </div>
                         </div>
@@ -527,7 +524,7 @@ const RoomStatus = () => {
 
             {/* RoomStatusConfig 내용을 직접 통합 */}
             <div className="bg-white rounded-lg ">
-                <div className="flex flex-col md:flex-row gap-6 bg-white rounded-lg shadow-sm p-6"
+                <div className="flex flex-col md:flex-row gap-0 bg-transparent p-0"
                      style={{minHeight: 'calc(100vh - 100px)'}}>
                     {/* 캘린더 영역 - 에어비앤비 스타일 */}
                     <div className="md:w-2/3 w-full flex flex-col">
@@ -535,8 +532,8 @@ const RoomStatus = () => {
                         <div className="rounded-lg overflow-hidden">
                             {/* 모바일에서 달력 컨테이너 스타일 변경 */}
                             <div
-                                className="airbnb-calendar-container bg-white px-3 pt-4 pb-6 w-full mx-auto"
-                                style={{ maxWidth: '100%' }}
+                                className="airbnb-calendar-container bg-white w-full mx-auto"
+                                style={{ maxWidth: '100%', width: '100%' }}
                             >
                                 <AirbnbStyleCalendar
                                     blockDates={customBlockDatesRSC}
@@ -616,7 +613,7 @@ const RoomStatus = () => {
                         )}
                     </div>
 
-                    <div className="md:w-1/3 w-full hidden md:block">
+                    <div className="md:w-1/3 w-full hidden md:block sticky top-24 self-start">
                         <h3 className="text-xl font-semibold mb-4 text-gray-800">선택 정보</h3>
                         <div className="p-6 bg-gray-50 rounded-lg shadow-sm">
                             <div className="mb-6">
@@ -669,7 +666,7 @@ const RoomStatus = () => {
                 </div>
                 {/* 모바일 고정 하단 패널 */}
                 { !isDesktop && (
-                  <div className="fixed bottom-4 right-4 left-4 z-50 bg-white border border-gray-200 rounded-xl shadow-md p-4">
+                  <div className="fixed bottom-16 right-0 left-0 z-50 bg-white border-t border-gray-200 rounded-t-xl shadow-md p-4">
                     <h3 className="text-base font-semibold mb-2 text-gray-800">선택 정보</h3>
                     <div className="text-sm text-gray-600 mb-1">
                       {startDateRSC && endDateRSC ? `${startDateRSC} ~ ${endDateRSC}` : '날짜를 선택해주세요'}

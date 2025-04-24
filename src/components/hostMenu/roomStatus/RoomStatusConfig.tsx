@@ -541,35 +541,33 @@ const RoomStatusConfig = ({data, selectedRoom}: { data: RoomData[], selectedRoom
 
             {/* 블록 해제 모달 */}
             {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
-                    <div className="relative p-4 w-full max-w-md bg-white rounded-lg shadow-lg">
+                <div className="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-0 bg-black bg-opacity-50">
+                    <div className="relative w-full max-w-xs sm:max-w-sm bg-white rounded-xl shadow-xl p-4 sm:p-6">
                         <button
-                            className="absolute top-4 right-4 text-gray-500 bg-transparent hover:bg-gray-100 hover:text-gray-900 rounded-full text-sm p-2"
+                            className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
                             onClick={() => setShowModal(false)}
                         >
                             <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                      d="M1 1l6 6m0 0l6 6M7 7l6-6M7 7L1 13"/>
+                                    d="M1 1l6 6m0 0l6 6M7 7l6-6M7 7L1 13"/>
                             </svg>
                         </button>
-                        <div className="p-6 text-center">
-                            <svg className="mx-auto mb-6 text-gray-400 w-16 h-16" xmlns="http://www.w3.org/2000/svg"
-                                 fill="none" viewBox="0 0 20 20">
+                        <div className="text-center">
+                            <svg className="mx-auto mb-5 text-gray-400 w-12 h-12" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 20 20">
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                      d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                    d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                             </svg>
-                            <h3 className="mb-6 text-xl font-medium text-gray-800">
-                                블락을 해제 하시겠습니까?
-                            </h3>
-                            <div className="flex justify-center gap-4">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">블락을 해제하시겠습니까?</h3>
+                            <div className="flex justify-center gap-3">
                                 <button
-                                    className="text-white bg-roomi hover:bg-roomi/90 focus:ring-4 focus:outline-none focus:ring-roomi/30 font-medium rounded-lg text-base px-6 py-3 transition duration-300 ease-in-out"
+                                    className="text-white bg-roomi hover:bg-roomi/90 font-medium rounded-lg px-4 py-2 text-xs sm:text-sm"
                                     onClick={handleUnblockBtn}
                                 >
                                     확인
                                 </button>
                                 <button
-                                    className="text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-base px-6 py-3 transition duration-300 ease-in-out"
+                                    className="text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 font-medium rounded-lg px-4 py-2 text-xs sm:text-sm"
                                     onClick={hanbleCencelBtn}
                                 >
                                     취소

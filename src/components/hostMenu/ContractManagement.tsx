@@ -278,7 +278,7 @@ const ContractManagement = () => {
     return (
         <div className="w-full h-screen flex flex-col">
             {/* 고정될 상단 부분 */}
-            <div className="mx-auto py-5 flex flex-col gap-4 w-full bg-white z-10">
+            <div className="mx-auto py-5 flex flex-col gap-4 w-full bg-white z-10 sticky top-0">
 
                 {!selectedReservation && (
                     <>
@@ -392,7 +392,7 @@ const ContractManagement = () => {
             </div>
 
             {/*컨텐츠*/}
-            <div className="flex-1 overflow-y-auto px-4 scrollbar-hidden">
+            <div className="flex-1 overflow-y-auto px-4 scrollbar-hidden" style={{ maxHeight: "calc(100vh - 130px)" }}>
                 {selectedReservation ? (
                     /*예약 상세 정보*/
                     <ReservationDetail

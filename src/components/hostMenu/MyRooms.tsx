@@ -102,7 +102,7 @@ const MyRooms = () => {
 
     return (
         <div className="w-full h-screen flex flex-col">
-            <div className="bg-white border-b border-gray-100 px-4 py-4 sm:px-5">
+            <div className="bg-white border-b border-white px-4 py-4 sm:px-5 sticky top-0 z-10">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 sm:gap-4">
 
                     <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -165,7 +165,7 @@ const MyRooms = () => {
             </div>
 
             {/* 스크롤될 리스트 부분 */}
-            <div className="flex-1 overflow-y-auto px-4 scrollbar-hidden">
+            <div className="flex-1 overflow-y-auto px-4 scrollbar-hidden" style={{ maxHeight: "calc(100vh - 90px)" }}>
                 {/* 필터링된 방 목록 */}
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
                     {filteredData.length > 0 ? (
