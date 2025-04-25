@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>ROOMMATES Co.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+        const userAgent = navigator.userAgent.toLowerCase();
+        const isAndroid = userAgent.includes("android");
+        const isIOS = /iphone|ipad|ipod/.test(userAgent);
+
+        const iosScheme = "roomi://";
+        const iosAppStore = "https://apps.apple.com/app/id6739731240";
+
+        const androidIntent = "intent://#Intent;scheme=roomi;package=com.myno1214.roomi;end";
+        const androidPlayStore = "https://play.google.com/store/apps/details?id=com.myno1214.roomi";
+
+        window.onload = () => {
+            setTimeout(() => {
+                if (isAndroid) {
+                    window.location.href = androidPlayStore;
+                } else if (isIOS) {
+                    window.location.href = iosAppStore;
+                }
+            }, 2000); // 앱 없을 경우 2초 후 스토어로
+
+            if (isAndroid) {
+                window.location.href = androidIntent;
+            } else if (isIOS) {
+                window.location.href = iosScheme;
+            }
+        };
+    </script>
+</head>
+<body>
+</body>
+</html>
