@@ -7,6 +7,7 @@ import {useAuthStore} from "../stores/AuthStore";
 import {useIsHostStore} from "../stores/IsHostStore";
 import {useSignUpChannelStore} from "../stores/SignUpChannelStore";
 import {useChatStore} from "../stores/ChatStore";
+import {response} from "express";
 
 export default function LineLoginCallback() {
     const navigate = useNavigate();
@@ -23,6 +24,7 @@ export default function LineLoginCallback() {
             getLineUserInfo(token);
         }
     }, []);
+
     const getLineUserInfo = async (token: string) => {
         try {
             const res = await axios.post(
@@ -35,28 +37,65 @@ export default function LineLoginCallback() {
                 }
             );
 
-            const { id, name, email, isHost, profileImage, channel, channelUid } = res.data.data;
+            const data = res.data.data;
 
-            console.log("✅ 서버에서 사용자 정보 가져옴:", res.data.data);
+            console.log("✅ 서버에서 사용자 정보 가져옴:", data);
 
             // 로그인 처리
-            await SocialLogin(channelUid, channel, setAuthToken, setIsHost, connect);
-
-            if (email && name) {
+            if (data.name) {
                 // 기존 사용자
+                let authToken = res.headers['authorization'] || ''; // 응답에서 토큰 추출
+                console.log('토큰:', authToken);
+
+                if (authToken) {
+                    localStorage.setItem('authToken', authToken); // 토큰 저장
+                    setAuthToken(authToken); // 전역 상태 업데이트
+                } else {
+                    throw new Error('토큰을 찾을 수 없습니다.');
+                }
+
+                localStorage.setItem('userId', data.id);
+                localStorage.setItem('userEmail', data.email);
+                localStorage.setItem('userName', data.name);
+                localStorage.setItem('userIsHost', data.isHost);
+
+                if (data.profile_image === null) {
+                    localStorage.setItem('userProfileImg', '/assets/images/profile.png');
+                } else {
+                    localStorage.setItem('userProfileImg', data.profile_image);
+                }
+
+                localStorage.setItem('userCurrency', data.currency);
+
+                // 동의 정보 저장
+                localStorage.setItem('accept_SMS', data.accept_SMS ? '1' : '0');
+                localStorage.setItem('accept_alert', data.accept_alert ? '1' : '0');
+                localStorage.setItem('accept_email', data.accept_email ? '1' : '0');
+
+                const hostStatus = localStorage.getItem("userIsHost") === "true";
+                console.log("hostStatus값 :", hostStatus);
+                setIsHost(hostStatus);
+
+                // 웹소켓 연결
+                if (authToken) {
+                    authToken = authToken.replace(/^Bearer\s/, "");
+                    connect(authToken);
+                }
+
                 navigate("/");
-            } else {
-                // 이메일/이름이 없는 신규 사용자 → 회원가입 페이지로 이동
-                navigate('/join/social', {
-                    state: {
-                        socialEmail: email || '',
-                        socialName: name || '',
-                        socialProfileImage: profileImage || '',
-                        socialChannel: channel,
-                        socialChannelUid: channelUid,
-                    },
-                });
             }
+            // else {
+            //     // 이메일/이름이 없는 신규 사용자 → 회원가입 페이지로 이동
+            //     navigate('/join/social', {
+            //         state: {
+            //             socialEmail: email || '',
+            //             socialName: name || '',
+            //             socialProfileImage: profileImage || '',
+            //             socialChannel: channel,
+            //             socialChannelUid: channelUid,
+            //         },
+            //     });
+            // }
         } catch (err) {
             console.error("LINE 사용자 정보 요청 실패:", err);
             navigate("/");
