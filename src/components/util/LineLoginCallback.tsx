@@ -23,7 +23,7 @@ export default function LineLoginCallback() {
                 new URLSearchParams({
                     grant_type: 'authorization_code',
                     code: code,
-                    redirect_uri: 'http://localhost:8081/sign-up/line', // 리디렉트 URI
+                    redirect_uri: 'https://roomi.co.kr/sign-up/line', // 리디렉트 URI
                     client_id: '2006686179',
                     client_secret: 'd6fbb28d95e39c6a74bed6b28c22165a',
                 }),
