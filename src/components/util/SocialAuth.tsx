@@ -104,7 +104,7 @@ export class SocialAuth {
             const returnedState = urlParams.get('state');
 
             if (code && returnedState === state) {
-                const response = await fetch('http://localhost:3000/api/auth/social/line', {
+                const response = await fetch('https://roomi.co.kr/api/auth/social/line', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

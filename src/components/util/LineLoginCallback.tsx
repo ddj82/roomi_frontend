@@ -1,10 +1,19 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import {validateUser} from "../../api/api";
+import {SocialLogin} from "./authUtils";
+import {useAuthStore} from "../stores/AuthStore";
+import {useIsHostStore} from "../stores/IsHostStore";
+import {useSignUpChannelStore} from "../stores/SignUpChannelStore";
+import {useChatStore} from "../stores/ChatStore";
 
 export default function LineLoginCallback() {
     const navigate = useNavigate();
-
+    const { setAuthToken } = useAuthStore();
+    const { setIsHost } = useIsHostStore();
+    const connect = useChatStore((state) => state.connect);
+    const { setSignUpChannel } = useSignUpChannelStore();
     useEffect(() => {
         const code = new URL(window.location.href).searchParams.get("code");
         const state = new URL(window.location.href).searchParams.get("state");
@@ -53,13 +62,33 @@ export default function LineLoginCallback() {
 
             console.log("✅ LINE 사용자 정보:", res.data);
 
-            // 👉 여기서 기존 회원 확인 → 로그인 or 회원가입 처리
-            // await validateUser(userId, 'line') 등
+            const socialChannel = 'line';
+            const socialChannelUid = userId;
+            const socialName = displayName;
+            const socialProfileImage = pictureUrl || '';
+            const socialEmail = ''; // LINE은 email을 별도 동의 받아야 하므로 기본값
 
-            // 예시로 홈으로 이동
-            navigate('/');
+            const statusCode = await validateUser(socialChannelUid, socialChannel);
+            if (statusCode === 409) {
+                navigate('/join/social', {
+                    state: {
+                        socialEmail,
+                        socialName,
+                        socialProfileImage,
+                        socialChannel,
+                        socialChannelUid,
+                    },
+                });
+            } else if (statusCode === 200) {
+                await SocialLogin(socialChannelUid, socialChannel, setAuthToken, setIsHost, connect);
+                navigate("/");
+            } else {
+                console.error("예상치 못한 상태 코드:", statusCode);
+                navigate("/");
+            }
         } catch (err) {
             console.error("LINE 사용자 정보 가져오기 실패:", err);
+            navigate("/");
         }
     };
 
