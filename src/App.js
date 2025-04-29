@@ -27,6 +27,7 @@ import {useHostHeaderBtnVisibility} from "./components/stores/HostHeaderBtnStore
 import BottomNavigator from "./components/navigator/BottomNavigator";
 import MyRoomUpdate from "./components/hostMenu/myRooms/MyRoomUpdate";
 import LoginPage from "./components/screens/link/LoginPage";
+import LineLoginCallback from "./components/util/LineLoginCallback";
 
 export default function App() {
     return (
@@ -73,6 +74,7 @@ function AppContent() {
                         <Route path="/join" element={<UserJoinScreen/>}/>
                         <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
                         <Route path="/sign-up" element={<KakaoLoginCallback/>}/>
+                        <Route path="/sign-up/line" element={<LineLoginCallback/>}/>
                         <Route path="/join/social" element={<SocialJoinScreen/>}/>
                         <Route path="/login" element={<LoginPage/>}/>
                         {/* 로그인 사용자 만 접근 가능 */}

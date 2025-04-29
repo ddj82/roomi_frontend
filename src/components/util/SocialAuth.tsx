@@ -85,8 +85,10 @@ export class SocialAuth {
 
             const authUrl = `https://access.line.me/oauth2/v2.1/authorize?${new URLSearchParams({
                 response_type: 'code',
-                client_id: process.env.EXPO_PUBLIC_LINE_CLIENT_ID!,
-                client_secret: process.env.EXPO_PUBLIC_LINE_CLIENT_SECRET!,
+                // client_id: process.env.EXPO_PUBLIC_LINE_CLIENT_ID!,
+                // client_secret: process.env.EXPO_PUBLIC_LINE_CLIENT_SECRET!,
+                client_id: '2006686179',    
+                client_secret: 'd6fbb28d95e39c6a74bed6b28c22165a',
                 redirect_uri: redirectUri,
                 state: state,
                 scope: 'profile openid email',
@@ -102,7 +104,7 @@ export class SocialAuth {
             const returnedState = urlParams.get('state');
 
             if (code && returnedState === state) {
-                const response = await fetch('https://roomi.co.kr/api/auth/social/line', {
+                const response = await fetch('http://localhost:3000/api/auth/social/line', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

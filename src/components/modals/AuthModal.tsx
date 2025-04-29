@@ -105,8 +105,36 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
             }
             case 'Line': {
                 try {
+                    console.log("라인로그인시작");
                     loginResult = await SocialAuth.lineLogin();
+                    console.log(loginResult);
                     onClose(); // 모달만 닫아주기
+                    // try {
+                    //     statusCode = await validateUser(googleData.socialId, googleData.provider);
+                    //     console.log('statusCode', statusCode);
+                    //     socialEmail = googleData.email;
+                    //     socialName = googleData.name;
+                    //     socialChannelUid = googleData.socialId;
+                    //     socialChannel = googleData.provider;
+                    //
+                    //     if (statusCode === 409) {
+                    //         // 회원가입
+                    //         navigate('/join/social', {
+                    //             state : {
+                    //                 socialEmail,
+                    //                 socialName,
+                    //                 socialChannel,
+                    //                 socialChannelUid,
+                    //             },
+                    //         })
+                    //     } else if (statusCode === 200) {
+                    //         // 소셜 로그인
+                    //         await SocialLogin(socialChannelUid, socialChannel, setAuthToken, setIsHost, connect);
+                    //         window.location.reload();
+                    //     }
+                    // } catch (e) {
+                    //
+                    // }
                 } catch (error) {
                     console.error('LINE 로그인 에러:', error);
                     alert('로그인 시도 중 문제가 발생했습니다. 다시 시도해주세요.');
