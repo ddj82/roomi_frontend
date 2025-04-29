@@ -25,7 +25,7 @@ export default function LineLoginCallback() {
     }, []);
     const getLineUserInfo = async (token: string) => {
         try {
-            const res = await axios.get("https://roomi.co.kr/api/users/me", {
+            const res = await axios.get("https://roomi.co.kr/api/users/token/login", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
