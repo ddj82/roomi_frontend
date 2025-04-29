@@ -25,11 +25,15 @@ export default function LineLoginCallback() {
     }, []);
     const getLineUserInfo = async (token: string) => {
         try {
-            const res = await axios.post("https://roomi.co.kr/api/users/token/login", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const res = await axios.post(
+                "https://roomi.co.kr/api/users/token/login",
+                {}, // POST Body 없으면 빈 객체
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
 
             const { id, name, email, isHost, profileImage, channel, channelUid } = res.data.data;
 
