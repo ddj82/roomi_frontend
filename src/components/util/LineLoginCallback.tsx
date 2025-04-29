@@ -15,13 +15,12 @@ export default function LineLoginCallback() {
     const connect = useChatStore((state) => state.connect);
     const { setSignUpChannel } = useSignUpChannelStore();
     useEffect(() => {
-        const code = new URL(window.location.href).searchParams.get("code");
-        const state = new URL(window.location.href).searchParams.get("state");
+        const token = new URL(window.location.href).searchParams.get("token");
 
-        if (!code) {
+        if (!token) {
             navigate('/');
         } else {
-            getAccessToken(code);
+            getLineUserInfo(token);
         }
     }, []);
 
@@ -88,6 +87,42 @@ export default function LineLoginCallback() {
             }
         } catch (err) {
             console.error("LINE 사용자 정보 가져오기 실패:", err);
+            navigate("/");
+        }
+    };
+
+    const getLineUserInfo = async (token: string) => {
+        try {
+            const res = await axios.get("https://roomi.co.kr/api/users/me", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const { id, name, email, isHost, profileImage, channel, channelUid } = res.data.data;
+
+            console.log("✅ 서버에서 사용자 정보 가져옴:", res.data.data);
+
+            // 로그인 처리
+            await SocialLogin(channelUid, channel, setAuthToken, setIsHost, connect);
+
+            if (email && name) {
+                // 기존 사용자
+                navigate("/");
+            } else {
+                // 이메일/이름이 없는 신규 사용자 → 회원가입 페이지로 이동
+                navigate('/join/social', {
+                    state: {
+                        socialEmail: email || '',
+                        socialName: name || '',
+                        socialProfileImage: profileImage || '',
+                        socialChannel: channel,
+                        socialChannelUid: channelUid,
+                    },
+                });
+            }
+        } catch (err) {
+            console.error("LINE 사용자 정보 요청 실패:", err);
             navigate("/");
         }
     };

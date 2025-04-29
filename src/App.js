@@ -1,107 +1,63 @@
-import React, {useEffect, useState} from 'react';
-import {BrowserRouter as Router, Routes, Route, useLocation} from 'react-router-dom';
-import Footer from "./components/footer/Footer";
-import Header from "./components/header/Header";
-import MainHome from "./components/screens/MainHome";
-import RoomDetailScreen from "./components/screens/RoomDetailScreen";
-import HostModeAgreeScreen from "./components/screens/HostModeAgreeScreen";
-import HostScreen from "./components/screens/HostScreen";
-import NaverMap from "./components/map/NaverMap";
-import MyRoomInsert from "./components/hostMenu/myRooms/MyRoomInsert";
-import GuestReservationSetScreen from "./components/screens/GuestReservationSetScreen";
-import GuestReservationScreen from "./components/screens/GuestReservationScreen";
-import UserJoinScreen from "./components/screens/UserJoinScreen";
-import UserMessage from "./components/screens/UserMessage";
-import 'src/css/Modal.css';
-import 'src/css/Calendar.css';
-import ProtectedAuthRoute from "./api/ProtectedAuthRoute";
-import GuestMyPage from "./components/screens/GuestMyPage";
-import HostMyPage from "./components/screens/HostMyPage";
-import ProtectedHostRoute from "./api/ProtectedHostRoute";
-import ProtectedGuestRoute from "./api/ProtectedGuestRoute";
-import KakaoLoginCallback from "./components/util/KakaoLoginCallback";
-import SocialJoinScreen from "./components/screens/SocialJoinScreen";
-import SuccessPage from "./components/toss/SuccessPage";
-import {useHeaderStore} from "./components/stores/HeaderStore";
-import {useHostHeaderBtnVisibility} from "./components/stores/HostHeaderBtnStore";
-import BottomNavigator from "./components/navigator/BottomNavigator";
-import MyRoomUpdate from "./components/hostMenu/myRooms/MyRoomUpdate";
-import LoginPage from "./components/screens/link/LoginPage";
-import LineLoginCallback from "./components/util/LineLoginCallback";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { SocialLogin } from "../api/socialLogin";
+import { useAuthStore } from "../stores/AuthStore";
+import { useSocketStore } from "../stores/SocketStore";
 
-export default function App() {
-    return (
-        <Router>
-            <AppContent/>
-        </Router>
-    );
-}
+const LineLoginCallback = () => {
+    const navigate = useNavigate();
+    const setAuthToken = useAuthStore((state) => state.setAuthToken);
+    const setIsHost = useAuthStore((state) => state.setIsHost);
+    const connect = useSocketStore((state) => state.connect);
 
-function AppContent() {
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-    const location = useLocation();
-    const { setVisibility } = useHeaderStore();
-    const isVisibleHostScreen = useHostHeaderBtnVisibility();
-
-    // 경로 변경 감지해서 헤더 visible 상태 설정
     useEffect(() => {
-        const isMyPage = location.pathname.startsWith("/myPage") || location.pathname.startsWith("/host");
-        setVisibility(!isMobile || !isMyPage);  // 모바일 && myPage면 숨김
-    }, [location.pathname, isMobile]); // <- 경로 or 모바일 상태가 바뀔 때마다 재평가
+        const token = new URL(window.location.href).searchParams.get("token");
 
-    // resize에 대한 반응 처리
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth <= 768);
-        };
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
+        if (!token) {
+            navigate('/');
+        } else {
+            getLineUserInfo(token);
+        }
     }, []);
 
-    const isVisible = useHeaderStore((state) => state.isVisible);
+    const getLineUserInfo = async (token: string) => {
+        try {
+            const res = await axios.get("https://roomi.co.kr/api/users/me", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-    return (
-        <>
-            {isVisible && <Header />}
-            <div className="app container xl:max-w-[1500px]"
-                // style={{minHeight: window.innerHeight - 130,}}
-            >
-                <Routes>
-                    {/* hostMode === true 일 때 이 부분 전부 차단됨 */}
-                    <Route element={<ProtectedGuestRoute />}>
-                        <Route path="/" element={<MainHome/>}/>
-                        <Route path="/naver" element={<NaverMap/>}/>
-                        <Route path="/join" element={<UserJoinScreen/>}/>
-                        <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
-                        <Route path="/sign-up" element={<KakaoLoginCallback/>}/>
-                        <Route path="/sign-up/line" element={<LineLoginCallback/>}/>
-                        <Route path="/join/social" element={<SocialJoinScreen/>}/>
-                        <Route path="/login" element={<LoginPage/>}/>
-                        {/* 로그인 사용자 만 접근 가능 */}
-                        <Route element={<ProtectedAuthRoute />}>
-                            <Route path="/myPage" element={<GuestMyPage/>}/>
-                            <Route path="/myPage/:menu" element={<GuestMyPage />} />
-                            <Route path="/chat" element={<UserMessage/>}/>
-                            <Route path="/detail/:roomId/:locale/reservation" element={<GuestReservationSetScreen/>}/>
-                            <Route path="/detail/:roomId/:locale/reservation/payment" element={<GuestReservationScreen/>}/>
-                            <Route path="/success" element={<SuccessPage/>}/>
-                            <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
-                        </Route>
-                    </Route>
-                    {/* hostMode === false 일 때 /host/* 페이지 차단 */}
-                    <Route element={<ProtectedHostRoute />}>
-                        <Route path="/host" element={<HostScreen/>}/>
-                        <Route path="/host/teb/:menu" element={<HostScreen/>}/>
-                        <Route path="/host/insert" element={<MyRoomInsert/>}/>
-                        <Route path="/host/update/:roomId" element={<MyRoomUpdate/>}/>
-                        <Route path="/host/myPage" element={<HostMyPage/>}/>
-                    </Route>
-                </Routes>
-            </div>
-            {isVisibleHostScreen && isMobile && <BottomNavigator />}
-            <div className="hide-on-mobile">
-                <Footer/>
-            </div>
-        </>
-    );
-}
+            const { id, name, email, isHost, profileImage, channel, channelUid } = res.data.data;
+
+            console.log("✅ 서버에서 사용자 정보 가져옴:", res.data.data);
+
+            // 로그인 처리
+            await SocialLogin(channelUid, channel, setAuthToken, setIsHost, connect);
+
+            if (email && name) {
+                // 기존 사용자
+                navigate("/");
+            } else {
+                // 이메일/이름이 없는 신규 사용자 → 회원가입 페이지로 이동
+                navigate('/join/social', {
+                    state: {
+                        socialEmail: email || '',
+                        socialName: name || '',
+                        socialProfileImage: profileImage || '',
+                        socialChannel: channel,
+                        socialChannelUid: channelUid,
+                    },
+                });
+            }
+        } catch (err) {
+            console.error("LINE 사용자 정보 요청 실패:", err);
+            navigate("/");
+        }
+    };
+
+    return <div>Loading...</div>;
+};
+
+export default LineLoginCallback;
