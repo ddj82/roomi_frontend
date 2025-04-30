@@ -87,8 +87,8 @@ export default function KakaoLoginCallback() {
             const socialChannelUid = data.id.toString();
             const socialChannel = 'kakao';
             const statusCode = await validateUser(socialChannelUid, socialChannel);
-
-            if (statusCode === 409) {
+            console.log("statusCode",statusCode)
+            if (statusCode === 200) {
                 // 회원가입
                 const socialEmail = data.kakao_account.email || '';
                 const socialName = data.properties.nickname;
@@ -105,7 +105,7 @@ export default function KakaoLoginCallback() {
                         socialChannelUid,
                     },
                 })
-            } else if (statusCode === 200) {
+            } else if (statusCode === 409) {
                 // 소셜 로그인
                 await SocialLogin(socialChannelUid, socialChannel, setAuthToken, setIsHost, connect);
             }

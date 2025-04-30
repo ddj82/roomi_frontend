@@ -55,10 +55,10 @@ export class SocialAuth {
             const REST_API_KEY=process.env.REACT_APP_REST_API_KEY; //REST API KEY
             const REDIRECT_URI = this.redirectUri + '/sign-up'; //Redirect URI
             const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-            console.log('redirectUri',this.redirectUri);
-            console.log('REST_API_KEY',REST_API_KEY);
-            console.log('REDIRECT_URI',REDIRECT_URI);
-            console.log('kakaoAuthUrl',kakaoAuthUrl);
+             console.log('redirectUri',REDIRECT_URI);
+            // console.log('REST_API_KEY',REST_API_KEY);
+            // console.log('REDIRECT_URI',REDIRECT_URI);
+            // console.log('kakaoAuthUrl',kakaoAuthUrl);
 
             // 팝업 띄우기
             const popup = window.open(kakaoAuthUrl, 'kakaoLogin', 'width=500,height=600');
