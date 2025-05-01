@@ -462,18 +462,18 @@ export default function RoomDetailScreen() {
                                         )}
                                         {room.maintenance_fee_month && (
                                             <div className="flex justify-between items-center py-2">
-                                                <span className="text-gray-600">{t("월 관리비")}</span>
+                                                <span className="text-gray-600">{t("service_charge")}</span>
                                                 <span
                                                     className="font-medium">{room.symbol} {room.maintenance_fee_month.toLocaleString()}</span>
                                             </div>
                                         )}
-                                        {room.deposit_month && (
-                                            <div className="flex justify-between items-center py-2">
-                                                <span className="text-gray-600">{t("월 보증금")}</span>
-                                                <span
-                                                    className="font-medium">{room.symbol} {room.deposit_month.toLocaleString()}</span>
-                                            </div>
-                                        )}
+                                        {/*{room.deposit_month && (*/}
+                                        {/*    <div className="flex justify-between items-center py-2">*/}
+                                        {/*        <span className="text-gray-600">{t("월 보증금")}</span>*/}
+                                        {/*        <span*/}
+                                        {/*            className="font-medium">{room.symbol} {room.deposit_month.toLocaleString()}</span>*/}
+                                        {/*    </div>*/}
+                                        {/*)}*/}
                                     </div>
                                     {/* Weekly pricing section */}
                                     <div className="space-y-2">
@@ -488,18 +488,18 @@ export default function RoomDetailScreen() {
                                         )}
                                         {room.maintenance_fee_week && (
                                             <div className="flex justify-between items-center py-2">
-                                                <span className="text-gray-600">{t("주 관리비")}</span>
+                                                <span className="text-gray-600">{t("service_charge")}</span>
                                                 <span
                                                     className="font-medium">{room.symbol} {room.maintenance_fee_week.toLocaleString()}</span>
                                             </div>
                                         )}
-                                        {room.deposit_week && (
-                                            <div className="flex justify-between items-center py-2">
-                                                <span className="text-gray-600">{t("주 보증금")}</span>
-                                                <span
-                                                    className="font-medium">{room.symbol} {room.deposit_week.toLocaleString()}</span>
-                                            </div>
-                                        )}
+                                        {/*{room.deposit_week && (*/}
+                                        {/*    <div className="flex justify-between items-center py-2">*/}
+                                        {/*        <span className="text-gray-600">{t("주 보증금")}</span>*/}
+                                        {/*        <span*/}
+                                        {/*            className="font-medium">{room.symbol} {room.deposit_week.toLocaleString()}</span>*/}
+                                        {/*    </div>*/}
+                                        {/*)}*/}
                                     </div>
 
 
@@ -507,9 +507,9 @@ export default function RoomDetailScreen() {
 
                                 {/* Maintenance details */}
                                 <div className="mt-4 ml-1">
-                                    <h3 className="text-gray-800 font-medium mb-2">관리비 포함 내역</h3>
+                                    <h3 className="text-gray-800 font-medium mb-2">서비스 비용 포함 내역</h3>
                                     <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-                                        {t('월 관리비, 인터넷, 수도세, 전기세 포함\n관리비, 청소비, 보안서비스, 시설 유지보수비 포함\n기본 관리비, 공용공간 유지비, 24시간 경비 서비스 포함\n관리비, 냉난방비, 엘리베이터 유지비, 주차관리비 포함\n전체 관리비, 인터넷, 공용시설 이용료 포함')}
+                                        {t('월간 서비스 비용 (인터넷, 운영비 포함)\n청소 서비스, 보안 서비스, 시설 유지 관리 비용 포함\n공용 공간 운영비, 24시간 보안 서비스 포함\n냉난방비, 엘리베이터 관리, 주차 서비스 비용 포함\n공용 시설 이용료, 인터넷, 종합 서비스 비용 포함')}
                                     </p>
                                 </div>
                             </div>
@@ -918,21 +918,27 @@ export default function RoomDetailScreen() {
                             </div>
 
                             {/* 비용 정보 */}
-                            <div className="rounded-lg bg-roomi-light p-3 mb-4 text-sm">
-                                <div className="flex justify-between mb-2">
-                                    <span className="text-gray-700">{t("deposit")}</span>
-                                    <span className="font-bold">
-                                        {room.symbol}{calUnit ? room.deposit?.toLocaleString() : room.deposit_week?.toLocaleString()}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between mb-2">
-                                    <span className="text-gray-700">{t("service_charge")}</span>
-                                    <span className="font-bold">
-                                        {room.symbol}{calUnit ?
-                                        room.maintenance_fee?.toLocaleString() : room.maintenance_fee_week?.toLocaleString()}
-                                    </span>
-                                </div>
-                            </div>
+                            {/*<div className="rounded-lg bg-roomi-light p-3 mb-4 text-sm">*/}
+                            {/*    <div className="flex justify-between mb-2">*/}
+                            {/*        <span className="text-gray-700">{t("가격(월)")}</span>*/}
+                            {/*        <span className="font-bold">*/}
+                            {/*            {room.symbol}{calUnit ? room?.month_price?.toLocaleString() : room.month_price?.toLocaleString()}*/}
+                            {/*        </span>*/}
+                            {/*    </div>*/}
+                            {/*    <div className="flex justify-between mb-2">*/}
+                            {/*        <span className="text-gray-700">{t("가격(주)")}</span>*/}
+                            {/*        <span className="font-bold">*/}
+                            {/*            {room.symbol}{calUnit ? room?.week_price?.toLocaleString() : room.week_price?.toLocaleString()}*/}
+                            {/*        </span>*/}
+                            {/*    </div>*/}
+                            {/*    <div className="flex justify-between mb-2">*/}
+                            {/*        <span className="text-gray-700">{t("service_charge")}</span>*/}
+                            {/*        <span className="font-bold">*/}
+                            {/*            {room.symbol}{calUnit ?*/}
+                            {/*            room.maintenance_fee?.toLocaleString() : room.maintenance_fee_week?.toLocaleString()}*/}
+                            {/*        </span>*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
                             {/* 예약 버튼 */}
                             <button
                                 className="w-full py-3 bg-roomi text-white text-sm rounded-lg font-medium hover:bg-roomi-3 transition-colors shadow-sm"

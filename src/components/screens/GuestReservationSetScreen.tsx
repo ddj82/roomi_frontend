@@ -85,9 +85,9 @@ export default function GuestReservationSetScreen() {
             // } else {
             //     setNightVal(0); // 날짜가 없을 경우 0박으로 설정
             // }
-            setTotalPrice(((price + maintenancePrice + feePrice) * monthValue) + depositPrice);
+            setTotalPrice(((price + maintenancePrice + feePrice) * monthValue) );
         } else {
-            setTotalPrice(((price + maintenancePrice + feePrice) * weekValue) + depositPrice);
+            setTotalPrice(((price + maintenancePrice + feePrice) * weekValue) );
         }
     };
 
@@ -273,7 +273,7 @@ export default function GuestReservationSetScreen() {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="p-4 rounded-lg bg-roomi-light">
-                                    <div className="text-sm text-gray-500">{t("체크인날짜")}</div>
+                                    <div className="text-sm text-gray-500">{t("입실")}</div>
                                     <div className="font-bold text-gray-800 mt-1 flex items-center">
                                         <svg className="w-5 h-5 mr-2 text-roomi" fill="none" stroke="currentColor"
                                              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -284,7 +284,7 @@ export default function GuestReservationSetScreen() {
                                     </div>
                                 </div>
                                 <div className="p-4 rounded-lg bg-roomi-light">
-                                    <div className="text-sm text-gray-500">{t("체크아웃날짜")}</div>
+                                    <div className="text-sm text-gray-500">{t("퇴실")}</div>
                                     <div className="font-bold text-gray-800 mt-1 flex items-center">
                                         <svg className="w-5 h-5 mr-2 text-roomi" fill="none" stroke="currentColor"
                                              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -394,10 +394,10 @@ export default function GuestReservationSetScreen() {
                                     </div>
                                 </div>
                                 {/*보증금*/}
-                                <div className="flex justify-between py-2">
-                                    <div className="text-gray-700">{t("deposit")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{depositPrice.toLocaleString()}</div>
-                                </div>
+                                {/*<div className="flex justify-between py-2">*/}
+                                {/*    <div className="text-gray-700">{t("deposit")}</div>*/}
+                                {/*    <div className="font-bold text-gray-800">{t('원')}{depositPrice.toLocaleString()}</div>*/}
+                                {/*</div>*/}
                                 {/*관리비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("service_charge")}</div>
@@ -407,7 +407,7 @@ export default function GuestReservationSetScreen() {
                                 </div>
                                 {/*청소비*/}
                                 <div className="flex justify-between py-2">
-                                    <div className="text-gray-700">관리비</div>
+                                    <div className="text-gray-700">수수료</div>
                                     <div className="font-bold text-gray-800">
                                         {t('원')}{(calUnit ? (feePrice * monthValue) : (feePrice * weekValue)).toLocaleString()}
                                     </div>

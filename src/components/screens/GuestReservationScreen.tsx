@@ -378,7 +378,7 @@ export default function GuestReservationScreen() {
                                 </div>
                             </div>
                             <div className="p-4 rounded-lg bg-roomi-light">
-                                <div className="text-sm text-gray-500">{t("체크인날짜")}</div>
+                                <div className="text-sm text-gray-500">{t("입실")}</div>
                                 <div className="font-bold text-gray-800 mt-1 flex items-center">
                                     <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
                                     { dayjs(bookData?.reservation?.check_in_date).format("YYYY-MM-DD") || checkIn || dayjs(location.state.bookData?.reservation?.reservation.check_in_date).format("YYYY-MM-DD") || '날짜 없음'}
@@ -386,7 +386,7 @@ export default function GuestReservationScreen() {
                                 </div>
                             </div>
                             <div className="mt-4 p-4 rounded-lg bg-roomi-light">
-                                <div className="text-sm text-gray-500">{t("체크아웃날짜")}</div>
+                                <div className="text-sm text-gray-500">{t("퇴실")}</div>
                                 <div className="font-bold text-gray-800 mt-1 flex items-center">
                                     <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
                                     { dayjs(bookData?.reservation?.check_out_date).format("YYYY-MM-DD") || checkOut || dayjs(location.state.bookData?.reservation?.reservation.check_out_date).format("YYYY-MM-DD") || '날짜 없음'}
@@ -504,10 +504,10 @@ export default function GuestReservationScreen() {
                                     </div>
                                 </div>
                                 {/*보증금*/}
-                                <div className="flex justify-between py-2">
-                                    <div className="text-gray-700">{t("deposit")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{depositPrice.toLocaleString()}</div>
-                                </div>
+                                {/*<div className="flex justify-between py-2">*/}
+                                {/*    <div className="text-gray-700">{t("deposit")}</div>*/}
+                                {/*    <div className="font-bold text-gray-800">{t('원')}{depositPrice.toLocaleString()}</div>*/}
+                                {/*</div>*/}
                                 {/*관리비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("service_charge")}</div>
@@ -515,12 +515,12 @@ export default function GuestReservationScreen() {
                                 </div>
                                 {/*청소비*/}
                                 <div className="flex justify-between py-2">
-                                    <div className="text-gray-700">{t("cleaning_fee")}</div>
+                                    <div className="text-gray-700">수수료</div>
                                     <div className="font-bold text-gray-800">{t('원')}{fee.toLocaleString()}</div>
                                 </div>
                                 <div className="flex justify-between border-t border-gray-200 mt-3 pt-4">
                                     <div className="text-gray-800 font-medium">{t("총결제금액")}</div>
-                                    <div className="font-bold text-roomi text-xl">{t("원")}{totalPrice.toLocaleString()}</div>
+                                    <div className="font-bold text-roomi text-xl">{t("원")}{(totalPrice-depositPrice).toLocaleString()}</div>
                                 </div>
                             </div>
                             <div className="mt-6 text-sm space-y-6 max-w-lg mx-auto">
