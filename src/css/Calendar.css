@@ -76,6 +76,9 @@
     height: 100%;
     background-color: rgba(244, 115, 102, 0.2);
     z-index: -2;
+    border-radius: 0 !important; /* Override any inherited border-radius */
+    -webkit-border-radius: 0 !important; /* For Safari/Chrome */
+    -moz-border-radius: 0 !important; /* For Firefox */
 }
 
 /* 범위 내 날짜 */
@@ -168,22 +171,21 @@
     border-radius: 50%;
 }
 .dateModal .react-calendar .react-calendar__tile--active {
-    background: #f47366 !important;
     color: white !important;
 }
 
-.dateModal .react-calendar .react-calendar__tile--active:enabled:hover abbr,
-.dateModal .react-calendar .react-calendar__tile--active:enabled:focus abbr {
-    background-color: #f47366 !important;
-    color: white !important;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    margin: auto;
-}
+/*.dateModal .react-calendar .react-calendar__tile--active:enabled:hover abbr,*/
+/*.dateModal .react-calendar .react-calendar__tile--active:enabled:focus abbr {*/
+/*    background-color: #f47366 !important;*/
+/*    color: white !important;*/
+/*    border-radius: 50%;*/
+/*    display: inline-flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    width: 32px;*/
+/*    height: 32px;*/
+/*    margin: auto;*/
+/*}*/
 
 .dateModal .react-calendar .selected-date abbr {
     display: inline-flex;
