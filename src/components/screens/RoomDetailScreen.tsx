@@ -507,9 +507,9 @@ export default function RoomDetailScreen() {
 
                                 {/* Maintenance details */}
                                 <div className="mt-4 ml-1">
-                                    <h3 className="text-gray-800 font-medium mb-2">서비스 비용 포함 내역</h3>
+                                    <h3 className="text-gray-800 font-medium mb-2">{t('서비스 비용 포함 내역')}</h3>
                                     <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-                                        {t('월간 서비스 비용 (인터넷, 운영비 포함)\n청소 서비스, 보안 서비스, 시설 유지 관리 비용 포함\n공용 공간 운영비, 24시간 보안 서비스 포함\n냉난방비, 엘리베이터 관리, 주차 서비스 비용 포함\n공용 시설 이용료, 인터넷, 종합 서비스 비용 포함')}
+                                        {t('종합 시설 관리 서비스 비용 (인터넷, 운영비 포함)\n청소 서비스, 보안 서비스, 시설 유지 관리 서비스 이용료 포함\n공용 공간 편의 서비스, 24시간 안전 관리 서비스 포함 실내 환경 관리(냉난방), 엘리베이터 유지 서비스, 주차 편의 서비스 이용료, 공용 시설 이용 서비스, 인터넷 연결 서비스, 종합 생활 편의 서비스 비용 포함')}
                                     </p>
                                 </div>
                             </div>
