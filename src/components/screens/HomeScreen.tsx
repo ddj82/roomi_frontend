@@ -19,7 +19,7 @@ const AccommodationCard = memo(
         const {t} = useTranslation();
 
         return (
-            <div className="homeScreen card" onClick={onClick}>
+            <div className="homeScreen card" onClick={onClick} data-nosnippet>
                 <div className="homeScreen card-header">
                     <WishListButton roomId={item.id} isFavorite={item.is_favorite}/>
                     {item.detail_urls && item.detail_urls.length > 0 ? (
@@ -94,7 +94,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
         }
 
         return (
-            <div className="homeScreen accommodation-grid">
+            <div className="homeScreen accommodation-grid" data-nosnippet>
                 {rooms.map((item) => (
                     <AccommodationCard
                         key={item.id}

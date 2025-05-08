@@ -11,23 +11,41 @@
 
         const iosScheme = "com.myno1214.roomi://";
         const iosAppStore = "https://apps.apple.com/app/id6739731240";
-
         const androidIntent = "intent://#Intent;scheme=roomi;package=com.myno1214.roomi;end";
         const androidPlayStore = "https://play.google.com/store/apps/details?id=com.myno1214.roomi";
 
-        window.onload = () => {
-            setTimeout(() => {
-                if (isAndroid) {
-                    window.location.href = androidPlayStore;
-                } else if (isIOS) {
-                    window.location.href = iosAppStore;
-                }
-            }, 2000); // 앱 없을 경우 2초 후 스토어로
+        const getQueryParam = (name) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        };
 
+        window.onload = async () => {
+            const route = getQueryParam("route") || "unknown";
+
+            try {
+                // ✅ POST 요청, 쿼리 스트링으로 전달
+                await fetch(`https://roomi.co.kr/api/tracking?route=${encodeURIComponent(route)}`, {
+                    method: "POST",
+                });
+            } catch (e) {
+                console.warn("유입 경로 전송 실패:", e);
+            }
+
+            // 앱 실행 시도
             if (isAndroid) {
                 window.location.href = androidIntent;
+                setTimeout(() => {
+                    window.location.href = androidPlayStore;
+                }, 2000);
             } else if (isIOS) {
-                window.location.href = iosScheme;
+                const iframe = document.createElement("iframe");
+                iframe.style.display = "none";
+                iframe.src = iosScheme;
+                document.body.appendChild(iframe);
+
+                setTimeout(() => {
+                    window.location.href = iosAppStore;
+                }, 2000);
             }
         };
     </script>

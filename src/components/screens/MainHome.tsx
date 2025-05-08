@@ -44,7 +44,7 @@ export default function MainHome() {
     };
 
     return (
-        <div className="mainHome main-container">
+        <div className="mainHome main-container" >
             {/* 상단 필터바 */}
             <FilterBar/>
             <div className={`mainHome content-wrapper ${homeVisible ? 'show-map' : 'show-list'}`}>
@@ -52,7 +52,7 @@ export default function MainHome() {
                     <NaverMap onRoomsUpdate={handleRoomsUpdate}/>
                 </div>
 
-                <div className="mainHome list-container">
+                <div className="mainHome list-container" data-nosnippet>
                     <HomeScreen rooms={rooms}/>
                 </div>
             </div>
