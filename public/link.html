@@ -8,11 +8,13 @@
         const userAgent = navigator.userAgent.toLowerCase();
         const isAndroid = userAgent.includes("android");
         const isIOS = /iphone|ipad|ipod/.test(userAgent);
+        const isMobile = isAndroid || isIOS;
 
         const iosScheme = "com.myno1214.roomi://";
         const iosAppStore = "https://apps.apple.com/app/id6739731240";
         const androidIntent = "intent://#Intent;scheme=roomi;package=com.myno1214.roomi;end";
         const androidPlayStore = "https://play.google.com/store/apps/details?id=com.myno1214.roomi";
+        const webUrl = "https://roomi.co.kr";
 
         const getQueryParam = (name) => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -31,7 +33,13 @@
                 console.warn("유입 경로 전송 실패:", e);
             }
 
-            // 앱 실행 시도
+            // 웹 브라우저인 경우 roomi.co.kr로 리다이렉트
+            if (!isMobile) {
+                window.location.href = webUrl;
+                return;
+            }
+
+            // 모바일 앱 실행 시도
             if (isAndroid) {
                 window.location.href = androidIntent;
                 setTimeout(() => {
@@ -51,5 +59,10 @@
     </script>
 </head>
 <body>
+<!-- 리다이렉트 전 표시될 내용 -->
+<div style="text-align: center; padding: 20px; font-family: sans-serif;">
+    <h1>ROOMMATES Co.</h1>
+    <p>잠시만 기다려주세요. 이동 중입니다...</p>
+</div>
 </body>
 </html>
