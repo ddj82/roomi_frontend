@@ -51,12 +51,12 @@
         paymentStarted = true;
 
         const IMP = window.IMP;
-        IMP.init("imp19424728"); // 가맹점 코드
+        IMP.init("imp01154410"); // 가맹점 코드
 
         addDebugInfo('아임포트 결제 요청 시작...');
 
         IMP.request_pay({
-            pg: 'inicis_pay', // PG사
+            pg: 'html5_inicis', // PG사
             pay_method: "card",
             merchant_uid: params.orderId,
             name: "테스트 결제 상품",
