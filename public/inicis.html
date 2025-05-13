@@ -67,7 +67,8 @@
             buyer_tel: params.buyerTel,
             buyer_addr: params.buyerAddr,
             buyer_postcode: "06018",
-            m_redirect_url: "https://roomi.co.kr/success.html" // 모바일 전용
+            m_redirect_url: "https://roomi.co.kr/success.html", // 모바일 전용,
+            popup:false
         }, function (rsp) {
             if (rsp.success) {
                 addDebugInfo('결제 성공 ✅: ' + JSON.stringify(rsp));
