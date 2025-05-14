@@ -11,7 +11,6 @@ import {SocialLogin} from "./authUtils";
 
 export default function KakaoLoginCallback() {
     const navigate = useNavigate();
-    const [accessTokenFetching, setAccessTokenFetching] = useState(false);
     const { setAuthToken } = useAuthStore();
     const { setIsHost } = useIsHostStore();
     const connect = useChatStore((state) => state.connect);
@@ -21,7 +20,7 @@ export default function KakaoLoginCallback() {
         console.log('code', code);
         if (!code) {
             navigate('/');
-        } else {
+        } else  {
             getAccessToken(code); // 요청 보내는 함수
         }
     }, []);
@@ -30,7 +29,6 @@ export default function KakaoLoginCallback() {
     // Access Token 받아오기
     const getAccessToken = async (code: string) => {
         try {
-            setAccessTokenFetching(true); // Set fetching to true
             const REST_API_KEY=process.env.REACT_APP_REST_API_KEY; //REST API KEY
             const BASE_URL = process.env.REACT_APP_BASE_URL;
             const REDIRECT_URI = BASE_URL + '/sign-up'; //Redirect URI
@@ -51,12 +49,11 @@ export default function KakaoLoginCallback() {
             );
 
             const accessToken = response.data.access_token;
-            setAccessTokenFetching(false); // Reset fetching to false
+            localStorage.setItem('kakaoToken', accessToken); // 카카오 토큰 저장
             await getKakaoUser(accessToken);
-
         } catch (error) {
             console.error("Error:", error);
-            setAccessTokenFetching(false); // Reset fetching even in case of error
+            navigate('/');
         }
     };
 
@@ -82,12 +79,13 @@ export default function KakaoLoginCallback() {
 
     const Login = async (data: any) => {
         try {
-            console.log('카카오 :',data);
-            console.log('카카오 유저id:', data.id.toString());
+            // console.log('카카오 :',data);
+            // console.log('카카오 유저id:', data.id.toString());
             const socialChannelUid = data.id.toString();
             const socialChannel = 'kakao';
             const statusCode = await validateUser(socialChannelUid, socialChannel);
-            console.log("statusCode",statusCode)
+            // console.log("statusCode",statusCode);
+
             if (statusCode === 409) {
                 // 회원가입
                 const socialEmail = data.kakao_account.email || '';
@@ -108,12 +106,9 @@ export default function KakaoLoginCallback() {
             } else if (statusCode === 200) {
                 // 소셜 로그인
                 await SocialLogin(socialChannelUid, socialChannel, setAuthToken, setIsHost, connect);
-            }
-
-            if (window.opener) {
-                window.close(); // 팝업이라면 닫기
-            } else {
-                navigate('/'); // 직접 접근이면 홈으로
+                localStorage.setItem('authMode', 'kakao'); // 카카오 로그인 플래그 생성
+                localStorage.setItem('mainReload', 'true'); // 로그인 완료, 메인페이지 새로고침 플래그
+                window.location.reload();
             }
 
         } catch (error) {

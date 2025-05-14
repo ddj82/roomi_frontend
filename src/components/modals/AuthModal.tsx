@@ -26,8 +26,8 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
             console.log('✅ Kakao SDK initialized');
         }
         // 토스 결제 심사 목적
-        setEmail("admin");
-        setPassword("admin");
+        // setEmail("admin");
+        // setPassword("admin");
     }, []);
 
     const handleSubmit = async (event: React.FormEvent) => {
@@ -98,8 +98,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
             }
             case 'Kakao': {
                 if (!window.Kakao) return;
-                loginResult = await SocialAuth.kakaoLogin();
-                console.log("카카오 loginResult:", loginResult);
+                await SocialAuth.kakaoLogin();
                 onClose();
                 break;
             }

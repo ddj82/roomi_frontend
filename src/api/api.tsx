@@ -3,6 +3,8 @@ import i18n from "src/i18n";
 import {RoomFormData, Schedules} from "../types/rooms";
 import {User} from "../types/user";
 import {Reservation} from "../types/reservation";
+import axios from "axios";
+import qs from "qs";
 
 const BASE_URL = 'https://roomi.co.kr/api';
 
@@ -52,13 +54,6 @@ const request = async (endpoint: string, requireAuth: boolean = true, method: st
             body: data ? JSON.stringify(data) : undefined,
         });
 
-        // if (response.ok) {
-        //     console.log('API 요청 성공');
-        //     return response; // 응답을 JSON으로 반환
-        // } else {
-        //     const errorData = await response.json();
-        //     throw new Error(errorData.message || 'API 요청 실패');
-        // }
         return response;
     } catch (error) {
         console.error(`API 요청 실패(request): ${endpoint}`, error);
@@ -190,6 +185,8 @@ export const logout = async () => {
         localStorage.removeItem('accept_alert');
         localStorage.removeItem('accept_email');
         localStorage.removeItem('userCurrency');
+        localStorage.removeItem('authMode'); // 소셜 로그인 플래그 제거
+        localStorage.removeItem('kakaoToken'); // 카카오 토큰 제거
 
         const detectedLang = i18n.services.languageDetector?.detect();
         console.log('detectedLang:', detectedLang);
@@ -252,7 +249,7 @@ export const myRoomList = async () => {
 };
 // 호스트모드 계약 관리 API
 export const myContractList = async () => {
-    return request(`/rooms/my/history`, true, 'GET', undefined, true);
+    return request(`/rooms/host/history`, true, 'GET', undefined, true);
 };
 
 // 방 사용 불가 처리 API

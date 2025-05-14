@@ -1,5 +1,8 @@
 import {GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
-import {auth} from '../../firebase'; // 모듈화된 Firebase Auth 인스턴스
+import {auth} from '../../firebase';
+import axios from "axios";
+import qs from "qs";
+import {logout} from "../../api/api"; // 모듈화된 Firebase Auth 인스턴스
 
 interface SocialAuthResponse {
     success: boolean;
@@ -54,13 +57,11 @@ export class SocialAuth {
         try {
             const REST_API_KEY=process.env.REACT_APP_REST_API_KEY; //REST API KEY
             const REDIRECT_URI = this.redirectUri + '/sign-up'; //Redirect URI
-            const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-             console.log('redirectUri',REDIRECT_URI);
-            // console.log('REST_API_KEY',REST_API_KEY);
-            // console.log('REDIRECT_URI',REDIRECT_URI);
-            // console.log('kakaoAuthUrl',kakaoAuthUrl);
+            const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code&prompt=login`;
+
             window.location.href = kakaoAuthUrl;
-            // 팝업 띄우기
+
+            // // 팝업 띄우기
             // const popup = window.open(kakaoAuthUrl, 'kakaoLogin', 'width=500,height=600');
             //
             // // 팝업 감시 → 닫히면 새로고침
@@ -74,6 +75,32 @@ export class SocialAuth {
         } catch (error: unknown) {
             console.error("카카오 로그인 팝업 오류:", error);
             return;
+        }
+    }
+
+    static async kakaoLogout() {
+        try {
+            // const REST_API_KEY=process.env.REACT_APP_REST_API_KEY; //REST API KEY
+            // const BASE_URL = process.env.REACT_APP_BASE_URL;
+            // const REDIRECT_URI = BASE_URL + '/logout-kakao'; //Redirect URI
+            // const kakaoLogoutUrl = `https://kauth.kakao.com/oauth/logout?client_id=${REST_API_KEY}&logout_redirect_uri=${REDIRECT_URI}`;
+            // window.location.href = kakaoLogoutUrl;
+
+            const accessToken = localStorage.getItem('kakaoToken'); // 카카오 토큰
+            const response = await axios.post(
+                'https://kapi.kakao.com/v1/user/logout',
+                null, // POST 요청이지만 body 없음
+                {
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Authorization": `Bearer ${accessToken}`,
+                    },
+                }
+            );
+
+            return response.statusText === 'OK';
+        } catch (error: any) {
+            console.error('소셜 로그아웃 실패:', error);
         }
     }
 
