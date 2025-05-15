@@ -32,19 +32,19 @@ export const BusinessInfoModal: React.FC<BusinessInfoModalProps> = ({ visible, o
                     </div>
                     <div className="bInfoModal info-row">
                         <span className="bInfoModal label">대표자</span>
-                        <span className="bInfoModal value">김민오</span>
+                        <span className="bInfoModal value">진유진</span>
                     </div>
                     <div className="bInfoModal info-row">
                         <span className="bInfoModal label">사업자등록번호</span>
-                        <span className="bInfoModal value">847-14-02078</span>
+                        <span className="bInfoModal value">159-81-03462</span>
                     </div>
                     <div className="bInfoModal info-row">
                         <span className="bInfoModal label">주소</span>
-                        <span className="bInfoModal value">서울특별시 서대문구 세무서7길 15-2,204</span>
+                        <span className="bInfoModal value">서울특별시 마포구 월드컵북로 1길 52, 지층44</span>
                     </div>
                     <div className="bInfoModal info-row">
                         <span className="bInfoModal label">이메일</span>
-                        <span className="bInfoModal value">roomi.official.kr@gmail.com</span>
+                        <span className="bInfoModal value">help@roomi.co.kr</span>
                     </div>
                     <div className="bInfoModal info-row">
                         <span className="bInfoModal label">전화번호</span>
