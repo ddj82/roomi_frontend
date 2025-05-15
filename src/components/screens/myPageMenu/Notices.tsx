@@ -30,8 +30,6 @@ export default function Notices() {
 
     return (
         <div className="p-4 md:p-6 max-w-3xl mx-auto">
-            {/*<h2 className="text-xl font-bold mb-6">{t('공지사항')}</h2>*/}
-
             {noticeList && noticeList.length > 0 ? (
                 <div className="space-y-4">
                     {noticeList.map((notice) => {

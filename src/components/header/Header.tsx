@@ -7,7 +7,7 @@ import GuestsModal from "src/components/modals/GuestsModal";
 import AuthModal from "src/components/modals/AuthModal";
 import {BusinessInfoModal} from "src/components/modals/BusinessInfoModal";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faSearch, faCalendarDay, faLocationDot, faUserPlus, faTimes, faChevronDown} from '@fortawesome/free-solid-svg-icons';
+import {faSearch, faUserPlus} from '@fortawesome/free-solid-svg-icons';
 import HostHeader from "src/components/header/HostHeader";
 import {useHeaderBtnVisibility} from "src/components/stores/HeaderBtnStore";
 import {useHostHeaderBtnVisibility} from "../stores/HostHeaderBtnStore";
@@ -21,10 +21,9 @@ import {logout} from "../../api/api";
 import {useChatStore} from "../stores/ChatStore";
 import {useIsHostStore} from "../stores/IsHostStore";
 import i18n from "i18next";
-import AccordionCalendar from "./AccordionCalendar";
 import '../../css/Header.css';
-import './SearchModal.css';
 import {SocialAuth} from "../util/SocialAuth";
+import {SearchBar} from "./SearchBar";
 
 type ModalSection = 'date' | 'location' | 'guests';
 type ModalPosition = { x: number; y: number };
@@ -65,13 +64,6 @@ const Header = () => {
     const searchBarRef = useRef<HTMLDivElement>(null);
     const modalRef = useRef<HTMLDivElement>(null);
 
-    // 위치 옵션 데이터
-    const locationOptions: LocationOption[] = [
-        {name: 'Seoul', country: '대한민국'},
-        {name: 'Busan', country: '대한민국'},
-        {name: 'Jeju', country: '대한민국'},
-        {name: 'Daejeon', country: '대한민국'}
-    ];
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -117,7 +109,7 @@ const Header = () => {
         if (activeCard === cardName) {
             // 이미 열린 카드를 클릭하면 닫지 않고 유지 (선택사항)
             // 닫고 싶다면 아래 주석을 해제
-            // setActiveCard(null);
+            setActiveCard(null);
         } else {
             setActiveCard(cardName);
         }
@@ -247,10 +239,10 @@ const Header = () => {
                                     ref={searchBarRef}
                                     onClick={openSearchModal}
                                     className="h search-bar-row md:h-14 h-12
-                                                w-full md:max-w-xl lg:max-w-2xl xl:max-w-3xl
-                                                text-[11px] md:text-sm lg:text-base flex items-center justify-between
-                                                bg-white border border-gray-200
-                                                cursor-pointer transition-shadow"
+                                               w-full md:max-w-xl lg:max-w-2xl xl:max-w-3xl
+                                               text-[11px] md:text-sm lg:text-base flex items-center justify-between
+                                               bg-white border border-gray-200
+                                               cursor-pointer transition-shadow"
                                     style={{borderRadius: '9999px', overflow: 'hidden'}}
                                 >
                                     <div className="search-simple-text flex items-center px-4 py-2 flex-1">
@@ -259,13 +251,12 @@ const Header = () => {
                                             className="text-roomi md:text-base lg:text-lg mr-2"
                                         />
                                         <span className="text-gray-500 truncate">
-                {t('어디로 여행 가세요?')}
-            </span>
+                                            {t('어디로 여행 가세요?')}
+                                        </span>
                                     </div>
 
                                     <button
-                                        className="h search-button md:w-9 md:h-9 w-7 h-7
-            m-2 flex items-center justify-center bg-roomi hover:bg-roomi-3 rounded-full"
+                                        className="h search-button md:w-9 md:h-9 w-7 h-7 m-2 flex items-center justify-center bg-roomi hover:bg-roomi-3 rounded-full"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             performSearch();
@@ -372,188 +363,16 @@ const Header = () => {
 
                 {/* 새로운 통합 검색 모달 (아코디언 스타일로 수정) */}
                 {searchModalOpen && (
-                    <div className="search-modal fixed inset-0 bg-white bg-opacity-95 z-[9999] overflow-y-auto">
-                        <div className="container mx-auto px-4 py-6 md:max-w-2xl lg:max-w-3xl">
-                            {/* 모달 헤더 */}
-                            <div className="flex items-center mb-6">
-                                <button
-                                    className="p-2 rounded-full hover:bg-gray-100"
-                                    onClick={closeSearchModal}
-                                >
-                                    <FontAwesomeIcon icon={faTimes} className="text-gray-800"/>
-                                </button>
-                                <h1 className="text-xl font-semibold text-center flex-1">{t('Search')}</h1>
-                                <div className="w-8"></div>
-                                {/* 정렬을 위한 여백 */}
-                            </div>
-
-                            <div ref={modalRef} className="search-content pb-20">
-                                {/* 위치 선택 카드 */}
-                                <div
-                                    className={`search-card bg-white rounded-xl shadow-md border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'location' ? 'search-card-collapsed' : ''}`}
-                                >
-                                    {/* 카드 헤더 - 클릭 시 접기/펼치기 */}
-                                    <div
-                                        className="p-4 flex justify-between items-center cursor-pointer"
-                                        onClick={() => toggleCard('location')}
-                                    >
-                                        <div className="flex items-center">
-                                            <FontAwesomeIcon icon={faLocationDot} className="text-roomi text-lg mr-3"/>
-                                            <div>
-                                                <h2 className="text-lg font-semibold">{t('Where')}</h2>
-                                                <p className="text-sm text-gray-500">
-                                                    {selectedLocation || t('Add destination')}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <FontAwesomeIcon
-                                            icon={faChevronDown}
-                                            className={`transition-transform duration-300 ${activeCard === 'location' ? 'transform rotate-180' : ''}`}
-                                        />
-                                    </div>
-
-                                    {/* 카드 내용 - 접기/펼치기 */}
-                                    <div
-                                        className={`search-card-content p-4 ${activeCard === 'location' ? 'block' : 'hidden'}`}>
-                                        <div className="search-input-container p-3 bg-gray-50 rounded-xl mb-4">
-                                            <div className="flex items-center">
-                                                <FontAwesomeIcon icon={faSearch}
-                                                                 className="text-gray-400 text-lg mr-3"/>
-                                                <input
-                                                    type="text"
-                                                    className="flex-1 outline-none border-none text-base bg-transparent"
-                                                    placeholder={t('Where are you going?')}
-                                                    value={selectedLocation || ''}
-                                                    onChange={(e) => setSelectedLocation(e.target.value)}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="popular-locations">
-                                            <h3 className="text-md font-medium mb-3">{t('Popular destinations')}</h3>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                {locationOptions.map((location, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-gray-100"
-                                                        onClick={() => handleSelectLocation(location)}
-                                                    >
-                                                        <FontAwesomeIcon icon={faLocationDot}
-                                                                         className="text-gray-400 mr-3"/>
-                                                        <div>
-                                                            <p className="font-medium">{t(location.name.toLowerCase())}</p>
-                                                            <p className="text-sm text-gray-500">{t(location.country)}</p>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* 날짜 선택 카드 */}
-                                <div
-                                    className={`search-card bg-white rounded-xl shadow-md border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'date' ? 'search-card-collapsed' : ''}`}
-                                >
-                                    {/* 카드 헤더 - 클릭 시 접기/펼치기 */}
-                                    <div
-                                        className="p-4 flex justify-between items-center cursor-pointer"
-                                        onClick={() => toggleCard('date')}
-                                    >
-                                        <div className="flex items-center">
-                                            <FontAwesomeIcon icon={faCalendarDay} className="text-roomi text-lg mr-3"/>
-                                            <div>
-                                                <h2 className="text-lg font-semibold">{t('When')}</h2>
-                                                <p className="text-sm text-gray-500">
-                                                    {(startDate && endDate)
-                                                        ? `${dayjs(startDate).format('MM-DD')} ~ ${dayjs(endDate).format('MM-DD')}`
-                                                        : t('Add dates')}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <FontAwesomeIcon
-                                            icon={faChevronDown}
-                                            className={`transition-transform duration-300 ${activeCard === 'date' ? 'transform rotate-180' : ''}`}
-                                        />
-                                    </div>
-
-                                    {/* 카드 내용 - 접기/펼치기 */}
-                                    <div
-                                        className={`search-card-content p-4 ${activeCard === 'date' ? 'block' : 'hidden'}`}>
-                                        <AccordionCalendar onSave={() => toggleCard('guests')}/>
-                                    </div>
-                                </div>
-
-                                {/* 인원 선택 카드 */}
-                                <div
-                                    className={`search-card bg-white rounded-xl shadow-md border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'guests' ? 'search-card-collapsed' : ''}`}
-                                >
-                                    {/* 카드 헤더 - 클릭 시 접기/펼치기 */}
-                                    <div
-                                        className="p-4 flex justify-between items-center cursor-pointer"
-                                        onClick={() => toggleCard('guests')}
-                                    >
-                                        <div className="flex items-center">
-                                            <FontAwesomeIcon icon={faUserPlus} className="text-roomi text-lg mr-3"/>
-                                            <div>
-                                                <h2 className="text-lg font-semibold">{t('Who')}</h2>
-                                                <p className="text-sm text-gray-500">
-                                                    {guestCount > 0
-                                                        ? `${t('guest')} ${guestCount}${t('guest_unit')}`
-                                                        : t('Add guests')}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <FontAwesomeIcon
-                                            icon={faChevronDown}
-                                            className={`transition-transform duration-300 ${activeCard === 'guests' ? 'transform rotate-180' : ''}`}
-                                        />
-                                    </div>
-
-                                    {/* 카드 내용 - 접기/펼치기 */}
-                                    <div
-                                        className={`search-card-content p-4 ${activeCard === 'guests' ? 'block' : 'hidden'}`}>
-                                        <div className="guests-picker-container p-4 bg-gray-50 rounded-xl">
-                                            <div className="flex justify-between items-center py-2">
-                                                <div>
-                                                    <h4 className="font-medium">{t('Adults')}</h4>
-                                                    <p className="text-sm text-gray-500">{t('Age 13+')}</p>
-                                                </div>
-                                                <div className="flex items-center">
-                                                    <button
-                                                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center bg-white"
-                                                        onClick={() => setGuestCount(prev => (prev > 0 ? prev - 1 : 0))}
-                                                        disabled={guestCount <= 0}
-                                                    >
-                                                        <span className="text-lg">-</span>
-                                                    </button>
-                                                    <span className="mx-4 w-6 text-center">{guestCount}</span>
-                                                    <button
-                                                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center bg-white"
-                                                        onClick={() => setGuestCount(prev => prev + 1)}
-                                                    >
-                                                        <span className="text-lg">+</span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* 하단 검색 버튼 */}
-                            <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200">
-                                <div className="mx-auto md:max-w-2xl lg:max-w-3xl">
-                                    <button
-                                        className="w-full p-3 md:p-2 bg-roomi text-white rounded-lg font-medium md:text-sm lg:text-base"
-                                        onClick={performSearch}
-                                    >
-                                        {t('Search')}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <SearchBar
+                        visible={searchModalOpen}
+                        onClose={() => setSearchModalOpen(false)}
+                        openSearchModal={openSearchModal}
+                        closeSearchModal={closeSearchModal}
+                        toggleCard={toggleCard}
+                        activeCard={activeCard}
+                        performSearch={performSearch}
+                        handleSelectLocation={handleSelectLocation}
+                    />
                 )}
 
                 <BusinessInfoModal visible={businessInfoVisible} onClose={() => setBusinessInfoVisible(false)}/>
