@@ -25,7 +25,6 @@ export async function SocialLogin(
         // 1. 로그인 요청
         await channelLogin(socialChannelUid, socialChannel, setAuthToken);
         await UserSetting(setIsHost, connect);
-        localStorage.setIsConnected(true);
     } catch (error) {
         console.error("소셜 로그인 처리 중 오류:", error);
     }
@@ -44,9 +43,8 @@ export async function UserSetting(
     if (token) {
         token = token.replace(/^Bearer\s/, "");
         connect(token);
+        console.log('로그인 성공, AuthToken, isHost 업데이트 완료');
     } else {
         console.error("❌ Auth Token이 없습니다.");
     }
-
-    console.log('로그인 성공, AuthToken, isHost 업데이트 완료');
 }

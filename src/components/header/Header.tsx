@@ -24,6 +24,7 @@ import i18n from "i18next";
 import AccordionCalendar from "./AccordionCalendar";
 import '../../css/Header.css';
 import './SearchModal.css';
+import {SocialAuth} from "../util/SocialAuth";
 
 type ModalSection = 'date' | 'location' | 'guests';
 type ModalPosition = { x: number; y: number };
@@ -184,6 +185,11 @@ const Header = () => {
 
     const handleLogout = async () => {
         try {
+            if (localStorage.getItem('authMode') && localStorage.getItem('authMode') === 'kakao') {
+                const response = await SocialAuth.kakaoLogout();
+                console.log('소셜로그아웃 메소드 실행 후', response);
+                if (!response) return; // 카카오 로그인 실패시 메소드 종료
+            }
             const response = await logout();
             console.log(response);
             resetUserMode();// hostMode 초기화

@@ -85,7 +85,7 @@ export default function HostMyPage() {
     };
 
     const handleSetSelectedMenu = (selectMenu:string) => {
-        navigate(`/hostMyPage/${selectMenu}`);
+        navigate(`/host/myPage/${selectMenu}`);
     };
 
     return (

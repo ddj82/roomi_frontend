@@ -39,6 +39,14 @@ export default function MainHome() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    useEffect(() => {
+        if (localStorage.getItem('mainReload') && localStorage.getItem('mainReload') === 'true') {
+            localStorage.removeItem('mainReload'); // 플래그 제거 (한 번만 새로고침하도록)
+            window.location.reload();
+        }
+    }, []);
+
+
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
