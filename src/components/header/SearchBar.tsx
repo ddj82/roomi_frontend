@@ -64,19 +64,19 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             isOpen={visible}
             onRequestClose={onClose}
             overlayClassName="overlay-searchBar"
-            className="w-1/2 h-[100vh] overflow-auto focus:outline-none scrollbar-hidden"
+            className="w-full md:w-3/4 lg:w-1/2 h-[100vh] overflow-auto focus:outline-none scrollbar-hidden"
         >
-            <div className="search-modal inset-0 bg-white bg-opacity-95 z-[9999] overflow-y-auto">
-                <div className="container mx-auto px-4 py-6 md:max-w-2xl lg:max-w-3xl">
+            <div className="search-modal inset-0 bg-transparent z-[9999] overflow-y-auto">
+                <div className="container mx-auto px-4 py-4 md:py-6 max-w-full md:max-w-2xl lg:max-w-3xl">
                     {/* 모달 헤더 */}
-                    <div className="flex items-center mb-6">
+                    <div className="flex items-center mb-4 md:mb-6">
                         <button
                             className="p-2 rounded-full hover:bg-gray-100"
                             onClick={closeSearchModal}
                         >
-                            <FontAwesomeIcon icon={faTimes} className="text-gray-800"/>
+                            <FontAwesomeIcon icon={faTimes} className="text-gray-800 text-lg"/>
                         </button>
-                        <h1 className="text-xl font-semibold text-center flex-1">{t('Search')}</h1>
+                        <h1 className="text-lg md:text-xl font-semibold text-center flex-1">{t('Search')}</h1>
                         <div className="w-8"></div>
                         {/* 정렬을 위한 여백 */}
                     </div>
@@ -84,18 +84,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                     <div ref={modalRef} className="search-content pb-20">
                         {/* 위치 선택 카드 */}
                         <div
-                            className={`search-card bg-white rounded-xl shadow-md border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'location' ? 'search-card-collapsed' : ''}`}
+                            className={`search-card bg-transparent backdrop-blur-sm rounded-xl shadow-md border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'location' ? 'search-card-collapsed' : ''}`}
                         >
                             {/* 카드 헤더 - 클릭 시 접기/펼치기 */}
                             <div
-                                className="p-4 flex justify-between items-center cursor-pointer"
+                                className="p-4 flex justify-between items-center cursor-pointer card-header"
                                 onClick={() => toggleCard('location')}
                             >
                                 <div className="flex items-center">
-                                    <FontAwesomeIcon icon={faLocationDot} className="text-roomi text-lg mr-3"/>
+                                    <FontAwesomeIcon icon={faLocationDot} className="text-roomi text-lg mr-2 md:mr-3"/>
                                     <div>
-                                        <h2 className="text-lg font-semibold">{t('Where')}</h2>
-                                        <p className="text-sm text-gray-500">
+                                        <h2 className="text-base md:text-lg font-semibold">{t('Where')}</h2>
+                                        <p className="text-xs md:text-sm text-gray-500">
                                             {selectedLocation || t('Add destination')}
                                         </p>
                                     </div>
@@ -109,7 +109,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                             {/* 카드 내용 - 접기/펼치기 */}
                             <div
                                 className={`search-card-content p-4 ${activeCard === 'location' ? 'block' : 'hidden'}`}>
-                                <div className="search-input-container p-3 bg-gray-50 rounded-xl mb-4">
+                                <div className="search-input-container p-2 md:p-3 bg-white bg-opacity-80 rounded-xl mb-3 md:mb-4">
                                     <div className="flex items-center">
                                         <FontAwesomeIcon icon={faSearch}
                                                          className="text-gray-400 text-lg mr-3"/>
@@ -124,12 +124,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                                 </div>
 
                                 <div className="popular-locations">
-                                    <h3 className="text-md font-medium mb-3">{t('Popular destinations')}</h3>
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <h3 className="text-md font-medium mb-2 md:mb-3">{t('Popular destinations')}</h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
                                         {locationOptions.map((location, index) => (
                                             <div
                                                 key={index}
-                                                className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-gray-100"
+                                                className="flex items-center p-3 hover:bg-gray-50 hover:bg-opacity-80 rounded-lg cursor-pointer border border-gray-100 bg-white bg-opacity-60"
                                                 onClick={() => handleSelectLocation(location)}
                                             >
                                                 <FontAwesomeIcon icon={faLocationDot}
@@ -147,18 +147,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
                         {/* 날짜 선택 카드 */}
                         <div
-                            className={`search-card bg-white rounded-xl shadow-md border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'date' ? 'search-card-collapsed' : ''}`}
+                            className={`search-card bg-transparent backdrop-blur-sm rounded-xl shadow-md border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'date' ? 'search-card-collapsed' : ''}`}
                         >
                             {/* 카드 헤더 - 클릭 시 접기/펼치기 */}
                             <div
-                                className="p-4 flex justify-between items-center cursor-pointer"
+                                className="p-4 flex justify-between items-center cursor-pointer card-header"
                                 onClick={() => toggleCard('date')}
                             >
                                 <div className="flex items-center">
-                                    <FontAwesomeIcon icon={faCalendarDay} className="text-roomi text-lg mr-3"/>
+                                    <FontAwesomeIcon icon={faCalendarDay} className="text-roomi text-lg mr-2 md:mr-3"/>
                                     <div>
-                                        <h2 className="text-lg font-semibold">{t('When')}</h2>
-                                        <p className="text-sm text-gray-500">
+                                        <h2 className="text-base md:text-lg font-semibold">{t('When')}</h2>
+                                        <p className="text-xs md:text-sm text-gray-500">
                                             {(startDate && endDate)
                                                 ? `${dayjs(startDate).format('MM-DD')} ~ ${dayjs(endDate).format('MM-DD')}`
                                                 : t('Add dates')}
@@ -180,18 +180,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
                         {/* 인원 선택 카드 */}
                         <div
-                            className={`search-card bg-white rounded-xl shadow-md border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'guests' ? 'search-card-collapsed' : ''}`}
+                            className={`search-card bg-transparent backdrop-blur-sm rounded-xl shadow-md border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'guests' ? 'search-card-collapsed' : ''}`}
                         >
                             {/* 카드 헤더 - 클릭 시 접기/펼치기 */}
                             <div
-                                className="p-4 flex justify-between items-center cursor-pointer"
+                                className="p-4 flex justify-between items-center cursor-pointer card-header"
                                 onClick={() => toggleCard('guests')}
                             >
                                 <div className="flex items-center">
-                                    <FontAwesomeIcon icon={faUserPlus} className="text-roomi text-lg mr-3"/>
+                                    <FontAwesomeIcon icon={faUserPlus} className="text-roomi text-lg mr-2 md:mr-3"/>
                                     <div>
-                                        <h2 className="text-lg font-semibold">{t('Who')}</h2>
-                                        <p className="text-sm text-gray-500">
+                                        <h2 className="text-base md:text-lg font-semibold">{t('Who')}</h2>
+                                        <p className="text-xs md:text-sm text-gray-500">
                                             {guestCount > 0
                                                 ? `${t('guest')} ${guestCount}${t('guest_unit')}`
                                                 : t('Add guests')}
@@ -207,26 +207,26 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                             {/* 카드 내용 - 접기/펼치기 */}
                             <div
                                 className={`search-card-content p-4 ${activeCard === 'guests' ? 'block' : 'hidden'}`}>
-                                <div className="guests-picker-container p-4 bg-gray-50 rounded-xl">
+                                <div className="guests-picker-container p-4 bg-white bg-opacity-60 rounded-xl">
                                     <div className="flex justify-between items-center py-2">
                                         <div>
-                                            <h4 className="font-medium">{t('Adults')}</h4>
-                                            <p className="text-sm text-gray-500">{t('Age 13+')}</p>
+                                            <h4 className="text-sm md:font-medium">{t('Adults')}</h4>
+                                            <p className="text-xs md:text-sm text-gray-500">{t('Age 13+')}</p>
                                         </div>
                                         <div className="flex items-center">
                                             <button
-                                                className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center bg-white"
+                                                className="w-7 h-7 md:w-8 md:h-8 rounded-full border border-gray-300 flex items-center justify-center bg-white"
                                                 onClick={() => setGuestCount(prev => (prev > 0 ? prev - 1 : 0))}
                                                 disabled={guestCount <= 0}
                                             >
-                                                <span className="text-lg">-</span>
+                                                <span className="text-base md:text-lg">-</span>
                                             </button>
-                                            <span className="mx-4 w-6 text-center">{guestCount}</span>
+                                            <span className="mx-3 md:mx-4 w-5 md:w-6 text-center">{guestCount}</span>
                                             <button
-                                                className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center bg-white"
+                                                className="w-7 h-7 md:w-8 md:h-8 rounded-full border border-gray-300 flex items-center justify-center bg-white"
                                                 onClick={() => setGuestCount(prev => prev + 1)}
                                             >
-                                                <span className="text-lg">+</span>
+                                                <span className="text-base md:text-lg">+</span>
                                             </button>
                                         </div>
                                     </div>
@@ -236,10 +236,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                     </div>
 
                     {/* 하단 검색 버튼 */}
-                    <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-gray-200">
-                        <div className="mx-auto md:max-w-2xl lg:max-w-3xl">
+                    <div className="fixed bottom-0 left-0 right-0 p-3 md:p-4 bg-white bg-opacity-90 border-t border-gray-200 safe-area-bottom">
+                        <div className="mx-auto max-w-full md:max-w-2xl lg:max-w-3xl">
                             <button
-                                className="w-full p-3 md:p-2 bg-roomi hover:bg-roomi-3 text-white rounded-lg font-medium md:text-sm lg:text-base"
+                                className="w-full p-2 md:p-3 bg-roomi hover:bg-roomi-3 text-white rounded-lg font-medium text-sm md:text-base"
                                 onClick={performSearch}
                             >
                                 {t('Search')}
