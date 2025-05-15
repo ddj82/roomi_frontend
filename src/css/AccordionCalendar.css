@@ -1,4 +1,22 @@
 /* AccordionCalendar.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*동준 추가*/
+.accordion-calendar .react-calendar__tile.end-date::before,
+.accordion-calendar .react-calendar__tile.start-date::before {
+    @apply w-full h-full;
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f47366;
+    border-radius: 50%;
+    z-index: -1;
+}
+
 
 .accordion-calendar {
     width: 100%;
@@ -99,7 +117,7 @@
 /* 날짜 범위 선택 스타일링 - 시작일과 종료일 */
 .accordion-custom-calendar .start-date,
 .accordion-custom-calendar .end-date {
-    background-color: #e53935 !important;
+    background-color: #f47366 !important;
     color: white !important;
     border-radius: 100px !important; /* 타원형 모양 */
     position: relative;
@@ -109,7 +127,6 @@
 
 /* 시작일과 종료일 사이의 범위 스타일링 */
 .accordion-custom-calendar .in-range {
-    background-color: rgba(244, 67, 54, 0.15) !important;
     border-radius: 0 !important;
     position: relative;
 }
@@ -121,7 +138,7 @@
 
 /* 확인 버튼 스타일 */
 .confirm-button {
-    background-color: #f44336;
+    background-color: #f47366;
     color: white;
     border: none;
     padding: 0.75rem 1rem;
@@ -134,7 +151,7 @@
 }
 
 .confirm-button:hover {
-    background-color: #e53935;
+    background-color: #d86558;
     transform: translateY(-1px);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
@@ -165,11 +182,15 @@
     }
 
     /* 시작일과 종료일 타원형 강화 */
-    .accordion-custom-calendar .start-date,
-    .accordion-custom-calendar .end-date {
+    .accordion-custom-calendar .start-date {
         padding: 1em 0.5em;
         width: 70%;
         margin: 0 auto;
+    }
+    .accordion-custom-calendar .end-date {
+        padding: 1em 0.5em;
+        width: 70%;
+        @apply bg-roomi-00 !important;
     }
 }
 

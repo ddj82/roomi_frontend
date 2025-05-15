@@ -1,5 +1,20 @@
 /* SearchModal.css */
 
+/* 모달 내용 (모달 내부 컨텐츠) */
+.overlay-searchBar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fefefe;
+    opacity: 0.95;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+}
+
 /* 모달 애니메이션 */
 .search-modal {
     animation: modal-fade-in 0.3s ease-out forwards;
@@ -63,9 +78,6 @@
     background-color: transparent;
 }
 
-.search-input-container:focus-within {
-    box-shadow: 0 0 0 2px #ff385c;
-}
 
 /* 간단한 검색바 스타일 */
 .search-simple-text {
@@ -107,7 +119,6 @@
 }
 
 .search-modal .fixed.bottom-0 button:hover {
-    background-color: #e31c5f;
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

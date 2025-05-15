@@ -12,7 +12,8 @@ import {
 import Notices from "./myPageMenu/Notices";
 import FAQ from "./myPageMenu/FAQ";
 import HelpCenter from "./myPageMenu/HelpCenter";
-import HostMyPageMobileContent from "./HostMyPageMobileContent"; // 필요하다면 이 컴포넌트 생성 필요
+import MyInfoEdit from "./myPageMenu/MyInfoEdit";
+import HostFAQ from "./myPageMenu/HostFAQ";
 
 export default function HostMyPage() {
     const { t } = useTranslation();
@@ -56,31 +57,61 @@ export default function HostMyPage() {
 
     // 메뉴 내용 렌더링 로직을 함수로 분리
     const renderMenuContent = () => {
-        if (loading) return <div className="flex_center">Loading...</div>;
-        if (!selectedMenu) {
-            // 기본 콘텐츠 표시
-            return <div className="flex items-center justify-center h-full">기본 호스트 정보가 표시됩니다.</div>;
-        }
+        if (loading) return <div className="flex items-center justify-center p-4">Loading...</div>;
 
-        // 선택된 메뉴에 따라 콘텐츠 렌더링
         switch (selectedMenu) {
+
             case '수입 및 통계':
-                return <div>수입 및 통계 콘텐츠</div>; // 추후 컴포넌트로 대체
+                return (
+                    <div className="p-2">
+                        <p className="text-gray-600 mb-4">{t("호스트 활동의 수입과 통계 정보를 확인할 수 있습니다.")}</p>
+
+                        {/* 수입 요약 */}
+                        <div className="bg-white shadow rounded-lg p-4 mb-4">
+                            <h4 className="font-medium mb-3">{t("이번 달 수입")}</h4>
+                            <div className="text-2xl font-bold text-green-600">₩0</div>
+                            <div className="mt-2 text-sm text-gray-500">{t("아직 수입이 발생하지 않았습니다.")}</div>
+                        </div>
+
+                        {/* 통계 정보 */}
+                        <div className="bg-white shadow rounded-lg p-4">
+                            <h4 className="font-medium mb-3">{t("방문자 통계")}</h4>
+                            <div className="text-sm text-gray-500">{t("등록된 통계 정보가 없습니다.")}</div>
+                        </div>
+                    </div>
+                );
+
             case '영수증':
-                return <div>영수증 콘텐츠</div>; // 추후 컴포넌트로 대체
+                return (
+                    <div className="p-2">
+                        <p className="text-gray-600 mb-4">{t("거래 내역 및 영수증을 확인할 수 있습니다.")}</p>
+
+                        {/* 영수증 목록 */}
+                        <div className="bg-white shadow rounded-lg p-4">
+                            <h4 className="font-medium mb-3">{t("거래 내역")}</h4>
+                            <div className="text-sm text-gray-500">{t("최근 거래 내역이 없습니다.")}</div>
+                        </div>
+                    </div>
+                );
+
             case '공지사항':
-                return <Notices/>;
+                return <Notices />;
+
             case 'FAQ':
-                return <FAQ/>;
+                return <HostFAQ />;
+
             case '고객센터':
-                return <HelpCenter/>;
+                return <HelpCenter />;
+
             case '내 정보':
-                return <div>내 정보 콘텐츠</div>; // 추후 컴포넌트로 대체
+                return <MyInfoEdit/>;
+
             default:
-                if (isMobile) {
-                    return <HostMyPageMobileContent selectedMenu={selectedMenu}/>;
-                }
-                return <div className="flex items-center justify-center h-full">메뉴를 선택해주세요.</div>;
+                return (
+                    <div className="flex items-center justify-center h-64">
+                        <p className="text-gray-500">{t("선택된 메뉴가 없습니다.")}</p>
+                    </div>
+                );
         }
     };
 

@@ -333,7 +333,7 @@ export const acceptions = async (alert: boolean, SMS: boolean, email: boolean) =
 
 // 유저 공지사항 목록 API
 export const getNotices = async () => {
-    return request(`/notices`, true);
+    return request(`/notices`, true, 'GET', undefined, true);
 };
 
 // 예약하기 API (결제 전 서버 저장)
