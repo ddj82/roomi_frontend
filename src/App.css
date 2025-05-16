@@ -2,14 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 @font-face {
-    font-family: "ConCon";
-    font-weight: normal;
-    src: url("./fonts/ConCon.ttf") format("truetype");
+    font-family: 'NotoSansKR';
+    font-weight: 500;
+    src: url('./fonts/NotoSansKR-Medium.ttf') format('truetype');
 }
 
 body {
-    margin: 0 auto;
-    /*font-family: "ConCon";*/
+    font-family: 'NotoSansKR', sans-serif;
 }
 
 /* 메인 스크롤바 숨기기 */

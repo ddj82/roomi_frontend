@@ -46,7 +46,10 @@ function AppContent() {
     // 경로 변경 감지해서 헤더 visible 상태 설정
     useEffect(() => {
         const isMyPage = location.pathname.startsWith("/myPage") || location.pathname.startsWith("/host");
-        setVisibility(!isMobile || !isMyPage);  // 모바일 && myPage면 숨김
+        const isRoomDetail = location.pathname.includes("/detail/") && !location.pathname.includes("/reservation");
+
+        // 모바일 && (마이페이지 또는 방 상세 페이지)면 헤더 숨김
+        setVisibility(!isMobile || !(isMyPage || isRoomDetail));
     }, [location.pathname, isMobile]); // <- 경로 or 모바일 상태가 바뀔 때마다 재평가
 
     // resize에 대한 반응 처리

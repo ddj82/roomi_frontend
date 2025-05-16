@@ -194,9 +194,9 @@
         margin-bottom: 12px;
     }
 
-    .card-header {
-        padding: 12px !important;
-    }
+    /*.card-header {*/
+    /*    padding: 12px !important;*/
+    /*}*/
 
     .search-card-content {
         padding: 12px !important;

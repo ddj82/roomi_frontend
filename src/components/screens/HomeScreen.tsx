@@ -20,16 +20,20 @@ const AccommodationCard = memo(
 
         return (
             <div className="homeScreen card" onClick={onClick} data-nosnippet>
-                <div className="homeScreen card-header">
-                    <WishListButton roomId={item.id} isFavorite={item.is_favorite}/>
+                <div className="homeScreen card-header w-full m-0 p-0 relative">
+                    <div className="absolute top-3 right-3 z-10">
+                        <WishListButton roomId={item.id} isFavorite={item.is_favorite}/>
+                    </div>
                     {item.detail_urls && item.detail_urls.length > 0 ? (
-                        <ImgCarousel images={item.detail_urls}
-                                     customClass="h-56"/>
+                        <ImgCarousel
+                            images={item.detail_urls}
+                            customClass="h-56 w-full object-cover md:rounded-lg rounded-none"
+                        />
                     ) : (
                         <img
-                            src="/default-image.jpg" // 이미지 없을 경우 기본 이미지
+                            src="/default-image.jpg"
                             alt="thumbnail"
-                            className="homeScreen card-image"
+                            className="h-56 w-full object-cover md:rounded-lg rounded-none"
                         />
                     )}
                 </div>
