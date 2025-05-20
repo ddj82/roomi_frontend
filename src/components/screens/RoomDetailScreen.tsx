@@ -4,7 +4,7 @@ import {addRoomHistory, fetchRoomData} from "src/api/api";
 import {Reservation, RoomData} from "../../types/rooms";
 import ImgCarousel from "../util/ImgCarousel";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import { facilityIcons } from "src/types/facilityIcons";
+import {facilityIcons} from "src/types/facilityIcons";
 import {
     faBath,
     faBuilding,
@@ -108,7 +108,7 @@ export default function RoomDetailScreen() {
                             const today = dayjs().format('YYYY-MM-DD');
 
                             // 1박2일 예약 배열
-                            if (endDate.diff(startDate, 'day') === 1 &&  startDate.format('YYYY-MM-DD') >= today) {
+                            if (endDate.diff(startDate, 'day') === 1 && startDate.format('YYYY-MM-DD') >= today) {
                                 oneDayListArr.push(endDate.format('YYYY-MM-DD'));
                             }
 
@@ -485,61 +485,53 @@ export default function RoomDetailScreen() {
                                 <div className="bg-gray-50 rounded-lg border border-gray-100 p-4 shadow-sm">
                                     <div className="text-gray-700 grid md:grid-cols-2 gap-6">
                                         {/* 월 단위 */}
-                                        {room.month_enabled && (
+                                        {typeof room.month_price === 'number' && room.month_price > 0 && (
                                             <div className="space-y-2">
                                                 <h3 className="text-lg font-medium text-gray-800 mb-2 pb-1 border-b border-gray-200 flex items-center">
-                                                    <FontAwesomeIcon
-                                                        icon={faCalendarAlt}
-                                                        className="text-roomi mr-2 text-sm"
-                                                    />
+                                                    <FontAwesomeIcon icon={faCalendarAlt}
+                                                                     className="text-roomi mr-2 text-sm"/>
                                                     월 단위
                                                 </h3>
-                                                {room.month_price && (
-                                                    <div
-                                                        className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
-                                                        <span className="text-gray-600">{t("월 가격")}</span>
-                                                        <span className="font-medium text-roomi">
-                                                            {room.symbol} {room.month_price.toLocaleString()}
-                                                        </span>
-                                                    </div>
-                                                )}
-                                                {room.maintenance_fee_month && (
+                                                <div
+                                                    className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
+                                                    <span className="text-gray-600">{t("월 가격")}</span>
+                                                    <span className="font-medium text-roomi">
+                                                        {room.symbol} {room.month_price.toLocaleString()}
+                                                    </span>
+                                                </div>
+                                                {typeof room.maintenance_fee_month === 'number' && room.maintenance_fee_month > 0 && (
                                                     <div
                                                         className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
                                                         <span className="text-gray-600">{t("service_charge")}</span>
                                                         <span className="font-medium">
-                                                            {room.symbol} {room.maintenance_fee_month.toLocaleString()}
+                                                          {room.symbol} {room.maintenance_fee_month.toLocaleString()}
                                                         </span>
                                                     </div>
                                                 )}
                                             </div>
                                         )}
                                         {/* 주 단위 */}
-                                        {room.week_enabled && (
+                                        {typeof room.week_price === 'number' && room.week_price > 0 && (
                                             <div className="space-y-2">
                                                 <h3 className="text-lg font-medium text-gray-800 mb-2 pb-1 border-b border-gray-200 flex items-center">
-                                                    <FontAwesomeIcon
-                                                        icon={faCalendarWeek}
-                                                        className="text-roomi mr-2 text-sm"
-                                                    />
+                                                    <FontAwesomeIcon icon={faCalendarWeek}
+                                                                     className="text-roomi mr-2 text-sm"/>
                                                     주 단위
                                                 </h3>
-                                                {(room.week_price && room.week_price > 0) && (
-                                                    <div
-                                                        className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
-                                                        <span className="text-gray-600">{t("주 가격")}</span>
-                                                        <span className="font-medium text-roomi">
-                                                            {room.symbol} {room.week_price.toLocaleString()}
-                                                        </span>
-                                                    </div>
-                                                )}
-                                                {(room.maintenance_fee_week && room.maintenance_fee_week > 0) && (
+                                                <div
+                                                    className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
+                                                    <span className="text-gray-600">{t("주 가격")}</span>
+                                                    <span className="font-medium text-roomi">
+        {room.symbol} {room.week_price.toLocaleString()}
+      </span>
+                                                </div>
+                                                {typeof room.maintenance_fee_week === 'number' && room.maintenance_fee_week > 0 && (
                                                     <div
                                                         className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
                                                         <span className="text-gray-600">{t("service_charge")}</span>
                                                         <span className="font-medium">
-                                                            {room.symbol} {room.maintenance_fee_week.toLocaleString()}
-                                                        </span>
+          {room.symbol} {room.maintenance_fee_week.toLocaleString()}
+        </span>
                                                     </div>
                                                 )}
                                             </div>
@@ -677,9 +669,12 @@ export default function RoomDetailScreen() {
                                     <div className="bg-white rounded-lg p-4">
                                         <div className="space-y-3">
                                             {room.breakfast_service && (
-                                                <div className="flex items-center p-2 hover:bg-white transition-colors rounded-md">
-                                                    <div className="w-10 h-10 rounded-full bg-roomi-000 flex_center mr-4 flex-shrink-0">
-                                                        <FontAwesomeIcon icon={faUtensils} className="text-roomi text-lg"/>
+                                                <div
+                                                    className="flex items-center p-2 hover:bg-white transition-colors rounded-md">
+                                                    <div
+                                                        className="w-10 h-10 rounded-full bg-roomi-000 flex_center mr-4 flex-shrink-0">
+                                                        <FontAwesomeIcon icon={faUtensils}
+                                                                         className="text-roomi text-lg"/>
                                                     </div>
                                                     <div>
                                                         <h3 className="text-sm font-medium text-gray-800 mb-0.5">{t("조식 서비스")}</h3>
@@ -693,7 +688,8 @@ export default function RoomDetailScreen() {
                                                     className="flex items-center p-2 hover:bg-white transition-colors rounded-md">
                                                     <div
                                                         className="w-10 h-10 rounded-full bg-roomi-000 flex_center mr-4 flex-shrink-0">
-                                                        <FontAwesomeIcon icon={faUserCheck} className="text-roomi text-lg"/>
+                                                        <FontAwesomeIcon icon={faUserCheck}
+                                                                         className="text-roomi text-lg"/>
                                                     </div>
                                                     <div>
                                                         <h3 className="text-sm font-medium text-gray-800 mb-0.5">{t("체크인 서비스")}</h3>
@@ -721,8 +717,10 @@ export default function RoomDetailScreen() {
                                             .filter(([_, value]) => value)
                                             .map(([key, value], index) => (
                                                 <div key={index} className="flex flex-col items-center text-center">
-                                                    <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center mb-1 md:mb-2 opacity-80">
-                                                        <FontAwesomeIcon icon={facilityIcons[key]} className="text-lg md:text-2xl"/>
+                                                    <div
+                                                        className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center mb-1 md:mb-2 opacity-80">
+                                                        <FontAwesomeIcon icon={facilityIcons[key]}
+                                                                         className="text-lg md:text-2xl"/>
                                                     </div>
                                                     <p className="text-xs md:text-sm text-gray-800">{value}</p>
                                                 </div>
@@ -743,8 +741,10 @@ export default function RoomDetailScreen() {
                                             .filter(([_, value]) => value)
                                             .map(([key, value], index) => (
                                                 <div key={index} className="flex flex-col items-center text-center">
-                                                    <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center mb-1 md:mb-2 opacity-80">
-                                                        <FontAwesomeIcon icon={facilityIcons[key]} className="text-lg md:text-2xl"/>
+                                                    <div
+                                                        className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center mb-1 md:mb-2 opacity-80">
+                                                        <FontAwesomeIcon icon={facilityIcons[key]}
+                                                                         className="text-lg md:text-2xl"/>
                                                     </div>
                                                     <p className="text-xs md:text-sm text-gray-800">{value}</p>
                                                 </div>
@@ -795,7 +795,8 @@ export default function RoomDetailScreen() {
                                     )}
                                 </div>
 
-                                <div className="h-60 md:h-80 rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                                <div
+                                    className="h-60 md:h-80 rounded-lg overflow-hidden shadow-sm border border-gray-100">
                                     <NaverMapRoom room={room}/>
                                 </div>
                             </div>
@@ -860,7 +861,8 @@ export default function RoomDetailScreen() {
                                                 />
                                             </div>
                                             <div>
-                                                <div className="font-medium text-gray-800 text-lg">{room.host.name}</div>
+                                                <div
+                                                    className="font-medium text-gray-800 text-lg">{room.host.name}</div>
                                                 <div className="text-gray-500 text-sm">호스트</div>
                                                 {/*{room.host.description && (*/}
                                                 {/*    <p className="text-gray-600 text-sm mt-1">{room.host.description}</p>*/}
@@ -893,11 +895,14 @@ export default function RoomDetailScreen() {
                                                 <div key={index} className="flex items-baseline">
                                                     {line.startsWith('•') ? (
                                                         <>
-                                                            <FontAwesomeIcon icon={faCircleDot} className="text-roomi mr-3 text-sm flex-shrink-0"/>
-                                                            <span className="text-sm text-gray-700">{line.substring(1).trim()}</span>
+                                                            <FontAwesomeIcon icon={faCircleDot}
+                                                                             className="text-roomi mr-3 text-sm flex-shrink-0"/>
+                                                            <span
+                                                                className="text-sm text-gray-700">{line.substring(1).trim()}</span>
                                                         </>
                                                     ) : (
-                                                        <span className={`text-sm ${index === 0 ? "font-medium text-gray-800" : "text-gray-700"}`}>
+                                                        <span
+                                                            className={`text-sm ${index === 0 ? "font-medium text-gray-800" : "text-gray-700"}`}>
                                                             {line}
                                                         </span>
                                                     )}
@@ -907,11 +912,14 @@ export default function RoomDetailScreen() {
                                                 <div key={index} className="flex items-baseline">
                                                     {line.startsWith('•') ? (
                                                         <>
-                                                            <FontAwesomeIcon icon={faCircleDot} className="text-roomi mr-3 text-sm flex-shrink-0"/>
-                                                            <span className="text-sm text-gray-700">{line.substring(1).trim()}</span>
+                                                            <FontAwesomeIcon icon={faCircleDot}
+                                                                             className="text-roomi mr-3 text-sm flex-shrink-0"/>
+                                                            <span
+                                                                className="text-sm text-gray-700">{line.substring(1).trim()}</span>
                                                         </>
                                                     ) : (
-                                                        <span className={`text-sm ${index === 0 ? "font-medium text-gray-800" : "text-gray-700"}`}>
+                                                        <span
+                                                            className={`text-sm ${index === 0 ? "font-medium text-gray-800" : "text-gray-700"}`}>
                                                             {line}
                                                         </span>
                                                     )}

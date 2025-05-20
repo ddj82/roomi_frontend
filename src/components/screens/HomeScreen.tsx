@@ -39,10 +39,10 @@ const AccommodationCard = memo(
                 </div>
                 <div className="homeScreen card-content">
                     <div className="homeScreen price-container">
-                        {item.month_enabled && item.month_price && (
+                        {typeof item.month_price === 'number' &&item.month_price > 0  && (
                             <p className="homeScreen price">{formatPrice(item.month_price)} / {t('월')}</p>
                         )}
-                        {item.week_enabled && item.week_price && (
+                        {typeof item.week_price === 'number' &&item.week_price > 0 && (
                             <p className="homeScreen price">{formatPrice(item.week_price)} / {t('주')}</p>
                         )}
 
