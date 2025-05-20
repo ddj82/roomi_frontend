@@ -105,7 +105,7 @@ export default function HelpCenter() {
                             className="w-full p-2 pl-10 border border-gray-300 rounded focus:outline-none resize-none"></textarea>
                     </div>
                     <button
-                        type="submit"
+                        /*type="submit"*/ type="button"
                         className="bg-roomi rounded text-white font-bold p-2"
                         // onClick={}
                     >

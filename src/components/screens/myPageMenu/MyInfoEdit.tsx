@@ -69,14 +69,7 @@ export default function MyInfoEdit() {
         <div className="p-4 md:px-8">
             <form onSubmit={handleSubmit}>
                 <div className="flex justify-between items-center mb-6">
-                    {!editMyInfo ? (
-                        <button
-                            type="button"
-                            onClick={handleEditMyInfo}
-                            className="py-2 px-5 text-white text-sm rounded bg-roomi hover:bg-roomi-3">
-                            {t('수정')}
-                        </button>
-                    ) : (
+                    {editMyInfo ? (
                         <div>
                             <button
                                 type="button"
@@ -90,6 +83,13 @@ export default function MyInfoEdit() {
                                 {t('완료')}
                             </button>
                         </div>
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={handleEditMyInfo}
+                            className="py-2 px-5 text-white text-sm rounded bg-roomi hover:bg-roomi-3">
+                            {t('수정')}
+                        </button>
                     )}
                 </div>
 

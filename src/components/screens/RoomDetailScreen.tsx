@@ -484,54 +484,66 @@ export default function RoomDetailScreen() {
                                 {/* Main pricing grid */}
                                 <div className="bg-gray-50 rounded-lg border border-gray-100 p-4 shadow-sm">
                                     <div className="text-gray-700 grid md:grid-cols-2 gap-6">
-                                        {/* Monthly pricing section */}
-                                        <div className="space-y-2">
-                                            <h3 className="text-lg font-medium text-gray-800 mb-2 pb-1 border-b border-gray-200 flex items-center">
-                                                <FontAwesomeIcon icon={faCalendarAlt}
-                                                                 className="text-roomi mr-2 text-sm"/>
-                                                월 단위
-                                            </h3>
-                                            {room.month_price && (
-                                                <div
-                                                    className="flex justify-between items-center py-2 hover:bg-white hover:shadow-sm rounded-md px-2 transition-all">
-                                                    <span className="text-gray-600">{t("월 가격")}</span>
-                                                    <span
-                                                        className="font-medium text-roomi">{room.symbol} {room.month_price.toLocaleString()}</span>
-                                                </div>
-                                            )}
-                                            {room.maintenance_fee_month && (
-                                                <div
-                                                    className="flex justify-between items-center py-2 hover:bg-white hover:shadow-sm rounded-md px-2 transition-all">
-                                                    <span className="text-gray-600">{t("service_charge")}</span>
-                                                    <span
-                                                        className="font-medium">{room.symbol} {room.maintenance_fee_month.toLocaleString()}</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                        {/* Weekly pricing section */}
-                                        <div className="space-y-2">
-                                            <h3 className="text-lg font-medium text-gray-800 mb-2 pb-1 border-b border-gray-200 flex items-center">
-                                                <FontAwesomeIcon icon={faCalendarWeek}
-                                                                 className="text-roomi mr-2 text-sm"/>
-                                                주 단위
-                                            </h3>
-                                            {room.week_price && (
-                                                <div
-                                                    className="flex justify-between items-center py-2 hover:bg-white hover:shadow-sm rounded-md px-2 transition-all">
-                                                    <span className="text-gray-600">{t("주 가격")}</span>
-                                                    <span
-                                                        className="font-medium text-roomi">{room.symbol} {room.week_price.toLocaleString()}</span>
-                                                </div>
-                                            )}
-                                            {room.maintenance_fee_week && (
-                                                <div
-                                                    className="flex justify-between items-center py-2 hover:bg-white hover:shadow-sm rounded-md px-2 transition-all">
-                                                    <span className="text-gray-600">{t("service_charge")}</span>
-                                                    <span
-                                                        className="font-medium">{room.symbol} {room.maintenance_fee_week.toLocaleString()}</span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        {/* 월 단위 */}
+                                        {room.month_enabled && (
+                                            <div className="space-y-2">
+                                                <h3 className="text-lg font-medium text-gray-800 mb-2 pb-1 border-b border-gray-200 flex items-center">
+                                                    <FontAwesomeIcon
+                                                        icon={faCalendarAlt}
+                                                        className="text-roomi mr-2 text-sm"
+                                                    />
+                                                    월 단위
+                                                </h3>
+                                                {room.month_price && (
+                                                    <div
+                                                        className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
+                                                        <span className="text-gray-600">{t("월 가격")}</span>
+                                                        <span className="font-medium text-roomi">
+                                                            {room.symbol} {room.month_price.toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                {room.maintenance_fee_month && (
+                                                    <div
+                                                        className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
+                                                        <span className="text-gray-600">{t("service_charge")}</span>
+                                                        <span className="font-medium">
+                                                            {room.symbol} {room.maintenance_fee_month.toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                        {/* 주 단위 */}
+                                        {room.week_enabled && (
+                                            <div className="space-y-2">
+                                                <h3 className="text-lg font-medium text-gray-800 mb-2 pb-1 border-b border-gray-200 flex items-center">
+                                                    <FontAwesomeIcon
+                                                        icon={faCalendarWeek}
+                                                        className="text-roomi mr-2 text-sm"
+                                                    />
+                                                    주 단위
+                                                </h3>
+                                                {(room.week_price && room.week_price > 0) && (
+                                                    <div
+                                                        className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
+                                                        <span className="text-gray-600">{t("주 가격")}</span>
+                                                        <span className="font-medium text-roomi">
+                                                            {room.symbol} {room.week_price.toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                {(room.maintenance_fee_week && room.maintenance_fee_week > 0) && (
+                                                    <div
+                                                        className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
+                                                        <span className="text-gray-600">{t("service_charge")}</span>
+                                                        <span className="font-medium">
+                                                            {room.symbol} {room.maintenance_fee_week.toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -655,44 +667,46 @@ export default function RoomDetailScreen() {
                             </div>
 
                             {/* 제공 서비스 */}
-                            <div className="space-y-4 pb-6 border-b border-gray-200">
-                                <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                                    <FontAwesomeIcon icon={faBell} className="text-roomi mr-2"/>
-                                    {t("제공 서비스")}
-                                </h2>
+                            {(room.breakfast_service || room.checkin_service) && (
+                                <div className="space-y-4 pb-6 border-b border-gray-200">
+                                    <h2 className="text-xl font-semibold text-gray-800 flex items-center">
+                                        <FontAwesomeIcon icon={faBell} className="text-roomi mr-2"/>
+                                        {t("제공 서비스")}
+                                    </h2>
 
-                                <div className="bg-white rounded-lg p-4">
-                                    <div className="space-y-3">
-                                        {room.breakfast_service && (
-                                            <div className="flex items-center p-2 hover:bg-white transition-colors rounded-md">
-                                                <div className="w-10 h-10 rounded-full bg-roomi-000 flex items-center justify-center mr-4">
-                                                    <FontAwesomeIcon icon={faUtensils} className="text-roomi text-lg"/>
+                                    <div className="bg-white rounded-lg p-4">
+                                        <div className="space-y-3">
+                                            {room.breakfast_service && (
+                                                <div className="flex items-center p-2 hover:bg-white transition-colors rounded-md">
+                                                    <div className="w-10 h-10 rounded-full bg-roomi-000 flex_center mr-4 flex-shrink-0">
+                                                        <FontAwesomeIcon icon={faUtensils} className="text-roomi text-lg"/>
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-sm font-medium text-gray-800 mb-0.5">{t("조식 서비스")}</h3>
+                                                        <p className="text-sm text-gray-600">{room.breakfast_service}</p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <h3 className="text-sm font-medium text-gray-800 mb-0.5">{t("조식 서비스")}</h3>
-                                                    <p className="text-sm text-gray-600">{room.breakfast_service}</p>
-                                                </div>
-                                            </div>
-                                        )}
+                                            )}
 
-                                        {room.checkin_service && (
-                                            <div
-                                                className="flex items-center p-2 hover:bg-white transition-colors rounded-md">
+                                            {room.checkin_service && (
                                                 <div
-                                                    className="w-10 h-10 rounded-full bg-roomi-000 flex items-center justify-center mr-4 flex-shrink-0">
-                                                    <FontAwesomeIcon icon={faUserCheck} className="text-roomi text-lg"/>
+                                                    className="flex items-center p-2 hover:bg-white transition-colors rounded-md">
+                                                    <div
+                                                        className="w-10 h-10 rounded-full bg-roomi-000 flex_center mr-4 flex-shrink-0">
+                                                        <FontAwesomeIcon icon={faUserCheck} className="text-roomi text-lg"/>
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-sm font-medium text-gray-800 mb-0.5">{t("체크인 서비스")}</h3>
+                                                        <p className="text-sm text-gray-600">{room.checkin_service}</p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <h3 className="text-sm font-medium text-gray-800 mb-0.5">{t("체크인 서비스")}</h3>
-                                                    <p className="text-sm text-gray-600">{room.checkin_service}</p>
-                                                </div>
-                                            </div>
-                                        )}
+                                            )}
 
-                                        {/* 추가 서비스가 있다면 이곳에 추가 */}
+                                            {/* 추가 서비스가 있다면 이곳에 추가 */}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
 
                             {/* 편의시설 */}
                             <div className="space-y-4 pb-6 border-b border-gray-200">
@@ -747,7 +761,9 @@ export default function RoomDetailScreen() {
 
                                 <div className="bg-gray-50 rounded-lg p-4 mb-4">
                                     <div className="flex items-start">
-                                        <FontAwesomeIcon icon={faMapLocationDot} className="text-gray-600 mr-3 mt-1 text-lg"/>
+                                        <div className="flex_center mr-3 mt-1 w-4 h-4">
+                                            <FontAwesomeIcon icon={faMapLocationDot} className="text-gray-600 text-lg"/>
+                                        </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-800 mb-1">{t("교통 안내")}</h3>
                                             <p className="text-sm text-gray-600 leading-relaxed">{room.transportation_info}</p>
@@ -756,7 +772,9 @@ export default function RoomDetailScreen() {
 
                                     {room.address && (
                                         <div className="flex items-start mt-3">
-                                            <FontAwesomeIcon icon={faMapPin} className="text-gray-600 mr-3 mt-1 text-lg"/>
+                                            <div className="flex_center mr-3 mt-1 w-4 h-4">
+                                                <FontAwesomeIcon icon={faMapPin} className="text-gray-600 text-lg"/>
+                                            </div>
                                             <div className="flex-grow">
                                                 <h3 className="text-sm font-medium text-gray-800 mb-1">{t("주소")}</h3>
                                                 <div className="flex items-center justify-between">
@@ -782,7 +800,6 @@ export default function RoomDetailScreen() {
                                 </div>
                             </div>
 
-                            {/* 유의사항 */}
                             {/* 유의사항 */}
                             <div className="space-y-4 pb-6 border-b border-gray-200">
                                 <h2 className="text-xl font-semibold text-gray-800 flex items-center">
@@ -881,8 +898,8 @@ export default function RoomDetailScreen() {
                                                         </>
                                                     ) : (
                                                         <span className={`text-sm ${index === 0 ? "font-medium text-gray-800" : "text-gray-700"}`}>
-                                {line}
-                            </span>
+                                                            {line}
+                                                        </span>
                                                     )}
                                                 </div>
                                             ))
@@ -895,8 +912,8 @@ export default function RoomDetailScreen() {
                                                         </>
                                                     ) : (
                                                         <span className={`text-sm ${index === 0 ? "font-medium text-gray-800" : "text-gray-700"}`}>
-                                {line}
-                            </span>
+                                                            {line}
+                                                        </span>
                                                     )}
                                                 </div>
                                             ))
