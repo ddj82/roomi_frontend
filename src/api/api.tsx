@@ -306,6 +306,39 @@ export const getRoomHistoryList = async () => {
     return request(`/rooms/history/list`, true, 'GET', undefined,true);
 };
 
+// 유저 정보 수정 API
+export const updateUserInfo = async (updateUserData: Partial<User>, file: File | null) => {
+    // 파일이 있으면 FormData 로 보냄
+    if (file) {
+        const formData = new FormData();
+        // updateUserData 필드들 추가
+        Object.entries(updateUserData).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+                formData.append(key, String(value));
+            }
+        });
+        // 파일 필드명은 백엔드 @UploadedFiles() 와 맞춰서 'files' 로
+        formData.append('files', file);
+
+        const token = getAuthToken();
+        let API_URL = BASE_URL + `/users/update/info`;
+        const response = await fetch(API_URL, {
+            method: "PUT",
+            headers: {
+                Authorization: token ?? "",
+            },
+            body: formData,
+        });
+
+        return response;
+    }
+
+    // 파일이 없으면 JSON
+    return request(`/users/update/info`, true, 'PUT', {
+        ...updateUserData,
+    });
+};
+
 // 유저 언어 코드 변경 API
 export const updateLanguage = async (langCode: string) => {
     return request(`/users/lang?language=${langCode}`, true, 'POST');

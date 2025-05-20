@@ -24,6 +24,11 @@ export default function HelpCenter() {
         }
     };
 
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+        console.log('Submit ㅎㅇ');
+    };
+
     return (
         <div className="p-4 md:px-8 max-w-3xl mx-auto">
             <div className="mb-8 flex flex-col gap-2">
@@ -55,7 +60,7 @@ export default function HelpCenter() {
             </div>
             <div className="mb-8 flex flex-col gap-2">
                 <h3 className="text-lg font-bold mb-2">이메일로 문의하기</h3>
-                <form className="flex flex-col gap-1">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-1">
                     <div className="relative">
                         <div className="absolute left-3.5 top-2 pointer-events-none">
                             <FontAwesomeIcon icon={faUser} className="w-4 h-4 text-gray-400"/>
@@ -105,7 +110,9 @@ export default function HelpCenter() {
                             className="w-full p-2 pl-10 border border-gray-300 rounded focus:outline-none resize-none"></textarea>
                     </div>
                     <button
-                        /*type="submit"*/ type="button"
+                        // type="submit"
+                        type="button"
+                        disabled
                         className="bg-roomi rounded text-white font-bold p-2"
                         // onClick={}
                     >

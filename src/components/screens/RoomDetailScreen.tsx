@@ -522,16 +522,16 @@ export default function RoomDetailScreen() {
                                                     className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
                                                     <span className="text-gray-600">{t("주 가격")}</span>
                                                     <span className="font-medium text-roomi">
-        {room.symbol} {room.week_price.toLocaleString()}
-      </span>
+                                                        {room.symbol} {room.week_price.toLocaleString()}
+                                                    </span>
                                                 </div>
                                                 {typeof room.maintenance_fee_week === 'number' && room.maintenance_fee_week > 0 && (
                                                     <div
                                                         className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
                                                         <span className="text-gray-600">{t("service_charge")}</span>
                                                         <span className="font-medium">
-          {room.symbol} {room.maintenance_fee_week.toLocaleString()}
-        </span>
+                                                            {room.symbol} {room.maintenance_fee_week.toLocaleString()}
+                                                        </span>
                                                     </div>
                                                 )}
                                             </div>
