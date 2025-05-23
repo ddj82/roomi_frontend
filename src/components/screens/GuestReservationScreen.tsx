@@ -20,7 +20,15 @@ import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
 import {BookData, CheckoutPage, FormDataState} from "src/components/toss/Checkout.jsx";
 import Modal from "react-modal";
 import dayjs from "dayjs";
-
+import * as PortOne from "@portone/browser-sdk/v2";
+import PayPalSPB from "../../payment/PayPalSPB";
+export enum Currency {
+    KRW = "KRW",
+    USD = "USD",
+    EUR = "EUR",
+    SGD = "SGD",
+    // 필요한 만큼 추가 가능
+}
 interface FormDataType {
     name: string;
     phone: string;
@@ -41,7 +49,8 @@ export default function GuestReservationScreen() {
     const {guestCount, setGuestCount} = useGuestsStore();
     const navigate = useNavigate();
     const location = useLocation();
-
+    // 추가할 state
+    const [showPayPalModal, setShowPayPalModal] = useState(false);
     var {
         price = 0,
         depositPrice = 0,
@@ -78,7 +87,10 @@ export default function GuestReservationScreen() {
     const [isChecked3, setIsChecked3] = useState(false);
     const [showToss, setShowToss] = useState(false);
     const [userCurrency, setUserCurrency] = useState('');
+    // 화면 상단
+    const [showPayPal, setShowPayPal] = useState(false);
 
+// 해외결제인 경우만 loadPaymentUI 실행
     useEffect(() => {
         setRoom(thisRoom);
         setUserCurrency(localStorage.getItem('userCurrency') ?? "");
@@ -91,7 +103,36 @@ export default function GuestReservationScreen() {
             setGuestCount(prev => prev - 1);
         }
     };
+    //
+    const loadPortonePayment = () => {
+        const requestData: PortOne.LoadPaymentUIRequest = {
+            uiType: "PAYPAL_SPB",
+            storeId: "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85", // ✅ 포트원 콘솔에서 확인
+            paymentId: `roomi_${Date.now()}`, // ✅ 고유 주문 ID
+            orderName: room?.title || "Roomi 결제",
+            totalAmount: Number(totalPrice.toFixed(2)),
+            currency: Currency.USD as any,
+            channelKey: "channel-key-32257656-6637-40bf-b343-795dbb0b1beb", // ✅ 콘솔에서 확인
+            customer: {
+                customerId: "guest_" + Date.now(), // ✅ 유저 식별자, 중복 안 나게
+                fullName: formDataState.name,
+                email: formDataState.email
+            } as any, // ⚠️ 타입 우회
+            redirectUrl: "https://roomi.co.kr/payment/complete"
+        };
 
+        const callbacks = {
+            onPaymentSuccess: (response: any) => {
+                console.log("✅ 결제 성공:", response);
+                // 필요 시 여기서 서버로 imp_uid 등 전달
+            },
+            onPaymentFail: (error: any) => {
+                console.error("❌ 결제 실패:", error);
+            }
+        };
+
+        PortOne.loadPaymentUI(requestData, callbacks);
+    };
     // Update form data state when user makes changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormDataState({
@@ -125,7 +166,61 @@ export default function GuestReservationScreen() {
 
     }, [paymentData]);
 
+    useEffect(() => {
+        if (selectedPayment !== "") return;
+
+        const tryLoad = () => {
+            const container = document.getElementById("portone-ui-container");
+            if (!container) {
+                console.log("❌ container 아직 없음. 재시도 중...");
+                setTimeout(tryLoad, 100);
+                return;
+            }
+
+            console.log("✅ container 있음, 결제 UI 로드 시도함");
+
+            PortOne.loadPaymentUI({
+                uiType: "PAYPAL_SPB",
+                storeId: "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85",
+                paymentId: `roomi_${Date.now()}`,
+                orderName: room?.title || "Roomi 결제",
+                totalAmount: Number(totalPrice.toFixed(2)),
+                currency: Currency.USD as any,
+                channelKey: "channel-key-32257656-6637-40bf-b343-795dbb0b1beb",
+                customer: {
+                    customerId: "guest_" + Date.now(),
+                    fullName: formDataState.name,
+                    email: formDataState.email,
+                } as any,
+                redirectUrl: "https://roomi.co.kr/payment/complete",
+            }, {
+                onPaymentSuccess: (res) => console.log("✅ 결제 성공", res),
+                onPaymentFail: (err) => console.error("❌ 결제 실패", err),
+            });
+        };
+
+        setTimeout(tryLoad, 300); // 모달이 열린 뒤 실행되도록 충분한 시간 확보
+    }, [selectedPayment]);
+
     const handlePayment = () => {
+        if (!isChecked1 || !isChecked2) {
+            alert("필수 약관에 동의해주세요.");
+            return;
+        }
+
+        formDataState.currency = userCurrency;
+
+        if (selectedPayment === "") {
+            // 해외결제는 버튼이 이미 떴기 때문에 따로 처리 안 함
+            return;
+        }
+
+        // 국내결제는 토스 실행
+        setPaymentData({
+            bookData,
+            formDataState,
+            price: Number(totalPrice.toFixed(2)),
+        });
         setShowToss(true);
     };
     /*
@@ -298,6 +393,7 @@ export default function GuestReservationScreen() {
 
     return (
         <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto pb-24 md:pb-0">
+            <div id="portone-ui-container"/>
             {room ? (
                 <div className="flex flex-col md:flex-row gap-8">
                     {/* 메인 콘텐츠 영역 */}
@@ -381,7 +477,7 @@ export default function GuestReservationScreen() {
                                 <div className="text-sm text-gray-500">{t("입실")}</div>
                                 <div className="font-bold text-gray-800 mt-1 flex items-center">
                                     <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
-                                    { dayjs(bookData?.reservation?.check_in_date).format("YYYY-MM-DD") || checkIn || dayjs(location.state.bookData?.reservation?.reservation.check_in_date).format("YYYY-MM-DD") || '날짜 없음'}
+                                    {dayjs(bookData?.reservation?.check_in_date).format("YYYY-MM-DD") || checkIn || dayjs(location.state.bookData?.reservation?.reservation.check_in_date).format("YYYY-MM-DD") || '날짜 없음'}
                                     ({bookData?.room.detail?.check_in_time || location.state.bookData?.reservation?.room.detail.check_in_time})
                                 </div>
                             </div>
@@ -389,8 +485,8 @@ export default function GuestReservationScreen() {
                                 <div className="text-sm text-gray-500">{t("퇴실")}</div>
                                 <div className="font-bold text-gray-800 mt-1 flex items-center">
                                     <FontAwesomeIcon icon={faCalendarDay} className="mr-2 text-roomi"/>
-                                    { dayjs(bookData?.reservation?.check_out_date).format("YYYY-MM-DD") || checkOut || dayjs(location.state.bookData?.reservation?.reservation.check_out_date).format("YYYY-MM-DD") || '날짜 없음'}
-                                    ({ bookData?.room.detail?.check_out_time || location.state.bookData?.reservation?.room.detail.check_out_time })
+                                    {dayjs(bookData?.reservation?.check_out_date).format("YYYY-MM-DD") || checkOut || dayjs(location.state.bookData?.reservation?.reservation.check_out_date).format("YYYY-MM-DD") || '날짜 없음'}
+                                    ({bookData?.room.detail?.check_out_time || location.state.bookData?.reservation?.room.detail.check_out_time})
                                 </div>
                             </div>
                             <div className="mt-4 p-4 rounded-lg bg-roomi-light">
@@ -459,10 +555,15 @@ export default function GuestReservationScreen() {
                         <div className="p-6 border border-gray-200 rounded-xl shadow-sm bg-white mb-6">
                             <div className="font-bold text-gray-800 mb-4">{t("결제 수단")}</div>
                             <div className="grid gap-4 grid-cols-2">
-                                <PaymentOption id="easy" label="국내 결제" selected={selectedPayment === "KR"}
-                                               onChange={handlePaymentChange}/>
-                                <PaymentOption id="card" label="해외 결제" selected={selectedPayment === ""}
-                                               onChange={handlePaymentChange}/>
+                                <div>
+                                    <PaymentOption id="easy" label="국내 결제" selected={selectedPayment === "KR"}
+                                                   onChange={handlePaymentChange}/>
+                                </div>
+                                <div >
+                                    <PaymentOption id="card" label="해외 결제" selected={selectedPayment === ""}
+                                                   onChange={handlePaymentChange}/>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -472,7 +573,8 @@ export default function GuestReservationScreen() {
                         border border-gray-200 shadow-sm md:p-6 p-4 break-words bg-white
                         w-full fixed bottom-0 z-[100]">
                         {/* 모바일 전용 아코디언 버튼 */}
-                        <div className="md:hidden w-full items-center p-4 rounded-lg cursor-pointer bg-roomi text-white">
+                        <div
+                            className="md:hidden w-full items-center p-4 rounded-lg cursor-pointer bg-roomi text-white">
                             <button type="button" className="w-full flex justify-between items-center"
                                     onClick={() => setSlideIsOpen(!slideIsOpen)}>
                                 <span className="font-bold">{t("price_info")}</span>
@@ -511,7 +613,8 @@ export default function GuestReservationScreen() {
                                 {/*관리비*/}
                                 <div className="flex justify-between py-2">
                                     <div className="text-gray-700">{t("service_charge")}</div>
-                                    <div className="font-bold text-gray-800">{t('원')}{maintenancePrice.toLocaleString()}</div>
+                                    <div
+                                        className="font-bold text-gray-800">{t('원')}{maintenancePrice.toLocaleString()}</div>
                                 </div>
                                 {/*청소비*/}
                                 <div className="flex justify-between py-2">
@@ -520,7 +623,8 @@ export default function GuestReservationScreen() {
                                 </div>
                                 <div className="flex justify-between border-t border-gray-200 mt-3 pt-4">
                                     <div className="text-gray-800 font-medium">{t("총결제금액")}</div>
-                                    <div className="font-bold text-roomi text-xl">{t("원")}{(totalPrice-depositPrice).toLocaleString()}</div>
+                                    <div
+                                        className="font-bold text-roomi text-xl">{t("원")}{(totalPrice - depositPrice).toLocaleString()}</div>
                                 </div>
                             </div>
                             <div className="mt-6 text-sm space-y-6 max-w-lg mx-auto">
@@ -701,7 +805,36 @@ export default function GuestReservationScreen() {
             {/*    </div>*/}
             {/*    <CheckoutPage paymentData={paymentData as PaymentData}/>*/}
             {/*</Modal>*/}
+            {/* 포트원 페이팔 결제 모달 */}
+            <Modal
+                isOpen={selectedPayment === ""}
+                onRequestClose={() => setSelectedPayment("KR")}
+                style={{
+                    content: {
+                        width: "600px",
+                        maxWidth: "90%",
+                        margin: "auto",
+                        inset: "50% 0px -200px 50%",
+                        transform: "translate(-50%, -50%)",
+                        borderRadius: "8px",
+                        overflowY: "auto",
+                    },
+                    overlay: {
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        zIndex: 9999,
+                    },
+                }}
+            >
+                <div className="flex justify-end">
+                    <button onClick={() => setSelectedPayment("KR")}>
+                        <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                </div>
+
+                <div className="portone-ui-container" />
+            </Modal>
             {paymentData && <CheckoutPage paymentData={paymentData}/>}
+
         </div>
     );
 }
