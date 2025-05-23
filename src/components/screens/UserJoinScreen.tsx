@@ -124,45 +124,45 @@ const UserJoinScreen = () => {
     const handleNext = () => {
         const newErrors: { [key: string]: string } = {}; // 새로운 오류 객체
 
-        // if (currentStep === 1) {
-        //     // 이메일 유효성 검사
-        //     if (!formData.email.trim()) {
-        //         newErrors.email = "이메일을 입력하세요.";
-        //     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-        //         newErrors.email = "올바른 이메일 형식을 입력하세요.";
-        //     } else if (!isVerified) {
-        //         newErrors.email = "이메일 인증을 해주세요.";
-        //     }
-        //
-        //     // 비밀번호 유효성 검사
-        //     // if (!formData.password.trim()) {
-        //     //     newErrors.password = "비밀번호를 입력하세요.";
-        //     // } else if (formData.password.length < 8) {
-        //     //     newErrors.password = "비밀번호는 최소 8자리 이상이어야 합니다.";
-        //     // }
-        //
-        //     // 전화번호 유효성 검사
-        //     if (!formData.phone.trim()) {
-        //         newErrors.phone = "전화번호를 입력하세요.";
-        //     } else if (!/^\d{10,11}$/.test(formData.phone)) {
-        //         newErrors.phone = "올바른 전화번호를 입력하세요.";
-        //     }
-        // } else if (currentStep === 2) {
-        //     // 이름 유효성 검사
-        //     if (!formData.name.trim()) {
-        //         newErrors.name = "이름을 입력하세요.";
-        //     }
-        //
-        //     // 생년월일 유효성 검사
-        //     if (!formData.birth.trim()) {
-        //         newErrors.birth = "생년월일을 입력하세요.";
-        //     }
-        //
-        //     // 성별 유효성 검사
-        //     if (!formData.gender) {
-        //         newErrors.gender = "성별을 선택하세요.";
-        //     }
-        // }
+        if (currentStep === 1) {
+            // 이메일 유효성 검사
+            if (!formData.email.trim()) {
+                newErrors.email = "이메일을 입력하세요.";
+            } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+                newErrors.email = "올바른 이메일 형식을 입력하세요.";
+            } else if (!isVerified) {
+                newErrors.email = "이메일 인증을 해주세요.";
+            }
+
+            // 비밀번호 유효성 검사
+            if (!formData.password.trim()) {
+                newErrors.password = "비밀번호를 입력하세요.";
+            } else if (formData.password.length < 8) {
+                newErrors.password = "비밀번호는 최소 8자리 이상이어야 합니다.";
+            }
+
+            // 전화번호 유효성 검사
+            if (!formData.phone.trim()) {
+                newErrors.phone = "전화번호를 입력하세요.";
+            } else if (!/^\d{10,11}$/.test(formData.phone)) {
+                newErrors.phone = "올바른 전화번호를 입력하세요.";
+            }
+        } else if (currentStep === 2) {
+            // 이름 유효성 검사
+            if (!formData.name.trim()) {
+                newErrors.name = "이름을 입력하세요.";
+            }
+
+            // 생년월일 유효성 검사
+            if (!formData.birth.trim()) {
+                newErrors.birth = "생년월일을 입력하세요.";
+            }
+
+            // 성별 유효성 검사
+            if (!formData.gender) {
+                newErrors.gender = "성별을 선택하세요.";
+            }
+        }
 
         // 오류가 있으면 상태 업데이트 후 진행 중지
         if (Object.keys(newErrors).length > 0) {
@@ -290,7 +290,7 @@ const UserJoinScreen = () => {
                             <div>
                                 {sendSeccess && (
                                     <div>
-                                        <div className="flex items-center mt-2">
+                                        <div className="flex flex-col md:flex-row md:items-center mt-2">
                                             <input
                                                 id="code"
                                                 type="text"
@@ -299,14 +299,18 @@ const UserJoinScreen = () => {
                                                 value={inputAuthCode}
                                                 onChange={(e) => setInputAuthCode(e.target.value)}
                                             />
-                                            <button
-                                                type="button"
-                                                className="px-6 py-3 border border-roomi text-roomi font-medium rounded-xl shadow-md transition-all duration-200 ml-2"
-                                                onClick={handleVerification}
-                                            >
-                                                확인
-                                            </button>
-                                            <span className="text-red-500 p-2 font-bold">{dayjs.duration(remainingTime, "seconds").format("mm:ss")}</span>
+                                            <div>
+                                                <button
+                                                    type="button"
+                                                    className="px-6 py-3 border border-roomi text-roomi text-sm font-medium rounded-xl shadow-md transition-all duration-200 md:ml-2 mt-1 md:mt-0"
+                                                    onClick={handleVerification}
+                                                >
+                                                    확인
+                                                </button>
+                                                <span className="text-red-500 p-2 font-bold text-base">
+                                                    {dayjs.duration(remainingTime, "seconds").format("mm:ss")}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 )}
@@ -469,6 +473,7 @@ const UserJoinScreen = () => {
                 <div className="flex justify-between">
                     {currentStep > 1 ? (
                         <button
+                            type="button"
                             className="px-6 py-3 text-roomi font-medium rounded-xl shadow-md hover:bg-gray-100 transition-all duration-200"
                             onClick={handlePrev}
                         >
@@ -499,19 +504,21 @@ const UserJoinScreen = () => {
 
             {/* 모달 */}
             {showModal && (
-                <div className="fixed inset-0 flex items-end justify-center bg-black bg-opacity-40">
-                    <div className="bg-white w-full max-w-md p-6 rounded-t-3xl shadow-2xl">
+                <div className="fixed inset-0 flex_center bg-black bg-opacity-40">
+                    <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-2xl">
                         <div className="mb-4">
                             회원가입을 종료하시겠습니까?
                         </div>
                         <div className="flex justify-end gap-2">
                             <button
+                                type="button"
                                 className="px-6 py-3 bg-gray-400 text-white font-medium rounded-xl shadow-md hover:bg-gray-500 transition-all duration-200"
                                 onClick={() => setShowModal(false)}
                             >
                                 {t("취소")}
                             </button>
                             <button
+                                type="button"
                                 className="px-6 py-3 bg-roomi text-white font-medium rounded-xl shadow-md hover:bg-roomi-dark transition-all duration-200"
                                 onClick={confirmBack}
                             >

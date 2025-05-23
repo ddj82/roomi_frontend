@@ -77,7 +77,6 @@ function AppContent() {
                         <Route path="/join" element={<UserJoinScreen/>}/>
                         <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
                         <Route path="/sign-up" element={<KakaoLoginCallback/>}/>
-                        {/*<Route path="/logout-kakao" element={<KakaoLogoutCallback/>}/>*/}
                         <Route path="/sign-up/line" element={<LineLoginCallback/>}/>
                         <Route path="/join/social" element={<SocialJoinScreen/>}/>
                         <Route path="/login" element={<LoginPage/>}/>

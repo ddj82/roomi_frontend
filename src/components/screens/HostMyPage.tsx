@@ -44,6 +44,8 @@ export default function HostMyPage() {
     }, [selectedMenu]);
 
     const handleLogout = async () => {
+        const confirmCancel = window.confirm(t('로그아웃 하시겠습니까?'));
+        if (!confirmCancel) return;
         try {
             const response = await logout();
             console.log(response);
@@ -60,7 +62,6 @@ export default function HostMyPage() {
         if (loading) return <div className="flex items-center justify-center p-4">Loading...</div>;
 
         switch (selectedMenu) {
-
             case '수입 및 통계':
                 return (
                     <div className="p-2">
@@ -107,11 +108,12 @@ export default function HostMyPage() {
                 return <MyInfoEdit/>;
 
             default:
-                return (
-                    <div className="flex items-center justify-center h-64">
-                        <p className="text-gray-500">{t("선택된 메뉴가 없습니다.")}</p>
-                    </div>
-                );
+                return <MyInfoEdit/>;
+                // return (
+                //     <div className="flex items-center justify-center h-64">
+                //         <p className="text-gray-500">{t("선택된 메뉴가 없습니다.")}</p>
+                //     </div>
+                // );
         }
     };
 

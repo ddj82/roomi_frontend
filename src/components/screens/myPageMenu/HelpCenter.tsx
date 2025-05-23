@@ -1,15 +1,24 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock, faCommentDots, faComments, faEnvelope, faHeading, faUser} from "@fortawesome/free-solid-svg-icons";
 import {faCopy} from "@fortawesome/free-regular-svg-icons";
 import {useHostModeStore} from "../../stores/HostModeStore";
+import {sendHelpMessage} from "../../../api/api";
 
 export default function HelpCenter() {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const {hostMode} = useHostModeStore();
+    const [sendEmailForm, setSendEmailForm] = useState({
+        name: '',
+        email: '',
+        title: '',
+        content: '',
+    });
+    // 오류 메시지 상태 추가
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
     const handleKakaoChannelBtn = () => {
         window.open(`http://pf.kakao.com/_xkEFxjn`, '_blank');
@@ -24,9 +33,60 @@ export default function HelpCenter() {
         }
     };
 
+    const handleChange = (field: string, value: any) => {
+        setSendEmailForm((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
+
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        console.log('Submit ㅎㅇ');
+        const newErrors: { [key: string]: string } = {}; // 새로운 오류 객체
+
+        if (sendEmailForm.name === "") {
+            newErrors.name = "발신자를 입력해주세요.";
+        }
+
+        if (sendEmailForm.email === "") {
+            newErrors.email = "발신 이메일을 입력해주세요.";
+        } else if (!/^\S+@\S+\.\S+$/.test(sendEmailForm.email)) {
+            newErrors.email = "올바른 이메일 형식을 입력하세요.";
+        }
+
+        if (sendEmailForm.title === "") {
+            newErrors.title = "제목을 입력해주세요.";
+        }
+
+        if (sendEmailForm.content === "") {
+            newErrors.content = "문의 내용을 입력해주세요.";
+        }
+
+        // 오류가 있으면 상태 업데이트 후 진행 중지
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        // 오류가 없으면 다음 단계로 이동
+        setErrors({}); // 오류 초기화
+        const confirmCancel = window.confirm(t('이메일 전송을 하시겠습니까?'));
+        if (confirmCancel) {
+            try {
+                const response = await sendHelpMessage(sendEmailForm);
+                const responseJson = await response.json();
+                if (responseJson.success) {
+                    alert('이메일이 성공적으로 발송되었습니다.');
+                } else {
+                    alert('이메일 발송에 실패하였습니다.');
+                }
+                window.location.reload();
+            } catch (err) {
+                console.error('메일전송 실패', err);
+            }
+        } else {
+            return;
+        }
     };
 
     return (
@@ -67,54 +127,59 @@ export default function HelpCenter() {
                         </div>
                         <input
                             type="text"
-                            // onChange={(e) => handleChange(e.target.value)}
+                            onChange={(e) => handleChange('name', e.target.value)}
+                            name="name"
+                            id="name"
                             placeholder="이름"
                             className="w-full p-2 pl-10 border rounded focus:outline-none"
                         />
                     </div>
+                    {errors.name && <p className="font-bold text-red-500 text-sm">{errors.name}</p>}
                     <div className="relative">
                         <div className="absolute left-3.5 top-2 pointer-events-none">
                             <FontAwesomeIcon icon={faEnvelope} className="w-4 h-4 text-gray-400"/>
                         </div>
                         <input
                             type="text"
-                            // onChange={(e) => handleChange(e.target.value)}
+                            onChange={(e) => handleChange('email', e.target.value)}
+                            name="email"
+                            id="email"
                             placeholder="이메일"
                             className="w-full p-2 pl-10 border rounded focus:outline-none"
                         />
                     </div>
+                    {errors.email && <p className="font-bold text-red-500 text-sm">{errors.email}</p>}
                     <div className="relative">
                         <div className="absolute left-3.5 top-2 pointer-events-none">
                             <FontAwesomeIcon icon={faHeading} className="w-4 h-4 text-gray-400"/>
                         </div>
                         <input
                             type="text"
-                            // onChange={(e) => handleChange(e.target.value)}
-                            // name=""
-                            // id=""
+                            onChange={(e) => handleChange('title', e.target.value)}
+                            name="title"
+                            id="title"
                             placeholder="제목"
                             className="w-full p-2 pl-10 border rounded focus:outline-none"
                         />
                     </div>
+                    {errors.title && <p className="font-bold text-red-500 text-sm">{errors.title}</p>}
                     <div className="relative">
                         <div className="absolute left-3.5 top-2 pointer-events-none">
                             <FontAwesomeIcon icon={faCommentDots} className="w-4 h-4 text-gray-400"/>
                         </div>
                         <textarea
-                            // onChange={(e) => handleChange("", e.target.value)}
-                            // name=""
-                            // id=""
+                            onChange={(e) => handleChange('content', e.target.value)}
+                            name="content"
+                            id="content"
                             placeholder="문의 내용"
                             cols={30}
                             rows={6}
                             className="w-full p-2 pl-10 border border-gray-300 rounded focus:outline-none resize-none"></textarea>
                     </div>
+                    {errors.content && <p className="font-bold text-red-500 text-sm">{errors.content}</p>}
                     <button
-                        // type="submit"
-                        type="button"
-                        disabled
+                        type="submit"
                         className="bg-roomi rounded text-white font-bold p-2"
-                        // onClick={}
                     >
                         문의하기
                     </button>

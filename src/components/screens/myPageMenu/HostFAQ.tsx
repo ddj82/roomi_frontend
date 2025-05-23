@@ -7,66 +7,29 @@ export default function HostFAQ() {
     const {t} = useTranslation();
 
     const faqTitles: FAQTitle[] = [
-        { id: 1, listId: 'faqList1', title: t('시작 가이드') },
-        { id: 2, listId: 'faqList2', title: t('공간 및 계약') },
-        { id: 3, listId: 'faqList3', title: t('계약 및 취소') },
-        { id: 4, listId: 'faqList4', title: t('결제 및 영수증') },
-        { id: 5, listId: 'faqList5', title: t('보증금') },
-        { id: 6, listId: 'faqList6', title: t('특별 기능') },
+        { id: 1, listId: 'faqList1', title: t('세금') },
+        { id: 2, listId: 'faqList2', title: t('정산 관련') },
     ];
 
     const faqList1: FAQList[] = [
-        { id: 1, title: t('루미는 어떻게 시작하나요?'), content: t('시작설명') },
-        { id: 2, title: t('루미에서는 숙박과 단기 임대를 어떻게 선택할 수 있나요?'), content: t('단기임대설명') },
-        { id: 3, title: t('루미는 안전한 계약을 보장하나요?'), content: t('계약설명') },
-        { id: 4, title: t('주/월 단위 계약이란 무엇인가요?'), content: t('단위계약설명') },
-        { id: 5, title: t('루미만의 차별화된 장점은 무엇인가요?'), content: t('장점설명') },
+        { id: 1, title: t('Roomi에서 발생한 수익은 어떻게 신고해야 하나요?'), content: t('Roomi를 통해 발생한 임대 소득은 호스트 본인이 직접 세금 신고를 진행해야 합니다.\n' +
+                '임대 소득은 과세 대상이며, 소득세 납부가 필요할 수 있습니다.\n' +
+                '자세한 신고 절차 및 기준은 국세청 홈페이지에서 확인하시거나 세무 전문가와 상담하시길 권장드립니다.') },
+        { id: 2, title: t('임대료에 대한 부가세 신고가 필요한가요?'), content: t('임대 유형에 따라 부가세 신고 여부가 다릅니다. \n\n✅ 부가세 신고가 필요 없는 경우 \n•주거용 임대 (예: 일반 주택, 원룸, 주거용 오피스텔 등) \n\n✅ 부가세 신고가 필요한 경우 \n•비주거용 공간 임대 (예: 호텔, 숙박업소, 사무용 오피스텔, 공유 오피스 등) \n\n💡 주거용 임대의 경우 부가세 신고 의무가 없지만, 비주거용 임대는 법령에 따라 부가세 신고가 필요할 수 있습니다. \n국세청 가이드라인을 확인하고 필요한 신고 절차를 진행해 주세요.') },
+        { id: 3, title: t('Roomi에서 전자세금계산서 또는 현금영수증 발행이 가능한가요?'), content: t('Roomi에서 발생하는 서비스 이용 수수료에 한하여 현금영수증 및 전자세금계산서 발행이 가능합니다. \n\n💡 발행 방법 \n1.Roomi 앱 → "마이페이지" 메뉴 → "영수증 발급" 선택 \n2.영수증 종류 및 정보를 입력 후 신청') },
     ];
 
     // 다른 FAQ 리스트들...
     const faqList2: FAQList[] = [
-        { id: 1, title: t('전입신고가 가능한 공간인가요?'), content: t('전입신고내용') },
-        { id: 2, title: t('공간을 실제로 보고 계약할 수 있나요?'), content: t('공간내용') },
-        { id: 3, title: t('"설명된 계약 조건과 공간 상태가 다르면 어떻게 해야 하나요?'), content: t('계약설명1') },
-        { id: 4, title: t('원하는 날짜만 골라서 계약할 수 있나요?'), content: t('날짜내용') },
-        { id: 5, title: t('입주 후 시설 고장이 생기면 어떻게 해야 하나요?'), content: t('입주설명') },
-    ];
-    const faqList3: FAQList[] = [
-        { id: 1, title: t('계약 취소는 어떻게 하나요?'), content: t('취소설명1') },
-        { id: 2, title: t('계약 취소는 언제까지 가능한가요?'), content: t('취소설명2') },
-        { id: 3, title: t('중도 퇴실 시 환불 규정은 어떻게 되나요?'), content: t('퇴실설명1') },
-        { id: 4, title: t('계약 날짜를 변경할 수 있나요?'), content: t('계약날짜규정') },
-    ];
-    const faqList4: FAQList[] = [
-        { id: 1, title: t('법인카드나 해외카드로 결제가 가능한가요?'), content: t('네, 루미는 법인카드와 해외카드 결제를 모두 지원합니다.') },
-        { id: 2, title: t('현금영수증을 받을 수 있나요?'), content: t('현금영수증내용') },
-        { id: 3, title: t('영수증 발급은 어떻게 하나요?'), content: t('일반영수증내용') },
-        { id: 4, title: t('루미 결제 수수료는 무엇인가요?'), content: t('수수료내용') },
-    ];
-    const faqList5: FAQList[] = [
-        { id: 1, title: t('보증금은 어떤 경우에 필요한가요?'), content: t('보증금 설명1') },
-        { id: 2, title: t('보증금 금액은 어떻게 결정되나요?'), content: t('보증금 설명2') },
-        { id: 3, title: t('보증금 반환은 어떻게 이루어지나요?'), content: t('보증금 설명3') },
-        { id: 5, title: t('보증금 반환이 지연될 경우 어떻게 해야 하나요?'), content: t('보증금 설명4') },
-        { id: 4, title: t('중도 퇴실 시 보증금은 어떻게 처리되나요?'), content: t('보증금 설명5') },
-        { id: 6, title: t('보증금을 모두 받지 못하는 경우가 있나요?'), content: t('보증금 설명6') },
-    ];
-    const faqList6: FAQList[] = [
-        { id: 1, title: t('루미에서는 원하는 기간에 따라 계약을 유연하게 선택할 수 있나요?'), content: t('부가설명1') },
-        { id: 2, title: t('루미에서는 숙박과 단기 임대가 구분되어 있나요?'), content: t('부가설명2') },
-        { id: 3, title: t('루미의 AI 추천 시스템은 무엇인가요?'), content: t('부가설명3') },
-        { id: 4, title: t('호스트와의 소통은 어떻게 하나요?'), content: t('부가설명4') },
-        { id: 5, title: t('지원되는 언어는 무엇인가요?'), content: t('지원언어설명') },
+        { id: 1, title: t('Roomi에서 임대료 정산은 언제, 어떻게 진행되나요?'), content: t('전입신고내용') },
+        { id: 2, title: t('정산 계좌를 변경할 수 있나요?'), content: t('공간내용') },
+        { id: 3, title: t('게스트가 카드 결제로 결제하면 추가 수수료가 부과되나요?'), content: t('계약설명1') },
     ];
 
     // listId → 실제 FAQ 배열 매핑
     const listsMap: Record<string, FAQList[]> = {
         faqList1,
         faqList2,
-        faqList3,
-        faqList4,
-        faqList5,
-        faqList6,
     };
 
     const [expandedId, setExpandedId] = useState<number | null>(null);

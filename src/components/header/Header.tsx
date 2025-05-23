@@ -176,6 +176,8 @@ const Header = () => {
     };
 
     const handleLogout = async () => {
+        const confirmCancel = window.confirm(t('로그아웃 하시겠습니까?'));
+        if (!confirmCancel) return;
         try {
             if (localStorage.getItem('authMode') && localStorage.getItem('authMode') === 'kakao') {
                 const response = await SocialAuth.kakaoLogout();

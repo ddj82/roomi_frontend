@@ -14,6 +14,9 @@ export default function MyInfoEdit() {
     const {isHost} = useIsHostStore();
     const [editMyInfo, setEditMyInfo] = useState(false);
     const [form, setForm] = useState<User | null>(null);
+    const [confirmPassword, setConfirmPassword] = useState('');
+    // 오류 메시지 상태 추가
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
     // 초기 form 상태 저장용
     const initialFormRef = useRef<User | null>(null);
     // 프로필 파일 및 미리보기 관리
@@ -44,6 +47,7 @@ export default function MyInfoEdit() {
     }, [editMyInfo]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setErrors({}); // 오류 초기화
         const { name, value } = e.target;
         setForm(prev => ({
             ...prev!,
@@ -59,8 +63,8 @@ export default function MyInfoEdit() {
                 email: userInfo.email,
                 phone: userInfo.phone ?? '',
                 birth: userInfo.birth ? dayjs.utc(userInfo.birth).format('YYYY-MM-DD') : '',
-                password: userInfo.password,
-                // password: '', // 비밀번호 변경 시 입력 받음
+                // password: userInfo.password,
+                password: '', // 비밀번호 변경 시 입력 받음
                 bank_holder: userInfo.bank_holder ?? '',
                 bank: userInfo.bank ?? '',
                 account: userInfo.account ?? ''
@@ -89,6 +93,8 @@ export default function MyInfoEdit() {
         setSelectedFile(null);
         setPreview("");
         setEditMyInfo(false);
+        setConfirmPassword('');
+        setErrors({}); // 오류 초기화
     };
 
     /*사진 파일 관련*/
@@ -111,6 +117,8 @@ export default function MyInfoEdit() {
         event.preventDefault();
         if (!form || !initialFormRef.current || !userInfo) return;
 
+        const newErrors: { [key: string]: string } = {}; // 새로운 오류 객체
+
         // 초기 유저 데이터
         const initial = initialFormRef.current;
 
@@ -123,6 +131,29 @@ export default function MyInfoEdit() {
             alert(t('수정사항이 없습니다.'));
             setEditMyInfo(false);
             return;
+        } else {
+            // 변경사항 있으면 유효성 검사
+
+            // 전화번호 변경 시
+            if (!/^\d{10,11}$/.test(form.phone as string)) {
+                newErrors.phone = "올바른 전화번호를 입력하세요.";
+            }
+
+            // 비밀번호 변경 시
+            if (form.password.length < 8) {
+                newErrors.password = "비밀번호는 최소 8자리 이상이어야 합니다.";
+            }
+            if (form.password !== confirmPassword) {
+                newErrors.confirmPassword = "비밀번호가 일치하지 않습니다.";
+            }
+
+            // 오류가 있으면 상태 업데이트 후 진행 중지
+            if (Object.keys(newErrors).length > 0) {
+                setErrors(newErrors);
+                return;
+            }
+            // 오류가 없으면 다음 단계로 이동
+            setErrors({}); // 오류 초기화
         }
 
         // 변경된 필드만 담을 객체
@@ -144,12 +175,16 @@ export default function MyInfoEdit() {
 
         try {
             const response = await updateUserInfo(updatedData, selectedFile);
-            console.log('response',response);
-            alert("정보 수정이 완료되었습니다.");
+            if (response.ok) {
+                alert("정보 수정이 완료되었습니다.");
+            } else {
+                alert("업데이트에 실패했습니다.");
+            }
         } catch (e) {
             console.error('수정 실패', e);
         }
         setEditMyInfo(false);
+        window.location.reload();
     };
 
     return (
@@ -229,7 +264,6 @@ export default function MyInfoEdit() {
                                             name="email"
                                             type="text"
                                             value={form?.email}
-                                            // onChange={handleChange}
                                             className="w-full mt-1 pr-4 pl-2 py-2 border rounded bg-gray-100"
                                             disabled
                                         />
@@ -245,6 +279,12 @@ export default function MyInfoEdit() {
                                             className="w-full mt-1 pr-4 pl-2 py-2 border rounded bg-gray-100"
                                         />
                                     </div>
+                                    {errors.phone && (
+                                        <div className="flex">
+                                            <span className="w-1/4 flex items-center"></span>
+                                            <p className="w-full text-red-500 text-sm">{errors.phone}</p>
+                                        </div>
+                                    )}
 
                                     <div className="flex">
                                         <span className="w-1/4 flex items-center text-sm text-gray-500">{t('생년월일')}</span>
@@ -268,17 +308,29 @@ export default function MyInfoEdit() {
                                                 placeholder={t('새 비밀번호를 입력하세요')}
                                             />
                                         </div>
+                                        {errors.password && (
+                                            <div className="flex">
+                                                <span className="w-1/4 flex items-center"></span>
+                                                <p className="w-full text-red-500 text-sm">{errors.password}</p>
+                                            </div>
+                                        )}
 
                                         <div className="flex">
                                             <span className="w-1/4 flex items-center text-sm text-gray-500">{t('비밀번호 확인')}</span>
                                             <input
-                                                name="passwordConfirm"
                                                 type="password"
-                                                onChange={handleChange}
+                                                value={confirmPassword}
+                                                onChange={(e) => setConfirmPassword(e.target.value)}
                                                 className="w-full mt-1 pr-4 pl-2 py-2 border rounded"
                                                 placeholder={t('비밀번호를 다시 입력하세요')}
                                             />
                                         </div>
+                                        {errors.confirmPassword && (
+                                            <div className="flex">
+                                                <span className="w-1/4 flex items-center"></span>
+                                                <p className="w-full text-red-500 text-sm">{errors.confirmPassword}</p>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {isHost && (

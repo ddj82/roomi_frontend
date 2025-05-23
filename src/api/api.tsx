@@ -230,9 +230,16 @@ export const termsOfUse = async () => {
 };
 
 // host 등록 API
-export const be_host = async () => {
+export const be_host = async (hostModeAgreeForm: {
+    bank: string;
+    bank_holder: string;
+    host_type: string;
+    account: string
+}) => {
     try {
-        const response = await request(`/users/be_host`, true, 'POST');
+        const response = await request(`/users/be_host`, true, 'POST', {
+            ...hostModeAgreeForm,
+        });
         if (response.ok) {
             localStorage.setItem('userIsHost', 'true');
             return response.ok;
@@ -330,13 +337,22 @@ export const updateUserInfo = async (updateUserData: Partial<User>, file: File |
             body: formData,
         });
 
+        const responseJson = await response.json();
+        localStorage.setItem('userProfileImg', responseJson.data.profile_image);
+        console.log('유저정보변경 리스폰스', response);
+        console.log('유저정보변경 리스폰스 제이슨', responseJson);
+
         return response;
     }
 
-    // 파일이 없으면 JSON
-    return request(`/users/update/info`, true, 'PUT', {
+    const response = await request(`/users/update/info`, true, 'PUT', {
         ...updateUserData,
     });
+
+    console.log('유저정보변경 리스폰스', response);
+
+    // 파일이 없으면 JSON
+    return response;
 };
 
 // 유저 언어 코드 변경 API
@@ -512,5 +528,11 @@ export const hostSoftDeleteReservation = async (reservationId: number) => {
     return request(`/book/host/delete?reservationId=${reservationId}`, true, 'DELETE');
 };
 
+// 고객센터 메일 전송 API
+export const sendHelpMessage = async (sendEmailForm: { name: string; title: string; email: string; content: string }) => {
+    return request(`/email/help`, false, 'POST', {
+        ...sendEmailForm,
+    });
+};
 
 

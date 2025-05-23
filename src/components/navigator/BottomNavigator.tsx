@@ -41,6 +41,8 @@ const BottomNavigation: React.FC = () => {
     };
 
     const handleLogout = async () => {
+        const confirmCancel = window.confirm(t('로그아웃 하시겠습니까?'));
+        if (!confirmCancel) return;
         try {
             const response = await logout();
             console.log(response);

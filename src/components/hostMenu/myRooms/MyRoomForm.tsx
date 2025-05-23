@@ -921,10 +921,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
         businessFileInputRef[type].current?.click();
     };
     // 파일 선택 시 실행될 함수
-    const handleBusinessFileChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        type: UploadType
-    ) => {
+    const handleBusinessFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: UploadType) => {
         if (!e.target.files || e.target.files.length === 0) return;
 
         const file = e.target.files[0];
@@ -954,11 +951,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
         e.target.value = "";
     };
     // 랜더링 함수
-    const renderBusinessUploadSection = (
-        title: string,
-        description: string,
-        type: UploadType
-    ) => (
+    const renderBusinessUploadSection = (title: string, description: string, type: UploadType) => (
         <div className="mt-4">
             <div className="text-sm text-gray-500 font-bold">{title}</div>
             <div className="mt-1">
@@ -1112,17 +1105,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
         );
     };
 
-    // const test = () => {
-    //     console.log('변환했냐?', roomFormData);
-    // };
-
     return (
-        <>
-        {/*<div>*/}
-        {/*    <button type="button" onClick={test}>*/}
-        {/*        업데이트*/}
-        {/*    </button>*/}
-        {/*</div>*/}
         <form onSubmit={handleSubmit} className="p-6">
             {/* 상단 헤더 */}
             <div className="mb-6 p-4 border rounded-md flex">
@@ -1178,7 +1161,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                             {/* 단기임대 */}
                             <div className="md:w-1/2">
                                 <label htmlFor="LEASE"
-                                       className={`block p-4 border-2 rounded-lg cursor-pointer transition mb-4 md:m-0
+                                       className={`flex flex-col h-full p-4 border-2 rounded-lg cursor-pointer transition mb-4 md:m-0
                                         ${roomFormData.room_type === "LEASE" ?
                                            "bg-roomi-000 border-roomi" : "border text-gray-700 hover:bg-gray-100"}`}
                                 >
@@ -1229,7 +1212,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                             {/* 숙박업소 */}
                             <div className="md:w-1/2">
                                 <label htmlFor="LODGE"
-                                       className={`block p-4 border-2 rounded-lg cursor-pointer transition 
+                                       className={`flex flex-col h-full p-4 border-2 rounded-lg cursor-pointer transition 
                                            ${roomFormData.room_type === "LODGE" ?
                                            "bg-roomi-000 border-roomi" : "border text-gray-700 hover:bg-gray-100"}`}
                                 >
@@ -2470,7 +2453,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
 
             {/* 종료 모달 */}
             {showModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50">
+                <div className="fixed inset-0 flex_center bg-gray-600 bg-opacity-50">
                     <div className="bg-white p-6 rounded-md shadow-md">
                         {mode === "insert" ? (
                             <div className="mb-4">방 등록을 종료하시겠습니까?</div>
@@ -2494,7 +2477,6 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                 </div>
             )}
         </form>
-        </>
     );
 };
 
