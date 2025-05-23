@@ -1,244 +1,567 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title><!DOCTYPE html>
-      <html lang="ko">
-      <head>
-      <meta charset="utf-8" />
-      <title>결제 성공</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>결제 성공</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #3b82f6;
+      --primary-hover: #2563eb;
+      --success-color: #10b981;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --text-muted: #9ca3af;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --border-color: #e5e7eb;
+      --border-radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
     body {
-      font-family: 'Noto Sans KR', sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
+    }
+
+    .container {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      /*box-shadow: var(--shadow-lg);*/
+      max-width: 480px;
+      width: 100%;
+      overflow: hidden;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
       text-align: center;
+      padding: 40px 32px 32px;
+      background: var(--bg-secondary);
     }
-    .payment-result {
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 20px;
-      margin-top: 20px;
-      background-color: #f9f9f9;
-    }
+
     .success-icon {
-      width: 60px;
-      height: 60px;
-      margin: 0 auto 20px;
-      background-color: #4caf50;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      background: var(--success-color);
       border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: relative;
+      animation: checkmark 0.6s ease-out 0.3s both;
     }
-    .success-icon:after {
+
+    @keyframes checkmark {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .success-icon::after {
       content: '';
-      position: absolute;
-      width: 30px;
-      height: 15px;
+      width: 24px;
+      height: 12px;
       border-left: 3px solid white;
       border-bottom: 3px solid white;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -60%) rotate(-45deg);
+      transform: rotate(-45deg);
+      animation: drawCheck 0.3s ease-out 0.6s both;
     }
-    .redirect-message {
-      margin-top: 30px;
-      font-size: 14px;
-      color: #666;
-      font-style: italic;
+
+    @keyframes drawCheck {
+      from {
+        width: 0;
+        height: 0;
+      }
+      to {
+        width: 24px;
+        height: 12px;
+      }
     }
-    .redirect-button {
-      margin-top: 20px;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 4px;
+
+    .title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
       font-size: 16px;
-      cursor: pointer;
+      color: var(--text-secondary);
     }
-    .redirect-button:hover {
-      background-color: #2980b9;
-    }
+
     .payment-info {
-      text-align: left;
-      margin: 20px auto;
-      max-width: 400px;
-      background-color: #fff;
-      padding: 15px;
-      border-radius: 6px;
-      border: 1px solid #eee;
+      padding: 32px;
     }
-    .payment-info p {
-      margin: 8px 0;
+
+    .info-item {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-color);
     }
-    .payment-info strong {
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
       font-weight: 500;
-      color: #555;
+      color: var(--text-secondary);
+      font-size: 14px;
     }
-    .payment-info span {
-      color: #222;
+
+    .info-value {
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: right;
+      flex: 1;
+      margin-left: 16px;
       word-break: break-all;
+      font-size: 14px;
+    }
+
+    .amount {
+      font-size: 18px;
+      color: var(--success-color);
+    }
+
+    .footer {
+      padding: 24px 32px 32px;
+      text-align: center;
+      background: var(--bg-secondary);
+    }
+
+    .redirect-message {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .redirect-button {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .redirect-button:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .redirect-button:active {
+      transform: translateY(0);
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-color);
+      border-top-color: var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 12px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin: 0;
+        border-radius: 0;
+      }
+
+      .header,
+      .payment-info,
+      .footer {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
     }
   </style>
 </head>
 <body>
-<div class="payment-result">
-  <div class="success-icon"></div>
-  <h1>결제가 성공적으로 완료되었습니다</h1>
-  <div id="payment-details" class="payment-info">
-    <p>결제 정보를 불러오는 중...</p>
+<div class="container">
+  <div class="header">
+    <div class="success-icon"></div>
+    <h1 class="title">결제 완료</h1>
+    <p class="subtitle">결제가 성공적으로 처리되었습니다</p>
   </div>
-  <p class="redirect-message">자동으로 앱이 열리지 않는 경우 아래 버튼을 클릭하세요.</p>
-  <button class="redirect-button" id="openAppButton">앱으로 이동</button>
+
+  <div id="payment-details" class="payment-info">
+    <div class="loading">
+      <div class="spinner"></div>
+      결제 정보를 불러오는 중...
+    </div>
+  </div>
+
+  <div class="footer">
+    <p class="redirect-message">
+      자동으로 앱이 열리지 않는 경우 아래 버튼을 클릭하세요
+    </p>
+    <button class="redirect-button" id="openAppButton">
+      앱으로 이동
+    </button>
+  </div>
 </div>
 
 <script>
-  // URL에서 쿼리 파라미터 추출
-  function getUrlParams() {
-    const params = {};
-    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) {
-      params[key] = decodeURIComponent(value);
-    });
-    return params;
-  }
+  class PaymentSuccessPage {
+    constructor() {
+      this.params = this.getUrlParams();
+      this.locale = this.params.locale || 'ko';
+      this.texts = this.getTexts(this.locale);
+      this.init();
+    }
 
-  // 앱으로 리다이렉트하는 함수
-  function redirectToApp() {
-    const params = getUrlParams();
-    let deepLink = `com.myno1214.roomi://success`;
+    getUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      const result = {};
+      for (const [key, value] of params) {
+        result[key] = value;
+      }
+      return result;
+    }
 
-    // 모든 URL 파라미터를 딥링크에 추가
-    let isFirstParam = true;
-    for (const key in params) {
-      if (params.hasOwnProperty(key)) {
-        // 첫 번째 파라미터는 '?'로, 나머지는 '&'로 구분
-        deepLink += isFirstParam ? `?${key}=${encodeURIComponent(params[key])}` : `&${key}=${encodeURIComponent(params[key])}`;
-        isFirstParam = false;
+    getTexts(locale) {
+      const translations = {
+        ko: {
+          title: '결제 완료',
+          subtitle: '결제가 성공적으로 처리되었습니다',
+          loading: '결제 정보를 불러오는 중...',
+          redirectMessage: '자동으로 앱이 열리지 않는 경우 아래 버튼을 클릭하세요',
+          appButton: '앱으로 이동',
+          errorMessage: '결제 정보를 찾을 수 없습니다',
+          labels: {
+            orderId: '주문번호',
+            amount: '결제금액',
+            paymentKey: '결제키',
+            orderName: '상품명',
+            method: '결제방법',
+            status: '상태',
+            approvedAt: '승인시간'
+          }
+        },
+        en: {
+          title: 'Payment Complete',
+          subtitle: 'Your payment has been processed successfully',
+          loading: 'Loading payment information...',
+          redirectMessage: 'If the app doesn\'t open automatically, click the button below',
+          appButton: 'Open App',
+          errorMessage: 'Payment information not found',
+          labels: {
+            orderId: 'Order ID',
+            amount: 'Amount',
+            paymentKey: 'Payment Key',
+            orderName: 'Product',
+            method: 'Payment Method',
+            status: 'Status',
+            approvedAt: 'Approved At'
+          }
+        },
+        ja: {
+          title: '決済完了',
+          subtitle: '決済が正常に処理されました',
+          loading: '決済情報を読み込み中...',
+          redirectMessage: 'アプリが自動的に開かない場合は、下のボタンをクリックしてください',
+          appButton: 'アプリを開く',
+          errorMessage: '決済情報が見つかりません',
+          labels: {
+            orderId: '注文番号',
+            amount: '決済金額',
+            paymentKey: '決済キー',
+            orderName: '商品名',
+            method: '決済方法',
+            status: 'ステータス',
+            approvedAt: '承認時刻'
+          }
+        }
+      };
+      return translations[locale] || translations.ko;
+    }
+
+    init() {
+      this.updatePageTexts();
+      this.displayPaymentDetails();
+      this.setupEventListeners();
+      this.autoRedirect();
+    }
+
+    updatePageTexts() {
+      document.querySelector('.title').textContent = this.texts.title;
+      document.querySelector('.subtitle').textContent = this.texts.subtitle;
+      document.querySelector('.redirect-message').textContent = this.texts.redirectMessage;
+      document.querySelector('#openAppButton').textContent = this.texts.appButton;
+    }
+
+    displayPaymentDetails() {
+      const detailsElement = document.getElementById('payment-details');
+      detailsElement.innerHTML = `
+          <div class="loading">
+            <div class="spinner"></div>
+            ${this.texts.loading}
+          </div>
+        `;
+
+      if (!this.params.orderId) {
+        detailsElement.innerHTML = `
+            <div class="info-item">
+              <span class="info-label">오류</span>
+              <span class="info-value">${this.texts.errorMessage}</span>
+            </div>
+          `;
+        return;
+      }
+
+      const details = this.buildPaymentDetails();
+      detailsElement.innerHTML = details;
+    }
+
+    buildPaymentDetails() {
+      const items = [];
+
+      if (this.params.orderId) {
+        items.push(this.createInfoItem(this.texts.labels.orderId, this.params.orderId));
+      }
+
+      if (this.params.amount) {
+        const formattedAmount = this.formatAmount(this.params.amount);
+        items.push(this.createInfoItem(this.texts.labels.amount, formattedAmount, 'amount'));
+      }
+
+      if (this.params.paymentKey) {
+        items.push(this.createInfoItem(this.texts.labels.paymentKey, this.params.paymentKey));
+      }
+
+      if (this.params.orderName) {
+        items.push(this.createInfoItem(this.texts.labels.orderName, this.params.orderName));
+      }
+
+      if (this.params.method) {
+        items.push(this.createInfoItem(this.texts.labels.method, this.getPaymentMethodName(this.params.method)));
+      }
+
+      if (this.params.status) {
+        items.push(this.createInfoItem(this.texts.labels.status, this.getStatusName(this.params.status)));
+      }
+
+      if (this.params.approvedAt) {
+        const formattedDate = this.formatDate(new Date(this.params.approvedAt));
+        items.push(this.createInfoItem(this.texts.labels.approvedAt, formattedDate));
+      }
+
+      return items.join('');
+    }
+
+    createInfoItem(label, value, className = '') {
+      return `
+          <div class="info-item">
+            <span class="info-label">${label}</span>
+            <span class="info-value ${className}">${value}</span>
+          </div>
+        `;
+    }
+
+    formatAmount(amount) {
+      const num = parseInt(amount);
+      if (this.locale === 'ko') {
+        return `${num.toLocaleString()}원`;
+      } else if (this.locale === 'ja') {
+        return `¥${num.toLocaleString()}`;
+      } else {
+        return `${num.toLocaleString()}`;
       }
     }
 
-    // 추가 정보 객체 생성 (토스페이먼츠 응답에 없는 정보도 추가 가능)
-    const additionalInfo = {
-      timestamp: new Date().toISOString(),
-      device: navigator.userAgent,
-      // 다른 필요한 정보 추가
-    };
-
-    // 추가 정보도 딥링크에 포함
-    for (const key in additionalInfo) {
-      if (additionalInfo.hasOwnProperty(key)) {
-        deepLink += `&${key}=${encodeURIComponent(additionalInfo[key])}`;
-      }
+    getPaymentMethodName(method) {
+      const methodNames = {
+        ko: {
+          CARD: '카드',
+          VIRTUAL_ACCOUNT: '가상계좌',
+          MOBILE_PHONE: '휴대폰',
+          TRANSFER: '계좌이체',
+          CULTURE_GIFT_CERTIFICATE: '문화상품권',
+          BOOK_GIFT_CERTIFICATE: '도서문화상품권',
+          GAME_GIFT_CERTIFICATE: '게임문화상품권'
+        },
+        en: {
+          CARD: 'Card',
+          VIRTUAL_ACCOUNT: 'Virtual Account',
+          MOBILE_PHONE: 'Mobile Phone',
+          TRANSFER: 'Bank Transfer',
+          CULTURE_GIFT_CERTIFICATE: 'Culture Gift Certificate',
+          BOOK_GIFT_CERTIFICATE: 'Book Gift Certificate',
+          GAME_GIFT_CERTIFICATE: 'Game Gift Certificate'
+        },
+        ja: {
+          CARD: 'カード',
+          VIRTUAL_ACCOUNT: 'バーチャルアカウント',
+          MOBILE_PHONE: '携帯電話',
+          TRANSFER: '銀行振込',
+          CULTURE_GIFT_CERTIFICATE: '文化商品券',
+          BOOK_GIFT_CERTIFICATE: '図書商品券',
+          GAME_GIFT_CERTIFICATE: 'ゲーム商品券'
+        }
+      };
+      return methodNames[this.locale]?.[method] || method;
     }
 
-    // 상세 정보 표시 (주요 정보만 선택적으로 보여줌)
-    const detailsElement = document.getElementById('payment-details');
-    if (params.orderId) {
-      let detailsHtml = '';
-
-      // 주요 결제 정보 표시 (우선 순위 높은 것들)
-      if (params.orderId) detailsHtml += `<p><strong>주문번호:</strong> <span>${params.orderId}</span></p>`;
-      if (params.amount) detailsHtml += `<p><strong>결제금액:</strong> <span>${parseInt(params.amount).toLocaleString()}원</span></p>`;
-      if (params.paymentKey) detailsHtml += `<p><strong>결제키:</strong> <span>${params.paymentKey}</span></p>`;
-      if (params.orderName) detailsHtml += `<p><strong>상품명:</strong> <span>${params.orderName}</span></p>`;
-
-      // 추가 정보 표시 (결제 방법, 상태 등)
-      if (params.method) detailsHtml += `<p><strong>결제방법:</strong> <span>${getPaymentMethodName(params.method)}</span></p>`;
-      if (params.status) detailsHtml += `<p><strong>상태:</strong> <span>${getStatusName(params.status)}</span></p>`;
-
-      // 시간 정보 (있는 경우)
-      if (params.approvedAt) {
-        const approvedDate = new Date(params.approvedAt);
-        detailsHtml += `<p><strong>승인시간:</strong> <span>${formatDate(approvedDate)}</span></p>`;
-      }
-
-      detailsHtml += `<p>잠시 후 자동으로 앱으로 이동합니다.</p>`;
-
-      detailsElement.innerHTML = detailsHtml;
-    } else {
-      detailsElement.innerHTML = `<p>결제 정보를 찾을 수 없습니다.</p>`;
+    getStatusName(status) {
+      const statusNames = {
+        ko: {
+          READY: '준비됨',
+          IN_PROGRESS: '진행중',
+          WAITING_FOR_DEPOSIT: '입금대기',
+          DONE: '완료',
+          CANCELED: '취소됨',
+          PARTIAL_CANCELED: '부분취소',
+          ABORTED: '중단됨',
+          EXPIRED: '만료됨'
+        },
+        en: {
+          READY: 'Ready',
+          IN_PROGRESS: 'In Progress',
+          WAITING_FOR_DEPOSIT: 'Waiting for Deposit',
+          DONE: 'Done',
+          CANCELED: 'Canceled',
+          PARTIAL_CANCELED: 'Partial Canceled',
+          ABORTED: 'Aborted',
+          EXPIRED: 'Expired'
+        },
+        ja: {
+          READY: '準備完了',
+          IN_PROGRESS: '進行中',
+          WAITING_FOR_DEPOSIT: '入金待ち',
+          DONE: '完了',
+          CANCELED: 'キャンセル',
+          PARTIAL_CANCELED: '部分キャンセル',
+          ABORTED: '中止',
+          EXPIRED: '期限切れ'
+        }
+      };
+      return statusNames[this.locale]?.[status] || status;
     }
 
-    // 디버깅용 로그
-    console.log('딥링크:', deepLink);
-    console.log('전달할 파라미터:', params);
+    formatDate(date) {
+      return `${date.getFullYear()}-${this.padZero(date.getMonth() + 1)}-${this.padZero(date.getDate())} ${this.padZero(date.getHours())}:${this.padZero(date.getMinutes())}`;
+    }
 
-    // 앱으로 리다이렉트
-    window.location.href = deepLink;
+    padZero(num) {
+      return num < 10 ? '0' + num : num;
+    }
+
+    buildDeepLink() {
+      let deepLink = 'com.myno1214.roomi://success';
+
+      const allParams = {
+        ...this.params,
+        locale: this.locale,
+        timestamp: new Date().toISOString(),
+        device: navigator.userAgent
+      };
+
+      const paramString = Object.entries(allParams)
+              .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+              .join('&');
+
+      if (paramString) {
+        deepLink += `?${paramString}`;
+      }
+
+      return deepLink;
+    }
+
+    redirectToApp() {
+      const deepLink = this.buildDeepLink();
+      console.log('딥링크:', deepLink);
+      console.log('전달할 파라미터:', this.params);
+      window.location.href = deepLink;
+    }
+
+    setupEventListeners() {
+      document.getElementById('openAppButton').addEventListener('click', () => {
+        this.redirectToApp();
+      });
+    }
+
+    autoRedirect() {
+      setTimeout(() => {
+        this.redirectToApp();
+      }, 1500);
+    }
+
+    async sendPaymentInfoToServer() {
+      if (this.params.paymentKey && this.params.orderId && this.params.amount) {
+        try {
+          console.log('결제 정보 서버 전송:', this.params);
+          // 실제 서버 API 호출 구현
+        } catch (error) {
+          console.error('서버 전송 오류:', error);
+        }
+      }
+    }
   }
 
-  // 결제 방법 이름 반환
-  function getPaymentMethodName(method) {
-    const methodNames = {
-      CARD: '카드',
-      VIRTUAL_ACCOUNT: '가상계좌',
-      MOBILE_PHONE: '휴대폰',
-      TRANSFER: '계좌이체',
-      CULTURE_GIFT_CERTIFICATE: '문화상품권',
-      BOOK_GIFT_CERTIFICATE: '도서문화상품권',
-      GAME_GIFT_CERTIFICATE: '게임문화상품권'
-    };
-    return methodNames[method] || method;
-  }
-
-  // 상태 이름 반환
-  function getStatusName(status) {
-    const statusNames = {
-      READY: '준비됨',
-      IN_PROGRESS: '진행중',
-      WAITING_FOR_DEPOSIT: '입금대기',
-      DONE: '완료',
-      CANCELED: '취소됨',
-      PARTIAL_CANCELED: '부분취소',
-      ABORTED: '중단됨',
-      EXPIRED: '만료됨'
-    };
-    return statusNames[status] || status;
-  }
-
-  // 날짜 포맷 함수
-  function formatDate(date) {
-    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}`;
-  }
-
-  // 숫자 앞에 0 추가
-  function padZero(num) {
-    return num < 10 ? '0' + num : num;
-  }
-
-  // 앱 열기 버튼 클릭 이벤트
-  document.getElementById('openAppButton').addEventListener('click', function() {
-    redirectToApp();
+  // 페이지 로드 시 초기화
+  document.addEventListener('DOMContentLoaded', () => {
+    new PaymentSuccessPage();
   });
-
-  // 페이지 로드 시 자동으로 앱 리다이렉트 (1.5초 후)
-  window.onload = function() {
-    setTimeout(redirectToApp, 1500);
-  };
-
-  // 서버에 결제 정보 전송 (선택사항)
-  const sendPaymentInfoToServer = async () => {
-    const params = getUrlParams();
-    if (params.paymentKey && params.orderId && params.amount) {
-      try {
-        // 실제 환경에서는 이 부분을 구현하여 서버에 결제 정보 전송
-        console.log('결제 정보 서버 전송:', params);
-      } catch (error) {
-        console.error('서버 전송 오류:', error);
-      }
-    }
-  };
-
-  // 서버 전송 실행 (필요한 경우)
-  // sendPaymentInfoToServer();
 </script>
-</body>
-</html></title>
-</head>
-<body>
-
 </body>
 </html>

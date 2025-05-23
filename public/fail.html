@@ -1,246 +1,420 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>결제 실패</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --error-color: #ef4444;
+            --error-bg: #fef2f2;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --border-color: #e5e7eb;
+            --border-error: #fecaca;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
         body {
-            font-family: 'Noto Sans KR', sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
+        }
+
+        .container {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            max-width: 480px;
+            width: 100%;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
             text-align: center;
+            padding: 40px 32px 32px;
+            background: var(--error-bg);
         }
-        .payment-result {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-            background-color: #fff0f0;
-        }
+
         .error-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 20px;
-            background-color: #e74c3c;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: var(--error-color);
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
+            animation: shake 0.6s ease-out 0.3s both;
         }
-        .error-icon:before, .error-icon:after {
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-5px);
+            }
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .error-icon::before,
+        .error-icon::after {
             content: '';
             position: absolute;
-            width: 30px;
-            height: 4px;
-            background-color: white;
-            top: 50%;
-            left: 50%;
+            width: 24px;
+            height: 3px;
+            background: white;
+            border-radius: 2px;
         }
-        .error-icon:before {
-            transform: translate(-50%, -50%) rotate(45deg);
+
+        .error-icon::before {
+            transform: rotate(45deg);
         }
-        .error-icon:after {
-            transform: translate(-50%, -50%) rotate(-45deg);
+
+        .error-icon::after {
+            transform: rotate(-45deg);
         }
-        .redirect-message {
-            margin-top: 30px;
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .error-info {
+            padding: 32px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: var(--text-secondary);
             font-size: 14px;
-            color: #666;
-            font-style: italic;
         }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--error-color);
+            word-break: break-all;
+            font-size: 14px;
+            background: var(--error-bg);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-error);
+        }
+
+        .footer {
+            padding: 24px 32px 32px;
+            text-align: center;
+            background: var(--bg-secondary);
+        }
+
+        .redirect-message {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
         .redirect-button {
-            margin-top: 20px;
-            background-color: #3498db;
+            background: var(--primary-color);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 4px;
+            padding: 14px 32px;
+            border-radius: 8px;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
         }
+
         .redirect-button:hover {
-            background-color: #2980b9;
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
         }
-        .error-details {
-            text-align: left;
-            margin: 20px auto;
-            max-width: 400px;
-            background-color: #fff;
-            padding: 15px;
-            border-radius: 6px;
-            border: 1px solid #ffcccc;
+
+        .redirect-button:active {
+            transform: translateY(0);
         }
-        .error-details p {
-            margin: 8px 0;
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            color: var(--text-muted);
         }
-        .error-details .label {
-            font-weight: 500;
-            color: #555;
-            display: block;
-            margin-bottom: 4px;
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--error-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 12px;
         }
-        .error-details .value {
-            color: #e74c3c;
-            word-break: break-all;
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .retry-info {
+            background: #f0f9ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+            }
+
+            .header,
+            .error-info,
+            .footer {
+                padding-left: 24px;
+                padding-right: 24px;
+            }
         }
     </style>
 </head>
 <body>
-<div class="payment-result">
-    <div class="error-icon"></div>
-    <h1>결제에 실패했습니다</h1>
-    <div id="error-details" class="error-details">
-        <p>오류 정보를 불러오는 중...</p>
+<div class="container">
+    <div class="header">
+        <div class="error-icon"></div>
+        <h1 class="title">결제 실패</h1>
+        <p class="subtitle">결제 처리 중 오류가 발생했습니다</p>
     </div>
-    <p class="redirect-message">자동으로 앱이 열리지 않는 경우 아래 버튼을 클릭하세요.</p>
-    <button class="redirect-button" id="openAppButton">앱으로 이동</button>
+
+    <div id="error-details" class="error-info">
+        <div class="loading">
+            <div class="spinner"></div>
+            오류 정보를 불러오는 중...
+        </div>
+    </div>
+
+    <div class="footer">
+        <p class="redirect-message">
+            자동으로 앱이 열리지 않는 경우 아래 버튼을 클릭하세요
+        </p>
+        <button class="redirect-button" id="openAppButton">
+            앱으로 이동
+        </button>
+    </div>
 </div>
 
 <script>
-    // URL에서 쿼리 파라미터 추출
-    function getUrlParams() {
-        const params = {};
-        window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) {
-            params[key] = decodeURIComponent(value);
-        });
-        return params;
-    }
+    class PaymentFailPage {
+        constructor() {
+            this.params = this.getUrlParams();
+            this.init();
+        }
 
-    // 앱으로 리다이렉트하는 함수
-    function redirectToApp() {
-        const params = getUrlParams();
-        let deepLink = `com.myno1214.roomi://fail`;
+        getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const result = {};
+            for (const [key, value] of params) {
+                result[key] = value;
+            }
+            return result;
+        }
 
-        // 모든 URL 파라미터를 딥링크에 추가
-        let isFirstParam = true;
-        for (const key in params) {
-            if (params.hasOwnProperty(key)) {
-                // 첫 번째 파라미터는 '?'로, 나머지는 '&'로 구분
-                deepLink += isFirstParam ? `?${key}=${encodeURIComponent(params[key])}` : `&${key}=${encodeURIComponent(params[key])}`;
-                isFirstParam = false;
+        init() {
+            this.displayErrorDetails();
+            this.setupEventListeners();
+            this.autoRedirect();
+        }
+
+        displayErrorDetails() {
+            const detailsElement = document.getElementById('error-details');
+
+            if (!this.params.code && !this.params.message) {
+                detailsElement.innerHTML = `
+            <div class="info-item">
+              <span class="info-label">알 수 없는 오류</span>
+              <span class="info-value">오류 정보를 찾을 수 없습니다</span>
+            </div>
+            ${this.getRetryInfo()}
+          `;
+                return;
+            }
+
+            const details = this.buildErrorDetails();
+            detailsElement.innerHTML = details + this.getRetryInfo();
+        }
+
+        buildErrorDetails() {
+            const items = [];
+
+            if (this.params.code) {
+                items.push(this.createInfoItem('오류 코드', this.params.code));
+            }
+
+            if (this.params.message) {
+                items.push(this.createInfoItem('오류 메시지', this.params.message));
+            }
+
+            if (this.params.orderId) {
+                items.push(this.createInfoItem('주문번호', this.params.orderId));
+            }
+
+            if (this.params.errorCode) {
+                items.push(this.createInfoItem('상세 오류 코드', this.params.errorCode));
+            }
+
+            if (this.params.errorType) {
+                items.push(this.createInfoItem('오류 유형', this.getErrorTypeName(this.params.errorType)));
+            }
+
+            return items.join('');
+        }
+
+        createInfoItem(label, value) {
+            return `
+          <div class="info-item">
+            <span class="info-label">${label}</span>
+            <span class="info-value">${value}</span>
+          </div>
+        `;
+        }
+
+        getErrorTypeName(errorType) {
+            const errorTypeNames = {
+                PROVIDER: '결제 제공자 오류',
+                INVALID_REQUEST: '잘못된 요청',
+                TIMEOUT: '시간 초과',
+                INTERNAL: '내부 오류',
+                USER_CANCELED: '사용자 취소',
+                REJECT: '거부됨',
+                UNAUTHORIZED: '인증 오류'
+            };
+            return errorTypeNames[errorType] || errorType;
+        }
+
+        getRetryInfo() {
+            return `
+          <div class="retry-info">
+            💡 문제가 지속되면 다른 결제 수단을 시도하거나 고객센터에 문의해주세요.
+          </div>
+        `;
+        }
+
+        buildDeepLink() {
+            let deepLink = 'com.myno1214.roomi://fail';
+
+            const allParams = {
+                ...this.params,
+                timestamp: new Date().toISOString(),
+                device: navigator.userAgent
+            };
+
+            const paramString = Object.entries(allParams)
+                .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+                .join('&');
+
+            if (paramString) {
+                deepLink += `?${paramString}`;
+            }
+
+            return deepLink;
+        }
+
+        redirectToApp() {
+            const deepLink = this.buildDeepLink();
+            console.log('딥링크:', deepLink);
+            console.log('전달할 오류 파라미터:', this.params);
+            window.location.href = deepLink;
+        }
+
+        setupEventListeners() {
+            document.getElementById('openAppButton').addEventListener('click', () => {
+                this.redirectToApp();
+            });
+        }
+
+        autoRedirect() {
+            setTimeout(() => {
+                this.redirectToApp();
+            }, 1500);
+        }
+
+        async sendErrorInfoToServer() {
+            if (this.params.code && this.params.message) {
+                try {
+                    console.log('오류 정보 서버 전송:', this.params);
+                    // 실제 서버 API 호출 구현
+                } catch (error) {
+                    console.error('서버 전송 오류:', error);
+                }
             }
         }
-
-        // 추가 정보 객체 생성
-        const additionalInfo = {
-            timestamp: new Date().toISOString(),
-            device: navigator.userAgent,
-            // 다른 필요한 정보 추가
-        };
-
-        // 추가 정보도 딥링크에 포함
-        for (const key in additionalInfo) {
-            if (additionalInfo.hasOwnProperty(key)) {
-                deepLink += `&${key}=${encodeURIComponent(additionalInfo[key])}`;
-            }
-        }
-
-        // 오류 상세 정보 표시
-        const detailsElement = document.getElementById('error-details');
-        let detailsHtml = '';
-
-        // 주요 오류 정보
-        if (params.code) {
-            detailsHtml += `
-        <p>
-          <span class="label">오류 코드</span>
-          <span class="value">${params.code}</span>
-        </p>
-      `;
-        }
-
-        if (params.message) {
-            detailsHtml += `
-        <p>
-          <span class="label">오류 메시지</span>
-          <span class="value">${params.message}</span>
-        </p>
-      `;
-        }
-
-        // 추가 정보 (있는 경우)
-        if (params.orderId) {
-            detailsHtml += `
-        <p>
-          <span class="label">주문번호</span>
-          <span class="value">${params.orderId}</span>
-        </p>
-      `;
-        }
-
-        if (params.errorCode) {
-            detailsHtml += `
-        <p>
-          <span class="label">상세 오류 코드</span>
-          <span class="value">${params.errorCode}</span>
-        </p>
-      `;
-        }
-
-        // 에러 타입 (있는 경우)
-        if (params.errorType) {
-            detailsHtml += `
-        <p>
-          <span class="label">오류 유형</span>
-          <span class="value">${getErrorTypeName(params.errorType)}</span>
-        </p>
-      `;
-        }
-
-        detailsHtml += `<p>잠시 후 자동으로 앱으로 이동합니다.</p>`;
-
-        if (detailsHtml) {
-            detailsElement.innerHTML = detailsHtml;
-        } else {
-            detailsElement.innerHTML = '<p>오류 정보를 찾을 수 없습니다.</p>';
-        }
-
-        // 디버깅용 로그
-        console.log('딥링크:', deepLink);
-        console.log('전달할 오류 파라미터:', params);
-
-        // 앱으로 리다이렉트
-        window.location.href = deepLink;
     }
 
-    // 오류 유형 이름 반환
-    function getErrorTypeName(errorType) {
-        const errorTypeNames = {
-            PROVIDER: '결제 제공자 오류',
-            INVALID_REQUEST: '잘못된 요청',
-            TIMEOUT: '시간 초과',
-            INTERNAL: '내부 오류',
-            USER_CANCELED: '사용자 취소',
-            REJECT: '거부됨',
-            UNAUTHORIZED: '인증 오류'
-        };
-        return errorTypeNames[errorType] || errorType;
-    }
-
-    // 앱 열기 버튼 클릭 이벤트
-    document.getElementById('openAppButton').addEventListener('click', function() {
-        redirectToApp();
+    // 페이지 로드 시 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+        new PaymentFailPage();
     });
-
-    // 페이지 로드 시 자동으로 앱 리다이렉트 (1.5초 후)
-    window.onload = function() {
-        setTimeout(redirectToApp, 1500);
-    };
-
-    // 서버에 오류 정보 전송 (선택사항)
-    const sendErrorInfoToServer = async () => {
-        const params = getUrlParams();
-        if (params.code && params.message) {
-            try {
-                // 실제 환경에서는 이 부분을 구현하여 서버에 오류 정보 전송
-                console.log('오류 정보 서버 전송:', params);
-            } catch (error) {
-                console.error('서버 전송 오류:', error);
-            }
-        }
-    };
-
-    // 서버 전송 실행 (필요한 경우)
-    // sendErrorInfoToServer();
 </script>
 </body>
 </html>
