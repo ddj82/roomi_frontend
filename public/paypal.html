@@ -1,93 +1,285 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>아임포트 결제</title>
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+    <title>PortOne PayPal 결제</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .payment-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .payment-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .payment-info h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+            font-weight: bold;
+            font-size: 18px;
+            color: #007bff;
+        }
+
+        .portone-ui-container {
+            min-height: 400px;
+            width: 100%;
+            /*border: 2px dashed #ddd;*/
+            /*border-radius: 8px;*/
+            display: block !important;
+            visibility: visible !important;
+            position: relative;
+            /*background: #fafafa;*/
+            margin-top: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .loading-text {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pay-button {
+            background: #0070ba;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .pay-button:hover {
+            background: #005ea6;
+        }
+
+        .pay-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
 </head>
 <body>
-<div style="text-align: center; padding: 20px;">
-    <h2>결제 진행 중...</h2>
-    <div id="debug-info" style="text-align: left; padding: 10px; font-size: 12px; color: #666;"></div>
-    <div id="error-message" style="color: red; display: none;"></div>
+<div>
+    <!--    <div class="payment-container">-->
+    <!--    <div class="header">-->
+    <!--        <h1>🏠 Roomi 결제</h1>-->
+    <!--        <p>PayPal로 안전하게 결제하세요</p>-->
+    <!--    </div>-->
+
+    <!--    <div class="payment-info">-->
+    <!--        <h3>결제 정보</h3>-->
+    <!--        <div class="info-row">-->
+    <!--            <span>상품명:</span>-->
+    <!--            <span>Roomi 결제 테스트</span>-->
+    <!--        </div>-->
+    <!--        <div class="info-row">-->
+    <!--            <span>결제 방법:</span>-->
+    <!--            <span>PayPal</span>-->
+    <!--        </div>-->
+    <!--        <div class="info-row">-->
+    <!--            <span>결제 금액:</span>-->
+    <!--            <span>$1.00 USD</span>-->
+    <!--        </div>-->
+    <!--    </div>-->
+
+    <div class="portone-ui-container">
+        <div class="loading-text">🔄 PayPal 결제 UI를 로드하고 있습니다...</div>
+    </div>
+
+    <div id="statusMessage" class="status-message"></div>
 </div>
 
+<!-- PortOne SDK 로드 -->
+<script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
+
 <script>
-    function addDebugInfo(message) {
-        const debugDiv = document.getElementById('debug-info');
-        const timestamp = new Date().toLocaleTimeString();
-        debugDiv.innerHTML += `[${timestamp}] ${message}<br>`;
-        console.log(`[${timestamp}] ${message}`);
+    // SDK 로드 상태 확인
+    function checkSDKStatus() {
+        console.log('=== SDK 상태 확인 ===');
+        console.log('window.PortOne:', window.PortOne);
+        console.log('typeof window.PortOne:', typeof window.PortOne);
+
+        if (window.PortOne) {
+            console.log('✅ PortOne SDK 사용 가능');
+            console.log('PortOne 메서드들:', Object.keys(window.PortOne));
+        } else {
+            console.log('❌ PortOne SDK 없음');
+        }
     }
 
-    // URL 파라미터 가져오기
-    const urlParams = new URLSearchParams(window.location.search);
-    const params = {
-        orderId: urlParams.get('orderId') || `order_${Date.now()}`,
-        amount: urlParams.get('amount') || "1000",
-        currency: urlParams.get('currency') || "USD",
-        buyerName: urlParams.get('buyerName') || "홍길동",
-        buyerEmail: urlParams.get('buyerEmail') || "test@example.com",
-        buyerTel: urlParams.get('buyerTel') || "01012345678",
-        buyerAddr: urlParams.get('buyerAddr') || "서울특별시 강남구",
-        pg: urlParams.get('pg') || "html5_inicis"
-    };
+    // 결제 시작 함수
+    function startPayment() {
+        console.log('=== 자동 결제 시작 ===');
+        checkSDKStatus();
+        const container = document.querySelector('.portone-ui-container');
+        const statusMessage = document.getElementById('statusMessage');
 
-    let paymentStarted = false;
+        // 로딩 상태로 변경
+        container.innerHTML = '<div class="loading-text">🔄 PayPal 결제 UI를 준비하고 있습니다...</div>';
+        statusMessage.style.display = 'none';
 
-    function initPayment() {
-        if (!window.IMP) {
-            addDebugInfo('아임포트 SDK 로딩 대기 중...');
-            setTimeout(initPayment, 500);
-            return;
-        }
+        // 컨테이너 확인
+        console.log('컨테이너 존재 여부:', !!container);
+        console.log('컨테이너 클래스:', container?.className);
+        console.log('컨테이너 innerHTML:', container?.innerHTML);
 
-        if (paymentStarted) {
-            addDebugInfo("이미 결제 시작됨. 중복 방지");
-            return;
-        }
-        paymentStarted = true;
+        // PortOne 결제 설정 (containerId를 클래스명으로 변경)
+        const requestData = {
+            uiType: "PAYPAL_SPB",
+            storeId: "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85",
+            paymentId: `roomi_${Date.now()}`,
+            orderName: "Roomi 결제 테스트",
+            totalAmount: 100, // $1.00 (센트 단위)
+            currency: "USD",
+            channelKey: "channel-key-32257656-6637-40bf-b343-795dbb0b1beb",
+            containerId: "portone-ui-container", // 클래스명으로 지정 (점 없이)
+            customer: {
+                customerId: "roomi_user_" + Date.now(),
+                fullName: "Yujin",
+                email: "test@example.com"
+            },
+            redirectUrl: "https://roomi.co.kr/payment/complete",
+            lang : "en"
+        };
 
-        const IMP = window.IMP;
-        IMP.init("imp01154410"); // 가맹점 코드
-
-        addDebugInfo('아임포트 결제 요청 시작...');
-
-        IMP.request_pay({
-            pg: 'paypal', // PG사
-            pay_method: "paypal",
-            merchant_uid: params.orderId,
-            name: "테스트 결제 상품",
-            amount: params.amount,
-            currency: params.currency,
-            buyer_name: params.buyerName,
-            buyer_email: params.buyerEmail,
-            buyer_tel: params.buyerTel,
-            buyer_addr: params.buyerAddr,
-            buyer_postcode: "06018",
-            m_redirect_url: "https://roomi.co.kr/success.html", // 모바일 전용,
-            popup:false
-        }, function (rsp) {
-            if (rsp.success) {
-                addDebugInfo('결제 성공 ✅: ' + JSON.stringify(rsp));
-                alert("결제가 성공적으로 완료되었습니다!");
-            } else {
-                addDebugInfo('결제 실패 ❌: ' + JSON.stringify(rsp));
-                document.getElementById('error-message').textContent =
-                    `결제 실패: ${rsp.error_msg || 'Unknown error'}`;
-                document.getElementById('error-message').style.display = 'block';
+        const callbacks = {
+            onPaymentSuccess: (response) => {
+                console.log("✅ 결제 성공", response);
+                showStatus('결제가 성공적으로 완료되었습니다! 🎉', 'success');
+            },
+            onPaymentFail: (error) => {
+                console.error("❌ 결제 실패", error);
+                showStatus('결제가 실패하거나 취소되었습니다. 😔', 'error');
             }
-        });
+        };
+
+        // PortOne SDK 확인 및 결제 시작
+        if (window.PortOne) {
+            try {
+                console.log('결제 요청 데이터:', requestData);
+                console.log('결제 UI 로드 시작...');
+
+                // 컨테이너 초기화 (로딩 텍스트 제거)
+                container.innerHTML = '';
+                container.style.display = 'block';
+
+                // 결제 UI 로드
+                const result = window.PortOne.loadPaymentUI(requestData, callbacks);
+                console.log('loadPaymentUI 결과:', result);
+
+            } catch (error) {
+                console.error('결제 UI 로드 실패:', error);
+                console.error('에러 스택:', error.stack);
+                showStatus('결제 시스템에 문제가 발생했습니다: ' + error.message, 'error');
+            }
+        } else {
+            showStatus('결제 시스템이 아직 로드되지 않았습니다. 잠시 후 다시 시도합니다.', 'error');
+            // 3초 후 재시도
+            setTimeout(() => {
+                startPayment();
+            }, 3000);
+        }
     }
 
-    window.onload = function() {
-        addDebugInfo('페이지 로드 완료');
-        addDebugInfo('전달받은 파라미터: ' + JSON.stringify(params));
+    // 상태 메시지 표시 함수
+    function showStatus(message, type) {
+        const statusMessage = document.getElementById('statusMessage');
+        statusMessage.textContent = message;
+        statusMessage.className = `status-message status-${type}`;
+        statusMessage.style.display = 'block';
 
-        setTimeout(initPayment, 1000);
-    };
+        // 5초 후 메시지 숨기기
+        setTimeout(() => {
+            statusMessage.style.display = 'none';
+        }, 5000);
+    }
+
+    // 페이지 로드 완료 후 자동으로 결제 시작
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('=== DOM 로드 완료 ===');
+
+        // SDK 로드 확인 후 자동 결제 시작
+        const checkSDKAndStart = () => {
+            if (window.PortOne) {
+                console.log('✅ PortOne SDK 로드 완료 - 자동 결제 시작');
+                setTimeout(() => {
+                    startPayment();
+                }, 500); // 0.5초 후 자동 시작
+            } else {
+                console.log('⏳ PortOne SDK 로드 중... 재시도');
+                setTimeout(checkSDKAndStart, 1000);
+            }
+        };
+
+        checkSDKAndStart();
+    });
+
+    // 스크립트 로드 에러 처리
+    window.addEventListener('error', function(e) {
+        console.error('스크립트 로드 에러:', e);
+    });
 </script>
 </body>
 </html>
