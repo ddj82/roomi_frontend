@@ -336,9 +336,33 @@
       return translations[locale] || translations.ko;
     }
 
+    handleFailure() {
+      const detailsElement = document.getElementById('payment-details');
+      const message = decodeURIComponent(this.params.message || '결제에 실패했습니다');
+
+      detailsElement.innerHTML = `
+    <div class="info-item">
+      <span class="info-label">오류</span>
+      <span class="info-value">${message}</span>
+    </div>
+  `;
+
+      document.querySelector('.title').textContent = '결제 실패';
+      document.querySelector('.subtitle').textContent = message;
+      document.querySelector('.success-icon').style.backgroundColor = '#ef4444'; // 실패 색상 (빨간색)
+      document.querySelector('.success-icon::after')?.remove(); // 체크 표시 제거
+    }
+
     init() {
       this.updatePageTexts();
-      this.displayPaymentDetails();
+
+      // ✅ 성공인지 실패인지 판단
+      if (this.params.code && this.params.code !== 'SUCCESS') {
+        this.handleFailure();  // 실패 처리
+      } else {
+        this.displayPaymentDetails(); // 기존 성공 UI
+      }
+
       this.setupEventListeners();
       this.autoRedirect();
     }
