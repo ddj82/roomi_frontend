@@ -67,41 +67,14 @@
                 refundHolderName: "홍길동",           // (선택) 환불용
                 refundAccount: "12345678901234"       // (선택) 환불용
             },
-            redirectUrl: params.redirectUrl
+            redirectUrl: params.redirectUrl,
+            m_redirect_url: params.redirectUrl, // 모바일 리다이렉트 URL
         };
 
         addDebugInfo('결제 요청 데이터: ' + JSON.stringify(paymentRequest, null, 2));
 
         PortOne.requestPayment(paymentRequest)
             .then(async (response) => {
-                console.log('=== PortOne 결제 응답 ===');
-                console.log(response);
-                console.log('=== 응답 상세 ===');
-                console.log('성공 여부:', response.success);
-                console.log('결제 ID:', response.imp_uid);
-                console.log('주문 ID:', response.merchant_uid);
-                if (response.success) {
-                    console.log('=== 가상계좌 정보 ===');
-                    console.log('은행명:', response.vbank_name);
-                    console.log('계좌번호:', response.vbank_num);
-                    console.log('예금주:', response.vbank_holder);
-                    console.log('입금기한:', response.vbank_date);
-                    console.log('전체 응답 객체:', JSON.stringify(response, null, 2));
-                } else {
-                    console.log('결제 실패:', response.error_msg);
-                }
-                const vaInfo = {
-                    bank: result.virtualAccount?.bankName,
-                    accountNumber: response.virtualAccount?.accountNumber,
-                    holderName: response.virtualAccount?.holderName,
-                    expiration: response.virtualAccount?.expiredAt,
-                    paymentId: response.paymentId,
-                    txId: result.txId
-                };
-
-                // ⭐ 가상계좌 정보 localStorage 저장
-                localStorage.setItem("virtualAccount", JSON.stringify(vaInfo));
-
                 // ⭐ success-virtual.html로 이동
                 window.location.href = `/success-virtual.html?paymentId=${vaInfo.paymentId}&txId=${vaInfo.txId}`;
             })
