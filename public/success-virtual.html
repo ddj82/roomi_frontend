@@ -166,7 +166,7 @@
     if (paymentId) {
         // API 호출하여 가상계좌 정보 가져오기 (POST 요청으로 body에 paymentId 전송)
         fetch(`https://roomi.co.kr/api/payment/virtual-account`, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
