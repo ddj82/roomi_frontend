@@ -15,4 +15,5 @@ export interface User {
     bank_holder?: string;
     bank?: string;
     account?: string;
+    is_korean?: boolean;
 }

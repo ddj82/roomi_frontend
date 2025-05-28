@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { RoomData, RoomFormData, Discounts } from "../../../types/rooms";
 import MyRoomForm from "./MyRoomForm";
+import {updateRoom} from "../../../api/api";
 
 async function urlsToFiles(urls: string[]): Promise<File[]> {
     const files = await Promise.all(
@@ -110,8 +111,15 @@ export default function MyRoomUpdate() {
     const handleUpdate = async (data: RoomFormData, files: File[]) => {
         if (!room) return;
         try {
-            // await updateRoom(room.id, data, files);
-            // navigate("/host");
+            const response = await updateRoom(room.id, data, files);
+            if (response.ok) {
+                console.log("방 수정 성공");
+                navigate("/host"); // 성공 시 호스트 페이지로 이동
+            } else {
+                // throw new Error("방 수정 실패");
+                console.log("방 수정 실패");
+                navigate("/host"); // 성공 시 호스트 페이지로 이동
+            }
         } catch (e) {
             console.error("방 수정 실패", e);
         }

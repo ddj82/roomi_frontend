@@ -133,6 +133,7 @@ export default function MyInfoEdit() {
             return;
         } else {
             // 변경사항 있으면 유효성 검사
+            console.log(form);
 
             // 전화번호 변경 시
             if (!/^\d{10,11}$/.test(form.phone as string)) {
@@ -140,11 +141,13 @@ export default function MyInfoEdit() {
             }
 
             // 비밀번호 변경 시
-            if (form.password.length < 8) {
-                newErrors.password = "비밀번호는 최소 8자리 이상이어야 합니다.";
-            }
-            if (form.password !== confirmPassword) {
-                newErrors.confirmPassword = "비밀번호가 일치하지 않습니다.";
+            if (form.password !== "") {
+                if (form.password.length < 8) {
+                    newErrors.password = "비밀번호는 최소 8자리 이상이어야 합니다.";
+                }
+                if (form.password !== confirmPassword) {
+                    newErrors.confirmPassword = "비밀번호가 일치하지 않습니다.";
+                }
             }
 
             // 오류가 있으면 상태 업데이트 후 진행 중지
