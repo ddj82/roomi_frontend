@@ -18,9 +18,7 @@
         }
 
         .container {
-            /*background-color: white;*/
             border-radius: 12px;
-            /*box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);*/
             max-width: 460px;
             width: 100%;
             padding: 40px 24px;
@@ -82,6 +80,15 @@
             font-weight: 600;
         }
 
+        .loading {
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .error {
+            color: #ef4444;
+        }
+
         button {
             background-color: #3b82f6;
             color: white;
@@ -108,31 +115,117 @@
     <div class="info-list" id="account-info">
         <div class="info-item">
             <span class="info-label">은행명</span>
-            <span class="info-value" id="bank">-</span>
+            <span class="info-value loading" id="bank">로딩 중...</span>
         </div>
         <div class="info-item">
             <span class="info-label">계좌번호</span>
-            <span class="info-value" id="account">-</span>
+            <span class="info-value loading" id="account">로딩 중...</span>
         </div>
         <div class="info-item">
             <span class="info-label">예금주</span>
-            <span class="info-value" id="holder">-</span>
+            <span class="info-value loading" id="holder">로딩 중...</span>
         </div>
         <div class="info-item">
             <span class="info-label">입금기한</span>
-            <span class="info-value" id="expiration">-</span>
+            <span class="info-value loading" id="expiration">로딩 중...</span>
         </div>
     </div>
     <button id="goApp">앱으로 이동</button>
 </div>
 
 <script>
-    const va = JSON.parse(localStorage.getItem("virtualAccount") || "{}");
-    document.getElementById("bank").textContent = va.bank || "정보 없음";
-    document.getElementById("account").textContent = va.accountNumber || "정보 없음";
-    document.getElementById("holder").textContent = va.holderName || "정보 없음";
-    document.getElementById("expiration").textContent = va.expiration ? new Date(va.expiration).toLocaleString() : "정보 없음";
+    // 은행 코드 매핑
+    const bankMapping = {
+        'IBK': '기업은행',
+        'KB': '국민은행',
+        'SH': '신한은행',
+        'WR': '우리은행',
+        'HN': '하나은행',
+        'NH': '농협은행',
+        'KEB': 'KEB하나은행',
+        'CT': '씨티은행',
+        'KK': '카카오뱅크',
+        'TT': '토스뱅크',
+        'K': '케이뱅크',
+        'BK': '부산은행',
+        'DG': '대구은행',
+        'KJ': '광주은행',
+        'JB': '전북은행',
+        'KN': '경남은행',
+        'MG': '새마을금고',
+        'SU': '수협은행',
+        'KDB': '산업은행',
+        'SBI': 'SBI저축은행',
+        'SC': 'SC제일은행'
+    };
 
+    // URL 파라미터에서 txId 추출
+    const params = new URLSearchParams(window.location.search);
+    const txId = params.get("txId");
+
+    if (txId) {
+        // API 호출하여 가상계좌 정보 가져오기
+        fetch(`https://roomi.co.kr/api/payment/virtual-account?txId=${txId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('가상계좌 정보를 불러올 수 없습니다.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 은행명 매핑
+                const bankName = bankMapping[data.bank] || data.bank;
+
+                // 날짜 포맷팅
+                const expiredDate = new Date(data.expiredAt);
+                const formattedDate = expiredDate.toLocaleString('ko-KR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                // DOM 업데이트
+                document.getElementById("bank").textContent = bankName;
+                document.getElementById("account").textContent = data.accountNumber;
+                document.getElementById("holder").textContent = data.remitteeName;
+                document.getElementById("expiration").textContent = formattedDate;
+
+                // 로딩 스타일 제거
+                document.querySelectorAll('.loading').forEach(el => {
+                    el.classList.remove('loading');
+                });
+            })
+            .catch(error => {
+                console.error('가상계좌 정보 조회 실패:', error);
+
+                // 에러 표시
+                document.getElementById("bank").textContent = "정보 없음";
+                document.getElementById("account").textContent = "정보 없음";
+                document.getElementById("holder").textContent = "정보 없음";
+                document.getElementById("expiration").textContent = "정보 없음";
+
+                // 에러 스타일 적용
+                document.querySelectorAll('.loading').forEach(el => {
+                    el.classList.remove('loading');
+                    el.classList.add('error');
+                });
+            });
+    } else {
+        // txId가 없는 경우
+        document.getElementById("bank").textContent = "정보 없음";
+        document.getElementById("account").textContent = "정보 없음";
+        document.getElementById("holder").textContent = "정보 없음";
+        document.getElementById("expiration").textContent = "정보 없음";
+
+        document.querySelectorAll('.loading').forEach(el => {
+            el.classList.remove('loading');
+            el.classList.add('error');
+        });
+    }
+
+    // 앱으로 이동 버튼
     document.getElementById("goApp").addEventListener("click", () => {
         const params = new URLSearchParams(window.location.search);
         const orderId = params.get("paymentId") || "";
