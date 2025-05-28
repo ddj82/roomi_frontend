@@ -68,7 +68,8 @@
             customData: {
                 isMobile: isMobileDevice,
                 userAgent: navigator.userAgent
-            }
+            },
+            popup : false // 모바일인 경우 현재 창에서 열도록 설정
         };
 
         // 모바일인 경우 추가 설정
@@ -79,7 +80,9 @@
         }
 
         addDebugInfo('결제 요청 데이터: ' + JSON.stringify(paymentRequest, null, 2));
-
+        if (isMobileDevice) {
+            PortOne.setUserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148");
+        }
         PortOne.requestPayment(paymentRequest)
             .then(result => {
                 addDebugInfo("✅ 결제 응답: " + JSON.stringify(result));
