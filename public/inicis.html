@@ -77,6 +77,10 @@
             paymentRequest.m_redirect_url = params.redirectUrl;
             // 모바일에서는 새창이 아닌 현재창에서 결제 진행
             paymentRequest.popup = false;
+            paymentRequest.display = {
+                pc: 'popup',
+                mobile: 'page'  // 모바일에서는 페이지 방식으로 강제
+            };
         }
 
         addDebugInfo('결제 요청 데이터: ' + JSON.stringify(paymentRequest, null, 2));
