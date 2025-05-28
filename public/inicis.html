@@ -9,8 +9,8 @@
 <body>
 <div style="text-align: center; padding: 20px;">
     <h2>결제 진행 중...</h2>
-    <div id="debug-info" style="text-align: left; padding: 10px; font-size: 12px; color: white;"></div>
-    <div id="error-message" style="color: white; display: none;"></div>
+    <div id="debug-info" style="text-align: left; padding: 10px; font-size: 12px; color: #666;"></div>
+    <div id="error-message" style="color: red; display: none;"></div>
 </div>
 
 <script>
@@ -64,8 +64,6 @@
                 }
             },
             redirectUrl: params.redirectUrl,
-            // 모바일 전용 설정 추가
-            windowType: isMobileDevice ? 'REDIRECTION' : 'POPUP',
             customData: {
                 isMobile: isMobileDevice,
                 userAgent: navigator.userAgent
@@ -75,6 +73,8 @@
         // 모바일인 경우 추가 설정
         if (isMobileDevice) {
             paymentRequest.m_redirect_url = params.redirectUrl;
+            // 모바일에서는 새창이 아닌 현재창에서 결제 진행
+            paymentRequest.popup = false;
         }
 
         addDebugInfo('결제 요청 데이터: ' + JSON.stringify(paymentRequest, null, 2));
@@ -103,7 +103,7 @@
                 }
             })
             .catch(error => {
-                addDebugInfo("❌ 결제 에러: " + JSON.stringify(error));
+                addDebugInfo("결제 에러: " + JSON.stringify(error));
                 document.getElementById('error-message').textContent = `결제 실패: ${error.message || 'Unknown error'}`;
                 document.getElementById('error-message').style.display = 'block';
 
