@@ -29,7 +29,7 @@
         buyerEmail: urlParams.get('buyerEmail') || "test@example.com",
         buyerTel: urlParams.get('buyerTel') || "01012345678",
         buyerAddr: urlParams.get('buyerAddr') || "서울특별시 강남구",
-        redirectUrl: urlParams.get('redirectUrl') || "https://roomi.co.kr/success.html",
+        redirectUrl: urlParams.get('redirectUrl') || "https://roomi.co.kr/success-virtual.html",
         channelKey: urlParams.get('channelKey') || "channel-key-14a7fa72-0d06-4bb5-9502-f721b189eb86",
         storeId: urlParams.get('storeId') || "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85"
     };
@@ -73,19 +73,23 @@
 
         PortOne.requestPayment(paymentRequest)
             .then(result => {
-                addDebugInfo("✅ 결제 성공: " + JSON.stringify(result));
-                alert("가상계좌 발급이 완료되었습니다!");
-                // location.href = `${params.redirectUrl}?success=true&paymentKey=${result.paymentKey}`;
+                const vaInfo = {
+                    bank: result.virtualAccount?.bankName,
+                    accountNumber: result.virtualAccount?.accountNumber,
+                    holderName: result.virtualAccount?.holderName,
+                    expiration: result.virtualAccount?.expiredAt,
+                    paymentId: result.paymentId,
+                    txId: result.txId
+                };
+
+                // ⭐ 가상계좌 정보 localStorage 저장
+                localStorage.setItem("virtualAccount", JSON.stringify(vaInfo));
+
+                // ⭐ success-virtual.html로 이동
+                window.location.href = `/success-virtual.html?paymentId=${vaInfo.paymentId}&txId=${vaInfo.txId}`;
             })
             .catch(error => {
-                addDebugInfo("❌ 결제 실패: " + JSON.stringify(error));
-                document.getElementById('error-message').textContent = `결제 실패: ${error.message || 'Unknown error'}`;
-                document.getElementById('error-message').style.display = 'block';
-
-                // 더 자세한 에러 정보 표시
-                if (error.details) {
-                    addDebugInfo("에러 상세: " + JSON.stringify(error.details));
-                }
+                console.error("결제 실패", error);
             });
     };
 </script>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>가상계좌 발급 완료</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" />
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            /*background-color: white;*/
+            border-radius: 12px;
+            /*box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);*/
+            max-width: 460px;
+            width: 100%;
+            padding: 40px 24px;
+            text-align: center;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            background-color: #10b981;
+            color: white;
+            border-radius: 50%;
+            width: 72px;
+            height: 72px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .info-list {
+            text-align: left;
+            margin-bottom: 32px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .info-label {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-weight: 600;
+        }
+
+        button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="success-icon">
+        ✓
+    </div>
+    <h1>가상계좌 발급 완료</h1>
+    <p class="subtitle">아래 정보를 확인하고 지정된 계좌로 입금해주세요.</p>
+    <div class="info-list" id="account-info">
+        <div class="info-item">
+            <span class="info-label">은행명</span>
+            <span class="info-value" id="bank">-</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">계좌번호</span>
+            <span class="info-value" id="account">-</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">예금주</span>
+            <span class="info-value" id="holder">-</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">입금기한</span>
+            <span class="info-value" id="expiration">-</span>
+        </div>
+    </div>
+    <button id="goApp">앱으로 이동</button>
+</div>
+
+<script>
+    const va = JSON.parse(localStorage.getItem("virtualAccount") || "{}");
+    document.getElementById("bank").textContent = va.bank || "정보 없음";
+    document.getElementById("account").textContent = va.accountNumber || "정보 없음";
+    document.getElementById("holder").textContent = va.holderName || "정보 없음";
+    document.getElementById("expiration").textContent = va.expiration ? new Date(va.expiration).toLocaleString() : "정보 없음";
+
+    document.getElementById("goApp").addEventListener("click", () => {
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get("paymentId") || "";
+        const txId = params.get("txId") || "";
+        window.location.href = `roomi://success?paymentId=${orderId}&txId=${txId}`;
+    });
+</script>
+</body>
+</html>
