@@ -164,8 +164,16 @@
     const paymentId = params.get("paymentId");
 
     if (paymentId) {
-        // API 호출하여 가상계좌 정보 가져오기
-        fetch(`https://roomi.co.kr/api/payment/virtual-account?paymentId=${paymentId}`)
+        // API 호출하여 가상계좌 정보 가져오기 (POST 요청으로 body에 paymentId 전송)
+        fetch(`https://roomi.co.kr/api/payment/virtual-account`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                paymentId: paymentId
+            })
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('가상계좌 정보를 불러올 수 없습니다.');
