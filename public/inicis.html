@@ -81,7 +81,7 @@
 
         addDebugInfo('결제 요청 데이터: ' + JSON.stringify(paymentRequest, null, 2));
         if (isMobileDevice) {
-            PortOne.setUserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148");
+            //PortOne.setUserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148");
         }
         PortOne.requestPayment(paymentRequest)
             .then(result => {
