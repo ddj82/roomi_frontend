@@ -82,17 +82,17 @@ const ImgCarousel: React.FC<CarouselProps> = ({ images, customClass = "", custom
                     </div>
                 ))}
             </div>
-            <div className="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3">
-                {images.map((_, index) => (
-                    <button
-                        key={index}
-                        className={`w-3 h-3 rounded-full ${
-                            index === currentIndex ? "bg-white" : "bg-gray-400"
-                        }`}
-                        onClick={(event) => goToSlide(event, index)}
-                    ></button>
-                ))}
-            </div>
+            {/*<div className="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3">*/}
+            {/*    {images.map((_, index) => (*/}
+            {/*        <button*/}
+            {/*            key={index}*/}
+            {/*            className={`w-3 h-3 rounded-full ${*/}
+            {/*                index === currentIndex ? "bg-white" : "bg-gray-400"*/}
+            {/*            }`}*/}
+            {/*            onClick={(event) => goToSlide(event, index)}*/}
+            {/*        ></button>*/}
+            {/*    ))}*/}
+            {/*</div>*/}
             <button onClick={prevSlide}
                     className="absolute top-0 left-0 z-30 flex_center h-full px-2 cursor-pointer group focus:outline-none">
                 <FontAwesomeIcon icon={faAngleLeft} className="text-white"/>

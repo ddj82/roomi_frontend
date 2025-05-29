@@ -9,7 +9,7 @@ interface HeaderBtnState {
 
 // 차단할 경로 목록 (키워드 포함 방식)
 const BLOCKED_KEYWORDS = ["reservation"];
-const BLOCKED_PREFIXES = ["/host", "/join"];
+const BLOCKED_PREFIXES = ["/host", "/join", "/myPage"];
 
 export const useHeaderBtnStore = create<HeaderBtnState>((set) => ({
     isVisible: true,

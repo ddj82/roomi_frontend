@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {BrowserRouter as Router, Routes, Route, useLocation} from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Footer from "./components/footer/Footer";
 import Header from "./components/header/Header";
 import MainHome from "./components/screens/MainHome";
@@ -28,11 +29,16 @@ import BottomNavigator from "./components/navigator/BottomNavigator";
 import MyRoomUpdate from "./components/hostMenu/myRooms/MyRoomUpdate";
 import LoginPage from "./components/screens/link/LoginPage";
 import LineLoginCallback from "./components/util/LineLoginCallback";
+import Main from "./components/screens/Main";
+
+const queryClient = new QueryClient();
 
 export default function App() {
     return (
         <Router>
-            <AppContent/>
+            <QueryClientProvider client={queryClient}>
+                <AppContent/>
+            </QueryClientProvider>
         </Router>
     );
 }
@@ -73,6 +79,7 @@ function AppContent() {
                     {/* hostMode === true 일 때 이 부분 전부 차단됨 */}
                     <Route element={<ProtectedGuestRoute />}>
                         <Route path="/" element={<MainHome/>}/>
+                        <Route path="/main" element={<Main/>}/>
                         <Route path="/naver" element={<NaverMap/>}/>
                         <Route path="/join" element={<UserJoinScreen/>}/>
                         <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>

@@ -62,10 +62,8 @@ interface HomeScreenProps {
 
 // Main Component
 const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
-    const navigate = useNavigate();
     const [rooms, setRooms] = useState<RoomData[]>([]);
     const [loading, setLoading] = useState(true);
-    const {t} = useTranslation();
 
     const handleRoomsUpdate = useCallback((newRooms: RoomData[]) => {
         console.log('Rooms updated:', newRooms);
@@ -79,7 +77,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
 
     const handleCardClick = (roomId: number) => {
         const currentLocale = i18n.language; // 현재 언어 감지
-        // navigate(`/detail/${roomId}/${currentLocale}`); // URL 파라미터로 전달
         window.open(`/detail/${roomId}/${currentLocale}`, '_blank');
     };
 
@@ -98,7 +95,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
         }
 
         return (
-            <div className="homeScreen accommodation-grid" data-nosnippet>
+            <div className="homeScreen accommodation-grid">
                 {rooms.map((item) => (
                     <AccommodationCard
                         key={item.id}

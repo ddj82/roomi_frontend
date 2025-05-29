@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useIsHostStore} from '../../stores/IsHostStore';
 import {User} from '../../../types/user';
 import dayjs from 'dayjs';
+import RoomDetailCertificationModal from "../../modals/RoomDetailCertificationModal";
+import {uploadIdentification} from "../../../api/api";
 
 interface MyInfoEditProps {
     user: User;
@@ -11,9 +13,47 @@ interface MyInfoEditProps {
 export default function MyInfo({user}: MyInfoEditProps) {
     const {t} = useTranslation();
     const {isHost} = useIsHostStore();
+    // 본인인증, 여권인증 모달
+    const [certificationModal, setCertificationModal] = useState(false);
+
+    // 인증 완료 콜백 함수
+    const handleCertificationComplete = async (isSuccess: boolean, impUid: string) => {
+        setCertificationModal(false); // 모달 닫기
+
+        if (isSuccess) {
+            console.log("인증 성공! (마이페이지)");
+            const res = await handleUploadIdentification(impUid);
+            if (!res) alert('인증 처리 중 문제가 발생하였습니다. 다시 시도해주세요.');
+            window.location.reload();
+        } else {
+            console.log("인증 실패 새로고침");
+            alert('본인인증에 실패했습니다. 다시 시도해주세요.');
+        }
+    };
+
+    // 인증 완료 처리 api 호출 함수
+    const handleUploadIdentification = async (impUid: string) => {
+        try {
+            const response = await uploadIdentification(impUid);
+            const responseJson = await response.json();
+            return responseJson.success;
+        } catch (e) {
+            console.error('인증 완료 처리 실패', e);
+            return false;
+        }
+    };
 
     return (
         <div className="flex flex-col items-center gap-6">
+            {/*인증 모달 컴포넌트 (조건부 렌더링)*/}
+            {certificationModal && (
+                <RoomDetailCertificationModal
+                    visible={certificationModal}
+                    onClose={() => setCertificationModal(false)}
+                    isKorean={!!localStorage.getItem('isKorean')}
+                    onCertificationComplete={handleCertificationComplete}
+                />
+            )}
             {/* 프로필 이미지 */}
             <div className="flex-shrink-0">
                 <img
@@ -21,6 +61,27 @@ export default function MyInfo({user}: MyInfoEditProps) {
                     alt="프로필 이미지"
                     className="w-32 h-32 rounded-full border"
                 />
+            </div>
+
+            {/* 본인인증 여부 */}
+            <div className="w-full md:w-fit">
+                <div>
+                    {user.identity_verified ? (
+                        <div>
+                            회원님의 본인 인증이 완료되었어요.
+                        </div>
+                    ) : (
+                        <div>
+                            <button
+                                type="button"
+                                onClick={() => setCertificationModal(true)}
+                                className="bg-roomi text-white rounded w-full p-2 md:px-4"
+                            >
+                                본인인증 하기
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* 사용자 정보 */}

@@ -5,6 +5,7 @@ import {User} from "../types/user";
 import {Reservation} from "../types/reservation";
 import axios from "axios";
 import qs from "qs";
+import exp from "node:constants";
 
 const BASE_URL = 'https://roomi.co.kr/api';
 
@@ -211,6 +212,11 @@ export const checkIdentification = async () => {
     return request(`/users/identification/metamap`, true);
 }
 
+// 본인 인증(import) 완료 후 identity_verified 처리 API
+export const uploadIdentification = async (impUid: string) => {
+    return request(`/users/update/identification?imp_uid=${impUid}`, true, 'PUT');
+};
+
 // 메인 화면 방 조회 API
 export const mainRoomData = async (swY: number, swX: number, neY: number, neX: number, currentLocale: string) => {
     const authToken = !!localStorage.getItem("authToken");
@@ -222,6 +228,11 @@ export const mainRoomData = async (swY: number, swX: number, neY: number, neX: n
         return request(`/rooms?swLat=${swY}&swLng=${swX}&neLat=${neY}&neLng=${neX}&locale=${currentLocale}&currency=${currency}`, false);
     }
 };
+
+// 방 조회 API
+// export const roomData = async () => {
+//
+// };
 
 // 방 조회 API
 export const fetchRoomData = async (id: number) => {

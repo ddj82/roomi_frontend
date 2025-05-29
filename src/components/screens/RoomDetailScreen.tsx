@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from 'react-router-dom';
-import {addRoomHistory, checkIdentification, fetchRoomData} from "src/api/api";
+import {addRoomHistory, checkIdentification, fetchRoomData, uploadIdentification} from "src/api/api";
 import {Reservation, RoomData} from "../../types/rooms";
 import ImgCarousel from "../util/ImgCarousel";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -369,7 +369,6 @@ export default function RoomDetailScreen() {
             const response = await checkIdentification();
             const responseJson = await response.json();
             identity_verified = responseJson.identity_verified;
-            console.log('인증 여부 API', responseJson.identity_verified);
         } catch (e) {
             console.error('인증 여부 확인 실패', e);
         }
@@ -378,24 +377,40 @@ export default function RoomDetailScreen() {
             console.log("인증 계정! 예약 진행");
             reservationBtn();
         } else {
-            // 본인인증 또는 여권확인 모달 열기
-            const isKorean = !!localStorage.getItem('isKorean');
-            console.log("한국인이냐?", isKorean, isKorean ? "본인인증 띄우기" : "여권인증 띄우기");
+            // 인증 모달 열기
             setCertificationModal(true);
         }
 
     };
 
     // 인증 완료 콜백 함수
-    const handleCertificationComplete = (isSuccess: boolean) => {
+    const handleCertificationComplete = async (isSuccess: boolean, impUid: string) => {
         setCertificationModal(false); // 모달 닫기
 
         if (isSuccess) {
             console.log("인증 성공! 예약 진행");
-            reservationBtn(); // 인증 성공 시 예약 진행
+            // 인증 성공 시 identity_verified true 처리, 예약 진행
+            const res = await handleUploadIdentification(impUid);
+            if (res) {
+                reservationBtn();
+            } else {
+                alert('인증 처리 중 문제가 발생하였습니다. 다시 시도해주세요.');
+            }
         } else {
             console.log("인증 실패");
             alert('본인인증에 실패했습니다. 다시 시도해주세요.');
+        }
+    };
+
+    // 인증 완료 처리 api 호출 함수
+    const handleUploadIdentification = async (impUid: string) => {
+        try {
+            const response = await uploadIdentification(impUid);
+            const responseJson = await response.json();
+            return responseJson.success;
+        } catch (e) {
+            console.error('인증 완료 처리 실패', e);
+            return false;
         }
     };
 
