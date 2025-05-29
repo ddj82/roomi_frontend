@@ -254,14 +254,14 @@
         </div>
     </div>
 
-    <div class="footer">
-        <p class="redirect-message">
-            자동으로 앱이 열리지 않는 경우 아래 버튼을 클릭하세요
-        </p>
-        <button class="redirect-button" id="openAppButton">
-            앱으로 이동
-        </button>
-    </div>
+<!--    <div class="footer">-->
+<!--        <p class="redirect-message">-->
+<!--            자동으로 앱이 열리지 않는 경우 아래 버튼을 클릭하세요-->
+<!--        </p>-->
+<!--        <button class="redirect-button" id="openAppButton">-->
+<!--            앱으로 이동-->
+<!--        </button>-->
+<!--    </div>-->
 </div>
 
 <script>
@@ -282,8 +282,8 @@
 
         init() {
             this.displayErrorDetails();
-            this.setupEventListeners();
-            this.autoRedirect();
+            //this.setupEventListeners();
+            //this.autoRedirect();
         }
 
         displayErrorDetails() {
@@ -389,7 +389,7 @@
 
         setupEventListeners() {
             document.getElementById('openAppButton').addEventListener('click', () => {
-                this.redirectToApp();
+                //this.redirectToApp();
             });
         }
 
