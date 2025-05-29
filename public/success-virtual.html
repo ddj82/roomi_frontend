@@ -256,12 +256,12 @@
     }
 
     // 앱으로 이동 버튼
-    document.getElementById("goApp").addEventListener("click", () => {
-        const params = new URLSearchParams(window.location.search);
-        const orderId = params.get("paymentId") || "";
-        const txId = params.get("txId") || "";
-        window.location.href = `roomi://success?paymentId=${orderId}&txId=${txId}`;
-    });
+    // document.getElementById("goApp").addEventListener("click", () => {
+    //     const params = new URLSearchParams(window.location.search);
+    //     const orderId = params.get("paymentId") || "";
+    //     const txId = params.get("txId") || "";
+    //     window.location.href = `roomi://success?paymentId=${orderId}&txId=${txId}`;
+    // });
 </script>
 </body>
 </html>

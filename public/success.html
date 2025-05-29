@@ -250,6 +250,15 @@
       }
     }
 
+    .redirect-notice {
+      text-align: center;
+      padding: 16px 32px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+    }
+
     @media (max-width: 480px) {
       .container {
         margin: 0;
@@ -257,7 +266,8 @@
       }
 
       .header,
-      .payment-info {
+      .payment-info,
+      .redirect-notice {
         padding-left: 24px;
         padding-right: 24px;
       }
@@ -277,6 +287,10 @@
       <div class="spinner"></div>
       결제 정보를 불러오는 중...
     </div>
+  </div>
+
+  <div class="redirect-notice" id="redirect-notice" style="display: none;">
+    잠시 후 메인 페이지로 이동합니다...
   </div>
 </div>
 
@@ -397,6 +411,16 @@
       }
 
       this.displayPaymentDetails();
+
+      // 결제 관련 파라미터가 있을 때만 웹뷰 콜백 전송 (쿼리 없으면 이미 감지됨)
+      if (this.hasPaymentParams()) {
+        this.sendWebViewCallback();
+      }
+
+      // 결제 성공 시에만 리다이렉트 실행
+      if (this.isSuccess) {
+        this.startRedirectCountdown();
+      }
     }
 
     setupSuccessUI() {
@@ -426,6 +450,103 @@
       statusIcon.className = isWarning ? 'status-icon warning' : 'status-icon error';
       title.textContent = this.texts.error.title;
       subtitle.textContent = this.texts.error.subtitle;
+    }
+
+    // 결제 관련 파라미터가 있는지 확인
+    hasPaymentParams() {
+      const paymentKeys = ['code', 'orderId', 'paymentKey', 'paymentId', 'amount', 'status', 'pgCode', 'message', 'pgMessage'];
+      return paymentKeys.some(key => this.params[key]);
+    }
+
+    // 웹뷰에서 네이티브 앱으로 콜백 전송
+    sendWebViewCallback() {
+      const callbackData = {
+        success: this.isSuccess,
+        ...this.params
+      };
+
+      // 딜레이를 주어 UI가 완전히 로드된 후 콜백 전송
+      setTimeout(() => {
+        try {
+          // Android WebView 콜백
+          if (window.Android && window.Android.onPaymentResult) {
+            console.log('Sending Android callback');
+            window.Android.onPaymentResult(JSON.stringify(callbackData));
+          }
+
+          // iOS WKWebView 콜백 (postMessage 방식)
+          if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.paymentResult) {
+            console.log('Sending iOS callback');
+            window.webkit.messageHandlers.paymentResult.postMessage(callbackData);
+          }
+
+          // Flutter WebView 콜백
+          if (window.flutter_inappwebview && window.flutter_inappwebview.callHandler) {
+            console.log('Sending Flutter callback');
+            window.flutter_inappwebview.callHandler('paymentResult', callbackData);
+          }
+
+          // React Native WebView 콜백
+          if (window.ReactNativeWebView) {
+            console.log('Sending React Native callback');
+            window.ReactNativeWebView.postMessage(JSON.stringify(callbackData));
+          }
+
+          // 범용 콜백 (window 객체에 메서드 등록)
+          if (window.onPaymentResult && typeof window.onPaymentResult === 'function') {
+            console.log('Sending generic callback');
+            window.onPaymentResult(callbackData);
+          }
+
+          // 커스텀 이벤트 발생
+          const event = new CustomEvent('paymentResult', {
+            detail: callbackData
+          });
+          window.dispatchEvent(event);
+          document.dispatchEvent(event);
+
+          // URL 변경으로 감지 (앱에서 URL 변경을 감지하는 경우)
+          if (this.isSuccess) {
+            // 성공시 특별한 URL로 변경
+            window.history.replaceState({}, '', window.location.pathname + '#payment-success');
+          } else {
+            // 실패시 특별한 URL로 변경
+            window.history.replaceState({}, '', window.location.pathname + '#payment-failed');
+          }
+
+          console.log('All callbacks sent successfully');
+
+        } catch (error) {
+          console.error('Error sending webview callback:', error);
+        }
+      }, 1500); // UI 로딩 완료를 위한 딜레이
+    }
+
+    // 리다이렉트 카운트다운 시작
+    startRedirectCountdown() {
+      const redirectNotice = document.getElementById('redirect-notice');
+
+      // 3초 후에 리다이렉트 안내 표시
+      setTimeout(() => {
+        redirectNotice.style.display = 'block';
+      }, 3000);
+
+      // 5초 후에 실제 리다이렉트 실행
+      setTimeout(() => {
+        this.redirectToSuccess();
+      }, 5000);
+    }
+
+    // 성공 페이지로 리다이렉트
+    redirectToSuccess() {
+      try {
+        console.log('Redirecting to success page...');
+        window.location.href = 'https://roomi.co.kr/success.html';
+      } catch (error) {
+        console.error('Error during redirect:', error);
+        // 리다이렉트 실패 시 fallback
+        window.open('https://roomi.co.kr/success.html', '_self');
+      }
     }
 
     displayPaymentDetails() {
@@ -550,8 +671,8 @@
 
   // 페이지 로드 시 초기화
   document.addEventListener('DOMContentLoaded', () => {
-    new PaymentResultPage();
+    window.location.href = 'https://roomi.co.kr/indicator.html';
   });
 </script>
 </body>
-</html>ㅋ
+</html>
