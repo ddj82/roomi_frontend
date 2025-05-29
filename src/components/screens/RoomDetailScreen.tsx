@@ -836,11 +836,11 @@ export default function RoomDetailScreen() {
                                                 <h3 className="text-sm font-medium text-gray-800 mb-1">{t("주소")}</h3>
                                                 <div className="flex items-center justify-between">
                                                     <p className="text-sm text-gray-600">
-                                                        {room.address} {room.address_detail}
+                                                        {room.address}
                                                     </p>
                                                     <button
                                                         onClick={() => {
-                                                            navigator.clipboard.writeText(room!.address! + " " + room!.address_detail!);
+                                                            navigator.clipboard.writeText(room!.address!);
                                                             alert('주소가 클립보드에 복사되었습니다.');
                                                         }}
                                                         className="ml-2 p-1.5 text-gray-500 hover:text-roomi hover:bg-gray-100 rounded-full transition-colors"
