@@ -68,7 +68,7 @@
         PortOne.requestPayment(paymentRequest)
             .then(result => {
                 addDebugInfo("✅ 결제 성공: " + JSON.stringify(result));
-                alert("결제가 취소되었습니.");
+                alert("결제가 취소되었습니다.");
                 // location.href = `${params.redirectUrl}?success=true&paymentKey=${result.paymentKey}`;
             })
             .catch(error => {
