@@ -42,7 +42,7 @@ export default function GuestReservationScreen() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    var {
+    let {
         price = 0,
         depositPrice = 0,
         maintenancePrice = 0,

@@ -23,6 +23,7 @@ const UserJoinScreen = () => {
         gender: "",
         birth: "",
         phone: "",
+        is_korean: true,
         checkboxes: [false, false, false],
     });
     const {signUpChannel} = useSignUpChannelStore()
@@ -184,7 +185,7 @@ const UserJoinScreen = () => {
         }
     };
 
-    const handleChange = (field: string, value: string) => {
+    const handleChange = (field: string, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
@@ -201,10 +202,10 @@ const UserJoinScreen = () => {
             email: formData.email,
             password: formData.password,
             channel: signUpChannel,
-            // nationality?: ,
             sex: formData.gender,
             birth: formData.birth,
             phone: formData.phone,
+            is_korean: formData.is_korean,
         };
         try {
             const response = await createUser(userSingUp);
@@ -429,42 +430,83 @@ const UserJoinScreen = () => {
                                 </div>
                             </div>
                             {errors.gender && <p className="font-bold text-red-500 text-sm">{errors.gender}</p>}
+                            <div className="my-2 flex items-center gap-4">
+                                <div>
+                                    <label htmlFor="is_korean_t" className="flex items-center mb-2 w-fit">
+                                        <input
+                                            id="is_korean_t"
+                                            type="radio"
+                                            name="is_korean"
+                                            checked={formData.is_korean}
+                                            onChange={(e) => handleChange("is_korean", true)}
+                                            className="accent-roomi focus:outline-none appearance-none"
+                                        />
+                                        <div className={`w-5 h-5 mr-2 flex_center border border-gray-300 rounded-md 
+                                            ${formData.is_korean && 'bg-roomi border-none'}`}>
+                                            {formData.is_korean && (
+                                                <FontAwesomeIcon icon={faCheck} className="text-xs text-white"/>
+                                            )}
+                                        </div>
+                                        {t("내국인")}
+                                    </label>
+                                </div>
+                                <div>
+                                    <label htmlFor="is_korean_f" className="flex items-center mb-2 w-fit">
+                                        <input
+                                            id="is_korean_f"
+                                            type="radio"
+                                            name="is_korean"
+                                            checked={!formData.is_korean}
+                                            onChange={(e) => handleChange("is_korean", false)}
+                                            className="accent-roomi focus:outline-none appearance-none"
+                                        />
+                                        <div className={`w-5 h-5 mr-2 flex_center border border-gray-300 rounded-md 
+                                            ${!formData.is_korean && 'bg-roomi border-none'}`}>
+                                            {!formData.is_korean && (
+                                                <FontAwesomeIcon icon={faCheck} className="text-xs text-white"/>
+                                            )}
+                                        </div>
+                                        {t("외국인")}
+                                    </label>
+                                </div>
+                            </div>
+                            {errors.is_korean && <p className="font-bold text-red-500 text-sm">{errors.is_korean}</p>}
                         </div>
                     )}
 
                     {currentStep === 3 && (
                         <div>
-                          {checkboxList.map((item, index) => (
-                            <div key={index} className="flex items-center justify-between w-full mb-2">
-                              <label className="flex items-center">
-                                <div className={`w-5 h-5 mr-2 flex_center border border-gray-300 rounded-md 
+                            {checkboxList.map((item, index) => (
+                                <div key={index} className="flex items-center justify-between w-full mb-2">
+                                    <label className="flex items-center">
+                                        <div className={`w-5 h-5 mr-2 flex_center border border-gray-300 rounded-md 
                                   ${formData.checkboxes[index] && 'bg-roomi border-none'}`}>
-                                  {formData.checkboxes[index] && (
-                                    <FontAwesomeIcon icon={faCheck} className="text-xs text-white"/>
-                                  )}
+                                            {formData.checkboxes[index] && (
+                                                <FontAwesomeIcon icon={faCheck} className="text-xs text-white"/>
+                                            )}
+                                        </div>
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.checkboxes[index]}
+                                            onChange={() => handleCheckboxChange(index)}
+                                            className="focus:outline-none appearance-none"
+                                        />
+                                        {`${t(item.label)} (${t(item.required ? '필수' : '선택')})`}
+                                    </label>
+                                    <a
+                                        href={
+                                            item.label.includes('개인정보') ? 'https://roomi.co.kr/api/policies/privacy-policy' :
+                                                item.label.includes('약관') ? 'https://roomi.co.kr/api/policies/terms-of-use' :
+                                                    item.label.includes('마케팅') ? 'https://roomi.co.kr/api/policies/marketing-policy' : '#'
+                                        }
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-roomi text-sm underline ml-2"
+                                    >
+                                        상세보기
+                                    </a>
                                 </div>
-                                <input
-                                  type="checkbox"
-                                  checked={formData.checkboxes[index]}
-                                  onChange={() => handleCheckboxChange(index)}
-                                  className="focus:outline-none appearance-none"
-                                />
-                                {`${t(item.label)} (${t(item.required ? '필수' : '선택')})`}
-                              </label>
-                              <a
-                                href={
-                                  item.label.includes('개인정보') ? 'https://roomi.co.kr/api/policies/privacy-policy' :
-                                  item.label.includes('약관') ? 'https://roomi.co.kr/api/policies/terms-of-use' :
-                                  item.label.includes('마케팅') ? 'https://roomi.co.kr/api/policies/marketing-policy' : '#'
-                                }
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-roomi text-sm underline ml-2"
-                              >
-                                상세보기
-                              </a>
-                            </div>
-                          ))}
+                            ))}
                         </div>
                     )}
                 </div>

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from 'react-router-dom';
-import {addRoomHistory, fetchRoomData} from "src/api/api";
+import {addRoomHistory, checkIdentification, fetchRoomData} from "src/api/api";
 import {Reservation, RoomData} from "../../types/rooms";
 import ImgCarousel from "../util/ImgCarousel";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -54,6 +54,7 @@ import i18n from "i18next";
 import utc from 'dayjs/plugin/utc';
 import isBetween from 'dayjs/plugin/isBetween';
 import {faBell, faCopy} from "@fortawesome/free-regular-svg-icons";
+import RoomDetailCertificationModal from "../modals/RoomDetailCertificationModal";
 
 dayjs.extend(utc);
 dayjs.extend(isBetween);
@@ -82,7 +83,10 @@ export default function RoomDetailScreen() {
     const [checkOutList, setCheckOutList] = useState<string[]>([]);
     // 1박2일 날짜들
     const [oneDayList, setOneDayList] = useState<string[]>([]);
-    const [userCurrency, setUserCurrency] = useState(localStorage.getItem('userCurrency') || 'KRW');
+    const [userCurrency, setUserCurrency] = useState(localStorage.getItem('userCurrency') ?? 'KRW');
+
+    // 본인인증, 여권인증 모달
+    const [certificationModal, setCertificationModal] = useState(false);
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -344,14 +348,58 @@ export default function RoomDetailScreen() {
         }
     }, [weekValue, monthValue]);
 
-    const reservationBtn = () => {
-        const isAuthenticated = !!localStorage.getItem("authToken"); // 로그인 여부 확인
+    const reservationBtnCertification = async () => {
+        let identity_verified = false;
+
+        // 로그인 여부 확인
+        const isAuthenticated = !!localStorage.getItem("authToken");
         if (!isAuthenticated) {
             alert('로그인 후 이용 가능합니다.');
             setAuthModalOpen(true);
             return;
         }
 
+        // 날짜 선택이 안되어 있으면 얼럿, 리턴
+        if (!startDate || !endDate) {
+            alert('체크인, 체크아웃 날짜를 선택해주세요.');
+            return;
+        }
+
+        try {
+            const response = await checkIdentification();
+            const responseJson = await response.json();
+            identity_verified = responseJson.identity_verified;
+            console.log('인증 여부 API', responseJson.identity_verified);
+        } catch (e) {
+            console.error('인증 여부 확인 실패', e);
+        }
+
+        if (identity_verified) {
+            console.log("인증 계정! 예약 진행");
+            reservationBtn();
+        } else {
+            // 본인인증 또는 여권확인 모달 열기
+            const isKorean = !!localStorage.getItem('isKorean');
+            console.log("한국인이냐?", isKorean, isKorean ? "본인인증 띄우기" : "여권인증 띄우기");
+            setCertificationModal(true);
+        }
+
+    };
+
+    // 인증 완료 콜백 함수
+    const handleCertificationComplete = (isSuccess: boolean) => {
+        setCertificationModal(false); // 모달 닫기
+
+        if (isSuccess) {
+            console.log("인증 성공! 예약 진행");
+            reservationBtn(); // 인증 성공 시 예약 진행
+        } else {
+            console.log("인증 실패");
+            alert('본인인증에 실패했습니다. 다시 시도해주세요.');
+        }
+    };
+
+    const reservationBtn = () => {
         // 기본 주간 가격 저장
         let price = (Number(room?.week_price!.toFixed(2)) || 0);
         let depositPrice = (Number(room?.deposit_week!.toFixed(2)) || 0);
@@ -425,6 +473,15 @@ export default function RoomDetailScreen() {
         <div className="relative overflow-visible max-w-[1200px] mx-auto pb-24 md:pb-0 md:my-8 my-0">
             {authModalOpen && (
                 <AuthModal visible={authModalOpen} onClose={() => setAuthModalOpen(false)} type="login"/>
+            )}
+            {/*인증 모달 컴포넌트 (조건부 렌더링)*/}
+            {certificationModal && (
+                <RoomDetailCertificationModal
+                    visible={certificationModal}
+                    onClose={() => setCertificationModal(false)}
+                    isKorean={!!localStorage.getItem('isKorean')}
+                    onCertificationComplete={handleCertificationComplete}
+                />
             )}
             {room ? (
                 <div className="flex flex-col md:flex-row gap-8">
@@ -778,7 +835,9 @@ export default function RoomDetailScreen() {
                                             <div className="flex-grow">
                                                 <h3 className="text-sm font-medium text-gray-800 mb-1">{t("주소")}</h3>
                                                 <div className="flex items-center justify-between">
-                                                    <p className="text-sm text-gray-600">{room.address}</p>
+                                                    <p className="text-sm text-gray-600">
+                                                        {room.address}
+                                                    </p>
                                                     <button
                                                         onClick={() => {
                                                             navigator.clipboard.writeText(room!.address!);
@@ -864,9 +923,6 @@ export default function RoomDetailScreen() {
                                                 <div
                                                     className="font-medium text-gray-800 text-lg">{room.host.name}</div>
                                                 <div className="text-gray-500 text-sm">호스트</div>
-                                                {/*{room.host.description && (*/}
-                                                {/*    <p className="text-gray-600 text-sm mt-1">{room.host.description}</p>*/}
-                                                {/*)}*/}
                                             </div>
                                         </div>
                                         <button
@@ -1041,7 +1097,7 @@ export default function RoomDetailScreen() {
                             {/* 예약 버튼 */}
                             <button
                                 className="w-full py-3 bg-roomi text-white text-sm rounded-lg font-medium hover:bg-roomi-3 transition-colors shadow-sm"
-                                onClick={reservationBtn}
+                                onClick={reservationBtnCertification}
                             >
                                 {t('confirm_reservation')}
                             </button>

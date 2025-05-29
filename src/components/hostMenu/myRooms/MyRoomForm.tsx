@@ -30,6 +30,7 @@ import {
 import { facilityIcons } from "src/types/facilityIcons";
 import Modal from "react-modal";
 import DaumPostcode from "react-daum-postcode";
+import RoomPreviewModal from "../../modals/RoomPreviewModal";
 
 export interface MyRoomFormProps {
     mode: "insert" | "update";
@@ -48,6 +49,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [roomFormData, setRoomFormData] = useState<RoomFormData>(initialData);
     const [loading, setLoading] = useState(false);
+    const [roomPreview, setRoomPreview] = useState(false);
 
     const totalSteps = useMemo(() => {
         if (roomFormData.room_type === "LODGE") return 15;
@@ -722,6 +724,17 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
     };
 
     /*사진 파일 관련*/
+    // roomFormData.detail_urls(File[])가 변경될 때마다 selectedImages 업데이트
+    useEffect(() => {
+        if (roomFormData.detail_urls && roomFormData.detail_urls.length > 0) {
+            const existingImages = roomFormData.detail_urls.map((file) => ({
+                file,
+                previewUrl: URL.createObjectURL(file),
+            }));
+            setSelectedImages(existingImages);
+        }
+    }, [roomFormData.detail_urls]);
+
     // 숨겨진 파일 input 클릭 트리거
     const handleInputFileSet = () => {
         fileInputRef.current?.click();
@@ -735,10 +748,10 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
         // 이미지 파일만 필터링 (MIME 타입이 image/로 시작하는지 확인)
         let validImageFiles = filesArray.filter((file) => file.type.startsWith("image/"));
 
-        // 총 이미지 수가 10장을 넘지 않도록 체크
-        if (validImageFiles.length + selectedImages.length > 10) {
-            alert("최대 10장까지만 업로드가 가능합니다.");
-            validImageFiles = validImageFiles.slice(0, 10 - selectedImages.length);
+        // 총 이미지 수가 50장을 넘지 않도록 체크
+        if (validImageFiles.length + selectedImages.length > 50) {
+            alert("최대 50장까지만 업로드가 가능합니다.");
+            validImageFiles = validImageFiles.slice(0, 50 - selectedImages.length);
         }
 
         // 각 파일에 대해 미리보기 URL 생성
@@ -762,13 +775,22 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
         // 같은 파일 재업로드 시 onChange 이벤트가 발생하도록 input value 초기화
         e.target.value = "";
     };
+
     // 특정 인덱스의 이미지 삭제 함수
     const handleRemoveImage = (index: number) => {
+        const imageToRemove = selectedImages[index];
+
         setSelectedImages((prev) => {
             // 메모리 누수를 막기 위해 object URL 해제
             URL.revokeObjectURL(prev[index].previewUrl);
             return prev.filter((_, i) => i !== index);
         });
+
+        // roomFormData.detail_urls에서도 해당 파일 제거
+        setRoomFormData((prev) => ({
+            ...prev,
+            detail_urls: (prev.detail_urls || []).filter((file) => file !== imageToRemove.file),
+        }));
     };
 
     /*태그 관련*/
@@ -873,8 +895,8 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
         const discountLabel = `${dayUnit}${isWeekly ? "주" : "개월"} 이상`;
 
         return (
-            <div className="flex flex-col">
-                <div>{discountLabel}</div>
+            <div className="flex flex-col gap-2">
+                <div className="md:text-base text-sm">{discountLabel}</div>
                 <div className="relative">
                     <input
                         type="number"
@@ -991,7 +1013,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                     <button
                         type="button"
                         onClick={() => handleBusinessFileSet(type)}
-                        className="w-1/3 rounded bg-roomi text-white text-sm p-4 flex_center gap-2"
+                        className="md:w-1/3 w-full rounded bg-roomi text-white text-sm p-4 flex_center gap-2"
                     >
                         <FontAwesomeIcon icon={faFileImage}/>
                         {title} 업로드
@@ -1106,7 +1128,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
     };
 
     return (
-        <form onSubmit={handleSubmit} className="p-6">
+        <form className="p-6">
             {/* 상단 헤더 */}
             <div className="mb-6 p-4 border rounded-md flex">
                 <button
@@ -1157,7 +1179,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                 </div>
                             </div>
                         </div>
-                        <div className="md:flex mt-4">
+                        <div className={`md:flex mt-4 ${mode} === "update" && pointer-events-none`}>
                             {/* 단기임대 */}
                             <div className="md:w-1/2">
                                 <label htmlFor="LEASE"
@@ -1207,6 +1229,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                        checked={roomFormData.room_type === "LEASE"}
                                        onChange={(e) => handleChange("room_type", e.target.value)}
                                        className="hidden"
+                                       disabled={mode === "update"}
                                 />
                             </div>
                             {/* 숙박업소 */}
@@ -1256,6 +1279,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                        checked={roomFormData.room_type === "LODGE"}
                                        onChange={(e) => handleChange("room_type", e.target.value)}
                                        className="hidden"
+                                       disabled={mode === "update"}
                                 />
                             </div>
                         </div>
@@ -1610,13 +1634,13 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                             <div className="border border-gray-300 rounded p-4 mt-4">
                                 <div className="flex justify-between font-bold">
                                     <div className="flex_center">사진 등록</div>
-                                    <div>{selectedImages.length}/10</div>
+                                    <div>{selectedImages.length}/50</div>
                                 </div>
                                 <div className="flex_center mt-2">
                                     <button
                                         type="button"
                                         onClick={handleInputFileSet}
-                                        className="w-1/3 rounded bg-roomi text-white text-sm p-4 flex_center gap-2"
+                                        className="md:w-1/3 w-full rounded bg-roomi text-white text-sm p-4 flex_center gap-2"
                                     >
                                         <FontAwesomeIcon icon={faImages}/>
                                         사진 추가하기
@@ -1631,13 +1655,13 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                     />
                                 </div>
                                 {/* 선택한 이미지 미리보기 영역 */}
-                                <div className="flex flex-wrap gap-2 mt-4">
+                                <div className="grid grid-cols-2 md:flex md:flex-wrap gap-2 mt-4">
                                     {selectedImages.map((imageItem, index) => (
                                         <div key={index} className="relative">
                                             <img
                                                 src={imageItem.previewUrl}
                                                 alt={`preview-${index}`}
-                                                className={`w-64 h-44 object-cover rounded ${
+                                                className={`md:w-64 md:h-44 object-cover rounded ${
                                                     index === 0 ? "border-2 border-roomi" : ""
                                                 }`}
                                             />
@@ -1759,11 +1783,11 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                             {/*금지 사항*/}
                             <div className="mt-4">
                                 <div className="font-bold">금지 사항 선택</div>
-                                <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mt-4">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
                                     {prohibitionsList.map((item) => (
                                         <label
                                             key={item}
-                                            className={`flex items-center gap-2 border rounded-md p-2 cursor-pointer hover:shadow transition-all 
+                                            className={`flex_center gap-2 border rounded-md p-2 cursor-pointer hover:shadow transition-all
                                                     ${roomFormData.detail.prohibitions.includes(item)
                                                 ? "bg-roomi-000 border-roomi text-roomi font-bold"
                                                 : "border text-gray-700 hover:bg-gray-100"
@@ -1790,7 +1814,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                                 }
                                                 className="hidden"
                                             />
-                                            <span className="text-sm">{item}</span>
+                                            <span className="md:text-sm text-xs">{item}</span>
                                         </label>
                                     ))}
                                 </div>
@@ -1840,8 +1864,8 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                             <div className="mt-4">
                                 {/*입실 시간*/}
                                 <div className="flex flex-col md:flex-row md:gap-8">
-                                    <div className="font-bold flex_center">입실 시간</div>
-                                    <div className="w-1/3 mt-4 md:mt-0 flex_center rounded">
+                                    <div className="font-bold md:flex_center">입실 시간</div>
+                                    <div className="md:w-1/3 mt-4 md:mt-0 flex_center rounded">
                                         <select
                                             id="check_in_time"
                                             value={roomFormData.detail.check_in_time}
@@ -1859,8 +1883,8 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                 </div>
                                 {/*퇴실 시간*/}
                                 <div className="mt-4 flex flex-col md:flex-row md:gap-8">
-                                    <div className="font-bold flex_center">퇴실 시간</div>
-                                    <div className="w-1/3 mt-4 md:mt-0 flex_center rounded">
+                                    <div className="font-bold md:flex_center">퇴실 시간</div>
+                                    <div className="md:w-1/3 mt-4 md:mt-0 flex_center rounded">
                                         <select
                                             id="check_out_time"
                                             value={roomFormData.detail.check_out_time}
@@ -2110,15 +2134,18 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                 <div className="mb-2">
                                     <label htmlFor="policy_easy"
                                            className={`block p-4 border-2 rounded-lg cursor-pointer transition mb-4 md:m-0 
-                                               ${roomFormData.refund_policy === '3' ?
+                                               ${(roomFormData.refund_policy.startsWith('유연한') || 
+                                               roomFormData.refund_policy === "3") ?
                                                "bg-roomi-000 border-roomi" : "border text-gray-700 hover:bg-gray-100"}`}
                                     >
                                         <div className="flex">
                                             <div
                                                 className={`flex_center p-2 text-gray-300
-                                                    ${roomFormData.refund_policy === '3' && "text-roomi"}`}
+                                                    ${(roomFormData.refund_policy.startsWith('유연한') || 
+                                                    roomFormData.refund_policy === "3") && "text-roomi"}`}
                                             >
-                                                {roomFormData.refund_policy === '3' ? (
+                                                {(roomFormData.refund_policy.startsWith('유연한') ||
+                                                    roomFormData.refund_policy === "3") ? (
                                                     <FontAwesomeIcon icon={faCheckCircle} className="w-6 h-6"/>
                                                 ) : (
                                                     <FontAwesomeIcon icon={faCircle} className="w-6 h-6"/>
@@ -2127,7 +2154,8 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                             <div className="w-full ml-4">
                                                 <div
                                                     className={`font-bold 
-                                                    ${roomFormData.refund_policy === '3' && "text-roomi"}`}
+                                                    ${(roomFormData.refund_policy.startsWith('유연한') || 
+                                                        roomFormData.refund_policy === "3") && "text-roomi"}`}
                                                 >
                                                     유연한 환불 정책
                                                 </div>
@@ -2137,14 +2165,16 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                             </div>
                                         </div>
                                         <input type="radio" name="refund_policy" id="policy_easy"
-                                               checked={roomFormData.refund_policy === '3'}
+                                               checked={(roomFormData.refund_policy.startsWith('유연한') ||
+                                                   roomFormData.refund_policy === "3")}
                                                onChange={() => handleChange("refund_policy", '3')}
                                                className="hidden"
                                         />
                                         <div className="flex text-gray-500 md:text-sm text-xs mt-2">
                                             <div
                                                 className={`w-full ml-4 p-3 
-                                                    ${roomFormData.refund_policy === '3' && "bg-gray-50 rounded-lg"}`}
+                                                    ${(roomFormData.refund_policy.startsWith('유연한') || 
+                                                    roomFormData.refund_policy === "3") && "bg-gray-50 rounded-lg"}`}
                                             >
                                                 <div className="my-2">
                                                     • 체크인 24시간 전까지: 100% 환불
@@ -2163,15 +2193,18 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                 <div className="mb-2">
                                     <label htmlFor="policy_basic"
                                            className={`block p-4 border-2 rounded-lg cursor-pointer transition mb-4 md:m-0 
-                                               ${roomFormData.refund_policy === '4' ?
+                                               ${(roomFormData.refund_policy.startsWith('일반') || 
+                                               roomFormData.refund_policy === "4") ?
                                                "bg-roomi-000 border-roomi" : "border text-gray-700 hover:bg-gray-100"}`}
                                     >
                                         <div className="flex">
                                             <div
                                                 className={`flex_center p-2 text-gray-300
-                                                    ${roomFormData.refund_policy === '4' && "text-roomi"}`}
+                                                    ${(roomFormData.refund_policy.startsWith('일반') || 
+                                                    roomFormData.refund_policy === "4") && "text-roomi"}`}
                                             >
-                                                {roomFormData.refund_policy === '4' ? (
+                                                {(roomFormData.refund_policy.startsWith('일반') ||
+                                                    roomFormData.refund_policy === "4") ? (
                                                     <FontAwesomeIcon icon={faCheckCircle} className="w-6 h-6"/>
                                                 ) : (
                                                     <FontAwesomeIcon icon={faCircle} className="w-6 h-6"/>
@@ -2180,7 +2213,8 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                             <div className="w-full ml-4">
                                                 <div
                                                     className={`font-bold 
-                                                    ${roomFormData.refund_policy === '4' && "text-roomi"}`}
+                                                    ${(roomFormData.refund_policy.startsWith('일반') || 
+                                                        roomFormData.refund_policy === "4") && "text-roomi"}`}
                                                 >
                                                     일반 환불 정책
                                                 </div>
@@ -2190,14 +2224,16 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                             </div>
                                         </div>
                                         <input type="radio" name="refund_policy" id="policy_basic"
-                                               checked={roomFormData.refund_policy === '4'}
+                                               checked={(roomFormData.refund_policy.startsWith('일반') ||
+                                                   roomFormData.refund_policy === "4")}
                                                onChange={() => handleChange("refund_policy", '4')}
                                                className="hidden"
                                         />
                                         <div className="flex text-gray-500 md:text-sm text-xs mt-2">
                                             <div
                                                 className={`w-full ml-4 p-3 
-                                                    ${roomFormData.refund_policy === '4' && "bg-gray-50 rounded-lg"}`}
+                                                    ${(roomFormData.refund_policy.startsWith('일반') || 
+                                                    roomFormData.refund_policy === "4") && "bg-gray-50 rounded-lg"}`}
                                             >
                                                 <div className="my-2">
                                                     • 체크인 3일 전까지: 100% 환불
@@ -2216,15 +2252,18 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                 <div className="">
                                     <label htmlFor="policy_strict"
                                            className={`block p-4 border-2 rounded-lg cursor-pointer transition mb-4 md:m-0 
-                                               ${roomFormData.refund_policy === '5' ?
+                                               ${(roomFormData.refund_policy.startsWith('엄격한') ||
+                                               roomFormData.refund_policy === "5") ?
                                                "bg-roomi-000 border-roomi" : "border text-gray-700 hover:bg-gray-100"}`}
                                     >
                                         <div className="flex">
                                             <div
                                                 className={`flex_center p-2 text-gray-300
-                                                    ${roomFormData.refund_policy === '5' && "text-roomi"}`}
+                                                    ${(roomFormData.refund_policy.startsWith('엄격한') ||
+                                                    roomFormData.refund_policy === "5") && "text-roomi"}`}
                                             >
-                                                {roomFormData.refund_policy === '5' ? (
+                                                {(roomFormData.refund_policy.startsWith('엄격한') ||
+                                                    roomFormData.refund_policy === "5") ? (
                                                     <FontAwesomeIcon icon={faCheckCircle} className="w-6 h-6"/>
                                                 ) : (
                                                     <FontAwesomeIcon icon={faCircle} className="w-6 h-6"/>
@@ -2233,7 +2272,8 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                             <div className="w-full ml-4">
                                                 <div
                                                     className={`font-bold 
-                                                    ${roomFormData.refund_policy === '5' && "text-roomi"}`}
+                                                    ${(roomFormData.refund_policy.startsWith('엄격한') ||
+                                                        roomFormData.refund_policy === "5") && "text-roomi"}`}
                                                 >
                                                     엄격한 환불 정책
                                                 </div>
@@ -2243,14 +2283,16 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                             </div>
                                         </div>
                                         <input type="radio" name="refund_policy" id="policy_strict"
-                                               checked={roomFormData.refund_policy === '5'}
+                                               checked={(roomFormData.refund_policy.startsWith('엄격한') ||
+                                                   roomFormData.refund_policy === "5")}
                                                onChange={() => handleChange("refund_policy", '5')}
                                                className="hidden"
                                         />
                                         <div className="flex text-gray-500 md:text-sm text-xs mt-2">
                                             <div
                                                 className={`w-full ml-4 p-3 
-                                                    ${roomFormData.refund_policy === '5' && "bg-gray-50 rounded-lg"}`}
+                                                    ${(roomFormData.refund_policy.startsWith('엄격한') || 
+                                                    roomFormData.refund_policy === "5") && "bg-gray-50 rounded-lg"}`}
                                             >
                                                 <div className="my-2">
                                                     • 체크인 7일 전까지: 50% 환불
@@ -2269,135 +2311,155 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                         </div>
                     </div>
                 )}
-                {currentStep === 14 && roomFormData.room_type === 'LODGE' && (
-                    /* 사업자 신고증 */
-                    <div>
-                        {/*안내*/}
-                        <div className="p-4 rounded-lg bg-roomi-000">
-                            <div className="flex items-center text-roomi m-2">
-                                <div className="w-5 h-5 flex_center border-2 border-roomi rounded-full">
-                                    <FontAwesomeIcon icon={faInfo} className="w-3 h-3"/>
+                {currentStep === 14 && (
+                    <>
+                        {roomFormData.room_type === 'LODGE' ? (
+                            /* 사업자 신고증 */
+                            <div>
+                                {/*안내*/}
+                                <div className="p-4 rounded-lg bg-roomi-000">
+                                    <div className="flex items-center text-roomi m-2">
+                                        <div className="w-5 h-5 flex_center border-2 border-roomi rounded-full">
+                                            <FontAwesomeIcon icon={faInfo} className="w-3 h-3"/>
+                                        </div>
+                                        <div className="ml-4 font-bold">안내사항</div>
+                                    </div>
+                                    <div className="text-gray-500 text-sm">
+                                        <div className="p-1 px-2">
+                                            <strong> · </strong>관할 기관에서 발급한 공식 서류만 인정됩니다.
+                                        </div>
+                                        <div className="p-1 px-2">
+                                            <strong> · </strong>서류 정보가 명확하게 보이도록 업로드해주시기 바랍니다.
+                                        </div>
+                                        <div className="p-1 px-2">
+                                            <strong> · </strong>서류의 정보와 입력하신 정보가 일치해야 합니다.
+                                        </div>
+                                        <div className="p-1 px-2">
+                                            <strong> · </strong>인증 심사는 영업일 기준 1~3일이 소요됩니다.
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="ml-4 font-bold">안내사항</div>
-                            </div>
-                            <div className="text-gray-500 text-sm">
-                                <div className="p-1 px-2">
-                                    <strong> · </strong>관할 기관에서 발급한 공식 서류만 인정됩니다.
+                                {/*사업자 정보*/}
+                                <div className="mt-4">
+                                    <div className="font-bold">사업자 정보</div>
+                                    <div className="mt-2">
+                                        <input
+                                            type="text"
+                                            value={roomFormData.business_representative}
+                                            onChange={(e) => handleChange("business_representative", e.target.value)}
+                                            placeholder="대표자명"
+                                            className="w-full border border-gray-300 rounded p-2 focus:outline-none"
+                                        />
+                                    </div>
+                                    <div className="mt-2">
+                                        <input
+                                            type="text"
+                                            value={roomFormData.business_number}
+                                            onChange={(e) => handleChange("business_number", e.target.value)}
+                                            placeholder="사업자 등록번호"
+                                            className="w-full border border-gray-300 rounded p-2 focus:outline-none"
+                                        />
+                                    </div>
+                                    <div className="mt-2">
+                                        <input
+                                            type="text"
+                                            value={roomFormData.business_name}
+                                            onChange={(e) => handleChange("business_name", e.target.value)}
+                                            placeholder="상호명"
+                                            className="w-full border border-gray-300 rounded p-2 focus:outline-none"
+                                        />
+                                    </div>
+                                    {/*사업장 주소*/}
+                                    <div className="mt-2 relative">
+                                        <input
+                                            type="text"
+                                            value={roomFormData.business_address}
+                                            readOnly
+                                            onClick={() => setDaumAddressModal(true)}
+                                            placeholder="주소"
+                                            className="w-full border border-gray-300 rounded p-2 pr-10 cursor-pointer focus:outline-none"
+                                        />
+                                        <div className="absolute right-3.5 top-2 text-roomi pointer-events-none">
+                                            <FontAwesomeIcon icon={faMagnifyingGlass} className="w-4 h-4"/>
+                                        </div>
+                                        <Modal
+                                            isOpen={daumAddressModal}
+                                            onRequestClose={() => setDaumAddressModal(false)}
+                                            className="bg-white p-4 rounded shadow-lg mx-auto"
+                                            overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                                        >
+                                            <DaumPostcode
+                                                style={{width: 400, height: 600}}
+                                                onComplete={handleBusinessAddress}
+                                            />
+                                        </Modal>
+                                        <input
+                                            type="text"
+                                            value={roomFormData.business_additionalAddress}
+                                            onChange={(e) => handleChange("business_additionalAddress", e.target.value)}
+                                            placeholder="상세 주소"
+                                            className="w-full border border-gray-300 rounded p-2 mt-2 focus:outline-none"
+                                        />
+                                    </div>
+                                    {/*사업장 종류*/}
+                                    <div className="mt-2">
+                                        <select
+                                            value={roomFormData.business_licenseType}
+                                            onChange={(e) => handleChange("business_licenseType", e.target.value)}
+                                            className="w-full border border-gray-300 rounded p-2 focus:outline-none text-gray-700"
+                                        >
+                                            <option value="">사업장 종류를 선택해주세요</option>
+                                            {businessLicenseType.map((type) => (
+                                                <option key={type} value={type}>
+                                                    {type}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
                                 </div>
-                                <div className="p-1 px-2">
-                                    <strong> · </strong>서류 정보가 명확하게 보이도록 업로드해주시기 바랍니다.
-                                </div>
-                                <div className="p-1 px-2">
-                                    <strong> · </strong>서류의 정보와 입력하신 정보가 일치해야 합니다.
-                                </div>
-                                <div className="p-1 px-2">
-                                    <strong> · </strong>인증 심사는 영업일 기준 1~3일이 소요됩니다.
-                                </div>
-                            </div>
-                        </div>
-                        {/*사업자 정보*/}
-                        <div className="mt-4">
-                            <div className="font-bold">사업자 정보</div>
-                            <div className="mt-2">
-                                <input
-                                    type="text"
-                                    value={roomFormData.business_representative}
-                                    onChange={(e) => handleChange("business_representative", e.target.value)}
-                                    placeholder="대표자명"
-                                    className="w-full border border-gray-300 rounded p-2 focus:outline-none"
-                                />
-                            </div>
-                            <div className="mt-2">
-                                <input
-                                    type="text"
-                                    value={roomFormData.business_number}
-                                    onChange={(e) => handleChange("business_number", e.target.value)}
-                                    placeholder="사업자 등록번호"
-                                    className="w-full border border-gray-300 rounded p-2 focus:outline-none"
-                                />
-                            </div>
-                            <div className="mt-2">
-                                <input
-                                    type="text"
-                                    value={roomFormData.business_name}
-                                    onChange={(e) => handleChange("business_name", e.target.value)}
-                                    placeholder="상호명"
-                                    className="w-full border border-gray-300 rounded p-2 focus:outline-none"
-                                />
-                            </div>
-                            {/*사업장 주소*/}
-                            <div className="mt-2 relative">
-                                <input
-                                    type="text"
-                                    value={roomFormData.business_address}
-                                    readOnly
-                                    onClick={() => setDaumAddressModal(true)}
-                                    placeholder="주소"
-                                    className="w-full border border-gray-300 rounded p-2 pr-10 cursor-pointer focus:outline-none"
-                                />
-                                <div className="absolute right-3.5 top-2 text-roomi pointer-events-none">
-                                    <FontAwesomeIcon icon={faMagnifyingGlass} className="w-4 h-4"/>
-                                </div>
-                                <Modal
-                                    isOpen={daumAddressModal}
-                                    onRequestClose={() => setDaumAddressModal(false)}
-                                    className="bg-white p-4 rounded shadow-lg mx-auto"
-                                    overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-                                >
-                                    <DaumPostcode
-                                        style={{width: 400, height: 600}}
-                                        onComplete={handleBusinessAddress}
-                                    />
-                                </Modal>
-                                <input
-                                    type="text"
-                                    value={roomFormData.business_additionalAddress}
-                                    onChange={(e) => handleChange("business_additionalAddress", e.target.value)}
-                                    placeholder="상세 주소"
-                                    className="w-full border border-gray-300 rounded p-2 mt-2 focus:outline-none"
-                                />
-                            </div>
-                            {/*사업장 종류*/}
-                            <div className="mt-2">
-                                <select
-                                    value={roomFormData.business_licenseType}
-                                    onChange={(e) => handleChange("business_licenseType", e.target.value)}
-                                    className="w-full border border-gray-300 rounded p-2 focus:outline-none text-gray-700"
-                                >
-                                    <option value="">사업장 종류를 선택해주세요</option>
-                                    {businessLicenseType.map((type) => (
-                                        <option key={type} value={type}>
-                                            {type}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                        {/*사업자 등록증*/}
-                        <div className="mt-4">
-                            <div className="font-bold">사업자 등록증</div>
-                            <div className="text-gray-600 text-sm mt-1">
-                                정확한 서류를 업로드하고 사업자 정보를 입력해야 인증을 받을 수 있습니다.
-                            </div>
-                            {renderBusinessUploadSection(
-                                "사업자 등록증",
-                                "사업자 등록증을 업로드 해주세요.",
-                                "business_licenseFile"
-                            )}
+                                {/*사업자 등록증*/}
+                                <div className="mt-4">
+                                    <div className="font-bold">사업자 등록증</div>
+                                    <div className="text-gray-600 text-sm mt-1">
+                                        정확한 서류를 업로드하고 사업자 정보를 입력해야 인증을 받을 수 있습니다.
+                                    </div>
+                                    {renderBusinessUploadSection(
+                                        "사업자 등록증",
+                                        "사업자 등록증을 업로드 해주세요.",
+                                        "business_licenseFile"
+                                    )}
 
-                            {renderBusinessUploadSection(
-                                "신분증 사본",
-                                "사업자 등록증에 기재 된 대표자 명의의 신분증 사본을 업로드 해주세요.",
-                                "business_identificationFile"
-                            )}
-                        </div>
-                    </div>
+                                    {renderBusinessUploadSection(
+                                        "신분증 사본",
+                                        "사업자 등록증에 기재 된 대표자 명의의 신분증 사본을 업로드 해주세요.",
+                                        "business_identificationFile"
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            /* 미리보기 */
+                            <div className="flex_center py-10">
+                                <button
+                                    type="button"
+                                    className="md:w-1/3 w-full bg-roomi rounded-lg text-lg text-white p-4"
+                                    onClick={() => setRoomPreview(true)}
+                                >
+                                    미리보기
+                                </button>
+                            </div>
+                        )}
+                    </>
                 )}
-                {((currentStep === 14 && roomFormData.room_type === 'LEASE') ||
-                    (currentStep === 15 && roomFormData.room_type === 'LODGE')) && (
+                {currentStep === 15 && (
                     /* 미리보기 */
-                    <div>
-                        미리보기
+                    <div className="flex_center py-10">
+                        <button
+                            type="button"
+                            className="md:w-1/3 w-full bg-roomi rounded-lg text-lg text-white p-4"
+                            onClick={() => setRoomPreview(true)}
+                        >
+                            미리보기
+                        </button>
                     </div>
                 )}
             </div>
@@ -2412,16 +2474,30 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                     <div/>
                 )}
                 {currentStep === totalSteps ? (
-                    <button type="submit" className="px-4 py-2 bg-roomi text-white rounded-md" disabled={loading}>
+                    <button
+                        type="button"
+                        className="px-4 py-2 bg-roomi text-white rounded-md"
+                        onClick={handleSubmit}
+                        disabled={loading}
+                    >
                         {mode === "insert" ? "등록" : "저장"}
                     </button>
                 ) : (
-                    <button type="button" className="px-4 py-2 bg-roomi text-white rounded-md" onClick={handleNext}
-                            disabled={loading}>
+                    <button
+                        type="button"
+                        className="px-4 py-2 bg-roomi text-white rounded-md"
+                        onClick={handleNext}
+                        disabled={loading}
+                    >
                         다음
                     </button>
                 )}
             </div>
+
+            {/* 미리보기 모달 */}
+            {roomPreview && (
+                <RoomPreviewModal visible={roomPreview} onClose={() => setRoomPreview(false)} room={roomFormData}/>
+            )}
 
             {/* 로딩 오버레이 */}
             {loading && (

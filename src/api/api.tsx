@@ -61,6 +61,11 @@ const request = async (endpoint: string, requireAuth: boolean = true, method: st
     }
 };
 
+// 회원가입 API
+export const createUser = async (formData: User) => {
+    return request(`/users/signUp`, false, 'POST', formData);
+};
+
 // 로그인 API
 export const login = async (email: string, password: string, setAuthToken: (token: string | null) => void) => {
     try {
@@ -84,6 +89,7 @@ export const login = async (email: string, password: string, setAuthToken: (toke
             localStorage.setItem('userEmail', data.data.email);
             localStorage.setItem('userName', data.data.name);
             localStorage.setItem('userIsHost', data.data.isHost);
+            localStorage.setItem('isKorean', data.data.is_korean);
             if (data.data.profile_image === null) {
                 localStorage.setItem('userProfileImg', '/assets/images/profile.png');
             } else {
@@ -134,6 +140,7 @@ export const channelLogin = async (channel_uid: string, channel: string, setAuth
             localStorage.setItem('userEmail', data.data.email);
             localStorage.setItem('userName', data.data.name);
             localStorage.setItem('userIsHost', data.data.isHost);
+            localStorage.setItem('isKorean', data.data.is_korean);
             if (data.data.profile_image === null) {
                 localStorage.setItem('userProfileImg', '/assets/images/profile.png');
             } else {
@@ -187,6 +194,7 @@ export const logout = async () => {
         localStorage.removeItem('userCurrency');
         localStorage.removeItem('authMode'); // 소셜 로그인 플래그 제거
         localStorage.removeItem('kakaoToken'); // 카카오 토큰 제거
+        localStorage.removeItem('isKorean');
 
         const detectedLang = i18n.services.languageDetector?.detect();
         console.log('detectedLang:', detectedLang);
@@ -198,10 +206,10 @@ export const logout = async () => {
     }
 };
 
-// 회원가입 API
-export const createUser = async (formData: User) => {
-    return request(`/users/signUp`, false, 'POST', formData);
-};
+// 본인 인증(여권 인증) 여부(identity_verified) 확인 API
+export const checkIdentification = async () => {
+    return request(`/users/identification/metamap`, true);
+}
 
 // 메인 화면 방 조회 API
 export const mainRoomData = async (swY: number, swX: number, neY: number, neX: number, currentLocale: string) => {
@@ -473,6 +481,59 @@ export const createRoom = async (roomFormData: RoomFormData, detailImageFiles: F
     let API_URL = BASE_URL + `/rooms`;
     const response = await fetch(API_URL, {
         method: "POST",
+        headers: {
+            Authorization: token ?? "",
+        },
+        body: formData,
+    });
+
+    return response;
+};
+
+// 호스트 방 업데이트 API
+export const updateRoom = async (roomId: number, roomFormData: RoomFormData, detailImageFiles: File[]) => {
+    const formData = new FormData();
+
+    const {
+        business_licenseFile,
+        business_identificationFile,
+        ...rest
+    } = roomFormData;
+
+    let dataToSend = { ...rest, id: roomId }; // 업데이트 시 ID 포함
+
+    if (roomFormData.room_type === "LEASE") {
+        // LEASE면 business 관련 필드 제거
+        Object.keys(dataToSend).forEach((key) => {
+            if (key.startsWith("business_")) {
+                delete (dataToSend as any)[key];
+            }
+        });
+    }
+
+    // 1. JSON 데이터
+    formData.append("data", JSON.stringify(dataToSend));
+
+    // 2. detail_urls → 서버의 files 필드로
+    detailImageFiles.forEach((file) => {
+        formData.append("files", file);
+    });
+
+    if (roomFormData.room_type === "LODGE") {
+        // 3. 사업자등록증 → 서버의 business_license
+        if (business_licenseFile) {
+            formData.append("business_license", business_licenseFile);
+        }
+        // 4. 신분증 사본 → 서버의 business_registration
+        if (business_identificationFile) {
+            formData.append("business_registration", business_identificationFile);
+        }
+    }
+
+    const token = getAuthToken();
+    let API_URL = BASE_URL + `/rooms`; // PUT 요청은 같은 endpoint
+    const response = await fetch(API_URL, {
+        method: "PUT", // POST에서 PUT으로 변경
         headers: {
             Authorization: token ?? "",
         },
