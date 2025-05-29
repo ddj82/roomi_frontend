@@ -59,13 +59,9 @@
             },
             // ✅ virtualAccount 설정 수정 - accountExpiry를 올바른 객체 형태로 설정
             virtualAccount: {
-                bank: "KB",                           // 발급 은행
                 accountExpiry: {
                     dueDate: validUntil   // 유효 기간을 validUntil로 설정
                 },
-                refundBank: "KB",                     // (선택) 환불용
-                refundHolderName: "홍길동",           // (선택) 환불용
-                refundAccount: "12345678901234"       // (선택) 환불용
             },
             redirectUrl: params.redirectUrl,
             m_redirect_url: params.redirectUrl, // 모바일 리다이렉트 URL
