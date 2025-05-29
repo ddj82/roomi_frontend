@@ -250,6 +250,15 @@
       }
     }
 
+    .redirect-notice {
+      text-align: center;
+      padding: 16px 32px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+    }
+
     @media (max-width: 480px) {
       .container {
         margin: 0;
@@ -257,7 +266,8 @@
       }
 
       .header,
-      .payment-info {
+      .payment-info,
+      .redirect-notice {
         padding-left: 24px;
         padding-right: 24px;
       }
@@ -277,6 +287,10 @@
       <div class="spinner"></div>
       결제 정보를 불러오는 중...
     </div>
+  </div>
+
+  <div class="redirect-notice" id="redirect-notice" style="display: none;">
+    잠시 후 메인 페이지로 이동합니다...
   </div>
 </div>
 
@@ -402,6 +416,11 @@
       if (this.hasPaymentParams()) {
         this.sendWebViewCallback();
       }
+
+      // 결제 성공 시에만 리다이렉트 실행
+      if (this.isSuccess) {
+        this.startRedirectCountdown();
+      }
     }
 
     setupSuccessUI() {
@@ -501,6 +520,33 @@
           console.error('Error sending webview callback:', error);
         }
       }, 1500); // UI 로딩 완료를 위한 딜레이
+    }
+
+    // 리다이렉트 카운트다운 시작
+    startRedirectCountdown() {
+      const redirectNotice = document.getElementById('redirect-notice');
+
+      // 3초 후에 리다이렉트 안내 표시
+      setTimeout(() => {
+        redirectNotice.style.display = 'block';
+      }, 3000);
+
+      // 5초 후에 실제 리다이렉트 실행
+      setTimeout(() => {
+        this.redirectToSuccess();
+      }, 5000);
+    }
+
+    // 성공 페이지로 리다이렉트
+    redirectToSuccess() {
+      try {
+        console.log('Redirecting to success page...');
+        window.location.href = 'https://roomi.co.kr/success.html';
+      } catch (error) {
+        console.error('Error during redirect:', error);
+        // 리다이렉트 실패 시 fallback
+        window.open('https://roomi.co.kr/success.html', '_self');
+      }
     }
 
     displayPaymentDetails() {
