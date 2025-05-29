@@ -502,7 +502,8 @@ const ContractManagement = () => {
                                                         {reservation.room?.title || "Unnamed Room"}
                                                     </h3>
                                                     <p className="text-xs text-gray-600 mt-1">
-                                                        {reservation.room?.address || "No address provided"}
+                                                        {reservation.room?.address || "No address provided"}<br/>
+                                                        {reservation.room?.address_detail || "No address provided"}
                                                     </p>
                                                     <p className="text-xs text-gray-600 mt-1">
                                                         {reservation.guest?.name || "No address provided"}
@@ -543,7 +544,8 @@ const ContractManagement = () => {
                                                     </span>
                                                     </div>
                                                     <p className="text-sm text-gray-600 mt-1">
-                                                        {reservation.room?.address || "No address provided"}
+                                                        {reservation.room?.address || "No address provided"}<br/>
+                                                        {reservation.room?.address_detail || "No address provided"}
                                                     </p>
                                                     <p className="text-xs text-gray-600 mt-2">
                                                         {reservation.guest?.name || "No address provided"}

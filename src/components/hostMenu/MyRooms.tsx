@@ -184,30 +184,35 @@ const MyRooms = () => {
 
                                 <div className="flex-1 flex flex-col justify-between w-full">
                                     <div>
-                                    <span
-                                        className={`inline-block px-2 py-1 text-xs font-semibold rounded 
-                                            ${getRoomStatus(room) === "활성"
-                                            ? "bg-blue-100 text-blue-700"
-                                            : getRoomStatus(room) === "비활성"
-                                                ? "bg-gray-100 text-gray-700"
-                                                : getRoomStatus(room) === "승인거절"
-                                                    ? "bg-red-100 text-red-700"
-                                                    : "bg-yellow-100 text-yellow-800"
-                                        }`}
-                                    >
-                                        {getRoomStatus(room)}
-                                    </span>
+                                        <span
+                                            className={`inline-block px-2 py-1 text-xs font-semibold rounded 
+                                                ${getRoomStatus(room) === "활성"
+                                                ? "bg-blue-100 text-blue-700"
+                                                : getRoomStatus(room) === "비활성"
+                                                    ? "bg-gray-100 text-gray-700"
+                                                    : getRoomStatus(room) === "승인거절"
+                                                        ? "bg-red-100 text-red-700"
+                                                        : "bg-yellow-100 text-yellow-800"
+                                            }`}
+                                        >
+                                            {getRoomStatus(room)}
+                                        </span>
                                         <div className="mt-1 text-base font-semibold text-gray-900">
                                             {room.title}
                                         </div>
                                         <div className="text-sm text-gray-500">{room.address}</div>
+                                        <div className="text-sm text-gray-500">{room.address_detail}</div>
                                         <div className="text-sm text-gray-500">
-                                            ￦{room.week_price?.toLocaleString()}/주
+                                            {room.symbol} {room.week_price?.toLocaleString()}/주
+                                        </div>
+                                        <div className="text-sm text-gray-500">
+                                            {room.symbol} {room.month_price?.toLocaleString()}/월
                                         </div>
                                     </div>
 
                                     <div className="mt-3 flex space-x-2">
-                                        <button className="text-xs px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 transition">
+                                        <button
+                                            className="text-xs px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 transition">
                                             삭제
                                         </button>
                                         <button

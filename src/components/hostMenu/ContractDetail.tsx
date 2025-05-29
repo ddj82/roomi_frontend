@@ -319,6 +319,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                     <div className="mt-4">
                         <h3 className="mt-4 text-lg font-semibold">{reservation.room?.title || "방 정보 없음"}</h3>
                         <p className="text-gray-600">{reservation.room?.address || "주소 정보 없음"}</p>
+                        <p className="text-gray-600">{reservation.room?.address_detail || ""}</p>
 
                         {/* Status Badges */}
                         {getStatusBadge()}
