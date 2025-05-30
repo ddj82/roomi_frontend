@@ -72,7 +72,7 @@ function AppContent() {
     return (
         <>
             {isVisible && <Header />}
-            <div className="app container xl:max-w-[1500px]"
+            <div className="app container xl:max-w-[1524px]"
                 // style={{minHeight: window.innerHeight - 130,}}
             >
                 <Routes>

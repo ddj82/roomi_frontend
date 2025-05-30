@@ -5,13 +5,13 @@ import {ApiResponse, RoomData} from "../../types/rooms";
 import {useTranslation} from "react-i18next";
 import i18n from "../../i18n";
 import {mainRoomData} from "../../api/api";
-import {useQuery} from "@tanstack/react-query";
 import ImgCarousel from "../util/ImgCarousel";
 import {ChevronLeft, ChevronRight} from "lucide-react";
 import RoomAccommodationCard from "../util/RoomAccommodationCard";
 import RoomScrollList from "../util/RoomScrollList";
 import {mainPopularRegion, mainSlideList} from "../../types/MainSlideList";
 import MainSlides from "../util/MainSlides";
+import {useQuery} from "@tanstack/react-query";
 
 interface MainProps {
     rooms: RoomData[];
