@@ -238,33 +238,33 @@ const Header = () => {
                         <div className="md:mr-4 mr-1.5">
                             {authToken ? (
                                 <div className="flex gap-3">
-                                    <div className="flex_center md:text-xs text-xxs">
-                                        <button
-                                            type="button"
-                                            onClick={() => window.location.href = '/main'}
-                                        >
-                                            방 등록하러 가기
-                                        </button>
-                                    </div>
-                                    {isHost && (
-                                        <>
-                                            {hostMode ? (
-                                                <div className="flex_center md:text-xs text-xxs">
-                                                    <button onClick={handleSetHostMode}
-                                                            className="w-full text-start block px-4 py-2 hover:bg-gray-100">
-                                                        {t("게스트로 전환")}
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <div className="flex_center md:text-xs text-xxs">
-                                                    <button onClick={handleSetHostMode}
-                                                            className="w-full text-start block px-4 py-2 hover:bg-gray-100">
-                                                        {t("호스트로 전환")}
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
+                                    {/*<div className="flex_center md:text-xs text-xxs">*/}
+                                    {/*    <button*/}
+                                    {/*        type="button"*/}
+                                    {/*        onClick={() => window.location.href = '/main'}*/}
+                                    {/*    >*/}
+                                    {/*        방 등록하러 가기*/}
+                                    {/*    </button>*/}
+                                    {/*</div>*/}
+                                    {/*{isHost && (*/}
+                                    {/*    <>*/}
+                                    {/*        {hostMode ? (*/}
+                                    {/*            <div className="flex_center md:text-xs text-xxs">*/}
+                                    {/*                <button onClick={handleSetHostMode}*/}
+                                    {/*                        className="w-full text-start block px-4 py-2 hover:bg-gray-100">*/}
+                                    {/*                    {t("게스트로 전환")}*/}
+                                    {/*                </button>*/}
+                                    {/*            </div>*/}
+                                    {/*        ) : (*/}
+                                    {/*            <div className="flex_center md:text-xs text-xxs">*/}
+                                    {/*                <button onClick={handleSetHostMode}*/}
+                                    {/*                        className="w-full text-start block px-4 py-2 hover:bg-gray-100">*/}
+                                    {/*                    {t("호스트로 전환")}*/}
+                                    {/*                </button>*/}
+                                    {/*            </div>*/}
+                                    {/*        )}*/}
+                                    {/*    </>*/}
+                                    {/*)}*/}
                                     <div className="flex_center">
                                         <button
                                             type="button"
@@ -334,25 +334,25 @@ const Header = () => {
                                 </div>
                             ) : (
                                 <div className="flex gap-3">
-                                    <div className="flex_center md:text-xs text-xxs">
-                                        <button
-                                            type="button"
-                                            onClick={() => window.location.href = '/main'}
-                                        >
-                                        방 등록하러 가기
-                                        </button>
-                                    </div>
+                                    {/*<div className="flex_center md:text-xs text-xxs">*/}
+                                    {/*    <button*/}
+                                    {/*        type="button"*/}
+                                    {/*        onClick={() => window.location.href = '/main'}*/}
+                                    {/*    >*/}
+                                    {/*    방 등록하러 가기*/}
+                                    {/*    </button>*/}
+                                    {/*</div>*/}
                                     <div className="flex_center">
                                         <button
                                             type="button"
-                                            className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-gray-300 hover:bg-gray-400 rounded-full shadow-md transition duration-200"
+                                            className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-gray-300 hover:bg-gray-400 rounded-full transition duration-200"
                                         >
                                             <FontAwesomeIcon icon={faGlobe} className="text-gray-600 md:text-xl text-sm" />
                                         </button>
                                     </div>
                                     <div>
                                         <button
-                                            className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-gray-300 hover:bg-gray-400 rounded-full shadow-md transition duration-200"
+                                            className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-gray-300 hover:bg-gray-400 rounded-full transition duration-200"
                                             onClick={() => setAuthModalVisible(true)}
                                         >
                                             <FontAwesomeIcon icon={faUserPlus} className="text-gray-600 md:text-base text-xs" />
