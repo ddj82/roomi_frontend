@@ -4,76 +4,104 @@ import {mainSlideList} from "../../types/MainSlideList";
 export default function MainSlides() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const slides = mainSlideList;
-    // 마우스 호버 시 자동 슬라이드 일시정지
     const [isHovered, setIsHovered] = useState(false);
 
     useEffect(() => {
-        if (isHovered) return; // 호버 중이면 자동 슬라이드 정지
+        if (isHovered) return;
 
         const interval = setInterval(() => {
             setCurrentIndex((prevIndex) =>
                 prevIndex === slides.length - 1 ? 0 : prevIndex + 1
             );
-        }, 3000); // 자동 슬라이드 시간
+        }, 3000);
 
         return () => clearInterval(interval);
     }, [slides.length, isHovered]);
 
     return (
-        <div className="relative w-full bg-[#f4f4f4]">
-            {/* Carousel wrapper */}
-            <div className="relative overflow-hidden rounded-lg h-56 md:h-80">
-                {/* 슬라이드 컨테이너 */}
-                <div
-                    className="flex transition-transform duration-700 ease-in-out h-full"
-                    style={{
-                        transform: `translateX(-${currentIndex * 100}%)`
-                    }}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                >
-                    {slides.map((slide, index) => (
-                        <div
-                            key={index}
-                            className="w-full flex-shrink-0 relative flex"
-                        >
-                            {/* 배경 이미지 */}
-                            <img
-                                src={slide.image}
-                                className="h-full"
-                                alt={`Slide ${index + 1}`}
-                            />
+        <div className="relative w-full bg-white">
+            {/* 데스크톱: 3개 그리드 */}
+            <div className="hidden md:block px-4 py-6">
+                <div className="overflow-x-auto scrollbar-hidden">
+                    <div className="flex gap-14 w-max px-1 mx-auto justify-center">
+                        {slides.map((slide, index) => (
+                            <div
+                                key={index}
+                                className="min-w-[444px] max-w-[444px] bg-gray-100 rounded-2xl p-4 flex items-start gap-5 flex-shrink-0 hover:shadow-md transition-all duration-300"
+                            >
+                                {/* 이미지 왼쪽 */}
+                                <div className="flex-shrink-0">
+                                    <img
+                                        src={slide.image}
+                                        alt={`Slide ${index + 1}`}
+                                        className="w-24 h-24 object-cover rounded-xl inline-block"
+                                    />
+                                </div>
 
-                            {/* 텍스트 오버레이 */}
-                            <div className="flex_center">
-                                <div className="text-black p-6 w-full flex flex-col gap-8">
-                                    <h3 className="text-lg md:text-2xl font-bold mb-2 transform translate-y-0 transition-transform duration-500">
-                                        {slide.title}
-                                    </h3>
-                                    <p className="text-sm md:text-lg opacity-90 transform translate-y-0 transition-transform duration-500 delay-100">
-                                        {slide.description}
-                                    </p>
+                                {/* 텍스트 오른쪽 */}
+                                <div className="flex-1">
+                                    <h3 className="text-base font-bold text-gray-900 mb-2">{slide.title}</h3>
+                                    <p className="text-sm text-gray-600 leading-snug">{slide.description}</p>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
 
-            {/* 슬라이드 인디케이터 (점) */}
-            <div className="flex justify-center space-x-2 mt-4 absolute bottom-2 right-1/2">
-                {slides.map((_, index) => (
-                    <button
-                        key={index}
-                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                            index === currentIndex
-                                ? 'bg-gray-800 scale-110'
-                                : 'bg-gray-400 hover:bg-gray-600'
-                        }`}
-                        onClick={() => setCurrentIndex(index)}
-                    />
-                ))}
+            {/* 모바일: 슬라이드 (더 작게) */}
+            <div className="md:hidden relative">
+                <div className="relative overflow-hidden rounded-lg h-40">
+                    <div
+                        className="flex transition-transform duration-700 ease-in-out h-full"
+                        style={{
+                            transform: `translateX(-${currentIndex * 100}%)`
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                    >
+                        {slides.map((slide, index) => (
+                            <div
+                                key={index}
+                                className="w-full flex-shrink-0 relative"
+                            >
+                            <img
+                                    src={slide.image}
+                                    className="w-full h-full object-cover"
+                                    alt={`Slide ${index + 1}`}
+                                />
+
+                                {/* 텍스트 오버레이 - 모바일용 간소화 */}
+                                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-end">
+                                    <div className="text-white p-4 w-full">
+                                        <h3 className="text-base font-bold mb-1">
+                                            {slide.title}
+                                        </h3>
+                                        <p className="text-xs opacity-90 line-clamp-2">
+                                            {slide.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* 모바일용 인디케이터 */}
+                <div className="flex justify-center space-x-2 mt-3">
+                    {slides.map((_, index) => (
+                        <button
+                            key={index}
+                            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                                index === currentIndex
+                                    ? 'bg-gray-800 scale-110'
+                                    : 'bg-gray-400'
+                            }`}
+                            onClick={() => setCurrentIndex(index)}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );
-};
+}

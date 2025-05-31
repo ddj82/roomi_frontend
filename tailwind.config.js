@@ -12,7 +12,8 @@ module.exports = {
                 "roomi-0": "#ffc7c2", // 더 연하게
                 "roomi-1": "#ffb6af", // 연하게
                 "roomi-2": "#ff9a8a", // 조금 더 진한 톤
-                "roomi": "#f47366", // 메인 컬러
+                // "roomi": "#f47366", // 메인 컬러
+                "roomi": "#ff8282", // ✅ 메인 컬러
                 "roomi-3": "#d86558", // 진하게
                 "roomi-4": "#be5a4e", // 더 진하게
                 "roomi-5": "#a44f44" // 더더 진하게

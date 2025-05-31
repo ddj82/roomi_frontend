@@ -9,40 +9,40 @@ const RoomAccommodationCard = memo(
         const formatPrice = useCallback((price: number | null) => {
             if (!price) return '가격 정보 없음';
             return `${item.symbol} ${price.toLocaleString()}`;
-        }, []);
+        }, [item]);
         const {t} = useTranslation();
 
         return (
-            <div className="homeScreen card" onClick={onClick}>
-                <div className="homeScreen card-header w-full m-0 p-0 relative">
-                    <div className="absolute top-3 right-3 z-10">
+            <div className="bg-transparent border-none shadow-none cursor-pointer" onClick={onClick}>
+                <div className="relative mb-2">
+                    <div className="absolute top-2 right-2 z-10">
                         <WishListButton roomId={item.id} isFavorite={item.is_favorite}/>
                     </div>
                     {item.detail_urls && item.detail_urls.length > 0 ? (
                         <ImgCarousel
                             images={item.detail_urls}
-                            customClass="h-56 w-full object-cover md:rounded-lg rounded-none"
+                            customClass="w-full h-32 md:h-48 object-cover rounded-xl"
                         />
                     ) : (
                         <img
                             src="/default-image.jpg"
                             alt="thumbnail"
-                            className="h-56 w-full object-cover md:rounded-lg rounded-none"
+                            className="w-full h-32 md:h-48 object-cover rounded-xl"
                         />
                     )}
                 </div>
-                <div className="homeScreen card-content">
-                    <div className="homeScreen price-container">
-                        {typeof item.month_price === 'number' &&item.month_price > 0  && (
-                            <p className="homeScreen price">{formatPrice(item.month_price)} / {t('월')}</p>
+                <div className="p-0">
+                    <div className="mb-1">
+                        <h3 className="text-xs md:text-sm font-bold text-gray-900 line-clamp-1 mb-1">{item.title || '제목 없음'}</h3>
+                        {typeof item.month_price === 'number' && item.month_price > 0 && (
+                            <p className="text-xs md:text-sm font-light text-gray-500 m-0">{formatPrice(item.month_price)} / {t('월')}</p>
                         )}
-                        {typeof item.week_price === 'number' &&item.week_price > 0 && (
-                            <p className="homeScreen price">{formatPrice(item.week_price)} / {t('주')}</p>
+                        {typeof item.week_price === 'number' && item.week_price > 0 && (
+                            <p className="text-xs md:text-sm font-light text-gray-500 m-0">{formatPrice(item.week_price)} / {t('주')}</p>
                         )}
-
                     </div>
-                    <h3 className="homeScreen title line-clamp-2">{item.title || '제목 없음'}</h3>
-                    <p className="homeScreen location">{item.address || '주소 정보 없음'}</p>
+
+                    <p className="text-xs md:text-sm text-gray-600 m-0 line-clamp-1">{item.address || '주소 정보 없음'}</p>
                 </div>
             </div>
         );

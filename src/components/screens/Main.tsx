@@ -107,17 +107,19 @@ const Main: React.FC<MainProps> = ({ rooms: externalRooms }) =>{
     return (
         <div className="p-4">
             {/* 인기 있는 장소 */}
-            <div className="flex flex-col gap-2 relative">
-                {/* 스크롤 버튼 */}
-                <>
+            <div className="flex flex-col gap-2">
+                <div className="font-bold text-lg px-4">인기 있는 장소</div>
+
+                {/* 화살표와 그리드를 감싸는 컨테이너 */}
+                <div className="relative flex items-center">
                     {/* 왼쪽 스크롤 버튼 */}
                     {canScrollLeft && (
                         <button
                             onClick={scrollLeft}
-                            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors z-[999]"
+                            className="absolute -left-4 z-[999] bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors hidden md:block"
                             aria-label="이전 방 목록"
                         >
-                            <ChevronLeft size={20} className="text-gray-600" />
+                            <ChevronLeft size={20} className="text-gray-600"/>
                         </button>
                     )}
 
@@ -125,63 +127,64 @@ const Main: React.FC<MainProps> = ({ rooms: externalRooms }) =>{
                     {canScrollRight && (
                         <button
                             onClick={scrollRight}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors z-[999]"
+                            className="absolute -right-4 z-[999] bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors hidden md:block"
                             aria-label="다음 방 목록"
                         >
-                            <ChevronRight size={20} className="text-gray-600" />
+                            <ChevronRight size={20} className="text-gray-600"/>
                         </button>
                     )}
-                </>
-                <div className="font-bold text-lg px-4">인기 있는 장소</div>
-                <div
-                    ref={scrollContainerRef}
-                    className="p-4 overflow-x-auto scrollbar-none scrollbar-hidden"
-                >
+
+                    {/* 가로 스크롤 */}
                     <div
-                        className="grid grid-rows-1 gap-4 w-max"
-                        style={{
-                            gridTemplateColumns: `repeat(${Math.ceil(popularRegion.length)}, 180px)`
-                        }}
+                        ref={scrollContainerRef}
+                        className="p-4 overflow-x-auto scrollbar-none scrollbar-hidden w-full"
                     >
-                        {popularRegion.map((region, index) => (
-                            <div key={index} className="relative">
-                                <div>
-                                    <img
-                                        src={region.image}
-                                        alt={region.title}
-                                        className="rounded-lg w-44 h-40"
-                                    />
+                        <div
+                            className="grid grid-rows-1 gap-4 md:gap-4 w-max"
+                            style={{
+                                gridTemplateColumns: `repeat(${Math.ceil(popularRegion.length)}, ${window.innerWidth >= 768 ? '195px' : '160px'})`
+                            }}
+                        >
+                            {popularRegion.map((region, index) => (
+                                <div key={index} className="relative">
+                                    <div>
+                                        <img
+                                            src={region.image}
+                                            alt={region.title}
+                                            className="rounded-lg w-40 h-36 md:w-52 md:h-48"
+                                        />
+                                    </div>
+                                    <div className="absolute inset-0 flex items-end text-white">
+                                        <div className="p-2">{region.title}</div>
+                                    </div>
                                 </div>
-                                <div className="absolute inset-0 flex items-end text-white">
-                                    <div className="p-2">{region.title}</div>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
-            
+
             {/* 모든 공간 */}
             <div className="flex flex-col gap-2">
                 <div className="font-bold text-lg px-4">모든 공간</div>
-                <RoomScrollList rooms={rooms} />
+                <RoomScrollList rooms={rooms}/>
             </div>
 
             {/* 인기 있는 공간 */}
             <div className="flex flex-col gap-2">
                 <div className="font-bold text-lg px-4">인기 있는 공간 둘러보기</div>
-                <RoomScrollList rooms={rooms} />
+                <RoomScrollList rooms={rooms}/>
             </div>
 
             {/* 신규 등록한 공간 둘러보기 */}
             <div className="flex flex-col gap-2">
                 <div className="font-bold text-lg px-4">신규 등록한 공간 둘러보기</div>
-                <RoomScrollList rooms={rooms} />
+                <RoomScrollList rooms={rooms}/>
             </div>
 
             {/* 하단 설명 메뉴 */}
             <div>
-                <MainSlides />
+                <MainSlides/>
             </div>
         </div>
     );

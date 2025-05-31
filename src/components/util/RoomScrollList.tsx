@@ -25,7 +25,7 @@ const RoomScrollList: React.FC<RoomScrollListProps> = ({ rooms }) => {
     }, []);
 
     // 스크롤 함수
-    const scrollLeft = useCallback(() => {
+    const scrollToLeft = useCallback(() => {
         if (scrollContainerRef.current) {
             const scrollAmount = scrollContainerRef.current.clientWidth * SCROLL_SPEED;
             scrollContainerRef.current.scrollBy({
@@ -35,7 +35,7 @@ const RoomScrollList: React.FC<RoomScrollListProps> = ({ rooms }) => {
         }
     }, []);
 
-    const scrollRight = useCallback(() => {
+    const scrollToRight = useCallback(() => {
         if (scrollContainerRef.current) {
             const scrollAmount = scrollContainerRef.current.clientWidth * SCROLL_SPEED;
             scrollContainerRef.current.scrollBy({
@@ -81,45 +81,43 @@ const RoomScrollList: React.FC<RoomScrollListProps> = ({ rooms }) => {
 
     return (
         <div className="relative">
-            {/* 왼쪽 스크롤 버튼 */}
+            {/* 화살표 */}
             {canScrollLeft && (
                 <button
-                    onClick={scrollLeft}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors z-[999]"
+                    onClick={scrollToLeft}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors z-[999] hidden md:block"
                     aria-label="이전 방 목록"
                 >
-                    <ChevronLeft size={20} className="text-gray-600" />
+                    <ChevronLeft size={20} className="text-gray-600"/>
                 </button>
             )}
 
-            {/* 오른쪽 스크롤 버튼 */}
             {canScrollRight && (
                 <button
-                    onClick={scrollRight}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors z-[999]"
+                    onClick={scrollToRight}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-full p-2 hover:bg-gray-50 transition-colors z-[999] hidden md:block"
                     aria-label="다음 방 목록"
                 >
-                    <ChevronRight size={20} className="text-gray-600" />
+                    <ChevronRight size={20} className="text-gray-600"/>
                 </button>
             )}
 
-            {/* 스크롤 가능한 컨테이너 */}
+            {/* 통합된 스크롤 컨테이너 */}
             <div
                 ref={scrollContainerRef}
                 className="overflow-x-auto h-fit scrollbar-none scrollbar-hidden p-4"
             >
-                {/* 2줄 그리드 */}
                 <div
                     className="grid grid-rows-1 gap-4 w-max"
                     style={{
-                        gridTemplateColumns: `repeat(${Math.ceil(rooms.length)}, 280px)`
+                        gridTemplateColumns: `repeat(${Math.ceil(rooms.length)}, ${window.innerWidth >= 768 ? '280px' : '160px'})`
                     }}
                 >
                     {rooms.map((item) => (
                         <RoomAccommodationCard
                             key={item.id}
                             item={item}
-                            onClick={() => handleCardClick(item.id)} // id 전달
+                            onClick={() => handleCardClick(item.id)}
                         />
                     ))}
                 </div>
