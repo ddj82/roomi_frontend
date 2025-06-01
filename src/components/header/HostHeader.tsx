@@ -66,7 +66,11 @@ const HostHeader: React.FC = () => {
 
     // Desktop Header Navigation
     const DesktopNavigation = () => (
-        <div className="flex flex-wrap justify-center text-sm font-medium text-center -mt-12" role="tablist">
+        <div
+            className="flex flex-wrap justify-center text-sm font-medium text-center bg-transparent"
+            style={{marginTop: '-58px'}}  // 또는 -58px, -59px 등 1px씩 조정
+            role="tablist"
+        >
             {tabs.map((tab) => (
                 <div key={tab} role="presentation" className="mx-2 sm:mx-4 text-base">
                     <button

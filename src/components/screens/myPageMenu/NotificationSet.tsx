@@ -71,7 +71,7 @@ export default function NotificationSet() {
 
     return (
         <div className="p-4 md:p-6 max-w-md mx-auto">
-            <h3 className="text-lg font-bold mb-6">{t('알림 설정')}</h3>
+            {/*<h3 className="text-lg font-bold mb-6">{t('알림 설정')}</h3>*/}
 
             <div className="space-y-4 mb-8">
                 {notificationOptions.map((option) => (

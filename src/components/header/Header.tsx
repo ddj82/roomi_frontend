@@ -183,7 +183,7 @@ const Header = () => {
     const handleSetHostMode = () => {
         if (hostMode) {
             resetUserMode();
-            window.location.href = '/';
+            window.location.href = '/main';
         } else {
             setHostMode(true);
             window.location.href = '/host';
@@ -431,6 +431,34 @@ const Header = () => {
                                                             </div>
                                                         )}
                                                     </div>
+                                                    <div className="flex_center md:text-xs text-xxs">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => window.location.href = '/main'}
+                                                        >
+                                                            방 등록하러 가기
+                                                        </button>
+                                                    </div>
+                                                    {isHost && (
+                                                        <>
+                                                            {hostMode ? (
+                                                                <div className="flex_center md:text-xs text-xxs">
+                                                                    <button onClick={handleSetHostMode}
+                                                                            className="w-full text-start block px-4 py-2 hover:bg-gray-100">
+                                                                        {t("게스트로 전환")}
+                                                                    </button>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="flex_center md:text-xs text-xxs">
+                                                                    <button onClick={handleSetHostMode}
+                                                                            className="w-full text-start block px-4 py-2 hover:bg-gray-100">
+                                                                        {t("호스트로 전환")}
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </>
+                                                    )}
+
                                                 </div>
                                             ) : (
                                                 <div className="flex gap-2">
@@ -467,6 +495,33 @@ const Header = () => {
                                     <div className="md:mr-4 mr-1.5">
                                         {authToken ? (
                                             <div className="flex gap-3">
+                                                <div className="flex_center md:text-xs text-xxs">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => window.location.href = '/main'}
+                                                    >
+                                                        방 등록하러 가기
+                                                    </button>
+                                                </div>
+                                                {isHost && (
+                                                    <>
+                                                        {hostMode ? (
+                                                            <div className="flex_center md:text-xs text-xxs">
+                                                                <button onClick={handleSetHostMode}
+                                                                        className="w-full text-start block px-4 py-2">
+                                                                    {t("게스트로 전환")}
+                                                                </button>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="flex_center md:text-xs text-xxs">
+                                                                <button onClick={handleSetHostMode}
+                                                                        className="w-full text-start block px-4 py-2 ">
+                                                                    {t("호스트로 전환")}
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
                                                 <div className="flex_center">
                                                     <button
                                                         type="button"
@@ -475,6 +530,9 @@ const Header = () => {
                                                         <Globe className="w-6 h-6 text-black stroke-[1.3]"/>
                                                     </button>
                                                 </div>
+
+
+
                                                 <div className="flex">
                                                     <div className="relative" ref={dropdownRef}>
                                                         <button
@@ -537,14 +595,17 @@ const Header = () => {
                                     </div>
                                 </div>
 
-                                <div className="flex flex-col items-center text-center mb-6">
-                                    <p className="text-roomi text-lg md:text-3xl font-semibold mb-2.5">
-                                        주단위부터 월단위까지, 보증금도 자유롭게
-                                    </p>
-                                    <p className=" text-xl md:text-3xl font-bold text-[#AF483E]">
-                                        전 세계 게스트와 연결되는 루미
-                                    </p>
-                                </div>
+                                {/* 호스트 모드가 아닐 때만 텍스트 표시 */}
+                                {!hostMode && (
+                                    <div className="flex flex-col items-center text-center mb-6">
+                                        <p className="text-roomi text-lg md:text-3xl font-semibold mb-2.5">
+                                            주단위부터 월단위까지, 보증금도 자유롭게
+                                        </p>
+                                        <p className=" text-xl md:text-3xl font-bold text-[#AF483E]">
+                                            전 세계 게스트와 연결되는 루미
+                                        </p>
+                                    </div>
+                                )}
 
                                 {/* 서치바 영역 */}
                                 {isVisible && (

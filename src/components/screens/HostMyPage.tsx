@@ -7,7 +7,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faArrowLeft, faBullhorn, faHome, faHeadset, faSignOutAlt, faUserMinus,
-    faPenToSquare, faChartLine, faReceipt, faQuestionCircle
+    faPenToSquare, faChartLine, faReceipt, faQuestionCircle, faTimes
 } from "@fortawesome/free-solid-svg-icons";
 import Notices from "./myPageMenu/Notices";
 import FAQ from "./myPageMenu/FAQ";
@@ -232,7 +232,7 @@ export default function HostMyPage() {
                             onClick={() => window.location.href = '/'}
                             className="p-3 rounded-lg flex items-center justify-center"
                         >
-                            <FontAwesomeIcon icon={faHome} className="text-xl text-roomi" />
+                            <FontAwesomeIcon icon={faTimes} className="text-xl text-black"/>
                         </button>
                     </div>
 
@@ -251,67 +251,65 @@ export default function HostMyPage() {
 
                 {/* 나의 거래 섹션 */}
 
-
                 {/* 호스트 관리 섹션 */}
-                <div className="font-bold text-xl mb-3">{t("호스트 관리")}</div>
-                <div className="grid grid-cols-3 gap-3 mb-6">
+                <div className="font-bold text-lg mb-3">{t("호스트 관리")}</div>
+                <div className="grid grid-cols-1 gap-3 mb-6">
                     <button
-                        className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-lg"
+                        className="flex items-center p-4 bg-gray-50 rounded-lg"
                         onClick={() => handleSetSelectedMenu('수입 및 통계')}>
-                        <FontAwesomeIcon icon={faChartLine} className="text-xl mb-2"/>
-                        <span className="text-sm">{t("수입 및 통계")}</span>
+                        <FontAwesomeIcon icon={faChartLine} className="text-xl mr-4"/>
+                        <span className="text-base">{t("수입 및 통계")}</span>
                     </button>
                     <button
-                        className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-lg"
+                        className="flex items-center p-4 bg-gray-50 rounded-lg"
                         onClick={() => handleSetSelectedMenu('영수증')}>
-                        <FontAwesomeIcon icon={faReceipt} className="text-xl mb-2"/>
-                        <span className="text-sm">{t("영수증")}</span>
+                        <FontAwesomeIcon icon={faReceipt} className="text-xl mr-4"/>
+                        <span className="text-base">{t("영수증")}</span>
                     </button>
-
                 </div>
 
                 {/* 고객 지원 섹션 */}
-                <div className="font-bold text-xl mb-3">{t("고객 지원")}</div>
-                <div className="grid grid-cols-3 gap-3 mb-6">
+                <div className="font-bold text-lg mb-3">{t("고객 지원")}</div>
+                <div className="grid grid-cols-1 gap-3 mb-6">
                     <button
-                        className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-lg"
+                        className="flex items-center p-4 bg-gray-50 rounded-lg"
                         onClick={() => handleSetSelectedMenu('공지사항')}>
-                        <FontAwesomeIcon icon={faBullhorn} className="text-xl mb-2"/>
-                        <span className="text-sm">{t("공지사항")}</span>
+                        <FontAwesomeIcon icon={faBullhorn} className="text-xl mr-4"/>
+                        <span className="text-base">{t("공지사항")}</span>
                     </button>
                     <button
-                        className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-lg"
+                        className="flex items-center p-4 bg-gray-50 rounded-lg"
                         onClick={() => handleSetSelectedMenu('FAQ')}>
-                        <FontAwesomeIcon icon={faQuestionCircle} className="text-xl mb-2"/>
-                        <span className="text-sm">FAQ</span>
+                        <FontAwesomeIcon icon={faQuestionCircle} className="text-xl mr-4"/>
+                        <span className="text-base">FAQ</span>
                     </button>
                     <button
-                        className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-lg"
+                        className="flex items-center p-4 bg-gray-50 rounded-lg"
                         onClick={() => handleSetSelectedMenu('고객센터')}>
-                        <FontAwesomeIcon icon={faHeadset} className="text-xl mb-2"/>
-                        <span className="text-sm">{t("고객센터")}</span>
+                        <FontAwesomeIcon icon={faHeadset} className="text-xl mr-4"/>
+                        <span className="text-base">{t("고객센터")}</span>
                     </button>
                 </div>
 
                 {/* 계정 설정 섹션 */}
-                <div className="font-bold text-xl mb-3">{t("계정 설정")}</div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="font-bold text-lg mb-3">{t("계정 설정")}</div>
+                <div className="grid grid-cols-1 gap-3">
                     <button
-                        className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-lg"
+                        className="flex items-center p-4 bg-gray-50 rounded-lg"
                         onClick={() => handleSetSelectedMenu('내 정보')}>
-                        <FontAwesomeIcon icon={faPenToSquare} className="text-xl mb-2"/>
-                        <span className="text-sm">{t("내 정보")}</span>
+                        <FontAwesomeIcon icon={faPenToSquare} className="text-xl mr-4"/>
+                        <span className="text-base">{t("내 정보")}</span>
                     </button>
                     <button
-                        className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-lg"
+                        className="flex items-center p-4 bg-gray-50 rounded-lg"
                         onClick={handleLogout}>
-                        <FontAwesomeIcon icon={faSignOutAlt} className="text-xl mb-2"/>
-                        <span className="text-sm">{t("로그아웃")}</span>
+                        <FontAwesomeIcon icon={faSignOutAlt} className="text-xl mr-4"/>
+                        <span className="text-base">{t("로그아웃")}</span>
                     </button>
                     <button
-                        className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-lg">
-                        <FontAwesomeIcon icon={faUserMinus} className="text-xl mb-2"/>
-                        <span className="text-sm">{t("회원탈퇴")}</span>
+                        className="flex items-center p-4 bg-gray-50 rounded-lg">
+                        <FontAwesomeIcon icon={faUserMinus} className="text-xl mr-4"/>
+                        <span className="text-base">{t("회원탈퇴")}</span>
                     </button>
                 </div>
             </div>
