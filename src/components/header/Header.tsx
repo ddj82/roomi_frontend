@@ -287,11 +287,12 @@ const Header = () => {
 
                 {/* 메인 콘텐츠 */}
                 <div className="relative z-10 h header container mx-auto">
-                    <div className={`mx-auto px-[20px] flex flex-col items-center transition-all duration-500 ease-in-out ${
-                        isScrolled ? (isMobile ? 'py-2' : 'py-3') : 'md:mt-8 mt-6'
-                    }`} style={{
-                        background: !isScrolled ? 'linear-gradient(to top, rgba(255, 236, 236, 0.8) 0%, rgba(255, 236, 236, 0.4) 20%, rgba(255, 255, 255, 0) 100%)' : 'transparent'
-                    }}>
+                    <div
+                        className={`mx-auto px-[20px] flex flex-col items-center transition-all duration-500 ease-in-out ${
+                            isScrolled ? (isMobile ? 'py-2' : 'py-3') : 'md:mt-8 mt-6'
+                        } ${
+                            !isScrolled ? 'bg-gradient-to-t from-red-50/80 via-red-50/40 to-transparent dark:from-gray-800/80 dark:via-gray-800/40 dark:to-transparent' : ''
+                        }`}>
 
                         {/* 스크롤 상태에 따른 조건부 렌더링 */}
                         {isScrolled ? (
@@ -343,43 +344,45 @@ const Header = () => {
                                             </button>
                                         </div>
 
-                                        {/* 중앙 서치바 */}
-                                        <div className="flex-1 max-w-md mx-4">
-                                            <div
-                                                ref={searchBarRef}
-                                                onClick={openSearchModal}
-                                                className="h-12 w-full flex items-center justify-between
-                                               bg-white/90 backdrop-blur-sm cursor-pointer
-                                               transition-all duration-300 hover:bg-white/95"
-                                                style={{
-                                                    borderRadius: '9999px',
-                                                    boxShadow: '0 2px 8px rgba(167, 97, 97, 0.15)'
-                                                }}
-                                            >
-                                                <div className="flex items-center px-4 flex-1">
-                                                    <MapPin className="w-5 h-5 text-black mr-2"/>
-                                                    <span className="text-gray-500 text-sm truncate">
-                                                    {selectedLocation || t('어디로 여행 가세요?')}
-                                                </span>
-                                                </div>
-                                                <button
-                                                    className="w-10 h-10 m-1 flex items-center justify-center
-                                                   bg-roomi hover:bg-roomi-3 rounded-full"
+                                        {!hostMode && (
+                                            <div className="flex-1 max-w-md mx-4">
+                                                <div
+                                                    ref={searchBarRef}
+                                                    onClick={openSearchModal}
+                                                    className="h-12 w-full flex items-center justify-between
+           bg-white/90 backdrop-blur-sm cursor-pointer
+           transition-all duration-300 hover:bg-white/95"
                                                     style={{
-                                                        boxShadow: '0 2px 4px rgba(167, 97, 97, 0.2)'
-                                                    }}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        performSearch();
+                                                        borderRadius: '9999px',
+                                                        boxShadow: '0 2px 8px rgba(167, 97, 97, 0.15)'
                                                     }}
                                                 >
-                                                    <FontAwesomeIcon icon={faSearch} className="text-white text-sm"/>
-                                                </button>
+                                                    <div className="flex items-center px-4 flex-1">
+                                                        <MapPin className="w-5 h-5 text-black mr-2"/>
+                                                        <span className="text-gray-500 text-sm truncate">
+                {selectedLocation || t('어디로 여행 가세요?')}
+            </span>
+                                                    </div>
+                                                    <button
+                                                        className="w-10 h-10 m-1 flex items-center justify-center
+               bg-roomi hover:bg-roomi-3 rounded-full"
+                                                        style={{
+                                                            boxShadow: '0 2px 4px rgba(167, 97, 97, 0.2)'
+                                                        }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            performSearch();
+                                                        }}
+                                                    >
+                                                        <FontAwesomeIcon icon={faSearch}
+                                                                         className="text-white text-sm"/>
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
+                                        )}
 
                                         {/* 프로필/로그인 영역 */}
-                                        <div className="flex-shrink-0">
+                                        <div className="flex-shrink-0 ">
                                             {authToken ? (
                                                 <div className="flex gap-2">
                                                     <button
@@ -396,35 +399,42 @@ const Header = () => {
                                                             }}
                                                             onClick={toggleDropdown}
                                                         >
-                                                            <img src={profileImg} alt="프로필사진" className="rounded-full w-8 h-8"/>
+                                                            <img src={profileImg} alt="프로필사진"
+                                                                 className="rounded-full w-8 h-8"/>
                                                         </button>
                                                         {userVisible && (
-                                                            <div className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg w-40 z-[2000] border border-gray-200"
-                                                                 style={{
-                                                                     boxShadow: '0 4px 12px rgba(167, 97, 97, 0.15)'
-                                                                 }}
+                                                            <div
+                                                                className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg w-40 z-[2000] border border-gray-200"
+                                                                style={{
+                                                                    boxShadow: '0 4px 12px rgba(167, 97, 97, 0.15)'
+                                                                }}
                                                             >
                                                                 <ul className="py-2 text-sm text-gray-700">
                                                                     <li>
                                                                         {hostMode ? (
-                                                                            <a href="/host/myPage" className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
+                                                                            <a href="/host/myPage"
+                                                                               className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
                                                                         ) : (
-                                                                            <a href="/myPage" className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
+                                                                            <a href="/myPage"
+                                                                               className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
                                                                         )}
                                                                     </li>
                                                                     <li>
-                                                                        {!hostMode && (<a href="/chat" className="block px-4 py-2 hover:bg-gray-100/70">{t('메시지')}</a>)}
+                                                                        {!hostMode && (<a href="/chat"
+                                                                                          className="block px-4 py-2 hover:bg-gray-100/70">{t('메시지')}</a>)}
                                                                     </li>
                                                                     {isHost && (
                                                                         <li>
-                                                                            <button onClick={handleSetHostMode} className="w-full text-start block px-4 py-2 hover:bg-gray-100/70">
+                                                                            <button onClick={handleSetHostMode}
+                                                                                    className="w-full text-start block px-4 py-2 hover:bg-gray-100/70">
                                                                                 {hostMode ? t("게스트로 전환") : t("호스트로 전환")}
                                                                             </button>
                                                                         </li>
                                                                     )}
                                                                 </ul>
                                                                 <div className="py-2">
-                                                                    <button onClick={handleLogout} className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/70">
+                                                                    <button onClick={handleLogout}
+                                                                            className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/70">
                                                                         {t('로그아웃')}
                                                                     </button>
                                                                 </div>
@@ -532,38 +542,44 @@ const Header = () => {
                                                 </div>
 
 
-
                                                 <div className="flex">
                                                     <div className="relative" ref={dropdownRef}>
                                                         <button
                                                             className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-roomi-000 text-roomi rounded-full shadow-md"
                                                             onClick={toggleDropdown}
                                                         >
-                                                            <img src={profileImg} alt="프로필사진" className="rounded-full md:w-10 md:h-10 w-8 h-8"/>
+                                                            <img src={profileImg} alt="프로필사진"
+                                                                 className="rounded-full md:w-10 md:h-10 w-8 h-8"/>
                                                         </button>
                                                         {userVisible && (
-                                                            <div className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg shadow-lg w-40 z-[2000] border border-gray-200">
+                                                            <div
+                                                                className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg shadow-lg w-40 z-[2000] border border-gray-200">
                                                                 <ul className="py-2 text-sm text-gray-700">
                                                                     <li>
                                                                         {hostMode ? (
-                                                                            <a href="/host/myPage" className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
+                                                                            <a href="/host/myPage"
+                                                                               className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
                                                                         ) : (
-                                                                            <a href="/myPage" className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
+                                                                            <a href="/myPage"
+                                                                               className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
                                                                         )}
                                                                     </li>
                                                                     <li>
-                                                                        {!hostMode && (<a href="/chat" className="block px-4 py-2 hover:bg-gray-100/70">{t('메시지')}</a>)}
+                                                                        {!hostMode && (<a href="/chat"
+                                                                                          className="block px-4 py-2 hover:bg-gray-100/70">{t('메시지')}</a>)}
                                                                     </li>
                                                                     {isHost && (
                                                                         <li>
-                                                                            <button onClick={handleSetHostMode} className="w-full text-start block px-4 py-2 hover:bg-gray-100/70">
+                                                                            <button onClick={handleSetHostMode}
+                                                                                    className="w-full text-start block px-4 py-2 hover:bg-gray-100/70">
                                                                                 {hostMode ? t("게스트로 전환") : t("호스트로 전환")}
                                                                             </button>
                                                                         </li>
                                                                     )}
                                                                 </ul>
                                                                 <div className="py-2">
-                                                                    <button onClick={handleLogout} className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/70">
+                                                                    <button onClick={handleLogout}
+                                                                            className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/70">
                                                                         {t('로그아웃')}
                                                                     </button>
                                                                 </div>
@@ -639,7 +655,8 @@ const Header = () => {
                                                     performSearch();
                                                 }}
                                             >
-                                                <FontAwesomeIcon icon={faSearch} className="text-white text-base md:text-lg"/>
+                                                <FontAwesomeIcon icon={faSearch}
+                                                                 className="text-white text-base md:text-lg"/>
                                             </button>
                                         </div>
                                     </div>

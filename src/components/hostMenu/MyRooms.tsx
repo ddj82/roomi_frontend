@@ -16,8 +16,8 @@ const MyRooms = () => {
     // 드롭다운 옵션 정의
     const conditions = [
         { value: '', label: '전체' },
-        { value: '활성', label: '활성' },
-        { value: '비활성', label: '비활성' },
+        { value: '활성화', label: '활성화' },
+        { value: '비활성화', label: '비활성화' },
         { value: '승인대기', label: '승인대기' },
         { value: '승인거절', label: '승인거절' }
     ];
@@ -47,7 +47,7 @@ const MyRooms = () => {
     const getRoomStatus = (room: RoomData) => {
         if (room.is_rejected) return "승인거절";
         if (!room.is_confirmed) return "승인대기";
-        return room.is_active ? "활성" : "비활성";
+        return room.is_active ? "활성화" : "비활성화";
     };
 
     // ✅ 필터링 함수 (검색어 & 승인 상태 반영)
@@ -100,25 +100,30 @@ const MyRooms = () => {
         navigate(`/host/update/${roomId}`, { state: { room } });
     };
 
-    return (
-        <div className="w-full h-screen flex flex-col">
-            <div className="bg-white border-b border-white px-4 py-4 sm:px-5 sticky top-0 z-10">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 sm:gap-4">
+    const formatPrice = (price: number | undefined) => {
+        if (!price) return '0';
+        return Number(price).toLocaleString();
+    };
 
+    return (
+        <div className="min-h-screen">
+            {/* 고정 헤더 */}
+            <div className="bg-white py-3.5 sticky top-0">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 sm:gap-4">
                     <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                         <div className="flex flex-row gap-3 w-full sm:w-auto">
                             <div className="relative w-full sm:w-40" ref={dropdownRef}>
                                 <button
                                     type="button"
                                     className="w-full flex items-center justify-between px-4 py-2.5 text-sm
-                                        bg-white border border-gray-300 rounded-lg transition shadow-sm hover:ring-1 hover:ring-roomi transition"
+                                        bg-white border border-gray-300 rounded-full transition shadow-sm hover:ring-1 hover:ring-roomi transition"
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                 >
                                     <span className="text-gray-700">{displayValue}</span>
                                     <ChevronDown className="w-4 h-4 text-gray-500"/>
                                 </button>
                                 {isDropdownOpen && (
-                                    <div className="absolute z-10 w-full mt-1 bg-white rounded-lg border border-gray-200 rounder-lg shadow-lg">
+                                    <div className="absolute w-full mt-1 bg-white rounded-lg border border-gray-200 rounder-lg shadow-lg">
                                         {conditions.map((condition) => (
                                             <div
                                                 key={condition.value || 'empty'}
@@ -142,7 +147,7 @@ const MyRooms = () => {
                                 </div>
                                 <input
                                     type="search"
-                                    className="w-full py-2.5 pl-10 pr-3 text-sm border border-gray-300 rounded-lg
+                                    className="w-full py-2.5 pl-10 pr-3 text-sm border border-gray-300 rounded-full
                                         shadow-sm focus:outline-none focus:ring-1 focus:ring-roomi transition"
                                     placeholder="제목 또는 주소 입력"
                                     value={searchQuery}
@@ -157,81 +162,165 @@ const MyRooms = () => {
                                 className="w-full sm:w-auto px-4 py-2.5 text-sm font-medium text-white bg-roomi rounded-lg shadow hover:bg-roomi-dark transition"
                                 onClick={handleInsertBtn}
                             >
-                                <span className="mr-1 text-base">＋</span> 방 등록
+                                <span className="text-base"></span> 방 등록하기
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* 스크롤될 리스트 부분 */}
-            <div className="flex-1 overflow-y-auto px-4 scrollbar-hidden" style={{ maxHeight: "calc(100vh - 90px)" }}>
+            {/* 컨텐츠 영역 */}
+            <div className="py-6">
                 {/* 필터링된 방 목록 */}
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
-                    {filteredData.length > 0 ? (
-                        filteredData.map((room, index) => (
+                {filteredData.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {filteredData.map((room, index) => (
                             <div
                                 key={index}
-                                className="flex flex-col border border-gray-200 rounded-lg p-3 hover:shadow-sm transition-shadow duration-300"
+                                className="bg-gray-50 rounded-lg overflow-hidden flex flex-col sm:flex-row cursor-pointer hover:shadow-sm transition-shadow duration-300"
                             >
-                                <div className="w-full h-64 rounded-md overflow-hidden mb-3">
-                                    <img
-                                        className="object-cover w-full h-full"
-                                        src={room.detail_urls?.[0]}
-                                        alt="thumbnail"
-                                    />
-                                </div>
-
-                                <div className="flex-1 flex flex-col justify-between w-full">
-                                    <div>
+                                {/* 모바일 레이아웃 */}
+                                <div className="w-full sm:hidden">
+                                    {/* 상태 및 가격 정보 */}
+                                    <div className="flex justify-between items-center p-3 bg-gray-50">
                                         <span
                                             className={`inline-block px-2 py-1 text-xs font-semibold rounded 
-                                                ${getRoomStatus(room) === "활성"
-                                                ? "bg-blue-100 text-blue-700"
-                                                : getRoomStatus(room) === "비활성"
-                                                    ? "bg-gray-100 text-gray-700"
+                                                ${getRoomStatus(room) === "활성화"
+                                                ? "bg-roomi text-white"
+                                                : getRoomStatus(room) === "비활성화"
+                                                    ? "bg-gray-400 text-white"
                                                     : getRoomStatus(room) === "승인거절"
-                                                        ? "bg-red-100 text-red-700"
-                                                        : "bg-yellow-100 text-yellow-800"
+                                                        ? "bg-red-500 text-white"
+                                                        : "bg-gray-400 text-white"
                                             }`}
                                         >
                                             {getRoomStatus(room)}
                                         </span>
-                                        <div className="mt-1 text-base font-semibold text-gray-900">
-                                            {room.title}
+                                        <span className="text-sm font-bold">
+                                            {room.symbol} {formatPrice(room.month_price)}/월
+                                        </span>
+                                    </div>
+
+                                    {/* 방 정보 */}
+                                    <div className="flex p-3 bg-gray-50">
+                                        {/* 썸네일 */}
+                                        <div className="w-20 h-20 bg-gray-200 flex-shrink-0 rounded-md overflow-hidden">
+                                            <img
+                                                className="object-cover w-full h-full"
+                                                src={room.detail_urls?.[0]}
+                                                alt="thumbnail"
+                                            />
                                         </div>
-                                        <div className="text-sm text-gray-500">{room.address}</div>
-                                        <div className="text-sm text-gray-500">{room.address_detail}</div>
-                                        <div className="text-sm text-gray-500">
-                                            {room.symbol} {room.week_price?.toLocaleString()}/주
-                                        </div>
-                                        <div className="text-sm text-gray-500">
-                                            {room.symbol} {room.month_price?.toLocaleString()}/월
+
+                                        {/* 방 내용 */}
+                                        <div className="ml-3 flex-1">
+                                            <h3 className="font-medium text-base">
+                                                {room.title}
+                                            </h3>
+                                            <p className="text-xs text-gray-600 mt-1">
+                                                {room.address}<br/>
+                                                {room.address_detail}
+                                            </p>
+                                            <p className="text-xs text-gray-600 mt-1">
+                                                주간: {room.symbol} {formatPrice(room.week_price)}/주
+                                            </p>
                                         </div>
                                     </div>
 
-                                    <div className="mt-3 flex space-x-2">
+                                    {/* 버튼 영역 */}
+                                    <div className="p-3 pt-0 flex gap-2">
                                         <button
-                                            className="text-xs px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 transition">
-                                            삭제
-                                        </button>
-                                        <button
-                                            className="text-xs px-3 py-1 border border-blue-300 text-blue-700 rounded hover:bg-blue-50 transition"
-                                            onClick={() => handleRoomUpdateBtn(room.id)}
+                                            className="flex-1 text-sm px-3 py-2 border border-gray-300 text-black rounded hover:bg-gray-100 transition"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleRoomUpdateBtn(room.id);
+                                            }}
                                         >
                                             수정
                                         </button>
+                                        <button
+                                            className="flex-1 text-sm px-3 py-2 border border-gray-300 text-black rounded hover:bg-gray-100 transition"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            삭제
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* 데스크톱 레이아웃 */}
+                                <div className="hidden sm:flex w-full">
+                                    {/* Thumbnail */}
+                                    <div className="w-24 h-24 bg-gray-200 flex-shrink-0 m-6 rounded-md overflow-hidden">
+                                        <img
+                                            className="object-cover w-full h-full"
+                                            src={room.detail_urls?.[0]}
+                                            alt="thumbnail"
+                                        />
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="flex-1 p-4 flex flex-col justify-between">
+                                        <div>
+                                            <div className="flex justify-between items-start">
+                                                <h3 className="font-medium text-base">
+                                                    {room.title}
+                                                </h3>
+                                                <span
+                                                    className={`inline-block px-2 py-1 text-xs font-semibold rounded 
+                                                        ${getRoomStatus(room) === "활성화"
+                                                        ? "bg-roomi text-white"
+                                                        : getRoomStatus(room) === "비활성화"
+                                                            ? "bg-gray-400 text-white"
+                                                            : getRoomStatus(room) === "승인거절"
+                                                                ? "bg-red-500 text-white"
+                                                                : "bg-gray-400 text-white"
+                                                    }`}
+                                                >
+                                                    {getRoomStatus(room)}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm text-gray-600 mt-1">
+                                                {room.address}<br/>
+                                                {room.address_detail}
+                                            </p>
+                                            <div className="flex justify-between items-center mt-2">
+                                                <div className="text-sm text-gray-600">
+                                                    <span
+                                                        className="mr-4">주간: {room.symbol} {formatPrice(room.week_price)}/주</span>
+                                                    <span>월간: {room.symbol} {formatPrice(room.month_price)}/월</span>
+                                                </div>
+
+                                                {/* 버튼 영역 - 가격과 같은 행에 배치 */}
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        className="text-sm px-3 py-1.5 border border-gray-300 text-black rounded hover:bg-gray-100 transition"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleRoomUpdateBtn(room.id);
+                                                        }}
+                                                    >
+                                                        수정
+                                                    </button>
+                                                    <button
+                                                        className="text-sm px-3 py-1.5 border border-gray-300 text-black rounded hover:bg-gray-100 transition"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        삭제
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        ))
-                    ) : (
-                        <div className="text-center bg-gray-50 rounded-lg p-10 mt-6 col-span-full">
-                            <div className="text-gray-500 text-lg">🔍 검색 결과가 없습니다.</div>
-                            <div className="text-gray-400 mt-2">다른 검색어나 필터를 사용해보세요.</div>
-                        </div>
-                    )}
-                </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center bg-gray-50 rounded-lg p-10">
+                        <div className="text-gray-500 text-lg">🔍 검색 결과가 없습니다.</div>
+                        <div className="text-gray-400 mt-2">다른 검색어나 필터를 사용해보세요.</div>
+                    </div>
+                )}
             </div>
         </div>
     );

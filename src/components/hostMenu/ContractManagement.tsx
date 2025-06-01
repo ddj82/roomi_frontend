@@ -24,7 +24,27 @@ const ContractManagement = () => {
 
     // Selected reservation for detail view
     const [selectedReservation, setSelectedReservation] = useState<ReservationHistory | null>(null);
+    // 상태 관리
+    const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
 
+// ref 추가
+    const statusDropdownRef = useRef<HTMLDivElement | null>(null);
+
+// 클릭 외부 감지 useEffect도 추가
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target as Node)) {
+                setIsStatusDropdownOpen(false);
+            }
+            if (roomDropdownRef.current && !roomDropdownRef.current.contains(event.target as Node)) {
+                setIsRoomDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
     useEffect(() => {
         fetchReservations();
         fetchRooms();
@@ -276,108 +296,159 @@ const ContractManagement = () => {
     };
 
     return (
-        <div className="w-full h-screen flex flex-col">
+        <div className="min-h-screen">
             {/* 고정될 상단 부분 */}
-            <div className="mx-auto py-5 flex flex-col gap-4 w-full bg-white z-10 sticky top-0">
+            <div className="mx-auto py-5 px-4 flex flex-col gap-4 w-full bg-white sticky top-0">
 
                 {!selectedReservation && (
                     <>
-                        {/* 탭 버튼 (MyRooms 스타일로) */}
-                        <div className="w-full">
-                            <div className="flex space-x-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setActiveTab("current")}
-                                    className={`px-4 py-2 text-sm font-medium rounded-lg transition 
-                                        ${activeTab === "current" ? "bg-roomi text-white shadow" : "bg-gray-100 text-gray-700"}`}
-                                >
-                                    현재 예약
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setActiveTab("past")}
-                                    className={`px-4 py-2 text-sm font-medium rounded-lg transition 
-                                        ${activeTab === "past" ? "bg-roomi text-white shadow" : "bg-gray-100 text-gray-700"}`}
-                                >
-                                    지난 예약
-                                </button>
-                            </div>
-                        </div>
-
                         {/* 검색 및 필터링 영역 */}
-                        <div className="w-full flex flex-col sm:flex-row gap-3">
-                            {/* 방 선택 드롭다운 */}
-                            <div className="relative w-full sm:w-1/6" ref={roomDropdownRef}>
-                                <button
-                                    type="button"
-                                    className="w-full flex items-center justify-between px-4 py-2.5 text-sm
-                                        bg-white border border-gray-300 rounded-lg transition shadow-sm hover:ring-1 hover:ring-roomi"
-                                    onClick={() => setIsRoomDropdownOpen(!isRoomDropdownOpen)}
-                                    aria-haspopup="true"
-                                    aria-expanded={isRoomDropdownOpen}
-                                >
-                                    <span className="text-gray-700">
-                                        {selectedRoomId
-                                            ? rooms.find(room => room.id === selectedRoomId)?.title || '선택된 방'
-                                            : '방 선택'}
-                                    </span>
-                                    <ChevronDown className="w-5 h-5 text-gray-500"/>
-                                </button>
-
-                                {/* 드롭다운 메뉴 */}
-                                {isRoomDropdownOpen && (
-                                    <div
-                                        className="absolute z-10 w-full mt-1 bg-white rounded-lg border border-gray-200 shadow-lg max-h-60 overflow-y-auto"
-                                        role="menu"
+                        <div className="w-full flex flex-col gap-3">
+                            {/* 첫 번째 줄: 필터 드롭다운들 */}
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                {/* 예약 상태 필터 드롭다운 */}
+                                <div className="relative w-full sm:w-1/6" ref={statusDropdownRef}>
+                                    <button
+                                        type="button"
+                                        className="w-full flex items-center justify-between px-4 py-3 text-sm
+            bg-white border border-gray-300 rounded-full transition shadow-sm hover:ring-1 hover:ring-roomi"
+                                        onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+                                        aria-haspopup="true"
+                                        aria-expanded={isStatusDropdownOpen}
                                     >
+                                        <span className="text-gray-700">
+                                            {activeTab === "current" ? "현재 예약" : "지난 예약"}
+                                        </span>
+                                        <ChevronDown className="w-5 h-5 text-gray-500"/>
+                                    </button>
+
+                                    {/* 드롭다운 메뉴 */}
+                                    {isStatusDropdownOpen && (
                                         <div
-                                            className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
-                                            ${!selectedRoomId ? 'bg-roomi-1' : ''}`}
-                                            onClick={() => {
-                                                setSelectedRoomId(null);
-                                                setIsRoomDropdownOpen(false);
-                                            }}
-                                            role="menuitem"
+                                            className="absolute z-10 w-full mt-1 bg-white rounded-lg border border-gray-200 shadow-lg max-h-60 overflow-y-auto"
+                                            role="menu"
                                         >
-                                            전체 방
-                                        </div>
-                                        {rooms.map((room) => (
                                             <div
-                                                key={room.id}
                                                 className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
-                                                ${selectedRoomId === room.id ? 'bg-roomi-1' : ''}`}
+                                                ${activeTab === "current" ? 'bg-roomi-1' : ''}`}
                                                 onClick={() => {
-                                                    setSelectedRoomId(room.id || null);
+                                                    setActiveTab("current");
+                                                    setIsStatusDropdownOpen(false);
+                                                }}
+                                                role="menuitem"
+                                            >
+                                                현재 예약
+                                            </div>
+                                            <div
+                                                className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
+                                                ${activeTab === "past" ? 'bg-roomi-1' : ''}`}
+                                                onClick={() => {
+                                                    setActiveTab("past");
+                                                    setIsStatusDropdownOpen(false);
+                                                }}
+                                                role="menuitem"
+                                            >
+                                                지난 예약
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* 방 선택 드롭다운 */}
+                                <div className="relative w-full sm:w-1/6" ref={roomDropdownRef}>
+                                    <button
+                                        type="button"
+                                        className="w-full flex items-center justify-between px-4 py-3 text-sm
+            bg-white border border-gray-300 rounded-full transition shadow-sm hover:ring-1 hover:ring-roomi"
+                                        onClick={() => setIsRoomDropdownOpen(!isRoomDropdownOpen)}
+                                        aria-haspopup="true"
+                                        aria-expanded={isRoomDropdownOpen}
+                                    >
+                                        <span className="text-gray-700">
+                                            {selectedRoomId
+                                                ? rooms.find(room => room.id === selectedRoomId)?.title || '선택된 방'
+                                                : '방 선택'}
+                                        </span>
+                                        <ChevronDown className="w-5 h-5 text-gray-500"/>
+                                    </button>
+
+                                    {/* 드롭다운 메뉴 */}
+                                    {isRoomDropdownOpen && (
+                                        <div
+                                            className="absolute z-10 w-full mt-1 bg-white rounded-lg border border-gray-200 shadow-lg max-h-60 overflow-y-auto"
+                                            role="menu"
+                                        >
+                                            <div
+                                                className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
+                                                ${!selectedRoomId ? 'bg-roomi-1' : ''}`}
+                                                onClick={() => {
+                                                    setSelectedRoomId(null);
                                                     setIsRoomDropdownOpen(false);
                                                 }}
                                                 role="menuitem"
                                             >
-                                                {room.title}
+                                                전체 방
                                             </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* 검색창 */}
-                            <div className="relative w-full sm:w-2/6">
-                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                                    <Search className="w-4 h-4 text-gray-500" aria-hidden="true" />
+                                            {rooms.map((room) => (
+                                                <div
+                                                    key={room.id}
+                                                    className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
+                                                    ${selectedRoomId === room.id ? 'bg-roomi-1' : ''}`}
+                                                    onClick={() => {
+                                                        setSelectedRoomId(room.id || null);
+                                                        setIsRoomDropdownOpen(false);
+                                                    }}
+                                                    role="menuitem"
+                                                >
+                                                    {room.title}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
-                                <input
-                                    type="search"
-                                    className="w-full py-3 pl-10 pr-3 text-base border border-gray-200 rounded-lg
-                                    shadow-sm focus:outline-none"
-                                    placeholder="제목 또는 주소 입력"
-                                    value={searchQuery}
-                                    onChange={handleSearchChange}
-                                    aria-label="검색"
-                                />
+
+                                {/* 나머지 공간 */}
+                                <div className="hidden sm:flex-1"></div>
                             </div>
 
-                            {/* 추가 공간 (정산 페이지와 일관성 유지) */}
-                            <div className="w-full sm:w-3/6">
-                                {/* 여기에 필요한 추가 요소들 */}
+                            {/* 두 번째 줄: 검색창 */}
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                {/* 검색창 */}
+                                {/*<div className="relative w-full sm:w-2/6">*/}
+                                {/*    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">*/}
+                                {/*        <Search className="w-4 h-4 text-gray-500" aria-hidden="true"/>*/}
+                                {/*    </div>*/}
+                                {/*    <input*/}
+                                {/*        type="search"*/}
+                                {/*        className="w-full py-3 pl-10 pr-3 text-base border border-gray-200 rounded-full*/}
+                                {/*        shadow-sm focus:outline-none"*/}
+                                {/*        placeholder="제목 또는 주소 입력"*/}
+                                {/*        value={searchQuery}*/}
+                                {/*        onChange={handleSearchChange}*/}
+                                {/*        aria-label="검색"*/}
+                                {/*    />*/}
+                                {/*</div>*/}
+
+                                {/* 모바일에서만 보이는 추가 버튼들 */}
+                                {/*<div className="flex sm:hidden gap-2">*/}
+                                {/*    <button*/}
+                                {/*        type="button"*/}
+                                {/*        className="flex-1 px-4 py-2 text-sm font-medium rounded-full transition*/}
+                                {/*        bg-gray-100 text-gray-700 hover:bg-gray-200"*/}
+                                {/*    >*/}
+                                {/*        날짜 필터*/}
+                                {/*    </button>*/}
+                                {/*    <button*/}
+                                {/*        type="button"*/}
+                                {/*        className="flex-1 px-4 py-2 text-sm font-medium rounded-full transition*/}
+                                {/*        bg-gray-100 text-gray-700 hover:bg-gray-200"*/}
+                                {/*    >*/}
+                                {/*        금액 필터*/}
+                                {/*    </button>*/}
+                                {/*</div>*/}
+
+                                {/* 추가 공간 (웹) */}
+                                <div className="hidden sm:flex-1"></div>
                             </div>
                         </div>
                     </>
@@ -392,7 +463,7 @@ const ContractManagement = () => {
             </div>
 
             {/*컨텐츠*/}
-            <div className="flex-1 overflow-y-auto px-4 scrollbar-hidden" style={{ maxHeight: "calc(100vh - 130px)" }}>
+            <div className="px-4 pb-6">
                 {selectedReservation ? (
                     /*예약 상세 정보*/
                     <ReservationDetail
@@ -407,7 +478,7 @@ const ContractManagement = () => {
                     />
                 ) : (
                     /*예약 내역*/
-                    <div className="h-[calc(100vh-230px)] overflow-y-auto scrollbar-hidden">
+                    <div>
                         {filteredReservations.length === 0 ? (
                             <div className="text-center py-10" role="status" aria-live="polite">
                                 <div className="text-gray-500 text-lg">
@@ -509,7 +580,7 @@ const ContractManagement = () => {
                                                         {reservation.guest?.name || "No address provided"}
                                                     </p>
                                                     <p className="text-sm font-bold mt-1">
-                                                        {reservation.symbol}{formatPrice(reservation.price + reservation.deposit+reservation.maintenance_fee)}
+                                                        {reservation.symbol}{formatPrice(reservation.price + reservation.deposit + reservation.maintenance_fee)}
                                                     </p>
                                                 </div>
                                             </div>
@@ -553,7 +624,7 @@ const ContractManagement = () => {
                                                     <div className="flex justify-between items-center mt-1">
                                                         <p className="text-sm text-gray-800">
                                                             총
-                                                            금액: {reservation.symbol}{formatPrice(reservation.price + reservation.deposit+reservation.maintenance_fee)}
+                                                            금액: {reservation.symbol}{formatPrice(reservation.price + reservation.deposit + reservation.maintenance_fee)}
                                                         </p>
                                                         <span
                                                             className={`text-xs px-2 py-1 rounded text-white ${

@@ -3,22 +3,22 @@ import { Search, ChevronDown } from 'lucide-react';
 
 const SearchComponent = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [roomCondition, setRoomCondition] = useState('비활성'); // 기본값 설정
+    const [roomCondition, setRoomCondition] = useState('비활성화'); // 기본값 설정
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const conditions = [
         { value: '', label: '전체' },
-        { value: '활성', label: '활성' },
-        { value: '비활성', label: '비활성' },
+        { value: '활성화', label: '활성화' },
+        { value: '비활성화', label: '비활성화' },
         { value: '승인대기', label: '승인대기' },
         { value: '승인거절', label: '승인거절' }
     ];
 
     // 선택된 조건의 라벨 찾기
     const displayValue = roomCondition ?
-        conditions.find(item => item.value === roomCondition)?.label || '비활성' :
-        '비활성';
+        conditions.find(item => item.value === roomCondition)?.label || '비활성화' :
+        '비활성화';
 
     const handleInsertBtn = () => {
         // 방 등록 로직

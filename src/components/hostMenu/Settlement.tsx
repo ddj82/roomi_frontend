@@ -60,7 +60,7 @@ const Settlement: React.FC = () => {
     return (
         <div className="w-full h-screen flex flex-col">
             {/* 고정될 상단 부분 */}
-            <div className="mx-auto py-5 flex flex-col gap-4 w-full bg-white z-10">
+            <div className="mx-auto py-5 flex flex-col gap-4 w-full bg-white ">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">{t('settlement')}</h2>
 
                 {/* 검색 및 필터링 영역 */}

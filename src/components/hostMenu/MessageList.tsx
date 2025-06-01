@@ -68,7 +68,7 @@ export default function MessageList(): React.ReactElement {
             {(!isMobile || !selectedChatRoomId) && (
                 <div className="flex flex-col overflow-hidden w-full md:w-2/5">
                     <div className="p-4 border-b border-gray-200 bg-white">
-                        <h2 className="text-xl font-semibold mb-2">메시지</h2>
+                        {/*<h2 className="text-xl font-semibold mb-2">메시지</h2>*/}
                         <div className="relative">
                             <input
                                 type="search"

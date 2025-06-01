@@ -31,6 +31,7 @@ import { facilityIcons } from "src/types/facilityIcons";
 import Modal from "react-modal";
 import DaumPostcode from "react-daum-postcode";
 import RoomPreviewModal from "../../modals/RoomPreviewModal";
+import ConfirmationModal from "../../modals/ComfirmationModal";
 
 export interface MyRoomFormProps {
     mode: "insert" | "update";
@@ -2527,31 +2528,16 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                 </div>
             )}
 
-            {/* 종료 모달 */}
-            {showModal && (
-                <div className="fixed inset-0 flex_center bg-gray-600 bg-opacity-50">
-                    <div className="bg-white p-6 rounded-md shadow-md">
-                        {mode === "insert" ? (
-                            <div className="mb-4">방 등록을 종료하시겠습니까?</div>
-                        ) : (
-                            <div className="mb-4">방 수정을 종료하시겠습니까?</div>
-                        )}
-                        <div className="flex justify-end gap-2">
-                            <button type="button" className="px-4 py-2 bg-gray-300 rounded-md"
-                                    onClick={() => setShowModal(false)}>
-                                취소
-                            </button>
-                            <button
-                                type="button"
-                                className="px-4 py-2 bg-red-500 text-white rounded-md"
-                                onClick={() => navigate("/host")}
-                            >
-                                나가기
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <ConfirmationModal
+                isOpen={showModal}
+                onClose={() => setShowModal(false)}
+                onConfirm={() => navigate("/host")}
+                title={mode === "insert" ? "방 등록을 종료하시겠습니까?" : "방 수정을 종료하시겠습니까?"}
+                confirmText="나가기"
+                cancelText="취소"
+                icon="question"
+                confirmButtonStyle="danger"
+            />
         </form>
     );
 };

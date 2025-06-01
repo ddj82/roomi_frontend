@@ -2,13 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 @font-face {
-    font-family: 'NotoSansKR';
-    font-weight: 500;
-    src: url('./fonts/NotoSansKR-Medium.ttf') format('truetype');
+    font-family: 'Inter';
+    src: url('./fonts/Inter-Variable.ttf') format('truetype');
+    font-weight: 100 900; /* Inter Variable은 가변 폰트니까 범위 지정 가능 */
+    font-display: swap;
 }
 
 body {
-    font-family: 'NotoSansKR', sans-serif;
+    font-family: 'Inter';
 }
 
 /* 메인 스크롤바 숨기기 */

@@ -68,7 +68,7 @@ const BottomNavigation: React.FC = () => {
 
     return (
         <div
-            className="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-sm border-t border-gray-200/50 flex justify-center items-center h-14 z-50"
+            className="fixed bottom-0 left-0 w-full bg-white backdrop-blur-sm border-t border-gray-200/50 flex justify-center items-center h-14 z-50"
             style={{
                 boxShadow: '0 -2px 8px rgba(167, 97, 97, 0.15)'
             }}
@@ -77,20 +77,17 @@ const BottomNavigation: React.FC = () => {
                 {tabs.map((tab) => (
                     <button
                         key={tab}
-                        className={`flex flex-col items-center justify-center p-2 min-w-0 transition-colors duration-200 ${
+                        className={`flex flex-col items-center justify-end p-2 min-w-0 transition-colors duration-200 ${
                             activeTab === tab ? "text-roomi" : "text-gray-500"
                         }`}
-                        onClick={() => {
-                            console.log('탭 클릭됨:', tab); // 탭 명 찍기
-                            setActiveTab(tab);
-                        }}
+                        onClick={() => setActiveTab(tab)}
                         type="button"
                         role="tab"
                         aria-controls={tab}
                         aria-selected={activeTab === tab}
                     >
-                        <div className="text-xl mb-1">{tabIcons[tab]}</div>
-                        <span className="text-xs font-medium leading-tight">{t(tab)}</span>
+                        <div className="text-lg mt-3 mb-1" style={{fontWeight: 300}}>{tabIcons[tab]}</div>
+                        <span className="text-[10px] leading-tight mt-0.5">{t(tab)}</span>
                     </button>
                 ))}
             </div>
