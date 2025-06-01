@@ -30,6 +30,7 @@ import MyRoomUpdate from "./components/hostMenu/myRooms/MyRoomUpdate";
 import LoginPage from "./components/screens/link/LoginPage";
 import LineLoginCallback from "./components/util/LineLoginCallback";
 import Main from "./components/screens/Main";
+import MobileHostHeader from "./components/screens/MobileHostHeader";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,9 @@ function AppContent() {
     return (
         <>
             {isVisible && <Header />}
+            {isVisibleHostScreen && isMobile && (
+                <MobileHostHeader/>
+            )}
             <div className="app container xl:max-w-[1524px]"
                 // style={{minHeight: window.innerHeight - 130,}}
             >

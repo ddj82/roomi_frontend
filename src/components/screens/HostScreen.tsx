@@ -36,7 +36,7 @@ export default function HostScreen() {
     };
 
     return (
-        <div className="my-4 px-6 h-[80vh]">
+        <div className="my-4 px-3 h-[80vh]">
             {renderMenu()}
             <div className="h-16 md:hidden"></div>
         </div>

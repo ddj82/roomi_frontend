@@ -2,11 +2,12 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from "react-i18next";
 import {useHostTabNavigation} from "../stores/HostTabStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendar, faComments, faFileLines, faHouseChimney} from "@fortawesome/free-solid-svg-icons";
+import {faCalendar, faComments, faFileLines, } from "@fortawesome/free-regular-svg-icons";
 import {useAuthStore} from "../stores/AuthStore";
 import {useChatStore} from "../stores/ChatStore";
 import {logout} from "../../api/api";
 import {useHostModeStore} from "../stores/HostModeStore";
+import {faHouseChimney} from "@fortawesome/free-solid-svg-icons";
 
 const tabIcons: Record<string, JSX.Element> = {
     my_room: <FontAwesomeIcon icon={faHouseChimney} />,
@@ -67,54 +68,31 @@ const BottomNavigation: React.FC = () => {
 
     return (
         <div
-            className={`fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50`}
+            className="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-sm border-t border-gray-200/50 flex justify-center items-center h-14 z-50"
+            style={{
+                boxShadow: '0 -2px 8px rgba(167, 97, 97, 0.15)'
+            }}
         >
-            {tabs.map((tab) => (
-                <button
-                    key={tab}
-                    className={`flex flex-col items-center justify-center w-1/5 p-2 ${
-                        activeTab === tab ? "text-roomi" : "text-gray-500"
-                    }`}
-                    onClick={() => {
-                        console.log('탭 클릭됨:', tab); // 탭 명 찍기
-                        setActiveTab(tab);
-                    }}
-                    type="button"
-                    role="tab"
-                    aria-controls={tab}
-                    aria-selected={activeTab === tab}
-                >
-                    <div className="text-xl mb-1">{tabIcons[tab]}</div>
-                    <span className="text-xs">{t(tab)}</span>
-                </button>
-            ))}
-            <div className="relative" ref={dropdownRef}>
-                <button
-                    className="w-8 h-8 md:w-10 md:h-10 flex_center bg-roomi-000 text-roomi rounded-full"
-                    onClick={toggleDropdown}>
-                    <img src={profileImg} alt="프로필사진" className="rounded-full md:w-10 md:h-10 w-8 h-8"/>
-                </button>
-                {userVisible && (
-                    <div className="absolute -right-3 bottom-12 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-40 z-[2000] border">
-                        <ul className="py-2 text-sm text-gray-700">
-                            <li>
-                                <a href="/host/myPage" className="block px-4 py-2 hover:bg-gray-100">{t('마이페이지')}</a>
-                            </li>
-                            <li>
-                                <button onClick={handleSetHostMode}
-                                        className="w-full text-start block px-4 py-2 hover:bg-gray-100">
-                                    {t("게스트로 전환")}
-                                </button>
-                            </li>
-                        </ul>
-                        <div className="py-2">
-                            <button onClick={handleLogout}
-                                    className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                {t('로그아웃')}
-                            </button>
-                        </div>
-                    </div>
-                )}
+            <div className="flex justify-around items-center w-full max-w-md">
+                {tabs.map((tab) => (
+                    <button
+                        key={tab}
+                        className={`flex flex-col items-center justify-center p-2 min-w-0 transition-colors duration-200 ${
+                            activeTab === tab ? "text-roomi" : "text-gray-500"
+                        }`}
+                        onClick={() => {
+                            console.log('탭 클릭됨:', tab); // 탭 명 찍기
+                            setActiveTab(tab);
+                        }}
+                        type="button"
+                        role="tab"
+                        aria-controls={tab}
+                        aria-selected={activeTab === tab}
+                    >
+                        <div className="text-xl mb-1">{tabIcons[tab]}</div>
+                        <span className="text-xs font-medium leading-tight">{t(tab)}</span>
+                    </button>
+                ))}
             </div>
         </div>
     );
