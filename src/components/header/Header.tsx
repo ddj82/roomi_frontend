@@ -78,7 +78,9 @@ const Header = () => {
 
         const handleScroll = () => {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            setIsScrolled(scrollTop > 50); // 임계값을 50으로 줄임
+            // 서치바 영역까지 스크롤했을 때 헤더 변경 (약 200px 정도)
+            const searchBarThreshold = 200;
+            setIsScrolled(scrollTop > searchBarThreshold);
         };
 
         const handleResize = () => {
@@ -247,29 +249,30 @@ const Header = () => {
     return (
         <>
             {/* 스크롤 시 헤더 공간 확보를 위한 스페이서 */}
-            {isScrolled && <div className="absolute inset-0"
-                                style={{
-                                    height: isScrolled ? (isMobile ? '60px' : '80px') : 'auto',
-                                    transition: 'height 0.3s ease',
-                                    background: 'linear-gradient(to top, rgba(255, 200, 200, 0.9) 0%, rgba(255, 255, 255, 0) 100%)'
-                                }}
-            />}
+            {isScrolled && (
+                <div
+                    className="w-full"
+                    style={{
+                        height: isMobile ? '60px' : '80px',
+                    }}
+                />
+            )}
 
             <div
-                className={`border-b border-white transition-all duration-300 ${
+                className={`border-b border-white transition-all duration-500 ease-in-out ${
                     isScrolled
-                        ? 'fixed top-0 left-0 right-0 z-[9999] bg-white/95 backdrop-blur-md shadow-md'
+                        ? 'fixed top-0 left-0 right-0 z-[9999]'
                         : 'relative'
                 }`}
                 style={{
-                    position: isScrolled ? 'fixed' : 'relative',
-                    top: isScrolled ? 0 : 'auto',
-                    left: isScrolled ? 0 : 'auto',
-                    right: isScrolled ? 0 : 'auto',
-                    zIndex: isScrolled ? 9999 : 'auto',
-                    backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.95)' : 'transparent',
+                    backgroundColor: isScrolled ? 'linear-gradient(to top, rgba(255, 236, 236, 0.8) 0%, rgba(255, 236, 236, 0.4) 20%, rgba(255, 255, 255, 0) 100%)' :'linear-gradient(to top, rgba(255, 236, 236, 0.8) 0%, rgba(255, 236, 236, 0.4) 20%, rgba(255, 255, 255, 0) 100%)',
                     backdropFilter: isScrolled ? 'blur(12px)' : 'none',
-                    boxShadow: isScrolled ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : 'none',
+                    boxShadow: isScrolled
+                        ? '0 4px 6px -1px rgba(167, 97, 97, 0.15), 0 -4px 6px -1px rgba(167, 97, 97, 0.1)'
+                        : 'none',
+                    WebkitBoxShadow: isScrolled
+                        ? '0 4px 6px -1px rgba(167, 97, 97, 0.15), 0 -4px 6px -1px rgba(167, 97, 97, 0.1)'
+                        : 'none',
                 }}
             >
                 {/* 그라데이션 배경 - 스크롤 시 숨김 */}
@@ -284,7 +287,7 @@ const Header = () => {
 
                 {/* 메인 콘텐츠 */}
                 <div className="relative z-10 h header container mx-auto">
-                    <div className={`mx-auto px-[20px] flex flex-col items-center transition-all duration-300 ${
+                    <div className={`mx-auto px-[20px] flex flex-col items-center transition-all duration-500 ease-in-out ${
                         isScrolled ? (isMobile ? 'py-2' : 'py-3') : 'md:mt-8 mt-6'
                     }`} style={{
                         background: !isScrolled ? 'linear-gradient(to top, rgba(255, 236, 236, 0.8) 0%, rgba(255, 236, 236, 0.4) 20%, rgba(255, 255, 255, 0) 100%)' : 'transparent'
@@ -302,9 +305,12 @@ const Header = () => {
                                             ref={searchBarRef}
                                             onClick={openSearchModal}
                                             className="h-10 w-full flex items-center justify-between
-                                           bg-white/90 backdrop-blur-sm shadow-md cursor-pointer
+                                           bg-white/90 backdrop-blur-sm cursor-pointer
                                            transition-all duration-300 hover:bg-white/95"
-                                            style={{borderRadius: '9999px'}}
+                                            style={{
+                                                borderRadius: '9999px',
+                                                boxShadow: '0 2px 8px rgba(167, 97, 97, 0.15)'
+                                            }}
                                         >
                                             <div className="flex items-center px-3 flex-1">
                                                 <MapPin className="w-4 h-4 text-black mr-2"/>
@@ -314,7 +320,10 @@ const Header = () => {
                                             </div>
                                             <button
                                                 className="w-8 h-8 m-1 flex items-center justify-center
-                                               bg-roomi hover:bg-roomi-3 rounded-full shadow-md"
+                                               bg-roomi hover:bg-roomi-3 rounded-full"
+                                                style={{
+                                                    boxShadow: '0 2px 4px rgba(167, 97, 97, 0.2)'
+                                                }}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     performSearch();
@@ -340,9 +349,12 @@ const Header = () => {
                                                 ref={searchBarRef}
                                                 onClick={openSearchModal}
                                                 className="h-12 w-full flex items-center justify-between
-                                               bg-white/90 backdrop-blur-sm shadow-md cursor-pointer
+                                               bg-white/90 backdrop-blur-sm cursor-pointer
                                                transition-all duration-300 hover:bg-white/95"
-                                                style={{borderRadius: '9999px'}}
+                                                style={{
+                                                    borderRadius: '9999px',
+                                                    boxShadow: '0 2px 8px rgba(167, 97, 97, 0.15)'
+                                                }}
                                             >
                                                 <div className="flex items-center px-4 flex-1">
                                                     <MapPin className="w-5 h-5 text-black mr-2"/>
@@ -352,7 +364,10 @@ const Header = () => {
                                                 </div>
                                                 <button
                                                     className="w-10 h-10 m-1 flex items-center justify-center
-                                                   bg-roomi hover:bg-roomi-3 rounded-full shadow-md"
+                                                   bg-roomi hover:bg-roomi-3 rounded-full"
+                                                    style={{
+                                                        boxShadow: '0 2px 4px rgba(167, 97, 97, 0.2)'
+                                                    }}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         performSearch();
@@ -375,13 +390,20 @@ const Header = () => {
                                                     </button>
                                                     <div className="relative" ref={dropdownRef}>
                                                         <button
-                                                            className="w-8 h-8 flex items-center justify-center bg-roomi-000 text-roomi rounded-full shadow-md"
+                                                            className="w-8 h-8 flex items-center justify-center bg-roomi-000 text-roomi rounded-full"
+                                                            style={{
+                                                                boxShadow: '0 2px 4px rgba(167, 97, 97, 0.2)'
+                                                            }}
                                                             onClick={toggleDropdown}
                                                         >
                                                             <img src={profileImg} alt="프로필사진" className="rounded-full w-8 h-8"/>
                                                         </button>
                                                         {userVisible && (
-                                                            <div className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg shadow-lg w-40 z-[2000] border border-gray-200">
+                                                            <div className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg w-40 z-[2000] border border-gray-200"
+                                                                 style={{
+                                                                     boxShadow: '0 4px 12px rgba(167, 97, 97, 0.15)'
+                                                                 }}
+                                                            >
                                                                 <ul className="py-2 text-sm text-gray-700">
                                                                     <li>
                                                                         {hostMode ? (
@@ -604,7 +626,7 @@ const Header = () => {
             </div>
         </>
 
-            );
-            };
+    );
+};
 
-            export default Header;
+export default Header;
