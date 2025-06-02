@@ -276,11 +276,9 @@
 
 
 <script>
-    if (this.isSuccess) {
-        window.location.hash = '#payment-success';
-    } else {
-        window.location.hash = '#payment-failed';
-    }
+
+        window.location.hash = '#payment';
+
     function triggerPaymentCallback() {
         // URL 파라미터로 성공/실패 판단
         const params = new URLSearchParams(window.location.search);
