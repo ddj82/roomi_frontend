@@ -1,12 +1,7 @@
 declare module "src/components/toss/Checkout.jsx" {
     import React from "react";
-    import {Reservation} from "./reservation";
+    import {MyReservation} from "./reservation";
     import {RoomData} from "./rooms";
-
-    interface BookData {
-        reservation: Reservation;
-        room: RoomData;
-    }
 
     interface FormDataState {
         name: string,
@@ -16,13 +11,16 @@ declare module "src/components/toss/Checkout.jsx" {
     }
 
     interface PaymentData {
-        bookData: BookData,
+        bookReservation: MyReservation,
+        bookRoom: RoomData,
         formDataState: FormDataState,
         price: number,
     }
 
     interface CheckoutPageProps {
-        paymentData: PaymentData
+        paymentData: PaymentData,
+        modalOpen: boolean,
+        modalClose: () => void
     }
 
     export const CheckoutPage: React.FC<CheckoutPageProps>;

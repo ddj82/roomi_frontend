@@ -224,7 +224,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
         if(reservationInfo.reservation.payment_status == "PAID"){
             // 이미 결제된 메시지 출력 + 새로고침
 
-        }else{
+        } else {
             // 결제 페이지로 이동
             navigate(`/detail/${reserveData.room.id}/${localStorage.getItem('userCurrency')}/reservation/payment`, {
                 state: {
@@ -241,7 +241,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                     },
                     thisRoom : reservationInfo.room,
                     bookData: {
-                        reservation: reservationInfo,
+                        reservation: reservationInfo.reservation,
                         room: reservationInfo.room,
                     },
                     JPY: reservationInfo.reservation.yen_price,
@@ -262,7 +262,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
         console.log(responseJson)
         const bookData = responseJson.data as MyReservationHistory;
         console.log(responseJson.data)
-         navigateToPayment(bookData);
+        navigateToPayment(bookData);
 
     };
 

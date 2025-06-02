@@ -53,6 +53,7 @@ export default function GuestReservationSetScreen() {
     });
     const [slideIsOpen, setSlideIsOpen] = useState(false);
     const [userCurrency, setUserCurrency] = useState('');
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
     useEffect(() => {
         setRoom(thisRoom);
@@ -78,13 +79,6 @@ export default function GuestReservationSetScreen() {
 
     const handleNight = () => {
         if (calUnit) {
-            // if (startDate && endDate) {
-            //     const diffDays = dayjs(endDate).diff(dayjs(startDate), "day"); // 일(day) 단위 차이 계산
-            //     setNightVal(diffDays);
-            //     setTotalPrice((price * diffDays) + allOptionPrice);
-            // } else {
-            //     setNightVal(0); // 날짜가 없을 경우 0박으로 설정
-            // }
             setTotalPrice(((price + maintenancePrice + feePrice) * monthValue) );
         } else {
             setTotalPrice(((price + maintenancePrice + feePrice) * weekValue) );
@@ -102,6 +96,38 @@ export default function GuestReservationSetScreen() {
     };
 
     const reservationBtn = async (): Promise<void> => {
+        // 예약자 정보 유효성 검사
+        const newErrors: { [key: string]: string } = {}; // 새로운 오류 객체
+
+        // 예약자명 유효성 검사
+        if (!formData.name.trim()) {
+            newErrors.name = "예약자명을 입력하세요.";
+        }
+
+        // 전화번호 유효성 검사
+        if (!formData.phone.trim()) {
+            newErrors.phone = "전화번호를 입력하세요.";
+        } else if (!/^\d{10,11}$/.test(formData.phone)) {
+            newErrors.phone = "올바른 전화번호를 입력하세요.";
+        }
+
+        // 이메일 유효성 검사
+        if (!formData.email.trim()) {
+            newErrors.email = "이메일을 입력하세요.";
+        } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+            newErrors.email = "올바른 이메일 형식을 입력하세요.";
+        }
+
+        // 오류가 있으면 상태 업데이트 후 진행 중지
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        // 오류가 없으면 다음 단계로 이동
+        setErrors({}); // 오류 초기화
+
+        console.log('유효성 통과',formData);
+
         let totalNight = weekValue; // 기본 주 단위로 초기화
         if (calUnit) {
             totalNight = monthValue; // 월 단위면 초기화
@@ -238,9 +264,9 @@ export default function GuestReservationSetScreen() {
                                     {room.is_verified && (
                                         <span
                                             className="inline-flex items-center text-sm font-medium py-0.5 text-roomi mr-2">
-          <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
-                                            {t('[인증숙박업소]')}
-        </span>
+                                          <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
+                                                                            {t('[인증숙박업소]')}
+                                        </span>
                                     )}
                                 </div>
                                 <div className="my-3 flex items-center text-gray-600 text-sm">
@@ -327,6 +353,7 @@ export default function GuestReservationSetScreen() {
                                         {t("예약자명")}
                                     </label>
                                 </div>
+                                {errors.name && <p className="font-bold text-red-500 text-sm">{errors.name}</p>}
                             </div>
                             <div className="my-5">
                                 <div className="relative z-0">
@@ -341,6 +368,7 @@ export default function GuestReservationSetScreen() {
                                         {t("전화번호")}
                                     </label>
                                 </div>
+                                {errors.phone && <p className="font-bold text-red-500 text-sm">{errors.phone}</p>}
                             </div>
                             <div className="my-5">
                                 <div className="relative z-0">
@@ -355,6 +383,7 @@ export default function GuestReservationSetScreen() {
                                         {t("이메일")}
                                     </label>
                                 </div>
+                                {errors.email && <p className="font-bold text-red-500 text-sm">{errors.email}</p>}
                             </div>
                         </div>
                     </div>
@@ -445,8 +474,8 @@ export default function GuestReservationSetScreen() {
                                             </div>
                                         </div>
                                         <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
-      방 예약 내용을 확인했습니다.
-    </span>
+                                          방 예약 내용을 확인했습니다.
+                                        </span>
                                     </label>
 
                                     {/* 2. 서비스 약관에 동의합니다 */}
@@ -470,16 +499,16 @@ export default function GuestReservationSetScreen() {
                                             </div>
                                         </div>
                                         <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
-      서비스 약관에 동의합니다.
-      <a
-          href="https://roomi.co.kr/api/policies/terms-of-use"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-roomi underline ml-2"
-      >
-        [상세보기]
-      </a>
-    </span>
+                                          서비스 약관에 동의합니다.
+                                          <a
+                                              href="https://roomi.co.kr/api/policies/terms-of-use"
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="text-roomi underline ml-2"
+                                          >
+                                            [상세보기]
+                                          </a>
+                                        </span>
                                     </label>
                                 </div>
 

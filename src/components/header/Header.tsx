@@ -261,7 +261,7 @@ const Header = () => {
             <div
                 className={`border-b border-white transition-all duration-500 ease-in-out ${
                     isScrolled
-                        ? 'fixed top-0 left-0 right-0 z-[9999]'
+                        ? 'fixed top-0 left-0 right-0 z-[2000]'
                         : 'relative'
                 }`}
                 style={{
@@ -292,7 +292,11 @@ const Header = () => {
                             isScrolled ? (isMobile ? 'py-2' : 'py-3') : 'md:mt-8 mt-6'
                         } ${
                             !isScrolled ? 'bg-gradient-to-t from-red-50/80 via-red-50/40 to-transparent dark:from-gray-800/80 dark:via-gray-800/40 dark:to-transparent' : ''
-                        }`}>
+                        }`}
+                        style={{
+                            background: 'linear-gradient(to top, rgba(255, 236, 236, 0.8) 0%, rgba(255, 236, 236, 0.4) 20%, rgba(255, 255, 255, 0) 100%)'
+                        }}
+                    >
 
                         {/* 스크롤 상태에 따른 조건부 렌더링 */}
                         {isScrolled ? (

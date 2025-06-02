@@ -10,8 +10,8 @@ const SuccessPage: React.FC = () => {
     // 결제완료 api 호출
     const handleConfirmPayment = async (paymentKey: string, orderId: string, amount: number) => {
         try {
-            const response = await confirmPayment(paymentKey, orderId, amount);
-            console.log('결제 완료 api response', response);
+            // const response = await confirmPayment(paymentKey, orderId, amount);
+            // console.log('결제 완료 api response', response);
         } catch (e) {
             console.error('결제 완료 api 에러', e);
         }

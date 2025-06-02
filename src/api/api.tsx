@@ -440,11 +440,17 @@ export const updateCurrency = async (currency: string) => {
 };
 
 // 결제 완료 API
-export const confirmPayment = async (paymentKey: string, orderId: string, amount: number) => {
+// export const confirmPayment = async (paymentKey: string, orderId: string, amount: number) => {
+//     return request(`/payment/confirm`, true, 'POST', {
+//         paymentKey: paymentKey,
+//         orderId: orderId,
+//         amount: amount,
+//     });
+// };
+export const confirmPayment = async (paymentId: string, orderId: string) => {
     return request(`/payment/confirm`, true, 'POST', {
-        paymentKey: paymentKey,
-        orderId: orderId,
-        amount: amount,
+        paymentId: paymentId,
+        reservationId: orderId,
     });
 };
 

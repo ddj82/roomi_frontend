@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useIsHostStore} from '../../stores/IsHostStore';
 import {User} from '../../../types/user';
@@ -15,6 +15,7 @@ export default function MyInfo({user}: MyInfoEditProps) {
     const {isHost} = useIsHostStore();
     // 본인인증, 여권인증 모달
     const [certificationModal, setCertificationModal] = useState(false);
+    const [userIsKorean, setUserIsKorean] = useState(true);
 
     // 인증 완료 콜백 함수
     const handleCertificationComplete = async (isSuccess: boolean, impUid: string) => {
@@ -43,6 +44,16 @@ export default function MyInfo({user}: MyInfoEditProps) {
         }
     };
 
+    useEffect(() => {
+        if (localStorage.getItem('isKorean')) {
+            if (localStorage.getItem('isKorean') === 'true') {
+                setUserIsKorean(true);
+            } else {
+                setUserIsKorean(false)
+            }
+        }
+    }, []);
+
     return (
         <div className="flex flex-col items-center gap-6">
             {/*인증 모달 컴포넌트 (조건부 렌더링)*/}
@@ -50,7 +61,7 @@ export default function MyInfo({user}: MyInfoEditProps) {
                 <RoomDetailCertificationModal
                     visible={certificationModal}
                     onClose={() => setCertificationModal(false)}
-                    isKorean={!!localStorage.getItem('isKorean')}
+                    isKorean={userIsKorean}
                     onCertificationComplete={handleCertificationComplete}
                 />
             )}

@@ -1,264 +1,193 @@
-// import {ANONYMOUS, loadTossPayments} from "@tosspayments/tosspayments-sdk";
-// import { useEffect, useState } from "react";
-//
-// // TODO: clientKey는 개발자센터의 결제위젯 연동 키 > 클라이언트 키로 바꾸세요.
-// // TODO: 구매자의 고유 아이디를 불러와서 customerKey로 설정하세요. 이메일・전화번호와 같이 유추가 가능한 값은 안전하지 않습니다.
-// const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-// const customerKey = generateRandomString();
-//
-// export function CheckoutPage({ paymentData }) {
-//   const [amount, setAmount] = useState({
-//     currency: "",
-//     value: 0,
-//   });
-//   const [ready, setReady] = useState(false);
-//   const [widgets, setWidgets] = useState(null);
-//   const [reservation, setReservation] = useState(null);
-//   const [room, setRoom] = useState(null);
-//   const [form, setForm] = useState(null);
-//
-//   useEffect(() => {
-//     async function fetchPaymentWidgets() {
-//       try {
-//         // ------  SDK 초기화 ------
-//         const tossPayments = await loadTossPayments(clientKey);
-//
-//         // 회원 결제
-//         const widgets = tossPayments.widgets({
-//           customerKey,
-//         });
-//         // 비회원 결제
-//         // const widgets = tossPayments.widgets({ customerKey: ANONYMOUS });
-//
-//         setWidgets(widgets);
-//       } catch (error) {
-//         console.error("Error fetching payment widget:", error);
-//       }
-//     }
-//
-//     fetchPaymentWidgets();
-//     setReservation(paymentData.bookData.reservation);
-//     setRoom(paymentData.bookData.room);
-//     setForm(paymentData.formDataState);
-//     setAmount({
-//       // currency: paymentData.formDataState.currency,
-//       currency: 'KRW',
-//       // value: paymentData.price,
-//       value: Math.round(paymentData.price),
-//     });
-//   }, [clientKey, customerKey]);
-//
-//   useEffect(() => {
-//     async function renderPaymentWidgets() {
-//       if (widgets == null) {
-//         return;
-//       }
-//
-//       // ------  주문서의 결제 금액 설정 ------
-//       // TODO: 위젯의 결제금액을 결제하려는 금액으로 초기화하세요.
-//       setAmount({
-//         // currency: paymentData.formDataState.currency,
-//         currency: 'KRW',
-//         // value: paymentData.price,
-//         value: Math.round(paymentData.price),
-//       });
-//       await widgets.setAmount(amount);
-//
-//       // ------  결제 UI 렌더링 ------
-//       // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderpaymentmethods
-//       await widgets.renderPaymentMethods({
-//         selector: "#payment-method",
-//         // 렌더링하고 싶은 결제 UI의 variantKey
-//         // 결제 수단 및 스타일이 다른 멀티 UI를 직접 만들고 싶다면 계약이 필요해요.
-//         // @docs https://docs.tosspayments.com/guides/v2/payment-widget/admin#새로운-결제-ui-추가하기
-//         variantKey: "DEFAULT",
-//       });
-//
-//       // ------  이용약관 UI 렌더링 ------
-//       // @docs https://docs.tosspayments.com/reference/widget-sdk#renderagreement선택자-옵션
-//       await widgets.renderAgreement({
-//         selector: "#agreement",
-//         variantKey: "AGREEMENT",
-//       });
-//
-//       setReady(true);
-//     }
-//
-//     renderPaymentWidgets();
-//   }, [widgets]);
-//
-//   const updateAmount = async (amount) => {
-//     setAmount(amount);
-//     await widgets.setAmount(amount);
-//   };
-//
-//   return (
-//     <div className="wrapper">
-//       <div className="box_section">
-//         {/* 결제 UI */}
-//         <div id="payment-method" />
-//         {/* 이용약관 UI */}
-//         <div id="agreement" />
-//
-//         {/* 결제하기 버튼 */}
-//         <div className="flex justify-end">
-//           <button
-//             className="button border text-sm text-white bg-roomi rounded mr-4 p-2"
-//             disabled={!ready}
-//             // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
-//             // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrequestpayment
-//             onClick={async () => {
-//               try {
-//                 // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
-//                 // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
-//                 // if (amount.currency === 'KRW') {
-//                   await widgets.requestPayment({
-//                     orderId: reservation.order_id,
-//                     orderName: room.title,
-//                     successUrl: window.location.origin + "/success",
-//                     failUrl: window.location.origin + "/fail",
-//                     customerEmail: form.email,
-//                     customerName: form.name,
-//                     customerMobilePhone: form.phone,
-//                   });
-//                 // } else {
-//                 //   await widgets.requestPayment({
-//                 //     orderId: reservation.order_id,
-//                 //     orderName: room.title,
-//                 //     successUrl: window.location.origin + "/success",
-//                 //     failUrl: window.location.origin + "/fail",
-//                 //     customerEmail: form.email,
-//                 //     customerName: form.name,
-//                 //     customerMobilePhone: form.phone,
-//                 //     card: {
-//                 //       useInternationalCardOnly: true,
-//                 //     },
-//                 //   });
-//                 // }
-//               } catch (error) {
-//                 // 에러 처리하기
-//                 console.error(error);
-//               }
-//             }}
-//           >
-//             결제하기
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-//
-// function generateRandomString() {
-//   return window.btoa(Math.random().toString()).slice(0, 20);
-// }
-//
+import PortOne from "@portone/browser-sdk/v2"
+import React, {useEffect, useState} from "react"
+import {confirmPayment} from "../../api/api";
+import dayjs from "dayjs";
+import Modal from "react-modal";
 
+export function CheckoutPage({ paymentData, modalOpen, modalClose }) {
+    const [paymentStatus, setPaymentStatus] = useState({
+        status: "IDLE",
+    });
 
-//KG_inicis
+    useEffect(() => {
+        if (modalOpen) {
+            document.body.style.overflow = 'hidden'; // 스크롤 방지
+        } else {
+            document.body.style.overflow = 'auto'; // 스크롤 복원
+        }
+        return () => {
+            document.body.style.overflow = 'auto'; // 컴포넌트 언마운트 시 복원
+        };
+    }, [modalOpen]);
 
-import { useEffect } from "react";
+    if (paymentData == null) {
+        return (
+            <dialog open>
+                <article aria-busy>결제 정보를 불러오는 중입니다.</article>
+            </dialog>
+        )
+    }
 
-export function CheckoutPage({ paymentData }) {
-  useEffect(() => {
-    const runPayment = () => {
-      console.log("paymentData", paymentData);
-
-        const { IMP } = window;
-      if (!IMP) {
-        console.error("❌ IMP가 아직 로드되지 않았습니다.");
-        return;
-      }
-
-      IMP.init("imp19424728"); // 본인 가맹점 코드
-
-      const reservation = paymentData.bookData.reservation;
-      const room = paymentData.bookData.room;
-      const form = paymentData.formDataState;
-      const pgCode = "html5_inicis"; // 테스트용 PG사 코드
-      console.log(`pgCode : ${pgCode}`)
-      IMP.request_pay(
-          {
-            // 올바른 PG사 코드 설정
-            pg: pgCode, // 이니시스 테스트 모드 (MID와 일치시킴)
-            // 또는 다음 형식 사용:
-            // pg: "inicis.{상점아이디}", // 실제 상점아이디 필요
-
-            pay_method: "card", // 결제 수단 추가
-            merchant_uid: reservation.order_id,
-            name: room.title,
-            amount: Math.round(paymentData.price),
-            currency: form.currency || "KRW",
-            buyer_name: form.name,
-            buyer_email: form.email,
-            buyer_tel: form.phone,
-            buyer_addr: form.address || "",
-            buyer_postcode: "00000",
-            // 모바일 리다이렉트 URL
-            m_redirect_url: window.location.origin + "/success.html",
-          },
-          function (rsp) {
-            if (rsp.success) {
-              console.log("✅ 결제 성공", rsp);
-              // TODO: 서버에 imp_uid, merchant_uid 전달해서 검증 요청
-              // 성공 시 리디렉션
-              window.location.href = window.location.origin + "/success.html?imp_uid=" + rsp.imp_uid + "&merchant_uid=" + rsp.merchant_uid;
-            } else {
-              console.error("❌ 결제 실패", rsp);
-              // 실패 시 에러 메시지 표시
-              alert("결제에 실패했습니다: " + rsp.error_msg);
-            }
-          }
-      );
+    const generateRandom7Digits = () => {
+        // 0부터 9999999까지의 숫자 중 하나를 랜덤으로 뽑고, 앞에 0이 있으면 채워서 길이를 7자리로 맞춤
+        const randomNumber = Math.floor(Math.random() * 10_000_000); // 0 이상 10^7 미만
+        return String(randomNumber).padStart(7, '0');
     };
 
-    // IMP 스크립트가 로드된 후 실행되도록 약간의 지연 추가
-    if (typeof window.IMP === "undefined") {
-      // 스크립트가 없으면 먼저 로드
-      const script = document.createElement("script");
-      script.src = "https://cdn.iamport.kr/v1/iamport.js";
-      script.async = true;
-      document.head.appendChild(script);
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        setPaymentStatus({ status: "PENDING" });
 
-      const interval = setInterval(() => {
-        if (window.IMP) {
-          clearInterval(interval);
-          runPayment();
+        const today = dayjs().format('YYYYMMDD');
+        const paymentId = today + generateRandom7Digits();
+        console.log('paymentId만듬',paymentId);
+
+        const payment = await PortOne.requestPayment({
+            storeId: "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85",
+            channelKey: "channel-key-14a7fa72-0d06-4bb5-9502-f721b189eb86",
+            // channelKey: "channel-key-7f9f2376-d742-40f7-9f6f-9ea74579cbe1",
+            paymentId: paymentId,
+            orderName: paymentData.bookRoom.title,
+            // totalAmount: Math.round(paymentData.price),
+            totalAmount: 1000,
+            currency: "KRW",
+            payMethod: "CARD",
+            customer: {
+                customerId: paymentData.formDataState.phone, // 변경해야함
+                fullName: paymentData.formDataState.name,
+                phoneNumber: paymentData.formDataState.phone,
+                email: paymentData.formDataState.email,
+                address: {
+                    addressLine1: paymentData.bookRoom.address,
+                    addressLine2: "", // 상세주소 없긴해
+                    country: "KR"
+                }
+            },
+            redirectUrl: window.location.origin + "/success.html",
+        })
+        if (payment.code !== undefined) {
+            setPaymentStatus({
+                status: "FAILED",
+                message: payment.message,
+            })
+            return
         }
-      }, 300); // 0.3초 간격으로 확인
-    } else {
-      runPayment();
+
+        const completeResponse = await confirmPayment(payment.paymentId, paymentData.bookReservation.id.toString());
+        const paymentComplete = await completeResponse.json();
+        console.log('completeResponse',completeResponse);
+        console.log('paymentComplete',paymentComplete);
+        // if (completeResponse.ok) {
+        //     const paymentComplete = await completeResponse.json()
+        //     setPaymentStatus({
+        //         status: paymentComplete.status,
+        //     })
+        // } else {
+        //     setPaymentStatus({
+        //         status: "FAILED",
+        //         message: await completeResponse.text(),
+        //     })
+        // }
     }
-  }, [paymentData]);
 
-  return (
-      <div style={{
-        position: 'fixed', // 화면 전체 기준
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        zIndex: 9999, // 웬만한 위에 뜸
-        pointerEvents: 'none' // 👉 클릭 막지 않도록!
-      }}>
-        <div style={{
-          border: '4px solid rgba(0, 0, 0, 0.1)',
-          borderRadius: '50%',
-          borderTop: '4px solid #3498db',
-          width: '40px',
-          height: '40px',
-          animation: 'spin 1s linear infinite'
-        }}></div>
+    const isWaitingPayment = paymentStatus.status !== "IDLE";
 
-        <style>
-          {`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}
-        </style>
-      </div>
-  );
+    const handleClose = () =>
+        setPaymentStatus({
+            status: "IDLE",
+        });
+
+    return (
+        <Modal
+            isOpen={modalOpen}
+            onRequestClose={modalClose}
+            shouldCloseOnOverlayClick={false}   // 바깥영역 클릭 막기
+            shouldCloseOnEsc={false}            // Esc 닫기 막기 (선택)
+            style={{
+                overlay: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    zIndex: 10000,           // 헤더(2000)보다, 리모컨(100)보다 훨씬 크게
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                },
+                content: {
+                    position: 'relative',    // overlay가 flex container가 되므로 굳이 fixed 안 해도 중앙 정렬됩니다.
+                    inset: 'auto',           // 기본 inset(0) 제거
+                    border: 'none',
+                    background: 'transparent',
+                    padding: '0',
+                    overflow: 'visible',
+                    // 필요하다면 content에도 zIndex 지정 가능
+                    zIndex: 10001,
+                },
+            }}
+        >
+            <div
+                style={{
+                    backgroundColor: '#fff',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    width: '90%',
+                    maxWidth: '500px',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                    position: 'relative',
+                    // 만약 내부 다른 요소가 겹칠 일이 있다면 이 요소에도 zIndex 지정
+                    zIndex: 10002,
+                }}
+            >
+                <button type="button" onClick={modalClose}>x</button>
+                <form onSubmit={handleSubmit}>
+                    <article>
+                        <div className="item">
+                            <div className="item-image">
+                                <img
+                                    src={paymentData.bookRoom.detail_urls[0]}
+                                    alt="thumbnail"
+                                    // className="md:h-[30rem] h-64 object-cover rounded-lg"
+                                />
+                            </div>
+                            <div className="item-text">
+                                <h5>{paymentData.bookRoom.title}</h5>
+                                {/*<p>{Math.round(paymentData.price).toLocaleString()}원</p>*/}
+                                <p>1000원</p>
+                            </div>
+                        </div>
+                        <div className="price">
+                            <label>총 구입 가격</label>
+                            {/*{Math.round(paymentData.price).toLocaleString()}원*/}
+                            1000원
+                        </div>
+                    </article>
+                    <button
+                        type="submit"
+                        aria-busy={isWaitingPayment}
+                        disabled={isWaitingPayment}
+                    >
+                        결제
+                    </button>
+                </form>
+            </div>
+            {paymentStatus.status === "FAILED" && (
+                <dialog open>
+                    <header>
+                        <h1>결제 실패</h1>
+                    </header>
+                    <p>{paymentStatus.message}</p>
+                    <button type="button" onClick={handleClose}>
+                        닫기
+                    </button>
+                </dialog>
+            )}
+            <dialog open={paymentStatus.status === "PAID"}>
+                <header>
+                    <h1>결제 성공</h1>
+                </header>
+                <p>결제에 성공했습니다.</p>
+                <button type="button" onClick={handleClose}>
+                    닫기
+                </button>
+            </dialog>
+        </Modal>
+    )
 }
-
-
