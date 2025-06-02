@@ -17,24 +17,35 @@
             height: 100vh;
         }
 
+        /* 로딩 스피너 */
+        .loading-spinner {
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 숨겨진 컨테이너 - 기능은 유지하되 화면에 보이지 않음 */
+        .hidden-container {
+            position: absolute;
+            left: -9999px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
         .container {
             border-radius: 12px;
             max-width: 460px;
             width: 100%;
             padding: 40px 24px;
             text-align: center;
-            animation: fadeInUp 0.5s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .success-icon {
@@ -106,31 +117,36 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="success-icon">
-        ✓
+<!-- 화면에 보이는 로딩 인디케이터 -->
+<div class="loading-spinner"></div>
+
+<!-- 숨겨진 기존 컨테이너 - 기능은 그대로 동작 -->
+<div class="hidden-container">
+    <div class="container">
+        <div class="success-icon">
+            ✓
+        </div>
+        <h1>가상계좌 발급 완료</h1>
+        <p class="subtitle">아래 정보를 확인하고 지정된 계좌로 입금해주세요.</p>
+        <div class="info-list" id="account-info">
+            <div class="info-item">
+                <span class="info-label">은행명</span>
+                <span class="info-value loading" id="bank">로딩 중...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">계좌번호</span>
+                <span class="info-value loading" id="account">로딩 중...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">예금주</span>
+                <span class="info-value loading" id="holder">로딩 중...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">입금기한</span>
+                <span class="info-value loading" id="expiration">로딩 중...</span>
+            </div>
+        </div>
     </div>
-    <h1>가상계좌 발급 완료</h1>
-    <p class="subtitle">아래 정보를 확인하고 지정된 계좌로 입금해주세요.</p>
-    <div class="info-list" id="account-info">
-        <div class="info-item">
-            <span class="info-label">은행명</span>
-            <span class="info-value loading" id="bank">로딩 중...</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">계좌번호</span>
-            <span class="info-value loading" id="account">로딩 중...</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">예금주</span>
-            <span class="info-value loading" id="holder">로딩 중...</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">입금기한</span>
-            <span class="info-value loading" id="expiration">로딩 중...</span>
-        </div>
-    </div>
-    <button id="goApp">앱으로 이동</button>
 </div>
 
 <script>
