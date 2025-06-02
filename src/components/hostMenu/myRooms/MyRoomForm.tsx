@@ -1180,7 +1180,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                 </div>
                             </div>
                         </div>
-                        <div className={`md:flex mt-4 ${mode} === "update" && pointer-events-none`}>
+                        <div className={`md:flex mt-4 ${mode === "update" && 'pointer-events-none'}`}>
                             {/* 단기임대 */}
                             <div className="md:w-1/2">
                                 <label htmlFor="LEASE"
@@ -1230,7 +1230,6 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                        checked={roomFormData.room_type === "LEASE"}
                                        onChange={(e) => handleChange("room_type", e.target.value)}
                                        className="hidden"
-                                       disabled={mode === "update"}
                                 />
                             </div>
                             {/* 숙박업소 */}
@@ -1280,7 +1279,6 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                        checked={roomFormData.room_type === "LODGE"}
                                        onChange={(e) => handleChange("room_type", e.target.value)}
                                        className="hidden"
-                                       disabled={mode === "update"}
                                 />
                             </div>
                         </div>

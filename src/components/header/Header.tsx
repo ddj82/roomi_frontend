@@ -79,8 +79,15 @@ const Header = () => {
         const handleScroll = () => {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             // 서치바 영역까지 스크롤했을 때 헤더 변경 (약 200px 정도)
-            const searchBarThreshold = 200;
-            setIsScrolled(scrollTop > searchBarThreshold);
+            if (isMobile) {
+                const searchBarThreshold = 170;
+                setIsScrolled(scrollTop > searchBarThreshold);
+                console.log('scrollTop',scrollTop);
+                console.log('scrollTop > searchBarThreshold',scrollTop > searchBarThreshold);
+            } else {
+                const searchBarThreshold = 200;
+                setIsScrolled(scrollTop > searchBarThreshold);
+            }
         };
 
         const handleResize = () => {
@@ -183,7 +190,7 @@ const Header = () => {
     const handleSetHostMode = () => {
         if (hostMode) {
             resetUserMode();
-            window.location.href = '/main';
+            window.location.href = '/';
         } else {
             setHostMode(true);
             window.location.href = '/host';
@@ -286,7 +293,7 @@ const Header = () => {
                 )}
 
                 {/* 메인 콘텐츠 */}
-                <div className="relative z-10 h header container mx-auto">
+                <div className={`relative z-10 h header mx-auto ${!isScrolled ? 'container' : 'px-10'}`}>
                     <div
                         className={`mx-auto px-[20px] flex flex-col items-center transition-all duration-500 ease-in-out ${
                             isScrolled ? (isMobile ? 'py-2' : 'py-3') : 'md:mt-8 mt-6'
@@ -294,7 +301,7 @@ const Header = () => {
                             !isScrolled ? 'bg-gradient-to-t from-red-50/80 via-red-50/40 to-transparent dark:from-gray-800/80 dark:via-gray-800/40 dark:to-transparent' : ''
                         }`}
                         style={{
-                            background: 'linear-gradient(to top, rgba(255, 236, 236, 0.8) 0%, rgba(255, 236, 236, 0.4) 20%, rgba(255, 255, 255, 0) 100%)'
+                            background: !isScrolled ? 'linear-gradient(to top, rgba(255, 236, 236, 0.8) 0%, rgba(255, 236, 236, 0.4) 20%, rgba(255, 255, 255, 0) 100%)' : ''
                         }}
                     >
 
@@ -354,8 +361,8 @@ const Header = () => {
                                                     ref={searchBarRef}
                                                     onClick={openSearchModal}
                                                     className="h-12 w-full flex items-center justify-between
-           bg-white/90 backdrop-blur-sm cursor-pointer
-           transition-all duration-300 hover:bg-white/95"
+                                                       bg-white/90 backdrop-blur-sm cursor-pointer
+                                                       transition-all duration-300 hover:bg-white/95"
                                                     style={{
                                                         borderRadius: '9999px',
                                                         boxShadow: '0 2px 8px rgba(167, 97, 97, 0.15)'
@@ -364,12 +371,12 @@ const Header = () => {
                                                     <div className="flex items-center px-4 flex-1">
                                                         <MapPin className="w-5 h-5 text-black mr-2"/>
                                                         <span className="text-gray-500 text-sm truncate">
-                {selectedLocation || t('어디로 여행 가세요?')}
-            </span>
+                                                            {selectedLocation || t('어디로 여행 가세요?')}
+                                                        </span>
                                                     </div>
                                                     <button
                                                         className="w-10 h-10 m-1 flex items-center justify-center
-               bg-roomi hover:bg-roomi-3 rounded-full"
+                                                                bg-roomi hover:bg-roomi-3 rounded-full"
                                                         style={{
                                                             boxShadow: '0 2px 4px rgba(167, 97, 97, 0.2)'
                                                         }}
@@ -408,7 +415,7 @@ const Header = () => {
                                                         </button>
                                                         {userVisible && (
                                                             <div
-                                                                className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg w-40 z-[2000] border border-gray-200"
+                                                                className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg w-40 z-[9000] border border-gray-200"
                                                                 style={{
                                                                     boxShadow: '0 4px 12px rgba(167, 97, 97, 0.15)'
                                                                 }}
@@ -445,14 +452,14 @@ const Header = () => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <div className="flex_center md:text-xs text-xxs">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => window.location.href = '/main'}
-                                                        >
-                                                            방 등록하러 가기
-                                                        </button>
-                                                    </div>
+                                                    {/*<div className="flex_center md:text-xs text-xxs">*/}
+                                                    {/*    <button*/}
+                                                    {/*        type="button"*/}
+                                                    {/*        onClick={() => window.location.href = '/main'}*/}
+                                                    {/*    >*/}
+                                                    {/*        방 등록하러 가기*/}
+                                                    {/*    </button>*/}
+                                                    {/*</div>*/}
                                                     {isHost && (
                                                         <>
                                                             {hostMode ? (
@@ -509,14 +516,14 @@ const Header = () => {
                                     <div className="md:mr-4 mr-1.5">
                                         {authToken ? (
                                             <div className="flex gap-3">
-                                                <div className="flex_center md:text-xs text-xxs">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => window.location.href = '/main'}
-                                                    >
-                                                        방 등록하러 가기
-                                                    </button>
-                                                </div>
+                                                {/*<div className="flex_center md:text-xs text-xxs">*/}
+                                                {/*    <button*/}
+                                                {/*        type="button"*/}
+                                                {/*        onClick={() => window.location.href = '/main'}*/}
+                                                {/*    >*/}
+                                                {/*        방 등록하러 가기*/}
+                                                {/*    </button>*/}
+                                                {/*</div>*/}
                                                 {isHost && (
                                                     <>
                                                         {hostMode ? (
@@ -557,7 +564,7 @@ const Header = () => {
                                                         </button>
                                                         {userVisible && (
                                                             <div
-                                                                className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg shadow-lg w-40 z-[2000] border border-gray-200">
+                                                                className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg shadow-lg w-40 z-[9000] border border-gray-200">
                                                                 <ul className="py-2 text-sm text-gray-700">
                                                                     <li>
                                                                         {hostMode ? (

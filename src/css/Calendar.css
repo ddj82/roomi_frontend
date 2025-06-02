@@ -50,7 +50,7 @@
     transform: translate(-50%, -50%);
     width: 34px;
     height: 34px;
-    background-color: #f47366;
+    background-color: #ff8282;
     border-radius: 50%;
     z-index: -1;
 }
@@ -117,7 +117,7 @@
 
 .react-calendar__tile.reservation-date abbr {
     text-decoration: line-through;
-    color: #f47366;
+    color: #ff8282;
     font-weight: bold;
 }
 
@@ -138,7 +138,7 @@
     transform: translateX(-50%);
     width: 4px;
     height: 4px;
-    /*background-color: #f47366;*/
+    /*background-color: #ff8282;*/
     border-radius: 50%;
 }
 
@@ -164,7 +164,7 @@
 
 /*.dateModal .react-calendar .react-calendar__tile--active:enabled:hover abbr,*/
 /*.dateModal .react-calendar .react-calendar__tile--active:enabled:focus abbr {*/
-/*    background-color: #f47366 !important;*/
+/*    background-color: #ff8282 !important;*/
 /*    color: white !important;*/
 /*    border-radius: 50%;*/
 /*    display: inline-flex;*/
@@ -179,7 +179,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background-color: #f47366 !important;
+    background-color: #ff8282 !important;
     color: white !important;
     font-weight: bold;
 

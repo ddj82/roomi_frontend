@@ -77,17 +77,17 @@ export function CheckoutPage({ paymentData, modalOpen, modalClose }) {
         const paymentComplete = await completeResponse.json();
         console.log('completeResponse',completeResponse);
         console.log('paymentComplete',paymentComplete);
-        // if (completeResponse.ok) {
-        //     const paymentComplete = await completeResponse.json()
-        //     setPaymentStatus({
-        //         status: paymentComplete.status,
-        //     })
-        // } else {
-        //     setPaymentStatus({
-        //         status: "FAILED",
-        //         message: await completeResponse.text(),
-        //     })
-        // }
+
+        if (paymentComplete.success) {
+            setPaymentStatus({
+                status: "PAID",
+            })
+        } else {
+            setPaymentStatus({
+                status: "FAILED",
+                message: paymentComplete.error,
+            })
+        }
     }
 
     const isWaitingPayment = paymentStatus.status !== "IDLE";

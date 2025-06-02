@@ -1,7 +1,7 @@
+import PortOne, {PaymentResponse} from "@portone/browser-sdk/v2"
 import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {fetchRoomData} from "../../api/api";
-import {MyReservationHistory, RoomData} from "../../types/rooms";
+import {RoomData} from "../../types/rooms";
 import {useTranslation} from "react-i18next";
 import {useDateStore} from "../stores/DateStore";
 import ImgCarousel from "../util/ImgCarousel";
@@ -18,9 +18,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
 import {CheckoutPage, FormDataState} from "src/components/toss/Checkout.jsx";
-import Modal from "react-modal";
 import dayjs from "dayjs";
 import {MyReservation} from "../../types/reservation";
+import {confirmPayment} from "../../api/api";
 
 interface FormDataType {
     name: string;
@@ -81,6 +81,17 @@ export default function GuestReservationScreen() {
     const [isChecked3, setIsChecked3] = useState(false);
     const [isChecked4, setIsChecked4] = useState(false);
     const [userCurrency, setUserCurrency] = useState('');
+    const [userIsKorean, setUserIsKorean] = useState(true);
+
+    useEffect(() => {
+        if (localStorage.getItem('isKorean')) {
+            if (localStorage.getItem('isKorean') === 'true') {
+                setUserIsKorean(true);
+            } else {
+                setUserIsKorean(false)
+            }
+        }
+    }, []);
 
     useEffect(() => {
         setRoom(thisRoom);
@@ -108,7 +119,7 @@ export default function GuestReservationScreen() {
         setSelectedPayment(e.target.value);
     };
 
-    const paymentBtn = () => {
+    const paymentBtn1 = () => {
         if (!isChecked1 || !isChecked2 || !isChecked3) {
             alert('필수 약관에 동의해주세요.');
             return;
@@ -122,7 +133,86 @@ export default function GuestReservationScreen() {
             price: Number(totalPrice.toFixed(2)),
         });
         setPortOneModal(true);
-   };
+    };
+
+    // 결제 진행 상태
+    const [paymentStatus, setPaymentStatus] = useState({
+        status: "IDLE",
+    });
+    // 페이먼트ID 생성
+    const generateRandom7Digits = () => {
+        // 0부터 9999999까지의 숫자 중 하나를 랜덤으로 뽑고, 앞에 0이 있으면 채워서 길이를 7자리로 맞춤
+        const randomNumber = Math.floor(Math.random() * 10_000_000); // 0 이상 10^7 미만
+        return String(randomNumber).padStart(7, '0');
+    };
+    const paymentBtn = async () => {
+        if (!isChecked1 || !isChecked2 || !isChecked3) {
+            alert('필수 약관에 동의해주세요.');
+            return;
+        }
+
+        setPaymentStatus({ status: "PENDING" });
+        const today = dayjs().format('YYYYMMDD');
+        const paymentId = today + generateRandom7Digits();
+        console.log('paymentId만듬',paymentId);
+
+        // const storeId = "store-"+process.env.PORT_ONE_STORE_ID;
+        // const channelKey = "channel-key-"+process.env.PORT_ONE_CHANNEL_KEY;
+        // console.log('storeId',storeId);
+        // console.log('channelKey',channelKey);
+
+        const payment = await PortOne.requestPayment({
+            // storeId: storeId,
+            // channelKey: channelKey,
+            storeId: "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85",
+            channelKey: "channel-key-14a7fa72-0d06-4bb5-9502-f721b189eb86",
+            // channelKey: "channel-key-7f9f2376-d742-40f7-9f6f-9ea74579cbe1",
+            paymentId: paymentId,
+            orderName: bookData.room.title,
+            // totalAmount: Math.round(paymentData.price),
+            totalAmount: 1000,
+            currency: "CURRENCY_KRW",
+            payMethod: "CARD",
+            customer: {
+                customerId: formDataState.phone, // 변경해야함
+                fullName: formDataState.name,
+                phoneNumber: formDataState.phone,
+                email: formDataState.email,
+                address: {
+                    addressLine1: bookData.room.address,
+                    addressLine2: "", // 상세주소 없긴해
+                    country: "COUNTRY_KR"
+                }
+            },
+            redirectUrl: window.location.origin + "/success.html",
+            // redirectUrl: window.location.origin + "/success",
+        });
+
+        if (payment) {
+            if (payment.code !== undefined) {
+                setPaymentStatus({
+                    status: "FAILED",
+                })
+                return
+            }
+
+            const completeResponse = await confirmPayment(payment.paymentId, bookData.reservation.id.toString());
+            const paymentComplete = await completeResponse.json();
+            console.log('completeResponse',completeResponse);
+            console.log('paymentComplete',paymentComplete);
+
+            if (paymentComplete.success) {
+                setPaymentStatus({
+                    status: "PAID",
+                })
+            } else {
+                setPaymentStatus({
+                    status: "FAILED",
+                })
+            }
+        }
+
+    };
 
     /*
         const handlePayment = async () => {
@@ -452,15 +542,25 @@ export default function GuestReservationScreen() {
                             </div>
                         </div>
 
-                        <div className="p-6 border border-gray-200 rounded-xl shadow-sm bg-white mb-6">
-                            <div className="font-bold text-gray-800 mb-4">{t("결제 수단")}</div>
-                            <div className="grid gap-4 grid-cols-2">
-                                <PaymentOption id="easy" label="국내 결제" selected={selectedPayment === "KR"}
-                                               onChange={handlePaymentChange}/>
-                                <PaymentOption id="card" label="해외 결제" selected={selectedPayment === ""}
-                                               onChange={handlePaymentChange}/>
+                        {userIsKorean ? (
+                            <div className="p-6 border border-gray-200 rounded-xl shadow-sm bg-white mb-6">
+                                <div className="font-bold text-gray-800 mb-4">{t("결제 수단")}</div>
+                                <div className="grid gap-4 grid-cols-2">
+                                    <PaymentOption id="easy" label="국내 카드" selected={selectedPayment === "KR"}
+                                                   onChange={handlePaymentChange}/>
+                                    <PaymentOption id="card" label="가상 계좌" selected={selectedPayment === ""}
+                                                   onChange={handlePaymentChange}/>
+                                </div>
                             </div>
-                        </div>
+                        ) : (
+                            <div className="p-6 border border-gray-200 rounded-xl shadow-sm bg-white mb-6">
+                                <div className="font-bold text-gray-800 mb-4">{t("결제 수단")}</div>
+                                <div className="grid gap-4 grid-cols-2">
+                                    <PaymentOption id="easy" label="해외 카드" selected={selectedPayment === "KR"}
+                                                   onChange={handlePaymentChange}/>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/*리모컨 영역*/}
@@ -468,7 +568,8 @@ export default function GuestReservationScreen() {
                         border border-gray-200 shadow-sm md:p-6 p-4 break-words bg-white
                         w-full fixed bottom-0 z-[100]">
                         {/* 모바일 전용 아코디언 버튼 */}
-                        <div className="md:hidden w-full items-center p-4 rounded-lg cursor-pointer bg-roomi text-white">
+                        <div
+                            className="md:hidden w-full items-center p-4 rounded-lg cursor-pointer bg-roomi text-white">
                             <button type="button" className="w-full flex justify-between items-center"
                                     onClick={() => setSlideIsOpen(!slideIsOpen)}>
                                 <span className="font-bold">{t("price_info")}</span>
@@ -699,19 +800,12 @@ export default function GuestReservationScreen() {
             {/*</Modal>*/}
             
             {/* 포트원 이니시스 */}
-            {paymentData && (
-                <CheckoutPage
-                    paymentData={paymentData}
-                    modalOpen={portOneModal}
-                    modalClose={() => setPortOneModal(false)}
-                />
-            )}
             {/*{paymentData && (*/}
-            {/*    <Modal*/}
-            {/*        isOpen={portOneModal}*/}
-            {/*    >*/}
-
-            {/*    </Modal>*/}
+            {/*    <CheckoutPage*/}
+            {/*        paymentData={paymentData}*/}
+            {/*        modalOpen={portOneModal}*/}
+            {/*        modalClose={() => setPortOneModal(false)}*/}
+            {/*    />*/}
             {/*)}*/}
         </div>
 

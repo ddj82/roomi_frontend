@@ -31,6 +31,7 @@ import LoginPage from "./components/screens/link/LoginPage";
 import LineLoginCallback from "./components/util/LineLoginCallback";
 import Main from "./components/screens/Main";
 import MobileHostHeader from "./components/screens/MobileHostHeader";
+import PortOnePaymentSuccess from "./components/util/PortOnePaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -98,7 +99,8 @@ function AppContent() {
                             <Route path="/chat" element={<UserMessage/>}/>
                             <Route path="/detail/:roomId/:locale/reservation" element={<GuestReservationSetScreen/>}/>
                             <Route path="/detail/:roomId/:locale/reservation/payment" element={<GuestReservationScreen/>}/>
-                            <Route path="/success" element={<SuccessPage/>}/>
+                            <Route path="/success" element={<PortOnePaymentSuccess/>}/>
+                            {/*<Route path="/success" element={<SuccessPage/>}/>*/}
                             <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
                         </Route>
                     </Route>

@@ -90,7 +90,7 @@ const NaverMap = ({ onRoomsUpdate }: NaverMapViewProps) => {
                             transform: 'translateX(-50%)',
                             borderLeft: '6px solid transparent',
                             borderRight: '6px solid transparent',
-                            borderTop: '8px solid #f47366',
+                            borderTop: '8px solid #ff8282',
                         }}
                     ></div>
                 </div>
