@@ -285,6 +285,16 @@
 <!--</div>-->
 
 <script>
+    // iOS/Android 공통 대응
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            try {
+                window.webkit?.messageHandlers?.postMessage?.postMessage("payment:success");
+            } catch (e) {
+                console.error("📩 메시지 전송 실패:", e);
+            }
+        }, 1); // 예시로 1.5초 뒤 전송
+    });
     class LoadingIndicator {
         constructor() {
             this.currentSpinner = 'basic';
@@ -371,6 +381,7 @@
 
     // 전역에서 사용할 수 있도록 window 객체에 추가
     window.loadingIndicator = loadingIndicator;
+
 </script>
 </body>
 </html>
