@@ -271,30 +271,58 @@
         </div>
     </div>
 
-<!--    <div class="loading-text">잠시만 기다려주세요</div>-->
-<!--    <div class="loading-subtext">페이지를 불러오는 중입니다...</div>-->
 </div>
 
-<!-- 스피너 선택 컨트롤 -->
-<!--<div class="spinner-controls">-->
-<!--    <button class="spinner-btn active" data-target="basic">기본</button>-->
-<!--    <button class="spinner-btn" data-target="pulse">펄스</button>-->
-<!--    <button class="spinner-btn" data-target="dots">도트</button>-->
-<!--    <button class="spinner-btn" data-target="ring">링</button>-->
-<!--    <button class="spinner-btn" data-target="wave">파도</button>-->
-<!--</div>-->
+
 
 <script>
-    // iOS/Android 공통 대응
-    window.addEventListener('DOMContentLoaded', () => {
+    if (this.isSuccess) {
+        window.location.hash = '#payment-success';
+    } else {
+        window.location.hash = '#payment-failed';
+    }
+    function triggerPaymentCallback() {
+        // URL 파라미터로 성공/실패 판단
+        const params = new URLSearchParams(window.location.search);
+        const isSuccess = !params.get('code') || params.get('code') === 'SUCCESS';
+
+        // Hash 설정
+        if (isSuccess) {
+            window.location.hash = '#payment-success';
+        } else {
+            window.location.hash = '#payment-failed';
+        }
+
+        // 메시지 전송
         setTimeout(() => {
             try {
-                window.webkit?.messageHandlers?.postMessage?.postMessage("payment:success");
+                const message = isSuccess ? "payment:success" : "payment:failed";
+
+                // iOS WKWebView
+                if (window.webkit?.messageHandlers?.paymentHandler) {
+                    window.webkit.messageHandlers.paymentHandler.postMessage(message);
+                    console.log("📩 iOS 메시지 전송:", message);
+                }
+
+                // Android WebView
+                if (window.Android?.onPaymentResult) {
+                    window.Android.onPaymentResult(message);
+                    console.log("📩 Android 메시지 전송:", message);
+                }
+
+                // Flutter InAppWebView
+                if (window.flutter_inappwebview?.callHandler) {
+                    window.flutter_inappwebview.callHandler('paymentResult', message);
+                    console.log("📩 Flutter 메시지 전송:", message);
+                }
+
             } catch (e) {
                 console.error("📩 메시지 전송 실패:", e);
             }
-        }, 1); // 예시로 1.5초 뒤 전송
-    });
+        }, 100);
+    }
+
+    // DOM 로드 후 실행
     class LoadingIndicator {
         constructor() {
             this.currentSpinner = 'basic';
