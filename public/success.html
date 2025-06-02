@@ -507,13 +507,7 @@
           document.dispatchEvent(event);
 
           // URL 변경으로 감지 (앱에서 URL 변경을 감지하는 경우)
-          if (this.isSuccess) {
-            // 성공시 특별한 URL로 변경
-            window.history.replaceState({}, '', window.location.pathname + '#payment-success');
-          } else {
-            // 실패시 특별한 URL로 변경
-            window.history.replaceState({}, '', window.location.pathname + '#payment-failed');
-          }
+          window.open('http://roomi.co.kr/indicator.html')
 
           console.log('All callbacks sent successfully');
 
