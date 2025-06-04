@@ -1,4 +1,4 @@
-declare module "src/components/toss/Checkout.jsx" {
+declare module "src/components/pay/Checkout.jsx" {
     import React from "react";
     import {MyReservation} from "./reservation";
     import {RoomData} from "./rooms";

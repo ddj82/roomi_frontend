@@ -37,7 +37,6 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
     const navigate = useNavigate();
     useEffect(() => {
         setReservedDetails(reserveData);
-        // window.scrollTo({ top: 0, behavior: 'smooth' });
         window.scrollTo({ top: 0 });
     }, []);
 
@@ -166,8 +165,8 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                                     <span className="text-white text-xs font-bold">i</span>
                                 </div>
                                 <span className="text-sm text-gray-700">
-                        호스트의 승인을 기다리고 있습니다.
-                    </span>
+                                    호스트의 승인을 기다리고 있습니다.
+                                </span>
                             </div>
                         </div>
 
@@ -203,8 +202,8 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                             <span className="text-white text-xs font-bold">i</span>
                         </div>
                         <span className="text-sm text-gray-700">
-          보증금 환급 절차가 진행중 입니다.
-        </span>
+                            보증금 환급 절차가 진행중 입니다.
+                        </span>
                     </div>
                 </div>);
 
@@ -256,7 +255,6 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
     };
     // 예약 취소, 체크인, 체크아웃, 후기 작성 ...등 버튼 클릭 핸들러
     const handlePayment = async () => {
-
         const response = await getReservation(reserveData.id);
         const responseJson = await response.json();
         console.log(responseJson)
@@ -286,7 +284,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
 
         // 2. 환불 정책 확인
         const refundRules = reservation.room?.refund_policy_rules;
-        console.log(`✅ ${refundRules}`);
+        console.log(`✅ 환불 규정 ${refundRules}`);
         if (!refundRules || Object.keys(refundRules).length === 0) {
             console.log('❌ 환불 규칙 없음');
             return false;
@@ -313,6 +311,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
 
         const exactCheckInTime = checkInDate.set('hour', checkInHour).set('minute', checkInMinute).set('second', 0);
         const hoursToCheckIn = exactCheckInTime.diff(now, 'hour');
+        // console.log(`⏱️ 체크인까지 남은 시간(일): ${}`);
         console.log(`⏱️ 체크인까지 남은 시간(시간): ${hoursToCheckIn}`);
 
         // 4. 시간 조건별 룰 매핑

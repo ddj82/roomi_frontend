@@ -454,6 +454,13 @@ export const confirmPayment = async (paymentId: string, orderId: string) => {
     });
 };
 
+// 결제 후 검증
+export const verifyPayment = async (paymentId: string) => {
+    return request(`/payment/verify`, true, 'POST', {
+        paymentId: paymentId,
+    });
+};
+
 // 호스트 방 추가 API
 export const createRoom = async (roomFormData: RoomFormData, detailImageFiles: File[]) => {
     const formData = new FormData();

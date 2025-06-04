@@ -17,10 +17,15 @@ import {
     faCheckCircle, faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import {LuCircleMinus, LuCirclePlus} from "react-icons/lu";
-import {CheckoutPage, FormDataState} from "src/components/toss/Checkout.jsx";
+import {FormDataState} from "src/components/pay/Checkout.jsx";
 import dayjs from "dayjs";
 import {MyReservation} from "../../types/reservation";
-import {confirmPayment} from "../../api/api";
+import {confirmPayment, verifyPayment} from "../../api/api";
+import {PaymentComplete} from "../../types/PaymentComplete";
+import SuccessPage from "../pay/SuccessPage";
+import Modal from "react-modal";
+import {PaymentFailedResponse, PaymentSuccessResponse} from "../../types/PaymentResponse";
+import FailPage from "../pay/FailPage";
 
 interface FormDataType {
     name: string;
@@ -43,7 +48,6 @@ export default function GuestReservationScreen() {
     const {guestCount, setGuestCount} = useGuestsStore();
     const navigate = useNavigate();
     const location = useLocation();
-    const [portOneModal, setPortOneModal] = useState(false);
 
     let {
         price = 0,
@@ -74,7 +78,7 @@ export default function GuestReservationScreen() {
     const [formDataState, setFormDataState] = useState<FormDataType>(formData);
 
     const [selectedPayment, setSelectedPayment] = useState<string>("KR");
-    const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
+    // const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
     const [slideIsOpen, setSlideIsOpen] = useState(false);
     const [isChecked1, setIsChecked1] = useState(false);
     const [isChecked2, setIsChecked2] = useState(false);
@@ -82,6 +86,15 @@ export default function GuestReservationScreen() {
     const [isChecked4, setIsChecked4] = useState(false);
     const [userCurrency, setUserCurrency] = useState('');
     const [userIsKorean, setUserIsKorean] = useState(true);
+
+    const [portOneModal, setPortOneModal] = useState(false);
+    // 결제 성공 상태
+    const [paymentSuccessResponse, setPaymentSuccessResponse] = useState<PaymentSuccessResponse | null>(null);
+    const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+    // 결제 실패 상태
+    const [paymentFailedResponse, setPaymentFailedResponse] = useState<PaymentFailedResponse | null>(null);
+
 
     useEffect(() => {
         if (localStorage.getItem('isKorean')) {
@@ -120,25 +133,21 @@ export default function GuestReservationScreen() {
     };
 
     const paymentBtn1 = () => {
-        if (!isChecked1 || !isChecked2 || !isChecked3) {
-            alert('필수 약관에 동의해주세요.');
-            return;
-        }
-        formDataState.currency = userCurrency;
-        console.log('예약셋 formDataState',formDataState );
-        setPaymentData({
-            bookReservation: bookData.reservation,
-            bookRoom: bookData.room,
-            formDataState: formDataState,
-            price: Number(totalPrice.toFixed(2)),
-        });
-        setPortOneModal(true);
+        // if (!isChecked1 || !isChecked2 || !isChecked3) {
+        //     alert('필수 약관에 동의해주세요.');
+        //     return;
+        // }
+        // formDataState.currency = userCurrency;
+        // console.log('예약셋 formDataState',formDataState );
+        // setPaymentData({
+        //     bookReservation: bookData.reservation,
+        //     bookRoom: bookData.room,
+        //     formDataState: formDataState,
+        //     price: Number(totalPrice.toFixed(2)),
+        // });
     };
 
-    // 결제 진행 상태
-    const [paymentStatus, setPaymentStatus] = useState({
-        status: "IDLE",
-    });
+
     // 페이먼트ID 생성
     const generateRandom7Digits = () => {
         // 0부터 9999999까지의 숫자 중 하나를 랜덤으로 뽑고, 앞에 0이 있으면 채워서 길이를 7자리로 맞춤
@@ -151,19 +160,11 @@ export default function GuestReservationScreen() {
             return;
         }
 
-        setPaymentStatus({ status: "PENDING" });
         const today = dayjs().format('YYYYMMDD');
         const paymentId = today + generateRandom7Digits();
         console.log('paymentId만듬',paymentId);
 
-        // const storeId = "store-"+process.env.PORT_ONE_STORE_ID;
-        // const channelKey = "channel-key-"+process.env.PORT_ONE_CHANNEL_KEY;
-        // console.log('storeId',storeId);
-        // console.log('channelKey',channelKey);
-
         const payment = await PortOne.requestPayment({
-            // storeId: storeId,
-            // channelKey: channelKey,
             storeId: "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85",
             channelKey: "channel-key-14a7fa72-0d06-4bb5-9502-f721b189eb86",
             // channelKey: "channel-key-7f9f2376-d742-40f7-9f6f-9ea74579cbe1",
@@ -177,168 +178,44 @@ export default function GuestReservationScreen() {
                 customerId: formDataState.phone, // 변경해야함
                 fullName: formDataState.name,
                 phoneNumber: formDataState.phone,
-                email: formDataState.email,
-                address: {
-                    addressLine1: bookData.room.address,
-                    addressLine2: "", // 상세주소 없긴해
-                    country: "COUNTRY_KR"
-                }
+                email: formDataState.email
             },
-            redirectUrl: window.location.origin + "/success.html",
-            // redirectUrl: window.location.origin + "/success",
         });
 
         if (payment) {
-            if (payment.code !== undefined) {
-                setPaymentStatus({
-                    status: "FAILED",
-                })
-                return
-            }
+            // 결제 후 검증
+            const verifyPaymentResponse = await verifyPayment(payment.paymentId);
+            const verifyPaymentResponseJson = await verifyPaymentResponse.json();
+            console.log('결제 후 검증 verifyPaymentResponseJson',verifyPaymentResponseJson);
 
-            const completeResponse = await confirmPayment(payment.paymentId, bookData.reservation.id.toString());
-            const paymentComplete = await completeResponse.json();
-            console.log('completeResponse',completeResponse);
-            console.log('paymentComplete',paymentComplete);
+            if (verifyPaymentResponseJson.status === "PAID") {
+                /* 결제 성공 */
+                setPaymentSuccessResponse(verifyPaymentResponseJson);
+                try {
+                    const completeResponse = await confirmPayment(payment.paymentId, bookData.reservation.id.toString());
+                    const paymentComplete = await completeResponse.json();
 
-            if (paymentComplete.success) {
-                setPaymentStatus({
-                    status: "PAID",
-                })
+                    if (!paymentComplete.success) {
+                        console.log('결제 상태 업데이트 중 오류');
+                        alert('결제 상태 업데이트 중 오류가 발생했습니다.');
+                        return;
+                    }
+                    setPaymentSuccess(true);
+                } catch (e) {
+                    console.error('결제 상태 업데이트 중 오류', e);
+                }
             } else {
-                setPaymentStatus({
-                    status: "FAILED",
-                })
+                /* 결제 실패 */
+                setPaymentFailedResponse(verifyPaymentResponseJson);
+                console.log('결제 실패');
             }
+
+            setPortOneModal(true);
         }
 
     };
 
-    /*
-        const handlePayment = async () => {
-            try {
-                const payment = await getFgkey();
-                const fgkey = payment.fgkey;
-                const params = payment.params;
-                const issuer_country = payment.issuer_country;
 
-                const requestData: Eximbay.PaymentRequest = {
-                    payment: {
-                        transaction_type: "PAYMENT",
-                        order_id: "테스트 주문번호",
-                        currency: "KRW",
-                        amount: totalPrice,
-                        lang: "KR",
-                    },
-                    merchant: {
-                        mid: "1849705C64",
-                    },
-                    buyer: {
-                        name: formDataState.name, // 수정: formData -> formDataState
-                        email: formDataState.email, // 수정: formData -> formDataState
-                    },
-                    url: {
-                        return_url: "http://localhost:8081/",
-                        status_url: "example://status"
-                    },
-                    product: [{
-                        name: params.name,
-                        quantity: params.quantity,
-                        unit_price: params.unit_price,
-                        link: params.link,
-                    }],
-                    settings: {
-                        issuer_country: issuer_country,
-                    },
-                };
-
-                if (window.EXIMBAY) {
-                    window.EXIMBAY.request_pay(
-                        {fgkey, ...requestData},
-                        (response: Eximbay.PaymentResponse) => {
-                            if (response.status === "SUCCESS") {
-                                alert("결제 성공!");
-                            } else {
-                                alert(`결제 실패: ${response.message}`);
-                            }
-                        }
-                    );
-                } else {
-                    console.error("Eximbay 스크립트가 로드되지 않았습니다.");
-                }
-            } catch (error) {
-                console.error("결제 요청 중 오류 발생:", error);
-                alert("결제 요청에 실패했습니다.");
-            }
-        };
-
-        const getFgkey = async () => {
-            const apiUrl = "https://api-test.eximbay.com/v1/payments/ready";
-            const mid = "1849705C64"; // 엑심베이에서 발급받은 상점ID
-            const params = {
-                product: JSON.stringify({
-                    name: room?.title,
-                    quantity: 1,
-                    unit_price: totalPrice,
-                    link: `http://localhost:8081/detail/${roomId}/${locale}`,
-                }),
-                issuer_country: selectedPayment,
-            };
-
-            try {
-                const productData = JSON.parse(params.product);
-                const requestBody: Eximbay.PaymentRequest = {
-                    payment: {
-                        transaction_type: "PAYMENT",
-                        order_id: "테스트 주문번호",
-                        currency: "KRW",
-                        amount: totalPrice,
-                        lang: "KR",
-                    },
-                    merchant: {
-                        mid: mid,
-                    },
-                    buyer: {
-                        name: formDataState.name, // 수정: formData -> formDataState
-                        email: formDataState.email, // 수정: formData -> formDataState
-                    },
-                    url: {
-                        return_url: "http://localhost:8081/",
-                        status_url: "example://status"
-                    },
-                    product: [{
-                        name: productData.name,
-                        quantity: productData.quantity,
-                        unit_price: productData.unit_price,
-                        link: productData.link,
-                    }],
-                    settings: {
-                        issuer_country: params.issuer_country,
-                    },
-                };
-
-                const response = await axios.post(
-                    apiUrl,
-                    requestBody,
-                    {
-                        headers: {
-                            'Authorization': 'Basic dGVzdF8xODQ5NzA1QzY0MkMyMTdFMEIyRDo=',
-                            "Content-Type": "application/json",
-                        },
-                    }
-                );
-                const data = response.data;
-                return {
-                    fgkey: data.fgkey,
-                    params: productData,
-                    issuer_country: params.issuer_country,
-                };
-            } catch (error: any) {
-                throw error;
-            }
-        };
-
-    * */
     interface PaymentOptionProps {
         id: string;
         label: string;
@@ -371,7 +248,7 @@ export default function GuestReservationScreen() {
     }
 
     useEffect(() => {
-        if (slideIsOpen) {
+        if (slideIsOpen || portOneModal) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'auto';
@@ -380,7 +257,7 @@ export default function GuestReservationScreen() {
         return () => {
             document.body.style.overflow = 'auto';
         };
-    }, [slideIsOpen]);
+    }, [slideIsOpen, portOneModal]);
 
     return (
         <div className="my-8 relative overflow-visible max-w-[1200px] mx-auto pb-24 md:pb-0">
@@ -767,46 +644,42 @@ export default function GuestReservationScreen() {
                     </div>
                 </div>
             )}
-            {/*기존 토스페이먼츠 모달*/}
-            {/*<Modal*/}
-            {/*    isOpen={showToss}*/}
-            {/*    onRequestClose={() => setShowToss(false)}*/}
-            {/*    contentLabel="토스 결제 모달"*/}
-            {/*    bodyOpenClassName="toss-modal"*/}
-            {/*    style={{*/}
-            {/*        content: {*/}
-            {/*            width: "600px",*/}
-            {/*            maxWidth: "90%",*/}
-            {/*            margin: "auto",*/}
-            {/*            inset: "50% 0px -200px 50%",*/}
-            {/*            transform: "translate(-50%, -50%)",*/}
-            {/*            borderRadius: "8px",*/}
-            {/*            overflowY: "auto",*/}
-            {/*        },*/}
-            {/*        overlay: {*/}
-            {/*            backgroundColor: "rgba(0, 0, 0, 0.5)",*/}
-            {/*            zIndex: 9999,*/}
-            {/*        },*/}
-            {/*    }}*/}
-            {/*>*/}
-            {/*    <div className="flex justify-end">*/}
-            {/*        <button*/}
-            {/*            onClick={() => setShowToss(false)}*/}
-            {/*            className="px-4 py-1">*/}
-            {/*            <FontAwesomeIcon icon={faXmark} />*/}
-            {/*        </button>*/}
-            {/*    </div>*/}
-            {/*    <CheckoutPage paymentData={paymentData as PaymentData}/>*/}
-            {/*</Modal>*/}
-            
-            {/* 포트원 이니시스 */}
-            {/*{paymentData && (*/}
-            {/*    <CheckoutPage*/}
-            {/*        paymentData={paymentData}*/}
-            {/*        modalOpen={portOneModal}*/}
-            {/*        modalClose={() => setPortOneModal(false)}*/}
-            {/*    />*/}
-            {/*)}*/}
+
+            {portOneModal && (
+                <Modal
+                    isOpen={portOneModal}
+                    onRequestClose={() => setPortOneModal(false)}
+                    shouldCloseOnOverlayClick={false}   // 바깥영역 클릭 막기
+                    shouldCloseOnEsc={false}            // Esc 닫기 막기 (선택)
+                    style={{
+                        overlay: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            zIndex: 10000,           // 헤더(2000)보다, 리모컨(100)보다 훨씬 크게
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        },
+                        content: {
+                            position: 'relative',    // overlay가 flex container가 되므로 굳이 fixed 안 해도 중앙 정렬됩니다.
+                            inset: 'auto',           // 기본 inset(0) 제거
+                            border: 'none',
+                            background: 'transparent',
+                            padding: '0',
+                            overflow: 'visible',
+                            // 필요하다면 content에도 zIndex 지정 가능
+                            zIndex: 10001,
+                        },
+                    }}
+                >
+                    {(paymentSuccess) ? (
+                        /* 결제 성공 모달 */
+                        <SuccessPage res={paymentSuccessResponse!}/>
+                    ) : (
+                        /* 결제 실패 모달 */
+                        <FailPage res={paymentFailedResponse!} modalClose={() => setPortOneModal(false)}/>
+                    )}
+                </Modal>
+            )}
         </div>
 
     );

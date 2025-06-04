@@ -22,7 +22,7 @@ import ProtectedHostRoute from "./api/ProtectedHostRoute";
 import ProtectedGuestRoute from "./api/ProtectedGuestRoute";
 import KakaoLoginCallback from "./components/util/KakaoLoginCallback";
 import SocialJoinScreen from "./components/screens/SocialJoinScreen";
-import SuccessPage from "./components/toss/SuccessPage";
+import SuccessPage from "./components/pay/SuccessPage";
 import {useHeaderStore} from "./components/stores/HeaderStore";
 import {useHostHeaderBtnVisibility} from "./components/stores/HostHeaderBtnStore";
 import BottomNavigator from "./components/navigator/BottomNavigator";
@@ -31,7 +31,7 @@ import LoginPage from "./components/screens/link/LoginPage";
 import LineLoginCallback from "./components/util/LineLoginCallback";
 import Main from "./components/screens/Main";
 import MobileHostHeader from "./components/screens/MobileHostHeader";
-import PortOnePaymentSuccess from "./components/util/PortOnePaymentSuccess";
+import FailPage from "./components/pay/FailPage";
 
 const queryClient = new QueryClient();
 
@@ -99,8 +99,8 @@ function AppContent() {
                             <Route path="/chat" element={<UserMessage/>}/>
                             <Route path="/detail/:roomId/:locale/reservation" element={<GuestReservationSetScreen/>}/>
                             <Route path="/detail/:roomId/:locale/reservation/payment" element={<GuestReservationScreen/>}/>
-                            <Route path="/success" element={<PortOnePaymentSuccess/>}/>
-                            {/*<Route path="/success" element={<SuccessPage/>}/>*/}
+                            <Route path="/success" element={<SuccessPage/>}/>
+                            <Route path="/fail" element={<FailPage/>}/>
                             <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
                         </Route>
                     </Route>
