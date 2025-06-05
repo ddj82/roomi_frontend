@@ -430,6 +430,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
         // 체크아웃 처리
         console.log('체크아웃 처리');
     };
+
     // MyReservationDetails 컴포넌트 내부, 상단에 상태 추가
     // 중도 퇴실 모달을 위한 상태 추가
     const [showDateModal, setShowDateModal] = useState(false);

@@ -440,13 +440,6 @@ export const updateCurrency = async (currency: string) => {
 };
 
 // 결제 완료 API
-// export const confirmPayment = async (paymentKey: string, orderId: string, amount: number) => {
-//     return request(`/payment/confirm`, true, 'POST', {
-//         paymentKey: paymentKey,
-//         orderId: orderId,
-//         amount: amount,
-//     });
-// };
 export const confirmPayment = async (paymentId: string, orderId: string) => {
     return request(`/payment/confirm`, true, 'POST', {
         paymentId: paymentId,
@@ -454,12 +447,19 @@ export const confirmPayment = async (paymentId: string, orderId: string) => {
     });
 };
 
-// 결제 후 검증
+// 결제(가상계좌 발급) 후 검증 API
 export const verifyPayment = async (paymentId: string) => {
     return request(`/payment/verify`, true, 'POST', {
         paymentId: paymentId,
     });
 };
+
+// 가상계좌 발급 확인 API
+export const getVirtualAccountInfo = async (paymentId: string) => {
+    return request(`/payment/virtual-account`, true, 'POST', {
+        paymentId: paymentId,
+    });
+}
 
 // 호스트 방 추가 API
 export const createRoom = async (roomFormData: RoomFormData, detailImageFiles: File[]) => {

@@ -1,4 +1,6 @@
 // 공통 하위 타입들
+import SuccessVirtualAccountPage from "../components/pay/SuccessVirtualAccountPage";
+
 interface Channel {
     type: string;
     id: string;
@@ -143,4 +145,18 @@ export interface PaymentSuccessResponse {
     pgResponse: string;       // 내부 JSON 문자열
     receiptUrl: string;
     disputes: any[];          // 분쟁 내역이 없거나 구조가 다양할 수 있으므로 any[]로 처리
+}
+
+
+// 가상 계좌 발급 성공 인터페이스
+export interface SuccessVirtualAccountResponse {
+    accountNumber: string;
+    accountType: string;
+    bank: string;
+    amount: Amount;
+    expiredAt: string;
+    issuedAt: string;
+    remitteeName: string;
+    remitterName: string;
+    type: string;
 }

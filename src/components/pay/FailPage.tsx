@@ -41,13 +41,6 @@ const FailPage = ({res, modalClose}: { res: PaymentFailedResponse; modalClose: (
                 <p className="mt-6 text-sm text-gray-600 italic">
                     문제가 지속되면 다른 결제 수단을 시도하거나 고객센터에 문의해주세요.
                 </p>
-                {/*<button*/}
-                {/*    id="openAppButton"*/}
-                {/*    className="mt-5 bg-roomi hover:bg-roomi-3 text-white py-2 px-6 rounded text-sm"*/}
-                {/*    onClick={() => navigate('/myPage')}*/}
-                {/*>*/}
-                {/*    마이페이지로 이동*/}
-                {/*</button>*/}
             </div>
         </div>
     );
