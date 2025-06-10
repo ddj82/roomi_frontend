@@ -14,8 +14,8 @@
         const userCode = params.get('userCode') || 'imp01154410';  // ✅ 언니 가맹점 코드
         const merchantUid = params.get('merchantUid') || `roomi_cert_${Date.now()}`;
         const company = params.get('company') || 'Roomi';
-        const successUrl = params.get('successUrl') || 'https://roomi.co.kr/verification-success.html';
-        const failUrl = params.get('failUrl') || 'https://roomi.co.kr/verification-fail.html';
+        const successUrl = params.get('successUrl') || 'com.myno1214.roomi://verification-success';
+        const failUrl = params.get('failUrl') || 'com.myno1214.roomi://verification-fail';
 
         const IMP = window.IMP;
         IMP.init(userCode);
@@ -28,23 +28,23 @@
             carrier: '',  // 사용자 선택
             name: '',     // 사용자 입력
             phone: '' ,    // 사용자 입력
-            m_redirect_url : 'https://roomi.co.kr/verification-result.html', // 모바일 리다이렉트 URL
+            redirect_url : 'com.myno1214.roomi://verification-done', // 모바일 리다이렉트 URL
         }, function (rsp) {
             console.log('📱 본인인증 결과:', rsp);
 
-            if (rsp.success) {
-                const redirectUrl = new URL(successUrl);
-                redirectUrl.searchParams.set('success', 'true');
-                redirectUrl.searchParams.set('imp_uid', rsp.imp_uid);
-                redirectUrl.searchParams.set('merchant_uid', rsp.merchant_uid);
-                location.href = redirectUrl.toString();
-            } else {
-                const redirectUrl = new URL(failUrl);
-                redirectUrl.searchParams.set('success', 'false');
-                redirectUrl.searchParams.set('error_msg', rsp.error_msg || '인증 실패');
-                redirectUrl.searchParams.set('merchant_uid', rsp.merchant_uid || merchantUid);
-                location.href = redirectUrl.toString();
-            }
+            // if (rsp.success) {
+            //     const redirectUrl = new URL(successUrl);
+            //     redirectUrl.searchParams.set('success', 'true');
+            //     redirectUrl.searchParams.set('imp_uid', rsp.imp_uid);
+            //     redirectUrl.searchParams.set('merchant_uid', rsp.merchant_uid);
+            //     location.href = redirectUrl.toString();
+            // } else {
+            //     const redirectUrl = new URL(failUrl);
+            //     redirectUrl.searchParams.set('success', 'false');
+            //     redirectUrl.searchParams.set('error_msg', rsp.error_msg || '인증 실패');
+            //     redirectUrl.searchParams.set('merchant_uid', rsp.merchant_uid || merchantUid);
+            //     location.href = redirectUrl.toString();
+            // }
         });
     })();
 </script>

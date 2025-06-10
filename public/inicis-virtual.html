@@ -20,7 +20,6 @@
         debugDiv.innerHTML += `[${timestamp}] ${message}<br>`;
         console.log(`[${timestamp}] ${message}`);
     }
-
     const urlParams = new URLSearchParams(window.location.search);
     const params = {
         orderId: urlParams.get('orderId') || `order_${Date.now()}`,
