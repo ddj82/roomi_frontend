@@ -253,14 +253,58 @@ const Header = () => {
         };
     }, [userVisible]);
 
+
+
+    const [headerHeight, setHeaderHeight] = useState(0);
+    const headerContentRef = useRef<HTMLDivElement>(null);
+
+    const getHeaderHeight = () => {
+        if (!isScrolled) return 0; // 기본 상태에서는 스페이서 불필요
+
+        if (isMobile) {
+            return 76; // 모바일 접힌 상태 높이 (여유있게)
+        } else {
+            return hostMode ? 88 : 96; // 웹 접힌 상태 높이 (호스트모드 여부에 따라, 여유있게)
+        }
+    };
+    // 헤더 높이 측정을 위한 useEffect
+    useEffect(() => {
+        const measureHeaderHeight = () => {
+            if (headerContentRef.current) {
+                const height = headerContentRef.current.offsetHeight;
+                setHeaderHeight(height);
+            }
+        };
+
+        // 초기 측정
+        measureHeaderHeight();
+
+        // 창 크기 변경 시 재측정
+        const handleResize = () => {
+            measureHeaderHeight();
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        // isScrolled나 isMobile 상태 변경 시에도 재측정
+        const timeoutId = setTimeout(measureHeaderHeight, 100);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(timeoutId);
+        };
+    }, [isScrolled, isMobile, hostMode, isVisible, isVisibleHostScreen]);
+
+    // 3. 수정된 return 부분
     return (
         <>
-            {/* 스크롤 시 헤더 공간 확보를 위한 스페이서 */}
+            {/* 스크롤 시 헤더 공간 확보를 위한 스페이서 - 계산된 높이 적용 */}
             {isScrolled && (
                 <div
                     className="w-full"
                     style={{
-                        height: isMobile ? '60px' : '80px',
+                        height: `${getHeaderHeight()}px`,
+                        transition: 'height 0.3s ease-in-out'
                     }}
                 />
             )}
@@ -317,8 +361,8 @@ const Header = () => {
                                             ref={searchBarRef}
                                             onClick={openSearchModal}
                                             className="h-10 w-full flex items-center justify-between
-                                           bg-white/90 backdrop-blur-sm cursor-pointer
-                                           transition-all duration-300 hover:bg-white/95"
+                                       bg-white/90 backdrop-blur-sm cursor-pointer
+                                       transition-all duration-300 hover:bg-white/95"
                                             style={{
                                                 borderRadius: '9999px',
                                                 boxShadow: '0 2px 8px rgba(167, 97, 97, 0.15)'
@@ -327,12 +371,12 @@ const Header = () => {
                                             <div className="flex items-center px-3 flex-1">
                                                 <MapPin className="w-4 h-4 text-black mr-2"/>
                                                 <span className="text-gray-500 text-xs truncate">
-                                                {selectedLocation || t('어디로 여행 가세요?')}
-                                            </span>
+                                            {selectedLocation || t('어디로 여행 가세요?')}
+                                        </span>
                                             </div>
                                             <button
                                                 className="w-8 h-8 m-1 flex items-center justify-center
-                                               bg-roomi hover:bg-roomi-3 rounded-full"
+                                           bg-roomi hover:bg-roomi-3 rounded-full"
                                                 style={{
                                                     boxShadow: '0 2px 4px rgba(167, 97, 97, 0.2)'
                                                 }}
@@ -361,8 +405,8 @@ const Header = () => {
                                                     ref={searchBarRef}
                                                     onClick={openSearchModal}
                                                     className="h-12 w-full flex items-center justify-between
-                                                       bg-white/90 backdrop-blur-sm cursor-pointer
-                                                       transition-all duration-300 hover:bg-white/95"
+                                                   bg-white/90 backdrop-blur-sm cursor-pointer
+                                                   transition-all duration-300 hover:bg-white/95"
                                                     style={{
                                                         borderRadius: '9999px',
                                                         boxShadow: '0 2px 8px rgba(167, 97, 97, 0.15)'
@@ -371,12 +415,12 @@ const Header = () => {
                                                     <div className="flex items-center px-4 flex-1">
                                                         <MapPin className="w-5 h-5 text-black mr-2"/>
                                                         <span className="text-gray-500 text-sm truncate">
-                                                            {selectedLocation || t('어디로 여행 가세요?')}
-                                                        </span>
+                                                        {selectedLocation || t('어디로 여행 가세요?')}
+                                                    </span>
                                                     </div>
                                                     <button
                                                         className="w-10 h-10 m-1 flex items-center justify-center
-                                                                bg-roomi hover:bg-roomi-3 rounded-full"
+                                                            bg-roomi hover:bg-roomi-3 rounded-full"
                                                         style={{
                                                             boxShadow: '0 2px 4px rgba(167, 97, 97, 0.2)'
                                                         }}
@@ -646,21 +690,21 @@ const Header = () => {
                                             ref={searchBarRef}
                                             onClick={openSearchModal}
                                             className="md:h-16 h-12 w-full max-w-3xl text-[11px] flex items-center justify-between
-                                           bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
-                                           cursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
+                                       bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
+                                       cursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
                                             style={{borderRadius: '9999px', overflow: 'hidden'}}
                                         >
                                             <div className="search-simple-text flex items-center px-4 py- flex-1">
                                                 <MapPin className="w-6 h-6 text-black"/>
                                                 <span className="text-gray-500 truncate">
-                                                {t('어디로 여행 가세요?')}
-                                            </span>
+                                            {t('어디로 여행 가세요?')}
+                                        </span>
                                             </div>
 
                                             <button
                                                 className="md:w-12 md:h-12 w-10 h-10 m-2 flex items-center justify-center
-                                               bg-roomi hover:bg-roomi-3 rounded-full shadow-md
-                                               transition-all duration-200 hover:scale-105"
+                                           bg-roomi hover:bg-roomi-3 rounded-full shadow-md
+                                           transition-all duration-200 hover:scale-105"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     performSearch();
@@ -714,7 +758,6 @@ const Header = () => {
                 </div>
             </div>
         </>
-
     );
 };
 

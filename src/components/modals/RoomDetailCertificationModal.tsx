@@ -85,13 +85,15 @@ export default function RoomDetailCertificationModal({visible, onClose, isKorean
         window.IMP.init(userCode);
 
         window.IMP.certification({
+            // imp_uid: userCode,
+            channelKey : "channel-key-4515c7c8-6e49-428d-9628-3ba4a277220e",
             merchant_uid: merchantUid,
             company: 'Roomi',
             min_age: 18,
-            carrier: '',  // 사용자 선택
-            name: '',     // 사용자 입력
-            phone: '',    // 사용자 입력
-            m_redirect_url: window.location.origin + '/verification-result', // 모바일 리다이렉트 URL
+            // carrier: '',  // 사용자 선택
+            // name: '',     // 사용자 입력
+            // phone: '',    // 사용자 입력
+            // m_redirect_url: window.location.origin + '/verification-result', // 모바일 리다이렉트 URL
         }, (rsp: any) => {
             console.log('📱 본인인증 결과:', rsp);
 

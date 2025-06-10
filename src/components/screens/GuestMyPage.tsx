@@ -104,7 +104,7 @@ export default function GuestMyPage() {
                 <div className="my-2 mx-4">
                     <div className="w-full">
                         <div className="border-t border-gray-300 pt-3 px-6">
-                            <div className="font-bold text-base mb-2">{t("나의 거래")}</div>
+                            <div className=" text-base mb-2">{t("나의 거래")}</div>
                             <div className="">
                                 <div className="my-1">
                                     <button
@@ -131,7 +131,7 @@ export default function GuestMyPage() {
                             </div>
                         </div>
                         <div className="border-t border-gray-300 pt-3 mt-3 px-6">
-                            <div className="font-bold text-base mb-2">{t("기본 설정")}</div>
+                            <div className=" text-base mb-2">{t("기본 설정")}</div>
                             <div className="">
                                 <div className="my-1">
                                     <button
@@ -157,7 +157,7 @@ export default function GuestMyPage() {
                             </div>
                         </div>
                         <div className="border-t border-gray-300 pt-3 mt-3 px-6">
-                            <div className="font-bold text-base mb-2">{t("고객 지원")}</div>
+                            <div className=" text-base mb-2">{t("고객 지원")}</div>
                             <div>
                                 <div className="my-1">
                                     <button
@@ -186,7 +186,7 @@ export default function GuestMyPage() {
                             </div>
                         </div>
                         <div className="border-t border-gray-300 pt-3 mt-3 px-6">
-                            <div className="font-bold text-base mb-2">{t("계정 설정")}</div>
+                            <div className=" text-base mb-2">{t("계정 설정")}</div>
                             <div>
                                 <div className="my-1">
                                     <button
@@ -252,7 +252,7 @@ export default function GuestMyPage() {
                 )}
 
                 {/* 나의 거래 섹션 */}
-                <div className="font-bold text-lg mb-3">{t("나의 거래")}</div>
+                <div className=" text-lg mb-3">{t("나의 거래")}</div>
                 <div className="grid grid-cols-1 gap-3 mb-6">
                     <button
                         className="flex items-center p-4 bg-gray-50 rounded-lg"
@@ -275,7 +275,7 @@ export default function GuestMyPage() {
                 </div>
 
                 {/* 기본 설정 섹션 */}
-                <div className="font-bold text-lg mb-3">{t("기본 설정")}</div>
+                <div className=" text-lg mb-3">{t("기본 설정")}</div>
                 <div className="grid grid-cols-1 gap-3 mb-6">
                     <button
                         className="flex items-center p-4 bg-gray-50 rounded-lg"
@@ -298,7 +298,7 @@ export default function GuestMyPage() {
                 </div>
 
                 {/* 고객 지원 섹션 */}
-                <div className="font-bold text-lg mb-3">{t("고객 지원")}</div>
+                <div className=" text-lg mb-3">{t("고객 지원")}</div>
                 <div className="grid grid-cols-1 gap-3 mb-6">
                     <button
                         className="flex items-center p-4 bg-gray-50 rounded-lg"
@@ -321,7 +321,7 @@ export default function GuestMyPage() {
                 </div>
 
                 {/* 계정 설정 섹션 */}
-                <div className="font-bold text-lg mb-3">{t("계정 설정")}</div>
+                <div className=" text-lg mb-3">{t("계정 설정")}</div>
                 <div className="grid grid-cols-1 gap-3">
                     <button
                         className="flex items-center p-4 bg-gray-50 rounded-lg"
@@ -347,7 +347,7 @@ export default function GuestMyPage() {
             <div className="guest-mypage-right md:w-3/4 lg:w-4/5 hidden md:flex flex-col scrollbar-hidden">
                 {/* 제목 고정 */}
                 <div className="px-8 pt-6 pb-2">
-                    <h2 className="text-2xl font-bold">{selectedMenu === '' ? '예약 내역' : selectedMenu}</h2>
+                    <h2 className="text-2xl ">{selectedMenu === '' ? '예약 내역' : selectedMenu}</h2>
                 </div>
 
                 {/* 아래 내용만 스크롤되게 */}
@@ -367,7 +367,7 @@ export default function GuestMyPage() {
                                 onClick={() => handleSetSelectedMenu('')}>
                             <FontAwesomeIcon icon={faArrowLeft} className="w-5 h-5"/>
                         </button>
-                        <h2 className="text-xl font-bold">{selectedMenu}</h2>
+                        <h2 className="text-xl ">{selectedMenu}</h2>
                     </div>
                     <div className="flex-1 overflow-y-auto p-4">
                         {/* 메뉴 내용 표시 */}
