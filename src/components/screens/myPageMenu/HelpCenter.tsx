@@ -92,9 +92,9 @@ export default function HelpCenter() {
     return (
         <div className="p-4 md:px-8 max-w-3xl mx-auto">
             <div className="mb-8 flex flex-col gap-2">
-                <h3 className="text-lg font-bold mb-2">카카오톡으로 문의하기</h3>
+                <h3 className="text-lg font-bold mb-2">{t('카카오톡으로 문의하기')}</h3>
                 <div className="text-xs">
-                    빠른 응답이 필요하시면 카카오톡 채널로 문의해주세요.
+                    {t('빠른 응답이 필요하시면 카카오톡 채널로 문의 해주세요.')}
                 </div>
                 <div>
                     <button
@@ -103,7 +103,7 @@ export default function HelpCenter() {
                         onClick={handleKakaoChannelBtn}
                     >
                         <FontAwesomeIcon icon={faComments}/>
-                        카카오톡 채널 열기
+                        {t('카카오톡 채널 열기')}
                     </button>
                 </div>
                 <div>
@@ -119,7 +119,7 @@ export default function HelpCenter() {
                 </div>
             </div>
             <div className="mb-8 flex flex-col gap-2">
-                <h3 className="text-lg font-bold mb-2">이메일로 문의하기</h3>
+                <h3 className="text-lg font-bold mb-2">{t('이메일로 문의하기')}</h3>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-1">
                     <div className="relative">
                         <div className="absolute left-3.5 top-2 pointer-events-none">
@@ -130,7 +130,7 @@ export default function HelpCenter() {
                             onChange={(e) => handleChange('name', e.target.value)}
                             name="name"
                             id="name"
-                            placeholder="이름"
+                            placeholder={t('이름')}
                             className="w-full p-2 pl-10 border rounded focus:outline-none"
                         />
                     </div>
@@ -144,7 +144,7 @@ export default function HelpCenter() {
                             onChange={(e) => handleChange('email', e.target.value)}
                             name="email"
                             id="email"
-                            placeholder="이메일"
+                            placeholder={t('이메일')}
                             className="w-full p-2 pl-10 border rounded focus:outline-none"
                         />
                     </div>
@@ -158,7 +158,7 @@ export default function HelpCenter() {
                             onChange={(e) => handleChange('title', e.target.value)}
                             name="title"
                             id="title"
-                            placeholder="제목"
+                            placeholder={t('제목')}
                             className="w-full p-2 pl-10 border rounded focus:outline-none"
                         />
                     </div>
@@ -171,7 +171,7 @@ export default function HelpCenter() {
                             onChange={(e) => handleChange('content', e.target.value)}
                             name="content"
                             id="content"
-                            placeholder="문의 내용"
+                            placeholder={t('문의 내용')}
                             cols={30}
                             rows={6}
                             className="w-full p-2 pl-10 border border-gray-300 rounded focus:outline-none resize-none"></textarea>
@@ -181,23 +181,23 @@ export default function HelpCenter() {
                         type="submit"
                         className="bg-roomi rounded text-white font-bold p-2"
                     >
-                        문의하기
+                        {t('문의하기')}
                     </button>
                 </form>
             </div>
             <div className="flex flex-col gap-2">
-                <h3 className="text-lg font-bold mb-2">{hostMode && '호스트 '}지원 정보</h3>
+                <h3 className="text-lg font-bold mb-2">{t('지원 정보')}</h3>
                 <div className="flex gap-8">
                     <div className="flex_center text-gray-500"><FontAwesomeIcon icon={faClock} /></div>
                     <div>
-                        <div>운영 시간</div>
-                        <div className="text-gray-500 text-sm">평일 09:00 - 18:00 (공휴일 제외)</div>
+                        <div>{t('운영 시간')}</div>
+                        <div className="text-gray-500 text-sm">{t('평일')} 09:00 - 18:00 ({t('공휴일 제외')})</div>
                     </div>
                 </div>
                 <div className="flex gap-8">
                     <div className="flex_center text-gray-500"><FontAwesomeIcon icon={faEnvelope}/></div>
                     <div>
-                        <div>{hostMode && '호스트 '}지원 이메일</div>
+                        <div>{t('지원 이메일')}</div>
                         <div className="text-gray-500 text-sm">help@roomi.co.kr</div>
                     </div>
                 </div>

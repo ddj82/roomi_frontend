@@ -81,8 +81,8 @@ export default function NotificationSet() {
                     >
                         <div className="flex items-center justify-between">
                             <div className="flex-1">
-                                <h4 className="font-bold mb-1">{option.title}</h4>
-                                <p className="text-xs text-gray-500">{option.description}</p>
+                                <h4 className="font-bold mb-1">{t(option.title)}</h4>
+                                <p className="text-xs text-gray-500">{t(option.description)}</p>
                             </div>
                             <div className="ml-4">
                                 <ToggleButton

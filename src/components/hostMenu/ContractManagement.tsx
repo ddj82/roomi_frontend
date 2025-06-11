@@ -337,7 +337,7 @@ const ContractManagement = () => {
                                                 }}
                                                 role="menuitem"
                                             >
-                                                현재 예약
+                                                {t('현재 예약')}
                                             </div>
                                             <div
                                                 className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
@@ -348,7 +348,7 @@ const ContractManagement = () => {
                                                 }}
                                                 role="menuitem"
                                             >
-                                                지난 예약
+                                                {t('지난 예약')}
                                             </div>
                                         </div>
                                     )}
