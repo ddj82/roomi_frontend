@@ -45,9 +45,6 @@ const Header = () => {
     const {authToken} = useAuthStore();
     const isVisible = useHeaderBtnVisibility();
     const isVisibleHostScreen = useHostHeaderBtnVisibility();
-    const dateRef = useRef(null);
-    const locationRef = useRef(null);
-    const guestsRef = useRef(null);
     const {startDate, endDate,} = useDateStore();
     const {guestCount, setGuestCount} = useGuestsStore();
     const {selectedLocation, setSelectedLocation} = useLocationStore();
@@ -64,49 +61,6 @@ const Header = () => {
     const [activeCard, setActiveCard] = useState<ActiveCardType>('location');
     const searchBarRef = useRef<HTMLDivElement>(null);
     const modalRef = useRef<HTMLDivElement>(null);
-
-    // 스크롤 상태 관리 추가
-    const [isScrolled, setIsScrolled] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
-    const headerRef = useRef<HTMLDivElement>(null);
-
-    // 화면 크기와 스크롤 감지
-    useEffect(() => {
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768);
-        };
-
-        const handleScroll = () => {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            // 서치바 영역까지 스크롤했을 때 헤더 변경 (약 200px 정도)
-            if (isMobile) {
-                const searchBarThreshold = 170;
-                setIsScrolled(scrollTop > searchBarThreshold);
-                console.log('scrollTop',scrollTop);
-                console.log('scrollTop > searchBarThreshold',scrollTop > searchBarThreshold);
-            } else {
-                const searchBarThreshold = 200;
-                setIsScrolled(scrollTop > searchBarThreshold);
-            }
-        };
-
-        const handleResize = () => {
-            checkMobile();
-        };
-
-        // 초기 설정
-        checkMobile();
-        handleScroll();
-
-        // 이벤트 리스너 등록
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        window.addEventListener('resize', handleResize, { passive: true });
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -255,472 +209,287 @@ const Header = () => {
 
 
 
-    const [headerHeight, setHeaderHeight] = useState(0);
-    const headerContentRef = useRef<HTMLDivElement>(null);
 
-    const getHeaderHeight = () => {
-        if (!isScrolled) return 0; // 기본 상태에서는 스페이서 불필요
 
-        if (isMobile) {
-            return 76; // 모바일 접힌 상태 높이 (여유있게)
-        } else {
-            return hostMode ? 88 : 96; // 웹 접힌 상태 높이 (호스트모드 여부에 따라, 여유있게)
-        }
-    };
-    // 헤더 높이 측정을 위한 useEffect
+    // 헤더 설정
+    const [hasReached, setHasReached] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
     useEffect(() => {
-        const measureHeaderHeight = () => {
-            if (headerContentRef.current) {
-                const height = headerContentRef.current.offsetHeight;
-                setHeaderHeight(height);
+        const handleScroll = () => {
+            if (window.innerWidth < 768) {
+                setIsMobile(true);
+                const y = window.scrollY;
+                if (!hasReached && y >= 219) {
+                    setHasReached(true);
+                    console.log('295px 도달 → hasReached = true');
+                } else if (hasReached && y < 219) {
+                    setHasReached(false);
+                    console.log('295px 미만으로 복귀 → hasReached = false');
+                }
+
+            } else {
+                setIsMobile(false);
+                const y = window.scrollY;
+
+                // 아직 322px에 도달하지 않았고, 이제 도달했으면
+                if (!hasReached && y >= 322) {
+                    setHasReached(true);
+                    console.log('322px 도달 → hasReached = true');
+                }
+                // 이미 도달했었고, 다시 322px 아래로 내려오면
+                else if (hasReached && y < 322) {
+                    setHasReached(false);
+                    console.log('322px 미만으로 복귀 → hasReached = false');
+                }
             }
         };
 
-        // 초기 측정
-        measureHeaderHeight();
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [hasReached]);
 
-        // 창 크기 변경 시 재측정
-        const handleResize = () => {
-            measureHeaderHeight();
-        };
+    // 그라데이션 효과
+    const gradientStyle = {
+        background: 'linear-gradient(to top, rgba(255, 236, 236, 0.8) 0%, rgba(255, 236, 236, 0.4) 20%, rgba(255, 255, 255, 0) 100%)'
+    };
 
-        window.addEventListener('resize', handleResize);
-
-        // isScrolled나 isMobile 상태 변경 시에도 재측정
-        const timeoutId = setTimeout(measureHeaderHeight, 100);
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            clearTimeout(timeoutId);
-        };
-    }, [isScrolled, isMobile, hostMode, isVisible, isVisibleHostScreen]);
-
-    // 3. 수정된 return 부분
     return (
         <>
-            {/* 스크롤 시 헤더 공간 확보를 위한 스페이서 - 계산된 높이 적용 */}
-            {isScrolled && (
-                <div
-                    className="w-full"
-                    style={{
-                        height: `${getHeaderHeight()}px`,
-                        transition: 'height 0.3s ease-in-out'
-                    }}
-                />
-            )}
-
             <div
-                className={`border-b border-white transition-all duration-500 ease-in-out ${
-                    isScrolled
-                        ? 'fixed top-0 left-0 right-0 z-[2000]'
-                        : 'relative'
-                }`}
-                style={{
-                    backgroundColor: isScrolled ? 'linear-gradient(to top, rgba(255, 236, 236, 0.8) 0%, rgba(255, 236, 236, 0.4) 20%, rgba(255, 255, 255, 0) 100%)' :'linear-gradient(to top, rgba(255, 236, 236, 0.8) 0%, rgba(255, 236, 236, 0.4) 20%, rgba(255, 255, 255, 0) 100%)',
-                    backdropFilter: isScrolled ? 'blur(12px)' : 'none',
-                    boxShadow: isScrolled
-                        ? '0 4px 6px -1px rgba(167, 97, 97, 0.15), 0 -4px 6px -1px rgba(167, 97, 97, 0.1)'
-                        : 'none',
-                    WebkitBoxShadow: isScrolled
-                        ? '0 4px 6px -1px rgba(167, 97, 97, 0.15), 0 -4px 6px -1px rgba(167, 97, 97, 0.1)'
-                        : 'none',
-                }}
+                className={`h-[387px] bg-white
+                    ${!hasReached && 'hidden'}
+                `}
+            />
+            {/*<div className={`${hasReached && 'h-[65px] bg-white'}`} />*/}
+            <div
+                className={`border-b border-gray-200 
+                    ${hasReached ? 'fixed top-0 left-0 w-full h-20 z-[9999] bg-white' : ''}
+                `}
+                style={hasReached ? {} : gradientStyle}
             >
-                {/* 그라데이션 배경 - 스크롤 시 숨김 */}
-                {!isScrolled && (
-                    <div
-                        className="absolute inset-0"
-                        style={{
-                            background: 'linear-gradient(to top, rgba(255, 236, 236, 0.8) 0%, rgba(255, 236, 236, 0.4) 20%, rgba(255, 255, 255, 0) 100%)'
-                        }}
-                    />
-                )}
+                <div
+                    className={`
+                        h header container mx-auto 
+                        ${hasReached ? 'h-16 my-2' : 'md:mt-8 mt-6'}
+                    `}
+                >
 
-                {/* 메인 콘텐츠 */}
-                <div className={`relative z-10 h header mx-auto ${!isScrolled ? 'container' : 'px-10'}`}>
-                    <div
-                        className={`mx-auto px-[20px] flex flex-col items-center transition-all duration-500 ease-in-out ${
-                            isScrolled ? (isMobile ? 'py-2' : 'py-3') : 'md:mt-8 mt-6'
-                        } ${
-                            !isScrolled ? 'bg-gradient-to-t from-red-50/80 via-red-50/40 to-transparent dark:from-gray-800/80 dark:via-gray-800/40 dark:to-transparent' : ''
-                        }`}
-                        style={{
-                            background: !isScrolled ? 'linear-gradient(to top, rgba(255, 236, 236, 0.8) 0%, rgba(255, 236, 236, 0.4) 20%, rgba(255, 255, 255, 0) 100%)' : ''
-                        }}
-                    >
+                    <div className="mx-auto container md:px-0 px-4">
+                        <div
+                            className={`h top-row flex items-center
+                                ${hasReached ? 'h-16' : 'md:mb-8 mb-6'}
+                            `}
+                        >
+                            {/* 로고 영역 */}
+                            <div className="h logo-container">
+                                <button onClick={handleLogo}>
+                                    <img src="/assets/images/roomi.png" alt="Logo" className="md:h-10 h-6"/>
+                                </button>
+                            </div>
 
-                        {/* 스크롤 상태에 따른 조건부 렌더링 */}
-                        {isScrolled ? (
-                            // 스크롤된 상태의 헤더
-                            <div className="w-full flex items-center justify-between">
-                                {/* 웹: 로고 + 서치바 + 프로필, 모바일: 서치바만 */}
-                                {isMobile ? (
-                                    // 모바일: 서치바만 표시
-                                    <div className="w-full">
-                                        <div
-                                            ref={searchBarRef}
-                                            onClick={openSearchModal}
-                                            className="h-10 w-full flex items-center justify-between
-                                       bg-white/90 backdrop-blur-sm cursor-pointer
-                                       transition-all duration-300 hover:bg-white/95"
-                                            style={{
-                                                borderRadius: '9999px',
-                                                boxShadow: '0 2px 8px rgba(167, 97, 97, 0.15)'
-                                            }}
-                                        >
-                                            <div className="flex items-center px-3 flex-1">
-                                                <MapPin className="w-4 h-4 text-black mr-2"/>
-                                                <span className="text-gray-500 text-xs truncate">
-                                            {selectedLocation || t('어디로 여행 가세요?')}
-                                        </span>
-                                            </div>
+                            {/* 검색창 */}
+                            {((hasReached && !isMobile) && !isHost) && (
+                                <div
+                                    ref={searchBarRef}
+                                    onClick={openSearchModal}
+                                    className="h-12 w-full max-w-3xl text-[11px] flex items-center justify-between
+                                        bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
+                                        ursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
+                                    style={{borderRadius: '9999px', overflow: 'hidden'}}
+                                >
+                                    <div className="search-simple-text flex items-center px-4 py- flex-1">
+                                        <MapPin className="w-6 h-6 text-black mr-2"/>
+                                        <span className="text-gray-500 truncate">
+                                                {t('어디로 여행 가세요?')}
+                                            </span>
+                                    </div>
+
+                                    <button
+                                        className="w-10 h-10 m-2 flex items-center justify-center
+                                                        bg-roomi hover:bg-roomi-3 rounded-full shadow-md
+                                                        transition-all duration-200 hover:scale-105"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            performSearch();
+                                        }}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faSearch}
+                                            className="text-white text-base md:text-lg"
+                                        />
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* 프로필/로그인 영역 */}
+                            <div className="md:mr-4 mr-1.5">
+                                {authToken ? (
+                                    <div className="flex gap-3">
+                                        {/*<div className="flex_center md:text-xs text-xxs">*/}
+                                        {/*    <button*/}
+                                        {/*        type="button"*/}
+                                        {/*        onClick={() => window.location.href = '/main'}*/}
+                                        {/*    >*/}
+                                        {/*        방 등록하러 가기*/}
+                                        {/*    </button>*/}
+                                        {/*</div>*/}
+                                        {isHost && (
+                                            <>
+                                                {hostMode ? (
+                                                    <div className="flex_center md:text-xs text-xxs">
+                                                        <button onClick={handleSetHostMode}
+                                                                className="w-full text-start block px-4 py-2">
+                                                            {t("게스트로 전환")}
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex_center md:text-xs text-xxs">
+                                                        <button onClick={handleSetHostMode}
+                                                                className="w-full text-start block px-4 py-2 ">
+                                                            {t("호스트로 전환")}
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
+                                        <div className="flex_center">
                                             <button
-                                                className="w-8 h-8 m-1 flex items-center justify-center
-                                           bg-roomi hover:bg-roomi-3 rounded-full"
-                                                style={{
-                                                    boxShadow: '0 2px 4px rgba(167, 97, 97, 0.2)'
-                                                }}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    performSearch();
-                                                }}
+                                                type="button"
+                                                className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
                                             >
-                                                <FontAwesomeIcon icon={faSearch} className="text-white text-xs"/>
+                                                <Globe className="w-6 h-6 text-black stroke-[1.3]"/>
                                             </button>
+                                        </div>
+
+
+                                        <div className="flex">
+                                            <div className="relative" ref={dropdownRef}>
+                                                <button
+                                                    className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-roomi-000 text-roomi rounded-full shadow-md"
+                                                    onClick={toggleDropdown}
+                                                >
+                                                    <img src={profileImg} alt="프로필사진"
+                                                         className="rounded-full md:w-10 md:h-10 w-8 h-8"/>
+                                                </button>
+                                                {userVisible && (
+                                                    <div
+                                                        className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg shadow-lg w-40 z-[9000] border border-gray-200">
+                                                        <ul className="py-2 text-sm text-gray-700">
+                                                            <li>
+                                                                {hostMode ? (
+                                                                    <a href="/host/myPage"
+                                                                       className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
+                                                                ) : (
+                                                                    <a href="/myPage"
+                                                                       className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
+                                                                )}
+                                                            </li>
+                                                            <li>
+                                                                {!hostMode && (<a href="/chat"
+                                                                                  className="block px-4 py-2 hover:bg-gray-100/70">{t('메시지')}</a>)}
+                                                            </li>
+                                                            {isHost && (
+                                                                <li>
+                                                                    <button onClick={handleSetHostMode}
+                                                                            className="w-full text-start block px-4 py-2 hover:bg-gray-100/70">
+                                                                        {hostMode ? t("게스트로 전환") : t("호스트로 전환")}
+                                                                    </button>
+                                                                </li>
+                                                            )}
+                                                        </ul>
+                                                        <div className="py-2">
+                                                            <button onClick={handleLogout}
+                                                                    className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/70">
+                                                                {t('로그아웃')}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 ) : (
-                                    // 웹: 로고 + 서치바 + 프로필
-                                    <div className="w-full flex items-center justify-between">
-                                        {/* 로고 */}
-                                        <div className="flex-shrink-0">
-                                            <button onClick={handleLogo}>
-                                                <img src="/assets/images/roomi.png" alt="Logo" className="h-8"/>
+                                    <div className="flex gap-3">
+                                        <div className="flex_center">
+                                            <button
+                                                type="button"
+                                                className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
+                                            >
+                                                <Globe className="w-6 h-6 text-black stroke-[1.3]"/>
                                             </button>
                                         </div>
-
-                                        {!hostMode && (
-                                            <div className="flex-1 max-w-md mx-4">
-                                                <div
-                                                    ref={searchBarRef}
-                                                    onClick={openSearchModal}
-                                                    className="h-12 w-full flex items-center justify-between
-                                                   bg-white/90 backdrop-blur-sm cursor-pointer
-                                                   transition-all duration-300 hover:bg-white/95"
-                                                    style={{
-                                                        borderRadius: '9999px',
-                                                        boxShadow: '0 2px 8px rgba(167, 97, 97, 0.15)'
-                                                    }}
-                                                >
-                                                    <div className="flex items-center px-4 flex-1">
-                                                        <MapPin className="w-5 h-5 text-black mr-2"/>
-                                                        <span className="text-gray-500 text-sm truncate">
-                                                        {selectedLocation || t('어디로 여행 가세요?')}
-                                                    </span>
-                                                    </div>
-                                                    <button
-                                                        className="w-10 h-10 m-1 flex items-center justify-center
-                                                            bg-roomi hover:bg-roomi-3 rounded-full"
-                                                        style={{
-                                                            boxShadow: '0 2px 4px rgba(167, 97, 97, 0.2)'
-                                                        }}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            performSearch();
-                                                        }}
-                                                    >
-                                                        <FontAwesomeIcon icon={faSearch}
-                                                                         className="text-white text-sm"/>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* 프로필/로그인 영역 */}
-                                        <div className="flex-shrink-0 ">
-                                            {authToken ? (
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        type="button"
-                                                        className="w-8 h-8 flex items-center justify-center bg-[#F1F1F1] rounded-full transition duration-200"
-                                                    >
-                                                        <Globe className="w-4 h-4 text-black stroke-[1.3]"/>
-                                                    </button>
-                                                    <div className="relative" ref={dropdownRef}>
-                                                        <button
-                                                            className="w-8 h-8 flex items-center justify-center bg-roomi-000 text-roomi rounded-full"
-                                                            style={{
-                                                                boxShadow: '0 2px 4px rgba(167, 97, 97, 0.2)'
-                                                            }}
-                                                            onClick={toggleDropdown}
-                                                        >
-                                                            <img src={profileImg} alt="프로필사진"
-                                                                 className="rounded-full w-8 h-8"/>
-                                                        </button>
-                                                        {userVisible && (
-                                                            <div
-                                                                className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg w-40 z-[9000] border border-gray-200"
-                                                                style={{
-                                                                    boxShadow: '0 4px 12px rgba(167, 97, 97, 0.15)'
-                                                                }}
-                                                            >
-                                                                <ul className="py-2 text-sm text-gray-700">
-                                                                    <li>
-                                                                        {hostMode ? (
-                                                                            <a href="/host/myPage"
-                                                                               className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
-                                                                        ) : (
-                                                                            <a href="/myPage"
-                                                                               className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
-                                                                        )}
-                                                                    </li>
-                                                                    <li>
-                                                                        {!hostMode && (<a href="/chat"
-                                                                                          className="block px-4 py-2 hover:bg-gray-100/70">{t('메시지')}</a>)}
-                                                                    </li>
-                                                                    {isHost && (
-                                                                        <li>
-                                                                            <button onClick={handleSetHostMode}
-                                                                                    className="w-full text-start block px-4 py-2 hover:bg-gray-100/70">
-                                                                                {hostMode ? t("게스트로 전환") : t("호스트로 전환")}
-                                                                            </button>
-                                                                        </li>
-                                                                    )}
-                                                                </ul>
-                                                                <div className="py-2">
-                                                                    <button onClick={handleLogout}
-                                                                            className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/70">
-                                                                        {t('로그아웃')}
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    {/*<div className="flex_center md:text-xs text-xxs">*/}
-                                                    {/*    <button*/}
-                                                    {/*        type="button"*/}
-                                                    {/*        onClick={() => window.location.href = '/main'}*/}
-                                                    {/*    >*/}
-                                                    {/*        방 등록하러 가기*/}
-                                                    {/*    </button>*/}
-                                                    {/*</div>*/}
-                                                    {isHost && (
-                                                        <>
-                                                            {hostMode ? (
-                                                                <div className="flex_center md:text-xs text-xxs">
-                                                                    <button onClick={handleSetHostMode}
-                                                                            className="w-full text-start block px-4 py-2 hover:bg-gray-100">
-                                                                        {t("게스트로 전환")}
-                                                                    </button>
-                                                                </div>
-                                                            ) : (
-                                                                <div className="flex_center md:text-xs text-xxs">
-                                                                    <button onClick={handleSetHostMode}
-                                                                            className="w-full text-start block px-4 py-2 hover:bg-gray-100">
-                                                                        {t("호스트로 전환")}
-                                                                    </button>
-                                                                </div>
-                                                            )}
-                                                        </>
-                                                    )}
-
-                                                </div>
-                                            ) : (
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        type="button"
-                                                        className="w-8 h-8 flex items-center justify-center bg-[#F1F1F1] rounded-full transition duration-200"
-                                                    >
-                                                        <Globe className="w-4 h-4 text-black stroke-[1.3]"/>
-                                                    </button>
-                                                    <button
-                                                        className="w-8 h-8 flex items-center justify-center bg-[#F1F1F1] rounded-full transition duration-200"
-                                                        onClick={() => setAuthModalVisible(true)}
-                                                    >
-                                                        <User className="w-4 h-4 text-black stroke-[1.3]"/>
-                                                    </button>
-                                                </div>
-                                            )}
+                                        <div>
+                                            <button
+                                                className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
+                                                onClick={() => setAuthModalVisible(true)}
+                                            >
+                                                <User className="w-6 h-6 text-black stroke-[1.3]"/>
+                                            </button>
                                         </div>
                                     </div>
                                 )}
                             </div>
-                        ) : (
-                            // 기본 상태의 헤더
-                            <>
-                                <div className="h top-row md:mb-8 mb-6 flex items-center">
-                                    {/* 로고 영역 */}
-                                    <div className="h logo-container">
-                                        <button onClick={handleLogo}>
-                                            <img src="/assets/images/roomi.png" alt="Logo" className="md:h-10 h-6"/>
-                                        </button>
+                        </div>
+
+                        {/* 호스트 모드가 아닐 때만 텍스트 표시 */}
+                        {!hostMode && (
+                            <div
+                                className={`flex flex-col items-center text-center mb-6 
+                                ${hasReached && 'hidden'}`}
+                            >
+                                <p className="text-roomi text-lg md:text-3xl font-semibold mb-2.5">
+                                    주단위부터 월단위까지, 보증금도 자유롭게
+                                </p>
+                                <p className=" text-xl md:text-3xl font-bold text-[#AF483E]">
+                                    전 세계 게스트와 연결되는 루미
+                                </p>
+                            </div>
+                        )}
+
+                        {/* 서치바 영역 */}
+                        {(isVisible && !hasReached) && (
+                            <div className="h search-bar-container w-full flex justify-center mb-8">
+                                <img
+                                    src="/assets/images/thumbnail.png"
+                                    alt="Roomi 캐릭터"
+                                    className={`h-12 md:h-20 mr-30 md:mr-50 ${hasReached && 'hidden'}`}
+                                />
+                                <div
+                                    ref={searchBarRef}
+                                    onClick={openSearchModal}
+                                    className="md:h-16 h-12 w-full max-w-3xl text-[11px] flex items-center justify-between
+                                                    bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
+                                                    ursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
+                                    style={{borderRadius: '9999px', overflow: 'hidden'}}
+                                >
+                                    <div className="search-simple-text flex items-center px-4 py- flex-1">
+                                        <MapPin className="w-6 h-6 text-black"/>
+                                        <span className="text-gray-500 truncate">
+                                                {t('어디로 여행 가세요?')}
+                                            </span>
                                     </div>
 
-                                    {/* 프로필/로그인 영역 */}
-                                    <div className="md:mr-4 mr-1.5">
-                                        {authToken ? (
-                                            <div className="flex gap-3">
-                                                {/*<div className="flex_center md:text-xs text-xxs">*/}
-                                                {/*    <button*/}
-                                                {/*        type="button"*/}
-                                                {/*        onClick={() => window.location.href = '/main'}*/}
-                                                {/*    >*/}
-                                                {/*        방 등록하러 가기*/}
-                                                {/*    </button>*/}
-                                                {/*</div>*/}
-                                                {isHost && (
-                                                    <>
-                                                        {hostMode ? (
-                                                            <div className="flex_center md:text-xs text-xxs">
-                                                                <button onClick={handleSetHostMode}
-                                                                        className="w-full text-start block px-4 py-2">
-                                                                    {t("게스트로 전환")}
-                                                                </button>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="flex_center md:text-xs text-xxs">
-                                                                <button onClick={handleSetHostMode}
-                                                                        className="w-full text-start block px-4 py-2 ">
-                                                                    {t("호스트로 전환")}
-                                                                </button>
-                                                            </div>
-                                                        )}
-                                                    </>
-                                                )}
-                                                <div className="flex_center">
-                                                    <button
-                                                        type="button"
-                                                        className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
-                                                    >
-                                                        <Globe className="w-6 h-6 text-black stroke-[1.3]"/>
-                                                    </button>
-                                                </div>
-
-
-                                                <div className="flex">
-                                                    <div className="relative" ref={dropdownRef}>
-                                                        <button
-                                                            className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-roomi-000 text-roomi rounded-full shadow-md"
-                                                            onClick={toggleDropdown}
-                                                        >
-                                                            <img src={profileImg} alt="프로필사진"
-                                                                 className="rounded-full md:w-10 md:h-10 w-8 h-8"/>
-                                                        </button>
-                                                        {userVisible && (
-                                                            <div
-                                                                className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg shadow-lg w-40 z-[9000] border border-gray-200">
-                                                                <ul className="py-2 text-sm text-gray-700">
-                                                                    <li>
-                                                                        {hostMode ? (
-                                                                            <a href="/host/myPage"
-                                                                               className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
-                                                                        ) : (
-                                                                            <a href="/myPage"
-                                                                               className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
-                                                                        )}
-                                                                    </li>
-                                                                    <li>
-                                                                        {!hostMode && (<a href="/chat"
-                                                                                          className="block px-4 py-2 hover:bg-gray-100/70">{t('메시지')}</a>)}
-                                                                    </li>
-                                                                    {isHost && (
-                                                                        <li>
-                                                                            <button onClick={handleSetHostMode}
-                                                                                    className="w-full text-start block px-4 py-2 hover:bg-gray-100/70">
-                                                                                {hostMode ? t("게스트로 전환") : t("호스트로 전환")}
-                                                                            </button>
-                                                                        </li>
-                                                                    )}
-                                                                </ul>
-                                                                <div className="py-2">
-                                                                    <button onClick={handleLogout}
-                                                                            className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/70">
-                                                                        {t('로그아웃')}
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="flex gap-3">
-                                                <div className="flex_center">
-                                                    <button
-                                                        type="button"
-                                                        className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
-                                                    >
-                                                        <Globe className="w-6 h-6 text-black stroke-[1.3]"/>
-                                                    </button>
-                                                </div>
-                                                <div>
-                                                    <button
-                                                        className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
-                                                        onClick={() => setAuthModalVisible(true)}
-                                                    >
-                                                        <User className="w-6 h-6 text-black stroke-[1.3]"/>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* 호스트 모드가 아닐 때만 텍스트 표시 */}
-                                {!hostMode && (
-                                    <div className="flex flex-col items-center text-center mb-6">
-                                        <p className="text-roomi text-lg md:text-3xl font-semibold mb-2.5">
-                                            주단위부터 월단위까지, 보증금도 자유롭게
-                                        </p>
-                                        <p className=" text-xl md:text-3xl font-bold text-[#AF483E]">
-                                            전 세계 게스트와 연결되는 루미
-                                        </p>
-                                    </div>
-                                )}
-
-                                {/* 서치바 영역 */}
-                                {isVisible && (
-                                    <div className="h search-bar-container w-full flex justify-center mb-8">
-                                        <img
-                                            src="/assets/images/thumbnail.png"
-                                            alt="Roomi 캐릭터"
-                                            className="h-12 md:h-20 mr-30 md:mr-50"
+                                    <button
+                                        className="md:w-12 md:h-12 w-10 h-10 m-2 flex items-center justify-center
+                                                        bg-roomi hover:bg-roomi-3 rounded-full shadow-md
+                                                        transition-all duration-200 hover:scale-105"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            performSearch();
+                                        }}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faSearch}
+                                            className="text-white text-base md:text-lg"
                                         />
-                                        <div
-                                            ref={searchBarRef}
-                                            onClick={openSearchModal}
-                                            className="md:h-16 h-12 w-full max-w-3xl text-[11px] flex items-center justify-between
-                                       bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
-                                       cursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
-                                            style={{borderRadius: '9999px', overflow: 'hidden'}}
-                                        >
-                                            <div className="search-simple-text flex items-center px-4 py- flex-1">
-                                                <MapPin className="w-6 h-6 text-black"/>
-                                                <span className="text-gray-500 truncate">
-                                            {t('어디로 여행 가세요?')}
-                                        </span>
-                                            </div>
-
-                                            <button
-                                                className="md:w-12 md:h-12 w-10 h-10 m-2 flex items-center justify-center
-                                           bg-roomi hover:bg-roomi-3 rounded-full shadow-md
-                                           transition-all duration-200 hover:scale-105"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    performSearch();
-                                                }}
-                                            >
-                                                <FontAwesomeIcon icon={faSearch}
-                                                                 className="text-white text-base md:text-lg"/>
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-                            </>
+                                    </button>
+                                </div>
+                            </div>
                         )}
                     </div>
 
-                    {isVisibleHostScreen && !isScrolled && (
+                    {isVisibleHostScreen && (
                         <HostHeader/>
                     )}
 

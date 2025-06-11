@@ -2,7 +2,6 @@
 
 .h.header {
     width: 100%;
-    background-color: #fff;
     position: relative;
     flex-direction: column;
 }
