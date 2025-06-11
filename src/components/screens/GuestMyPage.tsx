@@ -91,173 +91,157 @@ export default function GuestMyPage() {
 
     return (
         <div className="w-full my-4 flex flex-col md:flex-row relative text-black">
-            {/* 메뉴 영역 */}
-            {/* 웹 버전 메뉴 - 더 작은 폰트와 간격 */}
-            <div className="guest-mypage-left md:border-r md:w-1/4 lg:w-1/5 hidden md:block">
-                <div className="m-2 mx-4 mb-4">
-                    <div className="flex items-center justify-center">
-                        <div className="relative">
-                            <img
-                                src={profileImg}
-                                alt="프로필사진"
-                                className="rounded-full w-24 h-24 mb-3 object-cover border-2"
-                            />
+            {/* 웹 버전 메뉴 */}
+            <div className="guest-mypage-left md:border-r md:w-1/4 lg:w-1/5 hidden md:block bg-white">
+                {/* 프로필 섹션 */}
+                <div className="p-6">
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="p-6 text-center">
+                            <div className="relative inline-block mb-4">
+                                <img
+                                    src={profileImg}
+                                    alt="프로필사진"
+                                    className="rounded-full w-20 h-20 object-cover border-2 border-gray-200"
+                                />
+                            </div>
+                            <h3 className="font-semibold text-lg text-gray-900 mb-1">
+                                {localStorage.getItem('userName')}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-3">
+                                {localStorage.getItem('userEmail')}
+                            </p>
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {isHost ? t('호스트') : t('게스트')}
+                        </span>
                         </div>
                     </div>
-                    <div className="text-center font-semibold text-lg">{localStorage.getItem('userName')}</div>
-                    <div className="text-center text-black text-sm mt-1">{localStorage.getItem('userEmail')}</div>
                 </div>
 
-                <div className="my-2 mx-4">
-                    <div className="my-2">
-                        {!isHost && (
+                {/* 호스트 등록 버튼 */}
+                {!isHost && (
+                    <div className="px-6 pb-6">
+                        <button
+                            onClick={handleSetHostMode}
+                            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                        >
+                            {t("호스트 등록")}
+                        </button>
+                    </div>
+                )}
+
+                {/* 메뉴 섹션들 */}
+                <div className="px-6 pb-6 space-y-4">
+                    {/* 나의 거래 */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="px-4 py-3 border-b border-gray-100">
+                            <h4 className="font-semibold text-gray-900">{t("나의 거래")}</h4>
+                        </div>
+                        <div className="p-2">
                             <button
-                                onClick={handleSetHostMode}
-                                className="w-full p-2 text-white bg-roomi rounded-lg hover:bg-opacity-90 transition duration-300 text-base font-medium"
-                            >
-                                {t("호스트 등록")}
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('예약 내역')}>
+                                <List className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("예약 내역")}
                             </button>
-                        )}
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('관심 목록')}>
+                                <Heart className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("관심 목록")}
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('최근 본 게시물')}>
+                                <Eye className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("최근 본 게시물")}
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div className="my-2 mx-4">
-                    <div className="w-full">
-                        <div className="border-t border-gray-300 pt-3 px-6">
-                            <div className="text-base mb-2">{t("나의 거래")}</div>
-                            <div className="">
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('예약 내역')}
-                                    >
-                                        <List className="w-4 h-4 mr-2 inline"/>
-                                        {t("예약 내역")}
-                                    </button>
-                                </div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('관심 목록')}
-                                    >
-                                        <Heart className="w-4 h-4 mr-2 inline"/>
-                                        {t("관심 목록")}
-                                    </button>
-                                </div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('최근 본 게시물')}
-                                    >
-                                        <Eye className="w-4 h-4 mr-2 inline"/>
-                                        {t("최근 본 게시물")}
-                                    </button>
-                                </div>
-                            </div>
+                    {/* 기본 설정 */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="px-4 py-3 border-b border-gray-100">
+                            <h4 className="font-semibold text-gray-900">{t("기본 설정")}</h4>
                         </div>
-
-                        <div className="border-t border-gray-300 pt-3 mt-3 px-6">
-                            <div className="text-base mb-2">{t("기본 설정")}</div>
-                            <div className="">
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('알림 설정')}
-                                    >
-                                        <Bell className="w-4 h-4 mr-2 inline"/>
-                                        {t("알림 설정")}
-                                    </button>
-                                </div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('언어 설정')}
-                                    >
-                                        <Globe className="w-4 h-4 mr-2 inline"/>
-                                        {t("언어 설정")}
-                                    </button>
-                                </div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('통화 설정')}
-                                    >
-                                        <DollarSign className="w-4 h-4 mr-2 inline"/>
-                                        {t("통화 설정")}
-                                    </button>
-                                </div>
-                            </div>
+                        <div className="p-2">
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('알림 설정')}>
+                                <Bell className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("알림 설정")}
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('언어 설정')}>
+                                <Globe className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("언어 설정")}
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('통화 설정')}>
+                                <DollarSign className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("통화 설정")}
+                            </button>
                         </div>
+                    </div>
 
-                        <div className="border-t border-gray-300 pt-3 mt-3 px-6">
-                            <div className="text-base mb-2">{t("고객 지원")}</div>
-                            <div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('공지사항')}
-                                    >
-                                        <Megaphone className="w-4 h-4 mr-2 inline"/>
-                                        {t("공지사항")}
-                                    </button>
-                                </div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('FAQ')}
-                                    >
-                                        <HelpCircle className="w-4 h-4 mr-2 inline"/>
-                                        FAQ
-                                    </button>
-                                </div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('고객센터')}
-                                    >
-                                        <Headphones className="w-4 h-4 mr-2 inline"/>
-                                        {t("고객센터")}
-                                    </button>
-                                </div>
-                            </div>
+                    {/* 고객 지원 */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="px-4 py-3 border-b border-gray-100">
+                            <h4 className="font-semibold text-gray-900">{t("고객 지원")}</h4>
                         </div>
+                        <div className="p-2">
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('공지사항')}>
+                                <Megaphone className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("공지사항")}
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('FAQ')}>
+                                <HelpCircle className="w-4 h-4 mr-3 text-gray-500"/>
+                                FAQ
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('고객센터')}>
+                                <Headphones className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("고객센터")}
+                            </button>
+                        </div>
+                    </div>
 
-                        <div className="border-t border-gray-300 pt-3 mt-3 px-6">
-                            <div className="text-base mb-2">{t("계정 설정")}</div>
-                            <div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('내 정보')}
-                                    >
-                                        <Edit3 className="w-4 h-4 mr-2 inline"/>
-                                        {t("내 정보")}
-                                    </button>
-                                </div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={handleLogout}
-                                    >
-                                        <LogOut className="w-4 h-4 mr-2 inline"/>
-                                        {t("로그아웃")}
-                                    </button>
-                                </div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm">
-                                        <UserMinus className="w-4 h-4 mr-2 inline"/>
-                                        {t("회원탈퇴")}
-                                    </button>
-                                </div>
-                            </div>
+                    {/* 계정 설정 */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="px-4 py-3 border-b border-gray-100">
+                            <h4 className="font-semibold text-gray-900">{t("계정 설정")}</h4>
+                        </div>
+                        <div className="p-2">
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('내 정보')}>
+                                <Edit3 className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("내 정보")}
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={handleLogout}>
+                                <LogOut className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("로그아웃")}
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center">
+                                <UserMinus className="w-4 h-4 mr-3 text-red-500"/>
+                                <span className="text-red-600">{t("회원탈퇴")}</span>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* 모바일 버전 메뉴 - 그리드 레이아웃 적용 */}
-            <div className="guest-mypage-left md:hidden">
+            {/* 모바일 버전 메뉴 */}
+            <div className="guest-mypage-left md:hidden bg-white min-h-screen">
                 {/* 상단 앱바 영역 */}
                 <div className="bg-white border-b border-gray-200 px-4 py-3">
                     <div className="flex items-center justify-between">
@@ -295,10 +279,10 @@ export default function GuestMyPage() {
                                 <h2 className="text-lg font-semibold text-gray-900">{localStorage.getItem('userName')}</h2>
                                 <p className="text-sm text-gray-500">{localStorage.getItem('userEmail')}</p>
                                 <div className="mt-2">
-                    <span
-                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {isHost ? t('호스트') : t('게스트')}
-                    </span>
+                                <span
+                                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    {isHost ? t('호스트') : t('게스트')}
+                                </span>
                                 </div>
                             </div>
                             <ChevronRight className="w-5 h-5 text-gray-400"/>
@@ -334,8 +318,8 @@ export default function GuestMyPage() {
                                     <List className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  {t("예약 내역")}
-                </span>
+                                {t("예약 내역")}
+                            </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
 
@@ -347,8 +331,8 @@ export default function GuestMyPage() {
                                     <Heart className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  {t("관심 목록")}
-                </span>
+                                {t("관심 목록")}
+                            </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
 
@@ -356,13 +340,12 @@ export default function GuestMyPage() {
                                 className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors"
                                 onClick={() => handleSetSelectedMenu('최근 본 게시물')}
                             >
-                                <div
-                                    className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
                                     <Eye className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  {t("최근 본 게시물")}
-                </span>
+                                {t("최근 본 게시물")}
+                            </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
                         </div>
@@ -378,13 +361,12 @@ export default function GuestMyPage() {
                                 className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
                                 onClick={() => handleSetSelectedMenu('알림 설정')}
                             >
-                                <div
-                                    className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
                                     <Bell className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  {t("알림 설정")}
-                </span>
+                                {t("알림 설정")}
+                            </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
 
@@ -392,13 +374,12 @@ export default function GuestMyPage() {
                                 className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
                                 onClick={() => handleSetSelectedMenu('언어 설정')}
                             >
-                                <div
-                                    className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
                                     <Globe className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  {t("언어 설정")}
-                </span>
+                                {t("언어 설정")}
+                            </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
 
@@ -406,14 +387,12 @@ export default function GuestMyPage() {
                                 className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors"
                                 onClick={() => handleSetSelectedMenu('통화 설정')}
                             >
-                                <div
-                                    className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
                                     <DollarSign className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  {t("통화 설정")}
-
-                </span>
+                                {t("통화 설정")}
+                            </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
                         </div>
@@ -429,13 +408,12 @@ export default function GuestMyPage() {
                                 className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
                                 onClick={() => handleSetSelectedMenu('공지사항')}
                             >
-                                <div
-                                    className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
                                     <Megaphone className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  {t("공지사항")}
-                </span>
+                                {t("공지사항")}
+                            </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
 
@@ -447,8 +425,8 @@ export default function GuestMyPage() {
                                     <HelpCircle className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  FAQ
-                </span>
+                                FAQ
+                            </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
 
@@ -460,8 +438,8 @@ export default function GuestMyPage() {
                                     <Headphones className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  {t("고객센터")}
-                </span>
+                                {t("고객센터")}
+                            </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
                         </div>
@@ -481,8 +459,8 @@ export default function GuestMyPage() {
                                     <Edit3 className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  {t("내 정보")}
-                </span>
+                                {t("내 정보")}
+                            </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
 
@@ -494,8 +472,8 @@ export default function GuestMyPage() {
                                     <UserMinus className="w-5 h-5 text-red-600"/>
                                 </div>
                                 <span className="text-base font-medium text-red-600 flex-1 text-left">
-                  {t("회원탈퇴")}
-                </span>
+                                {t("회원탈퇴")}
+                            </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
                         </div>
@@ -503,11 +481,13 @@ export default function GuestMyPage() {
                 </div>
             </div>
 
-            {/* 데스크톱 전용 오른쪽 콘텐츠 (모바일에서는 숨김) */}
-            <div className="guest-mypage-right md:w-3/4 lg:w-4/5 hidden md:flex flex-col scrollbar-hidden">
+            {/* 데스크톱 전용 오른쪽 콘텐츠 */}
+            <div className="guest-mypage-right md:w-3/4 lg:w-4/5 hidden md:flex flex-col bg-white">
                 {/* 제목 고정 */}
-                <div className="px-8 pt-6 pb-2">
-                    <h2 className="text-2xl ">{selectedMenu === '' ? t('예약 내역') : t(selectedMenu)}</h2>
+                <div className="px-8 pt-6 pb-2 bg-white">
+                    <h2 className="text-2xl font-bold text-gray-900">
+                        {selectedMenu === '' ? t('예약 내역') : t(selectedMenu)}
+                    </h2>
                 </div>
 
                 {/* 아래 내용만 스크롤되게 */}
@@ -522,7 +502,7 @@ export default function GuestMyPage() {
             {/* 모바일에서만 오버레이 표시 */}
             {isMobile && selectedMenu && (
                 <div className="fixed top-0 left-0 w-full h-full bg-white z-50 flex flex-col overflow-hidden">
-                    {/* 상단 앱바 영역 - 마이페이지와 동일한 스타일 */}
+                    {/* 상단 앱바 영역 */}
                     <div className="bg-white border-b border-gray-200 px-4 py-3">
                         <div className="flex items-center justify-between">
                             <button
@@ -532,12 +512,11 @@ export default function GuestMyPage() {
                                 <FontAwesomeIcon icon={faArrowLeft} className="w-6 h-6 text-gray-700"/>
                             </button>
                             <h1 className="text-lg font-semibold text-gray-900">{t(selectedMenu)}</h1>
-                            <div className="w-10 h-10"></div> {/* 우측 여백을 위한 빈 div */}
+                            <div className="w-10 h-10"></div>
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4">
-                        {/* 메뉴 내용 표시 */}
+                    <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
                         {renderMenuContent()}
                     </div>
                 </div>

@@ -14,7 +14,19 @@ import FAQ from "./myPageMenu/FAQ";
 import HelpCenter from "./myPageMenu/HelpCenter";
 import MyInfoEdit from "./myPageMenu/MyInfoEdit";
 import HostFAQ from "./myPageMenu/HostFAQ";
-
+import {
+    Bell,
+    ChevronRight,
+    DollarSign,
+    Edit3,
+    Eye,
+    Globe,
+    Headphones,
+    Heart,
+    HelpCircle,
+    List, LogOut,
+    Megaphone, UserMinus, X
+} from "lucide-react";
 export default function HostMyPage() {
     const { t } = useTranslation();
     const { resetUserMode } = useHostModeStore();
@@ -124,207 +136,384 @@ export default function HostMyPage() {
     return (
         <div className="w-full my-4 flex flex-col md:flex-row relative text-black">
             {/* 웹 버전 메뉴 */}
-            <div className="host-mypage-left md:border-r md:w-1/4 lg:w-1/5 hidden md:block">
-                <div className="m-2 mx-4 mb-4">
-                    <div className="flex items-center justify-center">
-                        <div className="relative">
-                            <img src={profileImg} alt="프로필사진"
-                                 className="rounded-full w-24 h-24 mb-3 object-cover border-2"/>
+            <div className="guest-mypage-left md:border-r md:w-1/4 lg:w-1/5 hidden md:block bg-white">
+                {/* 프로필 섹션 */}
+                <div className="p-6">
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="p-6 text-center">
+                            <div className="relative inline-block mb-4">
+                                <img
+                                    src={profileImg}
+                                    alt="프로필사진"
+                                    className="rounded-full w-20 h-20 object-cover border-2 border-gray-200"
+                                />
+                            </div>
+                            <h3 className="font-semibold text-lg text-gray-900 mb-1">
+                                {localStorage.getItem('userName')}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-3">
+                                {localStorage.getItem('userEmail')}
+                            </p>
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        </span>
                         </div>
                     </div>
-                    <div className="text-center font-semibold text-lg">{localStorage.getItem('userName')}</div>
-                    <div className="text-center text-black text-sm mt-1">{localStorage.getItem('userEmail')}</div>
                 </div>
 
-                <div className="my-2 mx-4">
-                    <div className="w-full">
 
-
-                        <div className="border-t border-gray-300 pt-3 mt-3 px-6">
-                            <div className="font-bold text-base mb-2">{t("호스트 관리")}</div>
-                            <div className="">
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('수입 및 통계')}>
-                                        <FontAwesomeIcon icon={faChartLine} className="w-4 h-4 mr-2"/>{t("수입 및 통계")}
-                                    </button>
-                                </div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('영수증')}>
-                                        <FontAwesomeIcon icon={faReceipt} className="w-4 h-4 mr-2"/>{t("영수증")}
-                                    </button>
-                                </div>
-                            </div>
+                {/* 메뉴 섹션들 */}
+                <div className="px-6 pb-6 space-y-4">
+                    {/* 나의 거래 */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="px-4 py-3 border-b border-gray-100">
+                            <h4 className="font-semibold text-gray-900">{t("나의 거래")}</h4>
                         </div>
-
-                        <div className="border-t border-gray-300 pt-3 mt-3 px-6">
-                            <div className="font-bold text-base mb-2">{t("고객 지원")}</div>
-                            <div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('공지사항')}>
-                                        <FontAwesomeIcon icon={faBullhorn} className="w-4 h-4 mr-2"/>
-                                        {t("공지사항")}
-                                    </button>
-                                </div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('FAQ')}>
-                                        <FontAwesomeIcon icon={faQuestionCircle} className="w-4 h-4 mr-2"/>
-                                        FAQ
-                                    </button>
-                                </div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('고객센터')}>
-                                        <FontAwesomeIcon icon={faHeadset} className="w-4 h-4 mr-2"/>
-                                        {t("고객센터")}
-                                    </button>
-                                </div>
-                            </div>
+                        <div className="p-2">
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('예약 내역')}>
+                                <List className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("예약 내역")}
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('관심 목록')}>
+                                <Heart className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("관심 목록")}
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('최근 본 게시물')}>
+                                <Eye className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("최근 본 게시물")}
+                            </button>
                         </div>
+                    </div>
 
-                        <div className="border-t border-gray-300 pt-3 mt-3 px-6">
-                            <div className="font-bold text-base mb-2">{t("계정 설정")}</div>
-                            <div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={() => handleSetSelectedMenu('내 정보')}>
-                                        <FontAwesomeIcon icon={faPenToSquare} className="w-4 h-4 mr-2"/>
-                                        {t("내 정보")}
-                                    </button>
-                                </div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm"
-                                        onClick={handleLogout}>
-                                        <FontAwesomeIcon icon={faSignOutAlt} className="w-4 h-4 mr-2"/>
-                                        {t("로그아웃")}
-                                    </button>
-                                </div>
-                                <div className="my-1">
-                                    <button
-                                        className="w-full text-start p-2 hover:bg-gray-100 rounded-md transition duration-200 text-sm">
-                                        <FontAwesomeIcon icon={faUserMinus} className="w-4 h-4 mr-2"/>
-                                        {t("회원탈퇴")}
-                                    </button>
-                                </div>
-                            </div>
+                    {/* 기본 설정 */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="px-4 py-3 border-b border-gray-100">
+                            <h4 className="font-semibold text-gray-900">{t("기본 설정")}</h4>
+                        </div>
+                        <div className="p-2">
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('알림 설정')}>
+                                <Bell className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("알림 설정")}
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('언어 설정')}>
+                                <Globe className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("언어 설정")}
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('통화 설정')}>
+                                <DollarSign className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("통화 설정")}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* 고객 지원 */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="px-4 py-3 border-b border-gray-100">
+                            <h4 className="font-semibold text-gray-900">{t("고객 지원")}</h4>
+                        </div>
+                        <div className="p-2">
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('공지사항')}>
+                                <Megaphone className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("공지사항")}
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('FAQ')}>
+                                <HelpCircle className="w-4 h-4 mr-3 text-gray-500"/>
+                                FAQ
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('고객센터')}>
+                                <Headphones className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("고객센터")}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* 계정 설정 */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="px-4 py-3 border-b border-gray-100">
+                            <h4 className="font-semibold text-gray-900">{t("계정 설정")}</h4>
+                        </div>
+                        <div className="p-2">
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={() => handleSetSelectedMenu('내 정보')}>
+                                <Edit3 className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("내 정보")}
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
+                                onClick={handleLogout}>
+                                <LogOut className="w-4 h-4 mr-3 text-gray-500"/>
+                                {t("로그아웃")}
+                            </button>
+                            <button
+                                className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center">
+                                <UserMinus className="w-4 h-4 mr-3 text-red-500"/>
+                                <span className="text-red-600">{t("회원탈퇴")}</span>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* 모바일 버전 메뉴 - 그리드 레이아웃 적용 */}
-            <div className="host-mypage-left md:hidden p-4">
-                {/* 상단 헤더 영역: 홈 아이콘(왼쪽)과 프로필 정보(오른쪽) */}
-                <div className="flex items-center justify-between mb-6">
-                    {/* 홈 아이콘 - 왼쪽 */}
-                    <div>
+            {/* 모바일 버전 메뉴 */}
+            <div className="guest-mypage-left md:hidden bg-white min-h-screen">
+                {/* 상단 앱바 영역 */}
+                <div className="bg-white border-b border-gray-200 px-4 py-3">
+                    <div className="flex items-center justify-between">
                         <button
                             onClick={() => window.location.href = '/'}
-                            className="p-3 rounded-lg flex items-center justify-center"
+                            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                         >
-                            <FontAwesomeIcon icon={faTimes} className="text-xl text-black"/>
+                            <X className="w-6 h-6 text-gray-700"/>
+                        </button>
+                        <h1 className="text-lg font-semibold text-gray-900">{t('마이 루미')}</h1>
+                        <button
+                            onClick={handleLogout}
+                            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                        >
+                            <LogOut className="w-6 h-6 text-red-500"/>
                         </button>
                     </div>
+                </div>
 
-                    {/* 프로필 정보 - 오른쪽 */}
-                    <div className="flex items-center">
-                        <div className="flex-1 text-right mr-4">
-                            <div className="font-semibold text-lg">{localStorage.getItem('userName')}</div>
-                            <div className="text-sm text-gray-600">{localStorage.getItem('userEmail')}</div>
+                {/* 프로필 카드 */}
+                <div className="bg-white mx-4 my-4 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <button
+                        className="w-full p-6 text-left hover:bg-gray-50 transition-colors"
+                        onClick={() => handleSetSelectedMenu('내 정보')}
+                    >
+                        <div className="flex items-center space-x-4">
+                            <div className="relative">
+                                <img
+                                    src={profileImg}
+                                    alt="프로필사진"
+                                    className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                                />
+                            </div>
+                            <div className="flex-1">
+                                <h2 className="text-lg font-semibold text-gray-900">{localStorage.getItem('userName')}</h2>
+                                <p className="text-sm text-gray-500">{localStorage.getItem('userEmail')}</p>
+                                <div className="mt-2">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    {t('게스트')}
+                                </span>
+                                </div>
+                            </div>
+                            <ChevronRight className="w-5 h-5 text-gray-400"/>
                         </div>
-                        <div className="relative">
-                            <img src={profileImg} alt="프로필사진"
-                                 className="rounded-full w-16 h-16 object-cover border-2"/>
+                    </button>
+                </div>
+
+
+                {/* 메뉴 섹션들 */}
+                <div className="space-y-6 px-4 pb-8">
+                    {/* 나의 거래 */}
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3 px-2">
+                            {t("나의 거래")}
+                        </h3>
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                            <button
+                                className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
+                                onClick={() => handleSetSelectedMenu('예약 내역')}
+                            >
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                    <List className="w-5 h-5 text-gray-600"/>
+                                </div>
+                                <span className="text-base font-medium text-gray-900 flex-1 text-left">
+                                {t("예약 내역")}
+                            </span>
+                                <ChevronRight className="w-5 h-5 text-gray-400"/>
+                            </button>
+
+                            <button
+                                className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
+                                onClick={() => handleSetSelectedMenu('관심 목록')}
+                            >
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                    <Heart className="w-5 h-5 text-gray-600"/>
+                                </div>
+                                <span className="text-base font-medium text-gray-900 flex-1 text-left">
+                                {t("관심 목록")}
+                            </span>
+                                <ChevronRight className="w-5 h-5 text-gray-400"/>
+                            </button>
+
+                            <button
+                                className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors"
+                                onClick={() => handleSetSelectedMenu('최근 본 게시물')}
+                            >
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                    <Eye className="w-5 h-5 text-gray-600"/>
+                                </div>
+                                <span className="text-base font-medium text-gray-900 flex-1 text-left">
+                                {t("최근 본 게시물")}
+                            </span>
+                                <ChevronRight className="w-5 h-5 text-gray-400"/>
+                            </button>
                         </div>
                     </div>
-                </div>
 
-                {/* 나의 거래 섹션 */}
+                    {/* 기본 설정 */}
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3 px-2">
+                            {t("기본 설정")}
+                        </h3>
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                            <button
+                                className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
+                                onClick={() => handleSetSelectedMenu('알림 설정')}
+                            >
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                    <Bell className="w-5 h-5 text-gray-600"/>
+                                </div>
+                                <span className="text-base font-medium text-gray-900 flex-1 text-left">
+                                {t("알림 설정")}
+                            </span>
+                                <ChevronRight className="w-5 h-5 text-gray-400"/>
+                            </button>
 
-                {/* 호스트 관리 섹션 */}
-                <div className="font-bold text-lg mb-3">{t("호스트 관리")}</div>
-                <div className="grid grid-cols-1 gap-3 mb-6">
-                    <button
-                        className="flex items-center p-4 bg-gray-50 rounded-lg"
-                        onClick={() => handleSetSelectedMenu('수입 및 통계')}>
-                        <FontAwesomeIcon icon={faChartLine} className="text-xl mr-4"/>
-                        <span className="text-base">{t("수입 및 통계")}</span>
-                    </button>
-                    <button
-                        className="flex items-center p-4 bg-gray-50 rounded-lg"
-                        onClick={() => handleSetSelectedMenu('영수증')}>
-                        <FontAwesomeIcon icon={faReceipt} className="text-xl mr-4"/>
-                        <span className="text-base">{t("영수증")}</span>
-                    </button>
-                </div>
+                            <button
+                                className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
+                                onClick={() => handleSetSelectedMenu('언어 설정')}
+                            >
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                    <Globe className="w-5 h-5 text-gray-600"/>
+                                </div>
+                                <span className="text-base font-medium text-gray-900 flex-1 text-left">
+                                {t("언어 설정")}
+                            </span>
+                                <ChevronRight className="w-5 h-5 text-gray-400"/>
+                            </button>
 
-                {/* 고객 지원 섹션 */}
-                <div className="font-bold text-lg mb-3">{t("고객 지원")}</div>
-                <div className="grid grid-cols-1 gap-3 mb-6">
-                    <button
-                        className="flex items-center p-4 bg-gray-50 rounded-lg"
-                        onClick={() => handleSetSelectedMenu('공지사항')}>
-                        <FontAwesomeIcon icon={faBullhorn} className="text-xl mr-4"/>
-                        <span className="text-base">{t("공지사항")}</span>
-                    </button>
-                    <button
-                        className="flex items-center p-4 bg-gray-50 rounded-lg"
-                        onClick={() => handleSetSelectedMenu('FAQ')}>
-                        <FontAwesomeIcon icon={faQuestionCircle} className="text-xl mr-4"/>
-                        <span className="text-base">FAQ</span>
-                    </button>
-                    <button
-                        className="flex items-center p-4 bg-gray-50 rounded-lg"
-                        onClick={() => handleSetSelectedMenu('고객센터')}>
-                        <FontAwesomeIcon icon={faHeadset} className="text-xl mr-4"/>
-                        <span className="text-base">{t("고객센터")}</span>
-                    </button>
-                </div>
+                            <button
+                                className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors"
+                                onClick={() => handleSetSelectedMenu('통화 설정')}
+                            >
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                    <DollarSign className="w-5 h-5 text-gray-600"/>
+                                </div>
+                                <span className="text-base font-medium text-gray-900 flex-1 text-left">
+                                {t("통화 설정")}
+                            </span>
+                                <ChevronRight className="w-5 h-5 text-gray-400"/>
+                            </button>
+                        </div>
+                    </div>
 
-                {/* 계정 설정 섹션 */}
-                <div className="font-bold text-lg mb-3">{t("계정 설정")}</div>
-                <div className="grid grid-cols-1 gap-3">
-                    <button
-                        className="flex items-center p-4 bg-gray-50 rounded-lg"
-                        onClick={() => handleSetSelectedMenu('내 정보')}>
-                        <FontAwesomeIcon icon={faPenToSquare} className="text-xl mr-4"/>
-                        <span className="text-base">{t("내 정보")}</span>
-                    </button>
-                    <button
-                        className="flex items-center p-4 bg-gray-50 rounded-lg"
-                        onClick={handleLogout}>
-                        <FontAwesomeIcon icon={faSignOutAlt} className="text-xl mr-4"/>
-                        <span className="text-base">{t("로그아웃")}</span>
-                    </button>
-                    <button
-                        className="flex items-center p-4 bg-gray-50 rounded-lg">
-                        <FontAwesomeIcon icon={faUserMinus} className="text-xl mr-4"/>
-                        <span className="text-base">{t("회원탈퇴")}</span>
-                    </button>
+                    {/* 고객 지원 */}
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3 px-2">
+                            {t("고객 지원")}
+                        </h3>
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                            <button
+                                className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
+                                onClick={() => handleSetSelectedMenu('공지사항')}
+                            >
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                    <Megaphone className="w-5 h-5 text-gray-600"/>
+                                </div>
+                                <span className="text-base font-medium text-gray-900 flex-1 text-left">
+                                {t("공지사항")}
+                            </span>
+                                <ChevronRight className="w-5 h-5 text-gray-400"/>
+                            </button>
+
+                            <button
+                                className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
+                                onClick={() => handleSetSelectedMenu('FAQ')}
+                            >
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                    <HelpCircle className="w-5 h-5 text-gray-600"/>
+                                </div>
+                                <span className="text-base font-medium text-gray-900 flex-1 text-left">
+                                FAQ
+                            </span>
+                                <ChevronRight className="w-5 h-5 text-gray-400"/>
+                            </button>
+
+                            <button
+                                className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors"
+                                onClick={() => handleSetSelectedMenu('고객센터')}
+                            >
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                    <Headphones className="w-5 h-5 text-gray-600"/>
+                                </div>
+                                <span className="text-base font-medium text-gray-900 flex-1 text-left">
+                                {t("고객센터")}
+                            </span>
+                                <ChevronRight className="w-5 h-5 text-gray-400"/>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* 계정 설정 */}
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3 px-2">
+                            {t("계정 설정")}
+                        </h3>
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                            <button
+                                className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0"
+                                onClick={() => handleSetSelectedMenu('내 정보')}
+                            >
+                                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+                                    <Edit3 className="w-5 h-5 text-gray-600"/>
+                                </div>
+                                <span className="text-base font-medium text-gray-900 flex-1 text-left">
+                                {t("내 정보")}
+                            </span>
+                                <ChevronRight className="w-5 h-5 text-gray-400"/>
+                            </button>
+
+                            <button
+                                className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors"
+                                onClick={() => handleSetSelectedMenu('회원탈퇴')}
+                            >
+                                <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center mr-4">
+                                    <UserMinus className="w-5 h-5 text-red-600"/>
+                                </div>
+                                <span className="text-base font-medium text-red-600 flex-1 text-left">
+                                {t("회원탈퇴")}
+                            </span>
+                                <ChevronRight className="w-5 h-5 text-gray-400"/>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             {/* 데스크톱 전용 오른쪽 콘텐츠 */}
-            <div className="host-mypage-right md:w-3/4 lg:w-4/5 hidden md:flex flex-col scrollbar-hidden">
+            <div className="guest-mypage-right md:w-3/4 lg:w-4/5 hidden md:flex flex-col bg-white">
                 {/* 제목 고정 */}
-                <div className="px-8 pt-6 pb-2">
-                    <h2 className="text-2xl font-bold">{selectedMenu === '' ? '호스트 정보' : selectedMenu}</h2>
+                <div className="px-8 pt-6 pb-2 bg-white">
+                    <h2 className="text-2xl font-bold text-gray-900">
+                        {selectedMenu === '' ? t('예약 내역') : t(selectedMenu)}
+                    </h2>
                 </div>
 
                 {/* 아래 내용만 스크롤되게 */}
                 <div
                     id="myPageContent"
-                    className="host-mypage-right flex-1 overflow-y-auto px-8 pb-8 scrollbar-hidden"
+                    className="guest-mypage-right flex-1 overflow-y-auto px-8 pb-8 scrollbar-hidden"
                 >
                     {renderMenuContent()}
                 </div>
@@ -333,15 +522,21 @@ export default function HostMyPage() {
             {/* 모바일에서만 오버레이 표시 */}
             {isMobile && selectedMenu && (
                 <div className="fixed top-0 left-0 w-full h-full bg-white z-50 flex flex-col overflow-hidden">
-                    <div className="flex items-center p-4 bg-white sticky top-0 z-10">
-                        <button className="mr-4 p-2"
-                                onClick={() => handleSetSelectedMenu('')}>
-                            <FontAwesomeIcon icon={faArrowLeft} className="w-5 h-5"/>
-                        </button>
-                        <h2 className="text-xl font-bold">{selectedMenu}</h2>
+                    {/* 상단 앱바 영역 */}
+                    <div className="bg-white border-b border-gray-200 px-4 py-3">
+                        <div className="flex items-center justify-between">
+                            <button
+                                onClick={() => handleSetSelectedMenu('')}
+                                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                            >
+                                <FontAwesomeIcon icon={faArrowLeft} className="w-6 h-6 text-gray-700"/>
+                            </button>
+                            <h1 className="text-lg font-semibold text-gray-900">{t(selectedMenu)}</h1>
+                            <div className="w-10 h-10"></div>
+                        </div>
                     </div>
-                    <div className="flex-1 overflow-y-auto p-4">
-                        {/* 메뉴 내용 표시 */}
+
+                    <div className="flex-1 overflow-y-auto p-4 ">
                         {renderMenuContent()}
                     </div>
                 </div>
