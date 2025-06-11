@@ -99,6 +99,9 @@ export default function GuestReservationScreen() {
     // 결제 실패 상태
     const [paymentFailedResponse, setPaymentFailedResponse] = useState<PaymentFailedResponse | null>(null);
 
+    // const PORT_ONE_STORE_ID = process.env.REACT_APP_PORT_ONE_STORE_ID;
+    // const PORT_ONE_CHANNEL_KEY = process.env.REACT_APP_PORT_ONE_CHANNEL_KEY;
+
 
     useEffect(() => {
         if (localStorage.getItem('isKorean')) {

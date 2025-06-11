@@ -91,7 +91,7 @@ const Header = () => {
     };
 
     const openSearchModal = () => {
-        if (location.pathname === '/map') {
+        if (window.location.pathname === '/map') {
             // 이미 /map 페이지면 모달 열기
             setSearchModalOpen(true);
             document.body.style.overflow = 'hidden';

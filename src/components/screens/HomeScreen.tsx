@@ -7,6 +7,7 @@ import i18n from "src/i18n";
 import NaverMap from "../map/NaverMap";
 import ImgCarousel from "src/components/util/ImgCarousel";
 import {useTranslation} from "react-i18next";
+import GoogleMap from "../map/GoogleMap";
 
 // Accommodation Card Component
 const AccommodationCard = memo(
@@ -81,7 +82,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
     };
 
     const renderMap = useCallback(
-        () => <NaverMap onRoomsUpdate={handleRoomsUpdate} />,
+        () => <GoogleMap onRoomsUpdate={handleRoomsUpdate} />,
         [handleRoomsUpdate]
     );
 

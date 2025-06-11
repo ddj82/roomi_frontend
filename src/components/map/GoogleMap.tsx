@@ -4,9 +4,6 @@ import i18n from "../../i18n";
 import { mainRoomData } from "../../api/api";
 import ReactDOMServer from "react-dom/server";
 import ImgCarousel from "../util/ImgCarousel";
-import { createRoot } from "react-dom/client";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
 // Google Maps 및 MarkerClusterer 타입 선언
 declare global {
@@ -68,6 +65,7 @@ interface GoogleMapViewProps {
 }
 
 const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
+    const GOOGLE_MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAP_API_KEY;
     const markers = useRef<google.maps.Marker[]>([]);
     const debounceTimer = useRef<NodeJS.Timeout | null>(null);
     const mapRef = useRef<google.maps.Map | null>(null);
@@ -841,7 +839,7 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
 
                 const script = document.createElement('script');
                 script.type = 'text/javascript';
-                script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyA5uNG5ds2QbDU_HEcdnFRw1bhvhGkYelA&language=${locale}&libraries=marker&callback=initMap`;
+                script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_API_KEY}&language=${locale}&libraries=marker&callback=initMap`;
                 script.onerror = reject;
                 document.head.appendChild(script);
 
