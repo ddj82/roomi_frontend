@@ -66,28 +66,28 @@ export default function MyReservations() {
 
         if (status === 'CONFIRMED') { // 승인 완료
             if (paymentStatus === 'UNPAID') { // 승인 완료, 결제전
-                return renderStatusUI('bg-roomi-0', '결제대기');
+                return renderStatusUI('bg-roomi-0', t('결제대기'));
             } else if (paymentStatus === 'PAID') { // 승인 완료, 결제 완료
                 if (checkOut >= today && checkIn <= today) { // 이용중
-                    return renderStatusUI('bg-green-500', '이용중');
+                    return renderStatusUI('bg-green-500',  t('이용중'));
                 }
-                return renderStatusUI('bg-roomi', '예약완료');
+                return renderStatusUI('bg-roomi',  t('예약완료'));
             }
         } else if (status === 'COMPLETED') { // 계약 종료
             // 보증금환불여부 확인
-            return renderStatusUI('bg-black', '계약종료');
+            return renderStatusUI('bg-black',  t('계약종료'));
         } else if (status === 'CANCELLED') { // 취소
-            return renderStatusUI('bg-gray-700', '계약취소');
+            return renderStatusUI('bg-gray-700',  t('계약취소'));
         } else if (status === 'REJECTED') { // 승인 거절
-            return renderStatusUI('bg-gray-700', '승인거절');
+            return renderStatusUI('bg-gray-700',  t('승인거절'));
         }else if (status === 'IN_USE') { // 승인 거절
-            return renderStatusUI('bg-green-500', '이용중');
+            return renderStatusUI('bg-green-500',  t('이용중'));
         }else if (status === 'CHECKED_OUT') { // 승인 거절
-            return renderStatusUI('bg-roomi', '환급대기');
+            return renderStatusUI('bg-roomi',  t('환급대기'));
         }
 
         else { // 승인 대기, 결제전, 기본값
-            return renderStatusUI('bg-gray-500', '승인대기');
+            return renderStatusUI('bg-gray-500',  t('승인대기'));
         }
     };
 
@@ -265,12 +265,12 @@ export default function MyReservations() {
                         <button type="button" onClick={() => setReservedListSet(true)}
                                 className={`py-2 px-4 text-sm rounded font-bold ${!reservedListSet && 'text-gray-400'}`}
                         >
-                            현재 예약
+                            {t('현재 예약')}
                         </button>
                         <button type="button" onClick={() => setReservedListSet(false)}
                                 className={`py-2 px-4 text-sm rounded font-bold ${reservedListSet && 'text-gray-400'}`}
                         >
-                            지난 예약
+                            {t('지난 예약')}
                         </button>
                     </div>
                 )}

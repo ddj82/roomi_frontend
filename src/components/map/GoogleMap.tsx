@@ -905,9 +905,6 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
             <div style={styles.mapContainer}>
                 <div id="map" style={styles.map}/>
             </div>
-            <span>
-                1234
-            </span>
         </>
 
     );

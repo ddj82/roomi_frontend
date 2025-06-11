@@ -108,7 +108,7 @@ const Main: React.FC<MainProps> = ({ rooms: externalRooms }) =>{
         <div className="p-4">
             {/* 인기 있는 장소 */}
             <div className="flex flex-col gap-2">
-                <div className="font-bold text-lg px-4">인기 있는 장소</div>
+                <div className="font-bold text-lg px-4">{t('인기 있는 장소')}</div>
 
                 {/* 화살표와 그리드를 감싸는 컨테이너 */}
                 <div className="relative flex items-center">
@@ -155,7 +155,7 @@ const Main: React.FC<MainProps> = ({ rooms: externalRooms }) =>{
                                         />
                                     </div>
                                     <div className="absolute inset-0 flex items-end text-white">
-                                        <div className="p-2">{region.title}</div>
+                                        <div className="p-2">{t(region.title)}</div>
                                     </div>
                                 </div>
                             ))}
@@ -166,19 +166,19 @@ const Main: React.FC<MainProps> = ({ rooms: externalRooms }) =>{
 
             {/* 모든 공간 */}
             <div className="flex flex-col gap-2">
-                <div className="font-bold text-lg px-4">모든 공간</div>
+                <div className="font-bold text-lg px-4">{t('모든 공간')}</div>
                 <RoomScrollList rooms={rooms}/>
             </div>
 
             {/* 인기 있는 공간 */}
             <div className="flex flex-col gap-2">
-                <div className="font-bold text-lg px-4">인기 있는 공간 둘러보기</div>
+                <div className="font-bold text-lg px-4">{t('인기 있는 공간 둘러보기')}</div>
                 <RoomScrollList rooms={rooms}/>
             </div>
 
             {/* 신규 등록한 공간 둘러보기 */}
             <div className="flex flex-col gap-2">
-                <div className="font-bold text-lg px-4">신규 등록한 공간 둘러보기</div>
+                <div className="font-bold text-lg px-4">{t('신규 등록한 공간 둘러보기')}</div>
                 <RoomScrollList rooms={rooms}/>
             </div>
 

@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Modal from "react-modal";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faIdCard, faPassport } from '@fortawesome/free-solid-svg-icons';
+import {useTranslation} from "react-i18next";
 
 // 아임포트 타입 정의
 declare global {
@@ -18,7 +19,7 @@ export default function RoomDetailCertificationModal({visible, onClose, isKorean
 }) {
     const [isMetaMapLoaded, setIsMetaMapLoaded] = useState(false);
     const [metaMapLoading, setMetaMapLoading] = useState(false);
-
+    const {t} = useTranslation();
     // 아임포트 스크립트 로드
     useEffect(() => {
         const script = document.createElement('script');
@@ -190,17 +191,17 @@ export default function RoomDetailCertificationModal({visible, onClose, isKorean
                             </div>
                             <div className="flex flex-col justify-center">
                                 <div className="text-xl font-bold">
-                                    본인 인증
+                                    {t('본인 인증')}
                                 </div>
                                 <div>
-                                    통합 인증으로 본인 확인
+                                    {t('통합 인증으로 본인 확인')}
                                 </div>
                             </div>
                         </div>
                         <div>
-                            <div>• 인증서 필요</div>
-                            <div>• 대한민국 국적 전용</div>
-                            <div>• 약 1-2분 소요</div>
+                            <div>• {t('공인인증서 필요')}</div>
+                            <div>• {t('대한민국 국적 전용')}</div>
+                            <div>• {t('약 1-2분 소요')}</div>
                         </div>
                         <div>
                             <button
@@ -208,7 +209,7 @@ export default function RoomDetailCertificationModal({visible, onClose, isKorean
                                 onClick={handleKoreanCertification}
                                 className="flex_center bg-roomi text-white text-lg rounded-lg p-4 w-full"
                             >
-                                통합 인증하기
+                                {t('통합 인증하기')}
                             </button>
                         </div>
                     </div>

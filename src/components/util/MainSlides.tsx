@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {mainSlideList} from "../../types/MainSlideList";
+import {useTranslation} from "react-i18next";
 
 export default function MainSlides() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const slides = mainSlideList;
     const [isHovered, setIsHovered] = useState(false);
-
+    const {t} = useTranslation();
     useEffect(() => {
         if (isHovered) return;
 
@@ -40,8 +41,8 @@ export default function MainSlides() {
 
                                 {/* 텍스트 오른쪽 */}
                                 <div className="flex-1">
-                                    <h3 className="text-base font-bold text-gray-900 mb-2">{slide.title}</h3>
-                                    <p className="text-sm text-gray-600 leading-snug">{slide.description}</p>
+                                    <h3 className="text-base font-bold text-gray-900 mb-2">{t(slide.title)}</h3>
+                                    <p className="text-sm text-gray-600 leading-snug">{t(slide.description)}</p>
                                 </div>
                             </div>
                         ))}
@@ -75,10 +76,10 @@ export default function MainSlides() {
                                 <div className="absolute inset-0 bg-black bg-opacity-30 flex items-end">
                                     <div className="text-white p-4 w-full">
                                         <h3 className="text-base font-bold mb-1">
-                                            {slide.title}
+                                            {t(slide.title)}
                                         </h3>
                                         <p className="text-xs opacity-90 line-clamp-2">
-                                            {slide.description}
+                                            {t(slide.description)}
                                         </p>
                                     </div>
                                 </div>

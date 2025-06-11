@@ -446,10 +446,10 @@ const Header = () => {
                                 ${hasReached && 'hidden'}`}
                             >
                                 <p className="text-roomi text-lg md:text-3xl font-semibold mb-2.5">
-                                    주단위부터 월단위까지, 보증금도 자유롭게
+                                    {t('주단위부터 월단위까지, 보증금도 자유롭게')}
                                 </p>
                                 <p className=" text-xl md:text-3xl font-bold text-[#AF483E]">
-                                    전 세계 게스트와 연결되는 루미
+                                    {t('전 세계 게스트와 연결되는 루미')}
                                 </p>
                             </div>
                         )}

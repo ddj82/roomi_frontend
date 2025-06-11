@@ -49,9 +49,9 @@ export default function CurrencySet() {
                         {t('현재')}
                     </div>
                 </div>
-                <div className="text-xs text-gray-600 mt-3">
-                    {t('통화설정 가이드')}
-                </div>
+                {/*<div className="text-xs text-gray-600 mt-3">*/}
+                {/*    {t('통화설정 가이드')}*/}
+                {/*</div>*/}
             </div>
 
             <h3 className="text-lg font-bold mb-4">{t('통화 선택')}</h3>

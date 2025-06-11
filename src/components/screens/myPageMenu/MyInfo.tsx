@@ -124,9 +124,9 @@ export default function MyInfo({user}: MyInfoEditProps) {
                                         </svg>
                                     </div>
                                     <div className="text-left">
-                                        <p className="font-medium text-gray-800">인증 미완료</p>
+                                        <p className="font-medium text-gray-800">{t('인증 미완료')}</p>
                                         <p className="text-sm text-gray-600">
-                                            {userIsKorean ? '내국인' : '외국인'} 본인인증을 완료해주세요
+                                            {userIsKorean ? t('내국인') : t('외국인')} {t('본인인증을 완료해 주세요.')}
                                         </p>
                                     </div>
                                 </div>
@@ -135,7 +135,7 @@ export default function MyInfo({user}: MyInfoEditProps) {
                                     onClick={() => setCertificationModal(true)}
                                     className="flex items-center gap-2 px-4 py-2 text-roomi hover:text-roomi-dark transition-colors"
                                 >
-                                    <span className="text-sm font-medium">인증하러 가기</span>
+                                    <span className="text-sm font-medium">{t('인증하기')}</span>
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className="h-4 w-4"
