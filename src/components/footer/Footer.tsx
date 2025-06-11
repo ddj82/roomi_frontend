@@ -1,10 +1,10 @@
 import React from 'react';
 import {useHostHeaderBtnVisibility} from "../stores/HostHeaderBtnStore";
-import {useFooterStore} from "../stores/FooterStore";
+import {useFooterVisibility} from "../stores/FooterStore";
 
 const Footer: React.FC = () => {
     const isVisibleHostScreen = useHostHeaderBtnVisibility();
-    const isFooterVisible = useFooterStore();
+    const isFooterVisible = useFooterVisibility();
 
 
     if (isVisibleHostScreen || isFooterVisible) {

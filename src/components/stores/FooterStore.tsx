@@ -23,6 +23,8 @@ export const useFooterVisibility = () => {
         const isBlocked = BLOCKED_PREFIXES.some(prefix => location.pathname.startsWith(prefix));
         setFooterVisibility(!isBlocked); // 일단 경로 기준으로 설정
     }, [location.pathname]);
+
+    return useFooterStore((state) => state.isFooterVisible);
 };
 
 
