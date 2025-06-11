@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
     const isFooterVisible = useFooterVisibility();
 
 
-    if (isVisibleHostScreen || isFooterVisible) {
+    if (isVisibleHostScreen || !isFooterVisible) {
         return <div></div>
     } else {
         return (

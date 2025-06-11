@@ -208,10 +208,8 @@ const Header = () => {
                 const y = window.scrollY;
                 if (!hasReached && y >= 219) {
                     setHasReached(true);
-                    console.log('295px 도달 → hasReached = true');
                 } else if (hasReached && y < 219) {
                     setHasReached(false);
-                    console.log('295px 미만으로 복귀 → hasReached = false');
                 }
 
             } else {
@@ -221,12 +219,10 @@ const Header = () => {
                 // 아직 322px에 도달하지 않았고, 이제 도달했으면
                 if (!hasReached && y >= 322) {
                     setHasReached(true);
-                    console.log('322px 도달 → hasReached = true');
                 }
                 // 이미 도달했었고, 다시 322px 아래로 내려오면
                 else if (hasReached && y < 322) {
                     setHasReached(false);
-                    console.log('322px 미만으로 복귀 → hasReached = false');
                 }
             }
         };
