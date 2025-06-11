@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from "react";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useAuthStore} from "src/components/stores/AuthStore";
 import DateModal from "src/components/modals/DateModal";
 import LocationModal from "src/components/modals/LocationModal";
@@ -37,6 +37,7 @@ type ActiveCardType = 'location' | 'date' | 'guests' | null;
 const Header = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
+    const location = useLocation();
     const [authModalVisible, setAuthModalVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [activeSection, setActiveSection] = useState<ModalSection | null>(null);
@@ -90,8 +91,14 @@ const Header = () => {
     };
 
     const openSearchModal = () => {
-        setSearchModalOpen(true);
-        document.body.style.overflow = 'hidden';
+        if (location.pathname === '/map') {
+            // 이미 /map 페이지면 모달 열기
+            setSearchModalOpen(true);
+            document.body.style.overflow = 'hidden';
+        } else {
+            // 아니라면 /map 으로 이동
+            navigate('/map');
+        }
     };
 
     const closeSearchModal = () => {

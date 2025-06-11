@@ -83,9 +83,9 @@ function AppContent() {
                 <Routes>
                     {/* hostMode === true 일 때 이 부분 전부 차단됨 */}
                     <Route element={<ProtectedGuestRoute />}>
-                        <Route path="/" element={<MainHome/>}/>
-                        {/*<Route path="/main" element={<Main/>}/>*/}
-                        <Route path="/naver" element={<NaverMap/>}/>
+                        <Route path="/" element={<Main/>}/>
+                        {/*<Route path="/main" element={<MainHome/>}/>*/}
+                        {/*<Route path="/naver" element={<NaverMap/>}/>*/}
                         <Route path="/join" element={<UserJoinScreen/>}/>
                         <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
                         <Route path="/sign-up" element={<KakaoLoginCallback/>}/>
