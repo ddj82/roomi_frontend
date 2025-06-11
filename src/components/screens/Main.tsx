@@ -1,15 +1,10 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {ApiResponse, RoomData} from "../../types/rooms";
-// import NaverMap from "../map/NaverMap";
-// import MainRoom from "../util/MainRoom";
 import {useTranslation} from "react-i18next";
-import i18n from "../../i18n";
 import {mainRoomData} from "../../api/api";
-import ImgCarousel from "../util/ImgCarousel";
 import {ChevronLeft, ChevronRight} from "lucide-react";
-import RoomAccommodationCard from "../util/RoomAccommodationCard";
 import RoomScrollList from "../util/RoomScrollList";
-import {mainPopularRegion, mainSlideList} from "../../types/MainSlideList";
+import {mainPopularRegion} from "../../types/MainSlideList";
 import MainSlides from "../util/MainSlides";
 import {useQuery} from "@tanstack/react-query";
 
@@ -39,7 +34,7 @@ const useRoomData = () => {
     });
 };
 
-const Main: React.FC<MainProps> = ({ rooms: externalRooms }) =>{
+const Main: React.FC<MainProps> = () => {
     const {t} = useTranslation();
     const popularRegion = mainPopularRegion;
     // 스크롤 관련 상태와 ref

@@ -3,11 +3,9 @@ import {BrowserRouter as Router, Routes, Route, useLocation} from 'react-router-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Footer from "./components/footer/Footer";
 import Header from "./components/header/Header";
-import MainHome from "./components/screens/MainHome";
 import RoomDetailScreen from "./components/screens/RoomDetailScreen";
 import HostModeAgreeScreen from "./components/screens/HostModeAgreeScreen";
 import HostScreen from "./components/screens/HostScreen";
-import NaverMap from "./components/map/NaverMap";
 import MyRoomInsert from "./components/hostMenu/myRooms/MyRoomInsert";
 import GuestReservationSetScreen from "./components/screens/GuestReservationSetScreen";
 import GuestReservationScreen from "./components/screens/GuestReservationScreen";
@@ -32,7 +30,7 @@ import LineLoginCallback from "./components/util/LineLoginCallback";
 import Main from "./components/screens/Main";
 import MobileHostHeader from "./components/screens/MobileHostHeader";
 import FailPage from "./components/pay/FailPage";
-import {useFooterStore} from "./components/stores/FooterStore";
+import MainMap from "./components/screens/MainMap";
 
 const queryClient = new QueryClient();
 
@@ -84,8 +82,6 @@ function AppContent() {
                     {/* hostMode === true 일 때 이 부분 전부 차단됨 */}
                     <Route element={<ProtectedGuestRoute />}>
                         <Route path="/" element={<Main/>}/>
-                        {/*<Route path="/main" element={<MainHome/>}/>*/}
-                        {/*<Route path="/naver" element={<NaverMap/>}/>*/}
                         <Route path="/join" element={<UserJoinScreen/>}/>
                         <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
                         <Route path="/sign-up" element={<KakaoLoginCallback/>}/>
@@ -117,7 +113,7 @@ function AppContent() {
             </div>
             <Routes>
                 <Route element={<ProtectedGuestRoute />}>
-                    <Route path="/map" element={<MainHome/>}/>
+                    <Route path="/map" element={<MainMap/>}/>
                 </Route>
             </Routes>
             {isVisibleHostScreen && isMobile && <BottomNavigator />}

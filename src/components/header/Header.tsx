@@ -1,13 +1,9 @@
 import React, {useState, useRef, useEffect} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useAuthStore} from "src/components/stores/AuthStore";
-import DateModal from "src/components/modals/DateModal";
-import LocationModal from "src/components/modals/LocationModal";
-import GuestsModal from "src/components/modals/GuestsModal";
 import AuthModal from "src/components/modals/AuthModal";
-import {BusinessInfoModal} from "src/components/modals/BusinessInfoModal";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faGlobe, faSearch, faUserPlus} from '@fortawesome/free-solid-svg-icons';
+import {faSearch} from '@fortawesome/free-solid-svg-icons';
 import HostHeader from "src/components/header/HostHeader";
 import {useHeaderBtnVisibility} from "src/components/stores/HeaderBtnStore";
 import {useHostHeaderBtnVisibility} from "../stores/HostHeaderBtnStore";
@@ -25,6 +21,7 @@ import '../../css/Header.css';
 import {SocialAuth} from "../util/SocialAuth";
 import {SearchBar} from "./SearchBar";
 import {Globe, MapPin, User} from "lucide-react";
+import {useMapStore} from "../stores/MapStore";
 
 type ModalSection = 'date' | 'location' | 'guests';
 type ModalPosition = { x: number; y: number };
@@ -39,10 +36,6 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [authModalVisible, setAuthModalVisible] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [activeSection, setActiveSection] = useState<ModalSection | null>(null);
-    const [modalPosition, setModalPosition] = useState<ModalPosition>({x: 0, y: 0});
-    const [businessInfoVisible, setBusinessInfoVisible] = useState(false);
     const {authToken} = useAuthStore();
     const isVisible = useHeaderBtnVisibility();
     const isVisibleHostScreen = useHostHeaderBtnVisibility();
@@ -56,6 +49,7 @@ const Header = () => {
     const dropdownRef = useRef<HTMLDivElement>(null);
     const isLoggedIn = Boolean(authToken);
     const {profileImg} = useAuthStore();
+    const isMapVisible = useMapStore();
 
     // 검색 모달 관련 상태 추가
     const [searchModalOpen, setSearchModalOpen] = useState(false);
@@ -70,25 +64,6 @@ const Header = () => {
             i18n.changeLanguage(detectedLang || 'ko');
         }
     }, [isLoggedIn]);
-
-    // 기존 모달 관련 함수
-    const openModal = (section: ModalSection, ref: React.RefObject<any>) => {
-        if (ref.current) {
-            ref.current.getBoundingClientRect();
-            const rect = ref.current.getBoundingClientRect();
-            setModalPosition({
-                x: rect.left,
-                y: rect.bottom + 15,
-            });
-            setActiveSection(section);
-            setModalVisible(true);
-        }
-    };
-
-    const closeModal = () => {
-        setModalVisible(false);
-        setActiveSection(null);
-    };
 
     const openSearchModal = () => {
         if (window.location.pathname === '/map') {
@@ -268,7 +243,7 @@ const Header = () => {
                     ${!hasReached && 'hidden'}
                 `}
             />
-            {/*<div className={`${hasReached && 'h-[65px] bg-white'}`} />*/}
+            {/* 한줄 헤더 */}
             <div
                 className={`border-b border-gray-200 
                     ${hasReached ? 'fixed top-0 left-0 w-full h-20 z-[9999] bg-white' : ''}
@@ -296,7 +271,7 @@ const Header = () => {
                             </div>
 
                             {/* 검색창 */}
-                            {((hasReached && !isMobile) && !isHost) && (
+                            {((hasReached && !isMobile) && !hostMode) && (
                                 <div
                                     ref={searchBarRef}
                                     onClick={openSearchModal}
@@ -441,10 +416,7 @@ const Header = () => {
 
                         {/* 호스트 모드가 아닐 때만 텍스트 표시 */}
                         {!hostMode && (
-                            <div
-                                className={`flex flex-col items-center text-center mb-6 
-                                ${hasReached && 'hidden'}`}
-                            >
+                            <div className={`flex flex-col items-center text-center mb-6 ${hasReached && 'hidden'}`}>
                                 <p className="text-roomi text-lg md:text-3xl font-semibold mb-2.5">
                                     주단위부터 월단위까지, 보증금도 자유롭게
                                 </p>
@@ -500,39 +472,24 @@ const Header = () => {
                         <HostHeader/>
                     )}
 
-                    {/* 검색 모달 */}
-                    {searchModalOpen && (
-                        <SearchBar
-                            visible={searchModalOpen}
-                            onClose={() => setSearchModalOpen(false)}
-                            openSearchModal={openSearchModal}
-                            closeSearchModal={closeSearchModal}
-                            toggleCard={toggleCard}
-                            activeCard={activeCard}
-                            performSearch={performSearch}
-                            handleSelectLocation={handleSelectLocation}
-                        />
-                    )}
-
-                    <BusinessInfoModal visible={businessInfoVisible} onClose={() => setBusinessInfoVisible(false)}/>
-                    <AuthModal visible={authModalVisible} onClose={() => setAuthModalVisible(false)} type="login"/>
-
-                    {/* 기존 모달 코드 유지 */}
-                    {modalVisible && (
-                        <div className="h modal-container">
-                            {activeSection === 'date' && (
-                                <DateModal visible={true} onClose={closeModal} position={modalPosition}/>
-                            )}
-                            {activeSection === 'location' && (
-                                <LocationModal visible={true} onClose={closeModal} position={modalPosition}/>
-                            )}
-                            {activeSection === 'guests' && (
-                                <GuestsModal visible={true} onClose={closeModal} position={modalPosition}/>
-                            )}
-                        </div>
-                    )}
                 </div>
             </div>
+
+            {/* 검색 모달 */}
+            {searchModalOpen && (
+                <SearchBar
+                    visible={searchModalOpen}
+                    onClose={() => setSearchModalOpen(false)}
+                    openSearchModal={openSearchModal}
+                    closeSearchModal={closeSearchModal}
+                    toggleCard={toggleCard}
+                    activeCard={activeCard}
+                    performSearch={performSearch}
+                    handleSelectLocation={handleSelectLocation}
+                />
+            )}
+
+            <AuthModal visible={authModalVisible} onClose={() => setAuthModalVisible(false)} type="login"/>
         </>
     );
 };

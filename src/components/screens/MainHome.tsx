@@ -1,17 +1,12 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {RoomData} from "src/types/rooms"; // 스타일을 별도 CSS 파일로 관리
+import {RoomData} from "src/types/rooms";
 import 'src/css/MainHome.css';
-import FilterBar from "src/components/header/FilterBar";
 import HomeScreen from "src/components/screens/HomeScreen";
-import NaverMap from "src/components/map/NaverMap";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowUp} from "@fortawesome/free-solid-svg-icons";
 import {useTranslation} from "react-i18next";
 import GoogleMap from "../map/GoogleMap";
 
 export default function MainHome() {
     const [rooms, setRooms] = useState<RoomData[]>([]);
-    // const [showTopButton, setShowTopButton] = useState(false);
     const {t} = useTranslation();
 
     const handleRoomsUpdate = useCallback((newRooms: RoomData[]) => {

@@ -900,16 +900,11 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
             document.removeEventListener('mousedown', handleMapClick, true);
         };
     }, []);
-    return (
-        <>
-            <div style={styles.mapContainer}>
-                <div id="map" style={styles.map}/>
-            </div>
-            <span>
-                1234
-            </span>
-        </>
 
+    return (
+        <div style={styles.mapContainer}>
+            <div id="map" style={styles.map}/>
+        </div>
     );
 };
 

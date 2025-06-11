@@ -1,4 +1,4 @@
-import PortOne, {PaymentResponse} from "@portone/browser-sdk/v2"
+import PortOne from "@portone/browser-sdk/v2"
 import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {RoomData} from "../../types/rooms";
@@ -187,6 +187,7 @@ export default function GuestReservationScreen() {
                 // 결제 후 검증
                 const verifyPaymentResponse = await verifyPayment(payment.paymentId);
                 const verifyPaymentResponseJson = await verifyPaymentResponse.json();
+                console.log('결제 후 검증 verifyPaymentResponseJson',verifyPaymentResponseJson);
 
                 if (verifyPaymentResponse.ok) {
                     /* 가상계좌 발급 성공 */
@@ -201,8 +202,13 @@ export default function GuestReservationScreen() {
                             return;
                         }
 
-                        setVirtualAccountSuccessResponse(paymentComplete);
-                        setPaymentSuccess(true);
+                        if (verifyPaymentResponseJson.status === "VIRTUAL_ACCOUNT_ISSUED") {
+                            setVirtualAccountSuccessResponse(paymentComplete);
+                            setPaymentSuccess(true);
+                        } else {
+                            setPaymentFailedResponse(verifyPaymentResponseJson);
+                        }
+
                     } catch (e) {
                         console.error('발급 된 가상계좌 조회 중 오류', e);
                     }
