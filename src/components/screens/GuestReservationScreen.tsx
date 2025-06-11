@@ -211,11 +211,59 @@ export default function GuestReservationScreen() {
 
                 setPortOneModal(true);
             }
+        } else if (selectedPayment === "FOREIGNER") {
+            const payment = await PortOne.requestPayment({
+                storeId: "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85",
+                channelKey: "channel-key-0dfb8c53-05f6-4017-8ce5-6cff2f815022",
+                paymentId: paymentId,
+                orderName: bookData.room.title,
+                // totalAmount: Math.round(paymentData.price),
+                totalAmount: 1000,
+                locale : 'EN_US',
+                currency: "CURRENCY_USD",
+                payMethod: "CARD",
+                customer: {
+                    customerId: formDataState.phone, // 변경해야함
+                    fullName: formDataState.name,
+                    phoneNumber: formDataState.phone,
+                    email: formDataState.email
+                },
+            });
+
+            if (payment) {
+                // 결제 후 검증
+                const verifyPaymentResponse = await verifyPayment(payment.paymentId);
+                const verifyPaymentResponseJson = await verifyPaymentResponse.json();
+                console.log('결제 후 검증 verifyPaymentResponseJson',verifyPaymentResponseJson);
+
+                if (verifyPaymentResponseJson.status === "PAID") {
+                    /* 결제 성공 */
+                    setPaymentSuccessResponse(verifyPaymentResponseJson);
+                    try {
+                        const completeResponse = await confirmPayment(payment.paymentId, bookData.reservation.id.toString());
+                        const paymentComplete = await completeResponse.json();
+
+                        if (!paymentComplete.success) {
+                            console.log('결제 상태 업데이트 중 오류');
+                            alert('결제 상태 업데이트 중 오류가 발생했습니다.');
+                            return;
+                        }
+                        setPaymentSuccess(true);
+                    } catch (e) {
+                        console.error('결제 상태 업데이트 중 오류', e);
+                    }
+                } else {
+                    /* 결제 실패 */
+                    setPaymentFailedResponse(verifyPaymentResponseJson);
+                    console.log('결제 실패');
+                }
+
+                setPortOneModal(true);
+            }
         } else {
             const payment = await PortOne.requestPayment({
                 storeId: "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85",
                 channelKey: "channel-key-14a7fa72-0d06-4bb5-9502-f721b189eb86",
-                // channelKey: "channel-key-7f9f2376-d742-40f7-9f6f-9ea74579cbe1",
                 paymentId: paymentId,
                 orderName: bookData.room.title,
                 // totalAmount: Math.round(paymentData.price),
@@ -480,7 +528,7 @@ export default function GuestReservationScreen() {
                             <div className="p-6 border border-gray-200 rounded-xl shadow-sm bg-white mb-6">
                                 <div className="font-bold text-gray-800 mb-4">{t("결제 수단")}</div>
                                 <div className="grid gap-4 grid-cols-2">
-                                    <PaymentOption id="CARD" label="해외 카드" selected={selectedPayment === "CARD"}
+                                    <PaymentOption id="FOREIGNER" label="해외 카드" selected={selectedPayment === "FOREIGNER"}
                                                    onChange={handlePaymentChange}/>
                                 </div>
                             </div>
