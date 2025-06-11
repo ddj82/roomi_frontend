@@ -58,7 +58,8 @@ export default function MyHistoryList() {
 
                                 {/* 정보 */}
                                 <div className="w-3/4 flex flex-col">
-                                    <div className="text-base font-semibold text-gray-900 flex items-center">
+                                    <div
+                                        className="line-clamp-1 overflow-hidden text-ellipsis break-words text-base font-semibold text-gray-900">
                                         {room.title}
                                     </div>
 
@@ -69,12 +70,12 @@ export default function MyHistoryList() {
                                     <div className="mt-1">
                                         {(room.month_price! > 0) && (
                                             <div className="text-sm font-bold text-gray-700 mt-1">
-                                                {t('원')}{room.month_price!.toLocaleString()} / {t('일')}
+                                                {t('원')}{room.month_price!.toLocaleString()} / {t('월')}
                                             </div>
                                         )}
                                         {(room.week_price! > 0) && (
                                             <div className="text-sm font-bold text-gray-700 mt-1">
-                                                {t('원')}{room.week_price!.toLocaleString()} / {t('주')}
+                                                {t('원')}{room.week_price!.toLocaleString()} / {t('week_unit')}
                                             </div>
                                         )}
                                     </div>
@@ -110,12 +111,12 @@ export default function MyHistoryList() {
                                     <div className="mt-1">
                                         {(room.month_price! > 0) && (
                                             <div className="text-sm text-gray-700 mt-1">
-                                                {t('원')}{room.month_price!.toLocaleString()} / {t('일')}
+                                                {t('원')}{room.month_price!.toLocaleString()} / {t('월')}
                                             </div>
                                         )}
                                         {(room.week_price! > 0) && (
                                             <div className="text-sm text-gray-700 mt-1">
-                                                {t('원')}{room.week_price!.toLocaleString()} / {t('주')}
+                                                {t('원')}{room.week_price!.toLocaleString()} / {t('week_unit')}
                                             </div>
                                         )}
                                     </div>

@@ -70,41 +70,42 @@ export default function NotificationSet() {
     ];
 
     return (
-        <div className="p-4 md:p-6 max-w-md mx-auto">
-            {/*<h3 className="text-lg font-bold mb-6">{t('알림 설정')}</h3>*/}
-
-            <div className="space-y-4 mb-8">
+        <div className="space-y-6">
+            {/* 알림 설정 목록 */}
+            <div className="space-y-4">
                 {notificationOptions.map((option) => (
                     <div
                         key={option.id}
-                        className="border rounded-lg p-5 bg-white"
+                        className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
                     >
-                        <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                                <h4 className="font-bold mb-1">{t(option.title)}</h4>
-                                <p className="text-xs text-gray-500">{t(option.description)}</p>
-                            </div>
-                            <div className="ml-4">
-                                <ToggleButton
-                                    checked={option.state}
-                                    onChange={(e) => option.setState(e.target.checked)}
-                                />
+                        <div className="p-6">
+                            <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                    <h4 className="font-semibold text-gray-900 mb-1">{t(option.title)}</h4>
+                                    <p className="text-sm text-gray-600">{t(option.description)}</p>
+                                </div>
+                                <div className="ml-4">
+                                    <ToggleButton
+                                        checked={option.state}
+                                        onChange={(e) => option.setState(e.target.checked)}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* 수정 버튼 */}
-            <div className="mt-8 mb-4">
+            {/* 설정 저장 버튼 */}
+            <div className="pt-2">
                 <button
                     type="button"
                     onClick={handleSave}
                     disabled={isInitialState}
-                    className={`w-full py-4 text-white text-base font-medium rounded-lg transition-colors
-                        ${isInitialState
-                        ? 'bg-gray-300 cursor-not-allowed'
-                        : 'bg-roomi hover:bg-roomi-dark'
+                    className={`w-full py-3 px-6 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                        isInitialState
+                            ? 'bg-gray-300 cursor-not-allowed focus:ring-gray-300'
+                            : 'bg-roomi hover:bg-roomi-1 focus:ring-roomi'
                     }`}
                 >
                     {t('설정')}

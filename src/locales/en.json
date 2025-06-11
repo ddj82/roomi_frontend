@@ -286,8 +286,8 @@
 
   "내 정보" : "my info.",
   "인증 미완료" : "Not Verified",
-  "내국인" : "Korean National",
-  "외국인" : "Foreign National",
+  "내국인" : "Korean Nationality",
+  "외국인" : "Foreign Nationality",
   "본인인증을 완료해 주세요." : "Please complete identity verification",
   "인증하기" : "Proceed to Verification",
   "본인 인증": "Identity Verification",
@@ -363,5 +363,9 @@
   "환급대기": "awaiting refund",
   "승인대기": "awaiting approval",
   "월" : "month",
-  "관심 목록이 없습니다.": "your wishlist is empty"
+  "관심 목록이 없습니다.": "your wishlist is empty",
+  "마이 루미" : "My Roomi",
+  "사용자" : "User",
+  "언어 변경하기" : "sumbit",
+  "현재" : "current"
 }

@@ -55,7 +55,7 @@ export default function MyInfo({user}: MyInfoEditProps) {
     }, []);
 
     return (
-        <div className="p-4 md:p-6 max-w-7xl mx-auto">
+        <div>
             {/*인증 모달 컴포넌트 (조건부 렌더링)*/}
             {certificationModal && (
                 <RoomDetailCertificationModal
@@ -67,24 +67,33 @@ export default function MyInfo({user}: MyInfoEditProps) {
             )}
 
             <div className="space-y-6">
-                {/* 프로필 이미지 */}
-                <div className="flex justify-center">
-                    <img
-                        src={user.profile_image ?? '/assets/images/profile.png'}
-                        alt="프로필 이미지"
-                        className="w-24 h-24 md:w-32 md:h-32 rounded-full  object-cover"
-                    />
+                {/* 프로필 카드 */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="p-6">
+                        <div className="flex flex-col items-center text-center">
+                            <img
+                                src={user.profile_image ?? '/assets/images/profile.png'}
+                                alt="프로필 이미지"
+                                className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-2 border-gray-200 mb-4"
+                            />
+                            <h2 className="text-xl font-semibold text-gray-900 mb-1">{user.name}</h2>
+                            <p className="text-sm text-gray-500 mb-3">{user.email}</p>
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-roomi text-white">
+                            {userIsKorean ? t('내국인') : t('외국인')} {t('사용자')}
+                        </span>
+                        </div>
+                    </div>
                 </div>
 
                 {/* 본인인증 섹션 */}
-                <div className="bg-gray-50 rounded-lg p-6 ">
-                    <div className="text-center">
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="p-6">
                         {user.identity_verified ? (
-                            <div className="flex items-center justify-center gap-3 text-green-600">
-                                <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-full">
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-xl">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        className="h-5 w-5"
+                                        className="h-6 w-6 text-green-600"
                                         fill="none"
                                         viewBox="0 0 24 24"
                                         stroke="currentColor"
@@ -97,20 +106,20 @@ export default function MyInfo({user}: MyInfoEditProps) {
                                         />
                                     </svg>
                                 </div>
-                                <div>
-                                    <p className="font-semibold text-lg">인증완료</p>
-                                    <p className="text-sm text-gray-600">
-                                        {userIsKorean ? '내국인' : '외국인'} 본인인증이 완료되었습니다
+                                <div className="flex-1">
+                                    <h3 className="font-semibold text-lg text-gray-900">{t('인증완료')}</h3>
+                                    <p className="text-sm text-gray-500">
+                                        {userIsKorean ? t('내국인') : t('외국인')} 본인인증이 완료되었습니다
                                     </p>
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-xl">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
-                                            className="h-5 w-5 text-gray-500"
+                                            className="h-6 w-6 text-orange-600"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                             stroke="currentColor"
@@ -123,137 +132,97 @@ export default function MyInfo({user}: MyInfoEditProps) {
                                             />
                                         </svg>
                                     </div>
-                                    <div className="text-left">
-                                        <p className="font-medium text-gray-800">{t('인증 미완료')}</p>
-                                        <p className="text-sm text-gray-600">
-                                            {userIsKorean ? t('내국인') : t('외국인')} {t('본인인증을 완료해 주세요.')}
+                                    <div className="flex-1">
+                                        <h3 className="font-semibold text-lg text-gray-900">{t('인증 미완료')}</h3>
+                                        <p className="text-sm text-gray-500">
+                                            {t('본인인증을 완료해 주세요.')}
                                         </p>
                                     </div>
                                 </div>
                                 <button
                                     type="button"
                                     onClick={() => setCertificationModal(true)}
-                                    className="flex items-center gap-2 px-4 py-2 text-roomi hover:text-roomi-dark transition-colors"
+                                    className="px-4 py-2 bg-roomi text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
                                 >
-                                    <span className="text-sm font-medium">{t('인증하기')}</span>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-4 w-4"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M9 5l7 7-7 7"
-                                        />
-                                    </svg>
+                                    {t('인증하기')}
                                 </button>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* 그리드 레이아웃 */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* 정보 섹션들 */}
+                <div className="space-y-6">
                     {/* 기본 정보 섹션 */}
-                    <div className="bg-white  rounded-lg overflow-hidden">
-                        <div className="p-4 bg-gray-50">
-                            <h3 className="font-semibold text-gray-800">{t('기본 정보')}</h3>
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-100">
+                            <h3 className="text-lg font-semibold text-gray-900">{t('기본 정보')}</h3>
                         </div>
-                        <div className="p-4 space-y-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">{t('이름')}</label>
-                                <input
-                                    type="text"
-                                    defaultValue={user.name}
-                                    disabled
-                                    className="w-full px-3 py-2  rounded-lg bg-gray-50 text-gray-700"
-                                />
+                        <div className="p-6 space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">{t('이름')}</label>
+                                    <div className="px-4 py-3 bg-gray-50 rounded-lg border">
+                                        <span className="text-gray-900">{user.name}</span>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">{t('전화번호')}</label>
+                                    <div className="px-4 py-3 bg-gray-50 rounded-lg border">
+                                        <span className="text-gray-900">{user.phone}</span>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">{t('이메일')}</label>
-                                <input
-                                    type="email"
-                                    defaultValue={user.email}
-                                    disabled
-                                    className="w-full px-3 py-2  rounded-lg bg-gray-50 text-gray-700"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">{t('전화번호')}</label>
-                                <input
-                                    type="tel"
-                                    defaultValue={user.phone}
-                                    disabled
-                                    className="w-full px-3 py-2  rounded-lg bg-gray-50 text-gray-700"
-                                />
+                                <div className="px-4 py-3 bg-gray-50 rounded-lg border">
+                                    <span className="text-gray-900">{user.email}</span>
+                                </div>
                             </div>
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">{t('생년월일')}</label>
-                                <input
-                                    type="date"
-                                    defaultValue={dayjs.utc(user.birth).format('YYYY-MM-DD')}
-                                    disabled
-                                    className="w-full px-3 py-2  rounded-lg bg-gray-50 text-gray-700"
-                                />
+                                <div className="px-4 py-3 bg-gray-50 rounded-lg border">
+                                    <span className="text-gray-900">{dayjs.utc(user.birth).format('YYYY-MM-DD')}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* 정산 정보 섹션 - 항상 표시 */}
-                    <div className="bg-white  rounded-lg overflow-hidden">
-                        <div className="p-4  bg-gray-50">
-                            <h3 className="font-semibold text-gray-800">{t('정산 정보')}</h3>
+                    {/* 정산 정보 섹션 */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-100">
+                            <h3 className="text-lg font-semibold text-gray-900">{t('정산 정보')}</h3>
                         </div>
-                        <div className="p-4 space-y-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">{t('예금주')}</label>
-                                <input
-                                    type="text"
-                                    defaultValue={user.bank_holder}
-                                    disabled
-                                    className="w-full px-3 py-2  rounded-lg bg-gray-50 text-gray-700"
-                                />
-                            </div>
+                        <div className="p-6 space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">{t('예금주')}</label>
+                                    <div className="px-4 py-3 bg-gray-50 rounded-lg border">
+                                        <span className="text-gray-900">{user.bank_holder || '미입력'}</span>
+                                    </div>
+                                </div>
 
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">{t('은행명')}</label>
-                                <select
-                                    className="w-full px-3 py-2  rounded-lg bg-gray-50 text-gray-700"
-                                    disabled
-                                    defaultValue={user.bank}
-                                >
-                                    <option value="" disabled>{t('은행 선택')}</option>
-                                    <option value="국민은행">국민은행</option>
-                                    <option value="우리은행">우리은행</option>
-                                    <option value="농협">농협</option>
-                                    <option value="하나은행">하나은행</option>
-                                    <option value="신한은행">신한은행</option>
-                                    <option value="기업은행">기업은행</option>
-                                    <option value="카카오뱅크">카카오뱅크</option>
-                                    <option value="토스뱅크">토스뱅크</option>
-                                </select>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-700">{t('은행명')}</label>
+                                    <div className="px-4 py-3 bg-gray-50 rounded-lg border">
+                                        <span className="text-gray-900">{user.bank || '미입력'}</span>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">{t('계좌번호')}</label>
-                                <input
-                                    type="text"
-                                    defaultValue={user.account}
-                                    disabled
-                                    className="w-full px-3 py-2  rounded-lg bg-gray-50 text-gray-700"
-                                    placeholder={t('- 없이 입력해주세요.')}
-                                />
+                                <div className="px-4 py-3 bg-gray-50 rounded-lg border">
+                                    <span className="text-gray-900">{user.account || '미입력'}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     );

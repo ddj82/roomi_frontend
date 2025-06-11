@@ -90,115 +90,154 @@ export default function HelpCenter() {
     };
 
     return (
-        <div className="p-4 md:px-8 max-w-3xl mx-auto">
-            <div className="mb-8 flex flex-col gap-2">
-                <h3 className="text-lg font-bold mb-2">{t('카카오톡으로 문의하기')}</h3>
-                <div className="text-xs">
-                    {t('빠른 응답이 필요하시면 카카오톡 채널로 문의 해주세요.')}
+        <div className="space-y-6">
+            {/* 카카오톡 문의 섹션 */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-100">
+                    <h3 className="text-lg font-semibold text-gray-900">{t('카카오톡으로 문의하기')}</h3>
                 </div>
-                <div>
+                <div className="p-6 space-y-4">
+                    <p className="text-sm text-gray-600">
+                        {t('빠른 응답이 필요하시면 카카오톡 채널로 문의 해주세요.')}
+                    </p>
+
                     <button
                         type="button"
-                        className="bg-yellow-300 rounded p-2 px-8 font-bold flex_center gap-2 w-full md:w-fit"
+                        className="w-full md:w-auto bg-yellow-400 hover:bg-yellow-500 rounded-lg px-6 py-3 font-semibold text-gray-900 flex items-center justify-center gap-2 transition-colors"
                         onClick={handleKakaoChannelBtn}
                     >
                         <FontAwesomeIcon icon={faComments}/>
                         {t('카카오톡 채널 열기')}
                     </button>
-                </div>
-                <div>
-                    <div className="text-sm flex gap-2 rounded bg-gray-200 w-fit p-2">
-                        <span>http://pf.kakao.com/_xkEFxjn</span>
+
+                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border">
+                        <span className="text-sm text-gray-700 flex-1">http://pf.kakao.com/_xkEFxjn</span>
                         <button
                             type="button"
                             onClick={() => handleCopyClipBoard('http://pf.kakao.com/_xkEFxjn')}
+                            className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
                         >
                             <FontAwesomeIcon icon={faCopy}/>
                         </button>
                     </div>
                 </div>
             </div>
-            <div className="mb-8 flex flex-col gap-2">
-                <h3 className="text-lg font-bold mb-2">{t('이메일로 문의하기')}</h3>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-1">
-                    <div className="relative">
-                        <div className="absolute left-3.5 top-2 pointer-events-none">
-                            <FontAwesomeIcon icon={faUser} className="w-4 h-4 text-gray-400"/>
-                        </div>
-                        <input
-                            type="text"
-                            onChange={(e) => handleChange('name', e.target.value)}
-                            name="name"
-                            id="name"
-                            placeholder={t('이름')}
-                            className="w-full p-2 pl-10 border rounded focus:outline-none"
-                        />
-                    </div>
-                    {errors.name && <p className="font-bold text-red-500 text-sm">{errors.name}</p>}
-                    <div className="relative">
-                        <div className="absolute left-3.5 top-2 pointer-events-none">
-                            <FontAwesomeIcon icon={faEnvelope} className="w-4 h-4 text-gray-400"/>
-                        </div>
-                        <input
-                            type="text"
-                            onChange={(e) => handleChange('email', e.target.value)}
-                            name="email"
-                            id="email"
-                            placeholder={t('이메일')}
-                            className="w-full p-2 pl-10 border rounded focus:outline-none"
-                        />
-                    </div>
-                    {errors.email && <p className="font-bold text-red-500 text-sm">{errors.email}</p>}
-                    <div className="relative">
-                        <div className="absolute left-3.5 top-2 pointer-events-none">
-                            <FontAwesomeIcon icon={faHeading} className="w-4 h-4 text-gray-400"/>
-                        </div>
-                        <input
-                            type="text"
-                            onChange={(e) => handleChange('title', e.target.value)}
-                            name="title"
-                            id="title"
-                            placeholder={t('제목')}
-                            className="w-full p-2 pl-10 border rounded focus:outline-none"
-                        />
-                    </div>
-                    {errors.title && <p className="font-bold text-red-500 text-sm">{errors.title}</p>}
-                    <div className="relative">
-                        <div className="absolute left-3.5 top-2 pointer-events-none">
-                            <FontAwesomeIcon icon={faCommentDots} className="w-4 h-4 text-gray-400"/>
-                        </div>
-                        <textarea
-                            onChange={(e) => handleChange('content', e.target.value)}
-                            name="content"
-                            id="content"
-                            placeholder={t('문의 내용')}
-                            cols={30}
-                            rows={6}
-                            className="w-full p-2 pl-10 border border-gray-300 rounded focus:outline-none resize-none"></textarea>
-                    </div>
-                    {errors.content && <p className="font-bold text-red-500 text-sm">{errors.content}</p>}
-                    <button
-                        type="submit"
-                        className="bg-roomi rounded text-white font-bold p-2"
-                    >
-                        {t('문의하기')}
-                    </button>
-                </form>
-            </div>
-            <div className="flex flex-col gap-2">
-                <h3 className="text-lg font-bold mb-2">{t('지원 정보')}</h3>
-                <div className="flex gap-8">
-                    <div className="flex_center text-gray-500"><FontAwesomeIcon icon={faClock} /></div>
-                    <div>
-                        <div>{t('운영 시간')}</div>
-                        <div className="text-gray-500 text-sm">{t('평일')} 09:00 - 18:00 ({t('공휴일 제외')})</div>
-                    </div>
+
+            {/* 이메일 문의 섹션 */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-100">
+                    <h3 className="text-lg font-semibold text-gray-900">{t('이메일로 문의하기')}</h3>
                 </div>
-                <div className="flex gap-8">
-                    <div className="flex_center text-gray-500"><FontAwesomeIcon icon={faEnvelope}/></div>
-                    <div>
-                        <div>{t('지원 이메일')}</div>
-                        <div className="text-gray-500 text-sm">help@roomi.co.kr</div>
+                <div className="p-6">
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <label className="text-sm font-medium text-gray-700">{t('이름')}</label>
+                                <div className="relative">
+                                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                                        <FontAwesomeIcon icon={faUser} className="w-4 h-4 text-gray-400"/>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        onChange={(e) => handleChange('name', e.target.value)}
+                                        name="name"
+                                        id="name"
+                                        placeholder={t('이름')}
+                                        className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:border-transparent"
+                                    />
+                                </div>
+                                {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-sm font-medium text-gray-700">{t('이메일')}</label>
+                                <div className="relative">
+                                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                                        <FontAwesomeIcon icon={faEnvelope} className="w-4 h-4 text-gray-400"/>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        onChange={(e) => handleChange('email', e.target.value)}
+                                        name="email"
+                                        id="email"
+                                        placeholder={t('이메일')}
+                                        className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:border-transparent"
+                                    />
+                                </div>
+                                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-sm font-medium text-gray-700">{t('제목')}</label>
+                            <div className="relative">
+                                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                                    <FontAwesomeIcon icon={faHeading} className="w-4 h-4 text-gray-400"/>
+                                </div>
+                                <input
+                                    type="text"
+                                    onChange={(e) => handleChange('title', e.target.value)}
+                                    name="title"
+                                    id="title"
+                                    placeholder={t('제목')}
+                                    className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:border-transparent"
+                                />
+                            </div>
+                            {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-sm font-medium text-gray-700">{t('문의 내용')}</label>
+                            <div className="relative">
+                                <div className="absolute left-3 top-3 pointer-events-none">
+                                    <FontAwesomeIcon icon={faCommentDots} className="w-4 h-4 text-gray-400"/>
+                                </div>
+                                <textarea
+                                    onChange={(e) => handleChange('content', e.target.value)}
+                                    name="content"
+                                    id="content"
+                                    placeholder={t('문의 내용')}
+                                    rows={6}
+                                    className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:border-transparent resize-none"
+                                ></textarea>
+                            </div>
+                            {errors.content && <p className="text-red-500 text-sm">{errors.content}</p>}
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="w-full bg-roomi hover:bg-roomi-1 text-white font-semibold py-3 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:ring-offset-2"
+                        >
+                            {t('문의하기')}
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            {/* 지원 정보 섹션 */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-100">
+                    <h3 className="text-lg font-semibold text-gray-900">{t('지원 정보')}</h3>
+                </div>
+                <div className="p-6 space-y-4">
+                    <div className="flex items-start gap-4">
+                        <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-lg">
+                            <FontAwesomeIcon icon={faClock} className="w-5 h-5 text-gray-600"/>
+                        </div>
+                        <div className="flex-1">
+                            <h4 className="font-medium text-gray-900">{t('운영 시간')}</h4>
+                            <p className="text-sm text-gray-600">{t('평일')} 09:00 - 18:00 ({t('공휴일 제외')})</p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-start gap-4">
+                        <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-lg">
+                            <FontAwesomeIcon icon={faEnvelope} className="w-5 h-5 text-gray-600"/>
+                        </div>
+                        <div className="flex-1">
+                            <h4 className="font-medium text-gray-900">{t('지원 이메일')}</h4>
+                            <p className="text-sm text-gray-600">help@roomi.co.kr</p>
+                        </div>
                     </div>
                 </div>
             </div>

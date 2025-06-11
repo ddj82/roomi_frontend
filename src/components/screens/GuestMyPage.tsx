@@ -267,7 +267,7 @@ export default function GuestMyPage() {
                         >
                             <X className="w-6 h-6 text-gray-700"/>
                         </button>
-                        <h1 className="text-lg font-semibold text-gray-900">마이 루미</h1>
+                        <h1 className="text-lg font-semibold text-gray-900">{t('마이 루미')}</h1>
                         <button
                             onClick={handleLogout}
                             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -279,7 +279,10 @@ export default function GuestMyPage() {
 
                 {/* 프로필 카드 */}
                 <div className="bg-white mx-4 my-4 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="p-6">
+                    <button
+                        className="w-full p-6 text-left hover:bg-gray-50 transition-colors"
+                        onClick={() => handleSetSelectedMenu('내 정보')}
+                    >
                         <div className="flex items-center space-x-4">
                             <div className="relative">
                                 <img
@@ -292,15 +295,15 @@ export default function GuestMyPage() {
                                 <h2 className="text-lg font-semibold text-gray-900">{localStorage.getItem('userName')}</h2>
                                 <p className="text-sm text-gray-500">{localStorage.getItem('userEmail')}</p>
                                 <div className="mt-2">
-                  <span
-                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {isHost ? '호스트' : '게스트'}
-                  </span>
+                    <span
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {isHost ? t('호스트') : t('게스트')}
+                    </span>
                                 </div>
                             </div>
                             <ChevronRight className="w-5 h-5 text-gray-400"/>
                         </div>
-                    </div>
+                    </button>
                 </div>
 
                 {/* 호스트 등록 버튼 */}
@@ -358,7 +361,7 @@ export default function GuestMyPage() {
                                     <Eye className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  {t("최근 본")}
+                  {t("최근 본 게시물")}
                 </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
@@ -380,7 +383,7 @@ export default function GuestMyPage() {
                                     <Bell className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  {t("알림")}
+                  {t("알림 설정")}
                 </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
@@ -394,7 +397,7 @@ export default function GuestMyPage() {
                                     <Globe className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  {t("언어")}
+                  {t("언어 설정")}
                 </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>
@@ -408,7 +411,8 @@ export default function GuestMyPage() {
                                     <DollarSign className="w-5 h-5 text-gray-600"/>
                                 </div>
                                 <span className="text-base font-medium text-gray-900 flex-1 text-left">
-                  {t("통화")}
+                  {t("통화 설정")}
+
                 </span>
                                 <ChevronRight className="w-5 h-5 text-gray-400"/>
                             </button>

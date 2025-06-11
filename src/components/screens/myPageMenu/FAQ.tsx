@@ -86,82 +86,95 @@ export default function FAQ() {
     };
 
     return (
-        <div className="p-4 md:p-6 max-w-3xl mx-auto">
-            <h2 className="text-xl font-bold mb-6">{t('자주 묻는 질문')}</h2>
+        <div className="space-y-6">
+            {/* 헤더 */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="px-6 py-4">
+                    <h2 className="text-xl font-semibold text-gray-900">{t('자주 묻는 질문')}</h2>
+                </div>
+            </div>
 
-            {/* 카테고리 선택 탭 */}
-            <div className="mb-8 overflow-x-auto pb-2 scrollbar-hidden">
-                <div className="flex flex-nowrap md:grid md:grid-cols-3 gap-3">
-                    {faqTitles.map((faq) => (
-                        <button
-                            key={faq.id}
-                            type="button"
-                            onClick={() => setFAQList(faq.listId)}
-                            className={`px-5 py-3 rounded-lg text-sm font-medium whitespace-nowrap transition-all
-                                ${selectedTitle === faq.listId
-                                ? 'text-white bg-roomi shadow-sm'
-                                : 'text-gray-700 bg-gray-100 hover:bg-gray-200'}
-                            `}
-                        >
-                            {faq.title}
-                        </button>
-                    ))}
+            {/* 카테고리 선택 섹션 */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="p-6">
+                    <div className="overflow-x-auto pb-2 scrollbar-hidden">
+                        <div className="flex flex-nowrap md:grid md:grid-cols-3 gap-3">
+                            {faqTitles.map((faq) => (
+                                <button
+                                    key={faq.id}
+                                    type="button"
+                                    onClick={() => setFAQList(faq.listId)}
+                                    className={`px-4 py-3 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+                                        selectedTitle === faq.listId
+                                            ? 'text-white bg-roomi shadow-sm'
+                                            : 'text-gray-700 bg-gray-100 hover:bg-gray-200'
+                                    }`}
+                                >
+                                    {faq.title}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
 
             {/* FAQ 질문 목록 */}
-            <div className="space-y-3">
-                {list.map((faqItem) => {
-                    const isOpen = expandedId === faqItem.id;
-                    return (
-                        <div
-                            key={faqItem.id}
-                            className="border rounded-lg overflow-hidden transition-all "
-                        >
-                            {/* 질문 버튼 */}
-                            <button
-                                onClick={() => toggleAccordion(faqItem.id)}
-                                className="w-full text-left p-4 bg-white flex items-center justify-between cursor-pointer focus:outline-none"
+            {list.length > 0 ? (
+                <div className="space-y-4">
+                    {list.map((faqItem) => {
+                        const isOpen = expandedId === faqItem.id;
+                        return (
+                            <div
+                                key={faqItem.id}
+                                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all"
                             >
-                                <h3 className="font-medium text-gray-800 pr-8">{faqItem.title}</h3>
-                                <div className="text-gray-400 flex-shrink-0">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className={`h-5 w-5 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </div>
-                            </button>
+                                {/* 질문 버튼 */}
+                                <button
+                                    onClick={() => toggleAccordion(faqItem.id)}
+                                    className="w-full text-left p-6 bg-white flex items-center justify-between cursor-pointer focus:outline-none hover:bg-gray-50 transition-colors"
+                                >
+                                    <h3 className="font-semibold text-gray-900 pr-4 text-left">{faqItem.title}</h3>
+                                    <div className="text-gray-400 flex-shrink-0">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className={`h-5 w-5 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                </button>
 
-                            {/* 답변 내용 */}
-                            <AccordionItem isOpen={isOpen}>
-                                <div className="p-4 border-t border-gray-100 bg-gray-50 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                                    {faqItem.content}
-                                </div>
-                            </AccordionItem>
+                                {/* 답변 내용 */}
+                                <AccordionItem isOpen={isOpen}>
+                                    <div className="px-6 pb-6 border-t border-gray-100 bg-gray-50">
+                                        <div className="pt-4 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                                            {faqItem.content}
+                                        </div>
+                                    </div>
+                                </AccordionItem>
+                            </div>
+                        );
+                    })}
+                </div>
+            ) : (
+                /* 빈 상태 */
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="flex items-center justify-center py-16 text-gray-500">
+                        <div className="text-center">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-10 w-10 mx-auto text-gray-400 mb-3"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p className="text-gray-600 font-medium">{t('질문 목록이 없습니다.')}</p>
                         </div>
-                    );
-                })}
-            </div>
-
-            {/* 리스트가 비어있을 때 */}
-            {list.length === 0 && (
-                <div className="flex items-center justify-center py-16 text-gray-500 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="text-center">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-10 w-10 mx-auto text-gray-400 mb-3"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p>{t('질문 목록이 없습니다.')}</p>
                     </div>
                 </div>
             )}

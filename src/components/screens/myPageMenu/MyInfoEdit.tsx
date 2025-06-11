@@ -191,27 +191,27 @@ export default function MyInfoEdit() {
     };
 
     return (
-        <div className="p-2 md:p-6 max-w-7xl mx-auto">
-            <form onSubmit={handleSubmit}>
-                {userInfo ? (
-                    <>
-                        {editMyInfo ? (
-                            <div className="space-y-6">
-                                {/* 프로필 이미지 */}
-                                <div className="bg-white rounded-lg p-4 shadow-sm">
+        <form onSubmit={handleSubmit}>
+            {userInfo ? (
+                <>
+                    {editMyInfo ? (
+                        <div className="space-y-4">
+                            {/* 프로필 이미지 */}
+                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                <div className="p-4">
                                     <div className="flex justify-center">
                                         <div className="relative">
                                             <img
                                                 src={preview || userInfo.profile_image || '/assets/images/profile.png'}
                                                 alt="프로필 이미지"
-                                                className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover"
+                                                className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-2 border-gray-200"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={handleInputFileSet}
-                                                className="absolute right-0 bottom-0 w-8 h-8 bg-roomi text-white rounded-full flex items-center justify-center hover:bg-roomi-dark transition-colors focus:outline-none focus:ring-2 focus:ring-roomi focus:ring-offset-2"
+                                                className="absolute right-0 bottom-0 w-7 h-7 bg-roomi text-white rounded-full flex items-center justify-center hover:bg-roomi-1 transition-colors focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:ring-offset-2"
                                             >
-                                                <FontAwesomeIcon icon={faImage} className="w-4 h-4"/>
+                                                <FontAwesomeIcon icon={faImage} className="w-3 h-3"/>
                                             </button>
                                             <input
                                                 ref={fileInputRef}
@@ -223,195 +223,199 @@ export default function MyInfoEdit() {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                {/* 그리드 레이아웃 */}
-                                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                                    {/* 기본 정보 섹션 */}
-                                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                                        <div className="p-4 border-b border-gray-100 bg-gray-50">
-                                            <h3 className="font-semibold text-gray-800">{t('기본 정보')}</h3>
-                                        </div>
-                                        <div className="p-4 space-y-4">
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-medium text-gray-700">{t('이름')}</label>
-                                                <input
-                                                    name="name"
-                                                    type="text"
-                                                    value={form?.name}
-                                                    onChange={handleChange}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi focus:border-transparent"
-                                                />
-                                            </div>
-
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-medium text-gray-700">{t('이메일')}</label>
-                                                <input
-                                                    name="email"
-                                                    type="text"
-                                                    value={form?.email}
-                                                    disabled
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700"
-                                                />
-                                            </div>
-
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-medium text-gray-700">{t('전화번호')}</label>
-                                                <input
-                                                    name="phone"
-                                                    type="tel"
-                                                    value={form?.phone}
-                                                    onChange={handleChange}
-                                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi focus:border-transparent ${
-                                                        errors.phone ? 'border-red-500' : 'border-gray-300'
-                                                    }`}
-                                                />
-                                                {errors.phone && (
-                                                    <p className="text-red-500 text-sm">{errors.phone}</p>
-                                                )}
-                                            </div>
-
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-medium text-gray-700">{t('생년월일')}</label>
-                                                <input
-                                                    name="birth"
-                                                    type="date"
-                                                    value={form?.birth}
-                                                    onChange={handleChange}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi focus:border-transparent"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* 비밀번호 변경 섹션 */}
-                                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                                        <div className="p-4 border-b border-gray-100 bg-gray-50">
-                                            <h3 className="font-semibold text-gray-800">{t('비밀번호 변경')}</h3>
-                                        </div>
-                                        <div className="p-4 space-y-4">
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-medium text-gray-700">{t('새 비밀번호')}</label>
-                                                <input
-                                                    name="password"
-                                                    type="password"
-                                                    onChange={handleChange}
-                                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi focus:border-transparent ${
-                                                        errors.password ? 'border-red-500' : 'border-gray-300'
-                                                    }`}
-                                                    placeholder={t('새 비밀번호를 입력하세요')}
-                                                />
-                                                {errors.password && (
-                                                    <p className="text-red-500 text-sm">{errors.password}</p>
-                                                )}
-                                            </div>
-
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-medium text-gray-700">{t('비밀번호 확인')}</label>
-                                                <input
-                                                    type="password"
-                                                    value={confirmPassword}
-                                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi focus:border-transparent ${
-                                                        errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-                                                    }`}
-                                                    placeholder={t('비밀번호를 다시 입력하세요')}
-                                                />
-                                                {errors.confirmPassword && (
-                                                    <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* 호스트 정보 섹션 */}
-                                    {isHost && (
-                                        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                                            <div className="p-4 border-b border-gray-100 bg-gray-50">
-                                                <h3 className="font-semibold text-gray-800">{t('정산 정보')}</h3>
-                                            </div>
-                                            <div className="p-4 space-y-4">
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium text-gray-700">{t('예금주')}</label>
-                                                    <input
-                                                        name="bank_holder"
-                                                        type="text"
-                                                        value={form?.bank_holder}
-                                                        onChange={handleChange}
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi focus:border-transparent"
-                                                    />
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium text-gray-700">{t('은행명')}</label>
-                                                    <select
-                                                        name="bank"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi focus:border-transparent"
-                                                        value={form?.bank}
-                                                        onChange={handleChange}
-                                                    >
-                                                        <option value="" disabled>{t('은행 선택')}</option>
-                                                        <option value="국민은행">국민은행</option>
-                                                        <option value="우리은행">우리은행</option>
-                                                        <option value="농협">농협</option>
-                                                        <option value="하나은행">하나은행</option>
-                                                        <option value="신한은행">신한은행</option>
-                                                        <option value="기업은행">기업은행</option>
-                                                        <option value="카카오뱅크">카카오뱅크</option>
-                                                        <option value="토스뱅크">토스뱅크</option>
-                                                    </select>
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium text-gray-700">{t('계좌번호')}</label>
-                                                    <input
-                                                        name="account"
-                                                        type="text"
-                                                        value={form?.account}
-                                                        onChange={handleChange}
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi focus:border-transparent"
-                                                        placeholder={t('- 없이 입력해주세요.')}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
+                            {/* 기본 정보 섹션 */}
+                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                <div className="px-4 py-3 border-b border-gray-100">
+                                    <h3 className="font-semibold text-gray-900">{t('기본 정보')}</h3>
                                 </div>
+                                <div className="p-4 space-y-3">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div className="space-y-1">
+                                            <label className="text-sm font-medium text-gray-700">{t('이름')}</label>
+                                            <input
+                                                name="name"
+                                                type="text"
+                                                value={form?.name}
+                                                onChange={handleChange}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:border-transparent"
+                                            />
+                                        </div>
 
-                                {/* 버튼 그룹 */}
-                                <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                                    <button
-                                        type="button"
-                                        onClick={handleCancel}
-                                        className="flex-1 py-3 px-6 text-gray-700 bg-gray-200 rounded-lg font-medium hover:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
-                                    >
-                                        {t('취소')}
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="flex-1 py-3 px-6 text-white bg-roomi rounded-lg font-medium hover:bg-roomi-dark transition-colors focus:outline-none focus:ring-2 focus:ring-roomi focus:ring-offset-2"
-                                    >
-                                        {t('완료')}
-                                    </button>
+                                        <div className="space-y-1">
+                                            <label className="text-sm font-medium text-gray-700">{t('전화번호')}</label>
+                                            <input
+                                                name="phone"
+                                                type="tel"
+                                                value={form?.phone}
+                                                onChange={handleChange}
+                                                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:border-transparent ${
+                                                    errors.phone ? 'border-red-500' : 'border-gray-300'
+                                                }`}
+                                            />
+                                            {errors.phone && (
+                                                <p className="text-red-500 text-sm">{errors.phone}</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-700">{t('이메일')}</label>
+                                        <input
+                                            name="email"
+                                            type="text"
+                                            value={form?.email}
+                                            disabled
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-700"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-700">{t('생년월일')}</label>
+                                        <input
+                                            name="birth"
+                                            type="date"
+                                            value={form?.birth}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:border-transparent"
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        ) : (
-                            <>
-                                <MyInfo user={userInfo}/>
-                                {/* 수정 버튼 */}
-                                <div className="mt-6 max-w-md mx-auto">
-                                    <button
-                                        type="button"
-                                        onClick={handleEditMyInfo}
-                                        className="w-full bg-roomi text-white rounded-lg px-6 py-3 font-medium hover:bg-roomi-dark transition-colors focus:outline-none focus:ring-2 focus:ring-roomi focus:ring-offset-2"
-                                    >
-                                        {t('수정')}
-                                    </button>
+
+                            {/* 비밀번호 변경 섹션 */}
+                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                <div className="px-4 py-3 border-b border-gray-100">
+                                    <h3 className="font-semibold text-gray-900">{t('비밀번호 변경')}</h3>
                                 </div>
-                            </>
-                        )}
-                    </>
-                ) : (
-                    <div className="flex items-center justify-center py-16 text-gray-500 bg-gray-50 rounded-lg border border-gray-200">
+                                <div className="p-4 space-y-3">
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-700">{t('새 비밀번호')}</label>
+                                        <input
+                                            name="password"
+                                            type="password"
+                                            onChange={handleChange}
+                                            className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:border-transparent ${
+                                                errors.password ? 'border-red-500' : 'border-gray-300'
+                                            }`}
+                                            placeholder={t('새 비밀번호를 입력하세요')}
+                                        />
+                                        {errors.password && (
+                                            <p className="text-red-500 text-sm">{errors.password}</p>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-700">{t('비밀번호 확인')}</label>
+                                        <input
+                                            type="password"
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:border-transparent ${
+                                                errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                                            }`}
+                                            placeholder={t('비밀번호를 다시 입력하세요')}
+                                        />
+                                        {errors.confirmPassword && (
+                                            <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 호스트 정보 섹션 */}
+                            {isHost && (
+                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                    <div className="px-4 py-3 border-b border-gray-100">
+                                        <h3 className="font-semibold text-gray-900">{t('정산 정보')}</h3>
+                                    </div>
+                                    <div className="p-4 space-y-3">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div className="space-y-1">
+                                                <label className="text-sm font-medium text-gray-700">{t('예금주')}</label>
+                                                <input
+                                                    name="bank_holder"
+                                                    type="text"
+                                                    value={form?.bank_holder}
+                                                    onChange={handleChange}
+                                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:border-transparent"
+                                                />
+                                            </div>
+
+                                            <div className="space-y-1">
+                                                <label className="text-sm font-medium text-gray-700">{t('은행명')}</label>
+                                                <select
+                                                    name="bank"
+                                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:border-transparent"
+                                                    value={form?.bank}
+                                                    onChange={handleChange}
+                                                >
+                                                    <option value="" disabled>{t('은행 선택')}</option>
+                                                    <option value="국민은행">국민은행</option>
+                                                    <option value="우리은행">우리은행</option>
+                                                    <option value="농협">농협</option>
+                                                    <option value="하나은행">하나은행</option>
+                                                    <option value="신한은행">신한은행</option>
+                                                    <option value="기업은행">기업은행</option>
+                                                    <option value="카카오뱅크">카카오뱅크</option>
+                                                    <option value="토스뱅크">토스뱅크</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <label className="text-sm font-medium text-gray-700">{t('계좌번호')}</label>
+                                            <input
+                                                name="account"
+                                                type="text"
+                                                value={form?.account}
+                                                onChange={handleChange}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:border-transparent"
+                                                placeholder={t('- 없이 입력해주세요.')}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* 버튼 그룹 */}
+                            {/* 버튼 그룹 */}
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <button
+                                    type="button"
+                                    onClick={handleCancel}
+                                    className="flex-1 py-3 px-4 text-gray-700 bg-gray-100 rounded-lg font-medium hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 text-sm"
+                                >
+                                    {t('취소')}
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="flex-1 py-3 px-4 text-white bg-roomi rounded-lg font-medium hover:bg-roomi-1 transition-colors focus:outline-none focus:ring-2 focus:ring-roomi focus:ring-offset-2 text-sm"
+                                >
+                                    {t('완료')}
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <MyInfo user={userInfo}/>
+                            {/* 수정 버튼 */}
+                            <div className="mt-4">
+                                <button
+                                    type="button"
+                                    onClick={handleEditMyInfo}
+                                    className="w-full bg-roomi text-white rounded-lg px-4 py-3 font-medium hover:bg-roomi-1 transition-colors focus:outline-none focus:ring-2 focus:ring-roomi focus:ring-offset-2 text-sm"
+                                >
+                                    {t('수정')}
+                                </button>
+                            </div>
+                        </>
+                    )}
+                </>
+            ) : (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="flex items-center justify-center py-16 text-gray-500">
                         <div className="text-center">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -425,8 +429,8 @@ export default function MyInfoEdit() {
                             <p>{t('유저 정보를 불러오는 중입니다...')}</p>
                         </div>
                     </div>
-                )}
-            </form>
-        </div>
+                </div>
+            )}
+        </form>
     );
 };
