@@ -141,6 +141,7 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
     // 커스텀 마커 HTML 생성
     const createMarkerContent = (room: RoomData): HTMLElement => {
         const div = document.createElement('div');
+
         div.innerHTML = ReactDOMServer.renderToString(
             <div
                 className="relative bg-roomi text-white text-[13px] font-bold px-2 py-1 rounded-md shadow-md"
@@ -163,70 +164,62 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
         return div.firstElementChild as HTMLElement;
     };
 
-    // InfoWindow 컨텐츠 생성
-    const createInfoWindowContent = (room: RoomData): HTMLElement => {
-        const container = document.createElement('div');
-        container.className = 'custom-info-window';
 
-        const root = createRoot(container);
-        root.render(
-            <div className="relative w-[270px] bg-white rounded-xl shadow-xl overflow-hidden">
-                <button
-                    onClick={() => {
-                        if (infoWindow.current) {
-                            infoWindow.current.close();
-                        }
+    // 2. 이미지 렌더링 함수 분리
+    const renderRoomImage = (room: RoomData) => {
+        // 이미지 URL 배열이 있고 비어있지 않은 경우
+        if (room.detail_urls && Array.isArray(room.detail_urls) && room.detail_urls.length > 0) {
+            console.log('Using detail_urls:', room.detail_urls);
+
+            // ImgCarousel 대신 단순한 이미지로 먼저 테스트
+            if (room.detail_urls.length === 1) {
+                return (
+                    <img
+                        src={room.detail_urls[0]}
+                        alt={room.title}
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                            console.error('Image load error:', room.detail_urls![0]);
+                            e.currentTarget.src = '/default-room.jpg'; // 대체 이미지
+                        }}
+                        onLoad={() => {
+                            console.log('Image loaded successfully:', room.detail_urls![0]);
+                        }}
+                    />
+                );
+            } else {
+                // 여러 이미지가 있을 때는 ImgCarousel 사용
+                return <ImgCarousel images={room.detail_urls} customClass="h-full" />;
+            }
+        }
+
+        // 썸네일 이미지가 있는 경우
+        if (room.thumbnail_url) {
+            console.log('Using thumbnail_url:', room.thumbnail_url);
+            return (
+                <img
+                    src={room.thumbnail_url}
+                    alt={room.title}
+                    className="h-full w-full object-cover"
+                    onError={(e) => {
+                        console.error('Thumbnail load error:', room.thumbnail_url);
+                        e.currentTarget.src = '/default-room.jpg';
                     }}
-                    className="absolute top-3 right-3 flex_center w-2 h-2 p-2 text-lg text-gray-800 font-bold z-[100]"
-                >
-                    <FontAwesomeIcon icon={faCircleXmark} />
-                </button>
-                <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => handleRoomMarker(room.id)}
-                    className="cursor-pointer"
-                >
-                    <div className="h-[180px] w-full">
-                        {room.detail_urls && room.detail_urls.length > 0 ? (
-                            <ImgCarousel images={room.detail_urls} customClass="h-48" />
-                        ) : (
-                            <img
-                                src="/default-image.jpg"
-                                alt="thumbnail"
-                                className="h-full w-full object-cover"
-                            />
-                        )}
-                    </div>
+                />
+            );
+        }
 
-                    <div className="p-4 space-y-2 text-[14px]">
-                        <div className="text-[16px] font-semibold text-gray-900">{room.title}</div>
-                        <div className="text-gray-600">
-                            <div className="flex gap-1">
-                                <span className="text-blue-500">📍</span>
-                                <span className="line-clamp-2">{room.address}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <span className="text-yellow-500">💰</span>
-                                <span className="font-medium text-gray-800">{Number(room.week_price).toLocaleString()} /주</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <span className="text-green-600">💵</span>
-                                <span>{room.deposit}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <span className="text-amber-500">💡</span>
-                                <span>{room.maintenance_fee}</span>
-                            </div>
-                        </div>
-                    </div>
+        // 기본 이미지나 placeholder
+        console.log('Using default/placeholder image');
+        return (
+            <div className="h-full w-full bg-gray-200 flex items-center justify-center">
+                <div className="text-center text-gray-500">
+                    <div className="text-4xl mb-2">🏠</div>
+                    <div className="text-sm">이미지 없음</div>
                 </div>
             </div>
         );
-
-        return container;
     };
-
     // 표준 마커 생성 헬퍼 함수
     const createStandardMarker = (position: google.maps.LatLng, room: RoomData): google.maps.Marker => {
         const svgIcon: google.maps.Icon = {
@@ -252,12 +245,377 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
     };
 
     // 마커 업데이트 (클러스터링 포함)
+    // 주요 수정사항들
+
+
+    // InfoWindow 컨텐츠 생성 함수 - 완전히 수정
+    const createInfoWindowContent = (room: RoomData): string => {
+        // 기본 InfoWindow 구조에 맞춘 HTML 생성
+        return `
+        <div class="custom-room-info" style="
+            width: 300px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+        ">
+            <!-- 커스텀 닫기 버튼 -->
+            <button 
+                class="custom-close-btn"
+                style="
+                    position: absolute;
+                    top: 8px;
+                    right: 8px;
+                    z-index: 1000;
+                    width: 28px;
+                    height: 28px;
+                    background: rgba(0,0,0,0.6);
+                    border: none;
+                    border-radius: 50%;
+                    color: white;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 16px;
+                    transition: background-color 0.2s;
+                "
+                onmouseover="this.style.background='rgba(0,0,0,0.8)'"
+                onmouseout="this.style.background='rgba(0,0,0,0.6)'"
+            >×</button>
+            
+            <!-- 메인 콘텐츠 영역 -->
+            <div class="room-main-content" style="cursor: pointer;">
+                <!-- 이미지 영역 -->
+                <div style="
+                    height: 200px;
+                    width: 100%;
+                    background: #f5f5f5;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    ${generateImageHTML(room)}
+                </div>
+                
+                <!-- 정보 영역 -->
+                <div style="padding: 16px;">
+                    <!-- 제목 -->
+                    <h3 style="
+                        margin: 0 0 8px 0;
+                        font-size: 18px;
+                        font-weight: 600;
+                        color: #1a1a1a;
+                        line-height: 1.3;
+                        display: -webkit-box;
+                        -webkit-line-clamp: 2;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                    ">${room.title || '제목 없음'}</h3>
+                    
+                    <!-- 주소 -->
+                    <p style="
+                        margin: 0 0 12px 0;
+                        font-size: 14px;
+                        color: #666;
+                        display: -webkit-box;
+                        -webkit-line-clamp: 1;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                    ">${room.address || '주소 정보 없음'}</p>
+                    
+                    <!-- 가격 정보 구분선 -->
+                    <div style="
+                        height: 1px;
+                        background: #e5e5e5;
+                        margin: 12px 0;
+                    "></div>
+                    
+                    <!-- 가격 정보 -->
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <!-- 주간 가격 -->
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 14px; color: #666;">주간 가격</span>
+                            <span style="font-size: 18px; font-weight: 700; color: #1a1a1a;">
+                                ₩${Number(room.week_price || 0).toLocaleString()}
+                            </span>
+                        </div>
+                        
+                        <!-- 보증금 -->
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 13px; color: #888;">보증금</span>
+                            <span style="font-size: 13px; color: #333;">${room.deposit || '정보 없음'}</span>
+                        </div>
+                        
+                        <!-- 관리비 -->
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 13px; color: #888;">관리비</span>
+                            <span style="font-size: 13px; color: #333;">${room.maintenance_fee || '정보 없음'}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    };
+
+    const generateImageHTML = (room: RoomData): string => {
+        console.log('이미지 데이터 확인:', {
+            detail_urls: room.detail_urls,
+            thumbnail_url: room.thumbnail_url,
+            room_id: room.id
+        });
+
+        // detail_urls 배열 확인
+        if (room.detail_urls && Array.isArray(room.detail_urls) && room.detail_urls.length > 0) {
+            const imageUrl = room.detail_urls[0];
+            console.log('detail_urls 첫 번째 이미지 사용:', imageUrl);
+
+            return `
+            <img 
+                src="${imageUrl}"
+                alt="${room.title || '방 이미지'}"
+                style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    display: block;
+                "
+                onload="console.log('✅ 이미지 로드 성공:', '${imageUrl}')"
+                onerror="
+                    console.error('❌ 이미지 로드 실패:', '${imageUrl}');
+                    this.style.display = 'none';
+                    this.nextElementSibling.style.display = 'flex';
+                "
+            />
+            <div style="
+                width: 100%;
+                height: 100%;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                background: #f0f0f0;
+                flex-direction: column;
+                color: #999;
+            ">
+                <div style="font-size: 48px; margin-bottom: 8px;">🏠</div>
+                <div style="font-size: 14px;">이미지를 불러올 수 없습니다</div>
+            </div>
+        `;
+        }
+
+        // thumbnail_url 확인
+        if (room.thumbnail_url) {
+            console.log('thumbnail_url 사용:', room.thumbnail_url);
+            return `
+            <img 
+                src="${room.thumbnail_url}"
+                alt="${room.title || '방 이미지'}"
+                style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    display: block;
+                "
+                onload="console.log('✅ 썸네일 로드 성공:', '${room.thumbnail_url}')"
+                onerror="
+                    console.error('❌ 썸네일 로드 실패:', '${room.thumbnail_url}');
+                    this.style.display = 'none';
+                    this.nextElementSibling.style.display = 'flex';
+                "
+            />
+            <div style="
+                width: 100%;
+                height: 100%;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                background: #f0f0f0;
+                flex-direction: column;
+                color: #999;
+            ">
+                <div style="font-size: 48px; margin-bottom: 8px;">🏠</div>
+                <div style="font-size: 14px;">이미지를 불러올 수 없습니다</div>
+            </div>
+        `;
+        }
+
+        // 이미지가 없는 경우 플레이스홀더
+        console.log('이미지 없음, 플레이스홀더 사용 - 방 ID:', room.id);
+        return `
+        <div style="
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            flex-direction: column;
+            color: #666;
+        ">
+            <div style="font-size: 48px; margin-bottom: 12px;">🏠</div>
+            <div style="font-size: 14px; font-weight: 500;">이미지 없음</div>
+        </div>
+    `;
+    };
+
+// 이미지 렌더링을 HTML 문자열로 반환하는 함수
+    const renderRoomImageHTML = (room: RoomData): string => {
+        // 이미지 URL 확인 및 로깅
+        console.log('Room image data:', {
+            detail_urls: room.detail_urls,
+            thumbnail_url: room.thumbnail_url,
+            room_id: room.id
+        });
+
+        // detail_urls 배열이 있고 비어있지 않은 경우
+        if (room.detail_urls && Array.isArray(room.detail_urls) && room.detail_urls.length > 0) {
+            const firstImageUrl = room.detail_urls[0];
+            console.log('Using detail_urls first image:', firstImageUrl);
+
+            return `
+            <img 
+                src="${firstImageUrl}" 
+                alt="${room.title || '방 이미지'}"
+                class="h-full w-full object-cover"
+                style="display: block; width: 100%; height: 100%; object-fit: cover;"
+                onload="console.log('Image loaded:', '${firstImageUrl}')"
+                onerror="
+                    console.error('Image failed to load:', '${firstImageUrl}');
+                    this.src='/default-room.jpg';
+                    this.onerror=null;
+                "
+            />
+        `;
+        }
+
+        // 썸네일 이미지가 있는 경우
+        if (room.thumbnail_url) {
+            console.log('Using thumbnail_url:', room.thumbnail_url);
+            return `
+            <img 
+                src="${room.thumbnail_url}" 
+                alt="${room.title || '방 이미지'}"
+                class="h-full w-full object-cover"
+                style="display: block; width: 100%; height: 100%; object-fit: cover;"
+                onload="console.log('Thumbnail loaded:', '${room.thumbnail_url}')"
+                onerror="
+                    console.error('Thumbnail failed to load:', '${room.thumbnail_url}');
+                    this.src='/default-room.jpg';
+                    this.onerror=null;
+                "
+            />
+        `;
+        }
+
+        // 기본 플레이스홀더
+        console.log('Using placeholder for room:', room.id);
+        return `
+        <div class="h-full w-full bg-gray-200 flex items-center justify-center">
+            <div class="text-center text-gray-500">
+                <div class="text-4xl mb-2">🏠</div>
+                <div class="text-sm">이미지 없음</div>
+            </div>
+        </div>
+    `;
+    };
+
+// InfoWindow 스타일 조정 함수 - 더 안정적으로 수정
+    const adjustInfoWindowStyles = () => {
+        const adjustWithRetry = (attempt = 0) => {
+            if (attempt > 8) {
+                console.warn('InfoWindow 스타일 조정 최대 시도 횟수 초과');
+                return;
+            }
+
+            setTimeout(() => {
+                try {
+                    // InfoWindow 외부 컨테이너 (gm-style-iw-c)
+                    const iwContainer = document.querySelector('.gm-style-iw-c') as HTMLElement;
+                    if (iwContainer) {
+                        iwContainer.style.cssText = `
+                        padding: 0 !important;
+                        border-radius: 12px !important;
+                        overflow: visible !important;
+                        max-width: 320px !important;
+                        box-shadow: none !important;
+                        border: none !important;
+                        background: transparent !important;
+                    `;
+                    }
+
+                    // InfoWindow 내부 컨테이너 (gm-style-iw-chr)
+                    const iwContentRoot = document.querySelector('.gm-style-iw-chr') as HTMLElement;
+                    if (iwContentRoot) {
+                        iwContentRoot.style.cssText = `
+                        overflow: visible !important;
+                        padding: 0 !important;
+                        margin: 0 !important;
+                    `;
+                    }
+
+                    // InfoWindow 실제 콘텐츠 (gm-style-iw-d)
+                    const iwContent = document.querySelector('.gm-style-iw-d') as HTMLElement;
+                    if (iwContent) {
+                        iwContent.style.cssText = `
+                        overflow: visible !important;
+                        padding: 0 !important;
+                        margin: 0 !important;
+                        background: transparent !important;
+                        box-shadow: none !important;
+                    `;
+                    }
+
+                    // Google 기본 닫기 버튼 숨기기
+                    const defaultCloseBtn = document.querySelector('.gm-ui-hover-effect') as HTMLElement;
+                    if (defaultCloseBtn) {
+                        defaultCloseBtn.style.display = 'none !important';
+                    }
+
+                    // InfoWindow 꼬리 부분 유지
+                    const iwTail = document.querySelector('.gm-style-iw-tc') as HTMLElement;
+                    if (iwTail) {
+                        iwTail.style.display = 'block !important';
+                    }
+
+                    // 모든 요소가 준비되었는지 확인
+                    if (iwContainer && iwContentRoot && iwContent) {
+                        console.log('✅ InfoWindow 네이티브 구조 스타일 적용 완료');
+
+                        // 이벤트 리스너 추가
+                        setupInfoWindowEventListeners();
+                    } else {
+                        console.log(`🔄 InfoWindow 구조 대기 중... (${attempt + 1}/8)`);
+                        adjustWithRetry(attempt + 1);
+                    }
+
+                } catch (error) {
+                    console.warn('InfoWindow 스타일 조정 오류:', error);
+                    if (attempt < 5) {
+                        adjustWithRetry(attempt + 1);
+                    }
+                }
+            }, 80 + (attempt * 50));
+        };
+
+        adjustWithRetry();
+    };
+
+// 3. 마커 클릭 이벤트 핸들러 수정
     const updateMarkers = (map: google.maps.Map, rooms: RoomData[]): void => {
         clearMarkers();
 
-        if (!infoWindow.current) {
-            infoWindow.current = new window.google.maps.InfoWindow();
+        // InfoWindow 재생성
+        if (infoWindow.current) {
+            infoWindow.current.close();
+            infoWindow.current = null;
         }
+
+        infoWindow.current = new window.google.maps.InfoWindow({
+            disableAutoPan: false,
+            pixelOffset: new window.google.maps.Size(0, -10),
+        });
 
         const newMarkers: google.maps.Marker[] = rooms.map(room => {
             const position = new window.google.maps.LatLng(
@@ -267,54 +625,70 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
 
             let marker: google.maps.Marker;
 
-            // 지도 ID가 있고 Advanced Marker 사용 가능한지 확인
             const hasMapId = mapRef.current && (mapRef.current as any).mapId;
             const hasAdvancedMarker = window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement;
 
             if (hasMapId && hasAdvancedMarker) {
                 try {
-                    // Advanced Marker 사용
                     const content = createMarkerContent(room);
-
+                    content.setAttribute("gmp-clickable", "false");
                     marker = new window.google.maps.marker.AdvancedMarkerElement({
                         position,
-                        map: null, // 클러스터에서 관리하므로 map에 직접 추가하지 않음
+                        map: null,
                         title: room.title,
                         content: content,
                     });
                 } catch (error) {
-                    console.warn('Advanced Marker creation failed, falling back to standard marker:', error);
-                    // Advanced Marker 생성 실패 시 기본 마커로 fallback
+                    console.warn('Advanced Marker 생성 실패:', error);
                     marker = createStandardMarker(position, room);
                 }
             } else {
-                // 기본 Marker 사용
                 marker = createStandardMarker(position, room);
             }
 
             // 마커 클릭 이벤트
             marker.addListener('click', () => {
-                const content = createInfoWindowContent(room);
+                console.log('🎯 마커 클릭됨:', room.id);
 
+                // 이전 InfoWindow 닫기
                 if (infoWindow.current) {
-                    infoWindow.current.setContent(content);
-                    infoWindow.current.open(map, marker);
-
-                    // InfoWindow 스타일 조정
-                    setTimeout(() => {
-                        const iwContainer = document.querySelector('.gm-style-iw-c');
-                        if (iwContainer) {
-                            (iwContainer as HTMLElement).style.padding = '0';
-                            (iwContainer as HTMLElement).style.borderRadius = '12px';
-                            (iwContainer as HTMLElement).style.overflow = 'hidden';
-                        }
-
-                        const iwCloseBtn = document.querySelector('.gm-ui-hover-effect');
-                        if (iwCloseBtn) {
-                            (iwCloseBtn as HTMLElement).style.display = 'none';
-                        }
-                    }, 100);
+                    infoWindow.current.close();
                 }
+
+                setTimeout(() => {
+                    try {
+                        // 네이티브 구조를 활용한 컨텐츠 생성
+                        const content = createInfoWindowContent(room);
+
+                        if (infoWindow.current) {
+                            // room ID를 데이터 속성으로 추가
+                            const contentWithId = content.replace(
+                                'class="custom-room-info"',
+                                `class="custom-room-info" data-room-id="${room.id}"`
+                            );
+
+                            infoWindow.current.setContent(contentWithId);
+                            infoWindow.current.open(map, marker);
+
+                            console.log('✅ InfoWindow 열림 성공');
+
+                            // 네이티브 구조에 맞춘 스타일 조정
+                            adjustInfoWindowStyles();
+
+                            // 닫힘 이벤트 리스너
+                            const closeListener = infoWindow.current.addListener('closeclick', () => {
+                                console.log('🔒 InfoWindow 닫힘');
+                                try {
+                                    window.google.maps.event.removeListener(closeListener);
+                                } catch (e) {
+                                    console.warn('리스너 제거 실패:', e);
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error('❌ InfoWindow 열기 실패:', error);
+                    }
+                }, 120);
             });
 
             return marker;
@@ -322,87 +696,70 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
 
         markers.current = newMarkers;
 
-        // 마커 클러스터러 설정
+        // 클러스터링 로직은 기존과 동일
         try {
             if (markerCluster.current) {
                 markerCluster.current.clearMarkers();
             }
 
-            // MarkerClusterer 라이브러리가 로드되었는지 확인
             if (window.MarkerClusterer && window.GridAlgorithm) {
-                const clustererOptions: MarkerClustererOptions = {
+                markerCluster.current = new window.MarkerClusterer({
                     map: map,
                     markers: newMarkers,
                     algorithm: new window.GridAlgorithm({ gridSize: 100 }),
-                };
-
-                // Advanced Marker 사용시 커스텀 렌더러 (지도 ID가 있는 경우에만)
-                const hasMapId = mapRef.current && (mapRef.current as any).mapId;
-                const hasAdvancedMarker = window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement;
-
-                if (hasMapId && hasAdvancedMarker) {
-                    clustererOptions.renderer = {
-                        render: ({ count, position }: ClusterRenderData, stats: any) => {
-                            const color: string = count > 25 ? "#ff0000" : count > 10 ? "#ff8800" : "#ffbb00";
-
-                            try {
-                                const clusterElement = document.createElement('div');
-                                clusterElement.innerHTML = `
-                                    <svg fill="${color}" stroke="#fff" stroke-width="2" viewBox="0 0 240 240" width="50" height="50">
-                                        <circle cx="120" cy="120" opacity=".6" r="70" />
-                                        <circle cx="120" cy="120" opacity=".3" r="90" />
-                                        <circle cx="120" cy="120" opacity=".2" r="110" />
-                                        <text x="50%" y="50%" style="fill:#fff" text-anchor="middle" font-size="50" dominant-baseline="middle" font-family="roboto,arial,sans-serif" font-weight="bold">
-                                            ${count}
-                                        </text>
-                                    </svg>
-                                `;
-
-                                return new window.google.maps.marker.AdvancedMarkerElement({
-                                    position,
-                                    content: clusterElement.firstElementChild,
-                                    zIndex: Number(window.google.maps.Marker.MAX_ZINDEX) + count,
-                                });
-                            } catch (error) {
-                                console.warn('Advanced cluster marker creation failed, using standard marker');
-                                // Advanced Marker 실패 시 표준 마커로 fallback
-                                return new window.google.maps.Marker({
-                                    position,
-                                    icon: {
-                                        url: 'data:image/svg+xml;base64,' + btoa(`
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="53" height="53">
-                                                <circle cx="120" cy="120" opacity=".6" r="70" fill="${color}"/>
-                                                <circle cx="120" cy="120" opacity=".3" r="90" fill="${color}"/>
-                                                <circle cx="120" cy="120" opacity=".2" r="110" fill="${color}"/>
-                                                <text x="50%" y="50%" style="fill:#fff" text-anchor="middle" font-size="50" dominant-baseline="middle" font-family="roboto,arial,sans-serif" font-weight="bold">
-                                                    ${count}
-                                                </text>
-                                            </svg>
-                                        `),
-                                        scaledSize: new window.google.maps.Size(53, 53),
-                                        anchor: new window.google.maps.Point(26, 26),
-                                    },
-                                    zIndex: Number(window.google.maps.Marker.MAX_ZINDEX) + count,
-                                });
-                            }
-                        }
-                    };
-                }
-
-                markerCluster.current = new window.MarkerClusterer(clustererOptions);
-                console.log('MarkerClusterer initialized successfully with GridAlgorithm');
+                });
+                console.log('✅ MarkerClusterer 초기화 성공');
             } else {
-                console.warn('MarkerClusterer or GridAlgorithm not available, using individual markers');
-                // 클러스터링이 불가능하면 개별 마커로 표시
+                console.warn('⚠️ MarkerClusterer 없음, 개별 마커 사용');
                 newMarkers.forEach(marker => marker.setMap(map));
             }
         } catch (error) {
-            console.warn('Clustering failed, using individual markers:', error);
-            // 클러스터링이 실패하면 개별 마커로 표시
+            console.warn('❌ 클러스터링 실패:', error);
             newMarkers.forEach(marker => marker.setMap(map));
         }
     };
+    const setupInfoWindowEventListeners = () => {
+        // 커스텀 닫기 버튼
+        const customCloseBtn = document.querySelector('.custom-close-btn') as HTMLElement;
+        if (customCloseBtn) {
+            customCloseBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                if (infoWindow.current) {
+                    infoWindow.current.close();
+                }
+            });
+        }
 
+        // 메인 콘텐츠 클릭 이벤트
+        const mainContent = document.querySelector('.room-main-content') as HTMLElement;
+        if (mainContent) {
+            mainContent.addEventListener('click', (e) => {
+                // 닫기 버튼이 아닌 경우만 페이지 이동
+                if (!(e.target as HTMLElement).closest('.custom-close-btn')) {
+                    const roomInfo = document.querySelector('.custom-room-info') as HTMLElement;
+                    if (roomInfo) {
+                        const roomId = roomInfo.getAttribute('data-room-id');
+                        if (roomId) {
+                            handleRoomMarker(parseInt(roomId));
+                        }
+                    }
+                }
+            });
+        }
+
+        // 이벤트 전파 방지
+        const roomInfo = document.querySelector('.custom-room-info') as HTMLElement;
+        if (roomInfo) {
+            roomInfo.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            roomInfo.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+            });
+        }
+    };
     const handleRoomMarker = (roomId: number): void => {
         const locale = i18n.language;
         window.open(`/detail/${roomId}/${locale}`, '_blank');
@@ -518,6 +875,33 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
         };
     }, [debouncedLoadRooms]);
 
+    useEffect(() => {
+        // InfoWindow 전역 클릭 이벤트 방지
+        const handleGlobalClick = (e: MouseEvent) => {
+            // InfoWindow 내부 클릭인지 확인
+            const target = e.target as HTMLElement;
+            if (target.closest('.custom-info-window-overlay')) {
+                e.stopPropagation();
+                return;
+            }
+        };
+
+        // 지도 클릭 시 InfoWindow 닫기 방지
+        const handleMapClick = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (target.closest('.gm-style-iw-c') || target.closest('.custom-info-window-overlay')) {
+                e.stopPropagation();
+            }
+        };
+
+        document.addEventListener('click', handleGlobalClick, true);
+        document.addEventListener('mousedown', handleMapClick, true);
+
+        return () => {
+            document.removeEventListener('click', handleGlobalClick, true);
+            document.removeEventListener('mousedown', handleMapClick, true);
+        };
+    }, []);
     return (
         <>
             <div style={styles.mapContainer}>
