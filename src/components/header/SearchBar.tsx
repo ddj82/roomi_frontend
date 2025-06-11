@@ -65,13 +65,17 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             onRequestClose={onClose}
             overlayClassName="overlay-searchBar"
             className="w-full md:w-3/4 lg:w-1/2 h-[100vh] overflow-auto focus:outline-none scrollbar-hidden"
+            style={{
+                overlay: { zIndex: 10000 },
+                content: { zIndex: 10000 }
+            }}
         >
             <div className="search-modal inset-0 bg-transparent z-[9999] overflow-y-auto">
-                <div className="container mx-auto px-4 py-4 md:py-6 max-w-full md:max-w-2xl lg:max-w-3xl">
-                    {/* 모달 헤더 */}
-                    <div className="flex items-center mb-4 md:mb-6">
+                <div className="container mx-auto px-4 max-w-full md:max-w-2xl lg:max-w-3xl">
+                    {/* 모달 헤더 - 고정 */}
+                    <div className="sticky top-0 bg-transparent z-[9999] flex items-center py-4 md:py-6">
                         <button
-                            className="p-2 rounded-full hover:bg-gray-100"
+                            className="p-2 rounded-full "
                             onClick={closeSearchModal}
                         >
                             <FontAwesomeIcon icon={faTimes} className="text-gray-800 text-lg"/>
@@ -81,10 +85,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                         {/* 정렬을 위한 여백 */}
                     </div>
 
-                    <div ref={modalRef} className="search-content pb-20">
+                    <div ref={modalRef} className="search-content py-4 pb-24">
                         {/* 위치 선택 카드 */}
                         <div
-                            className={`search-card bg-transparent backdrop-blur-sm rounded-xl shadow-md border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'location' ? 'search-card-collapsed' : ''}`}
+                            className={`search-card bg-white backdrop-blur-sm rounded-xl  border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'location' ? 'search-card-collapsed' : ''}`}
                         >
                             {/* 카드 헤더 - 클릭 시 접기/펼치기 */}
                             <div
@@ -115,7 +119,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                                                          className="text-gray-400 text-lg mr-3"/>
                                         <input
                                             type="text"
-                                            className="flex-1 outline-none border-none text-base bg-transparent"
+                                            className="flex-1 outline-none border-none text-base bg-white"
                                             placeholder={t('Where are you going?')}
                                             value={selectedLocation || ''}
                                             onChange={(e) => setSelectedLocation(e.target.value)}
@@ -129,7 +133,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                                         {locationOptions.map((location, index) => (
                                             <div
                                                 key={index}
-                                                className="flex items-center p-3 hover:bg-gray-50 hover:bg-opacity-80 rounded-lg cursor-pointer border border-gray-100 bg-white bg-opacity-60"
+                                                className="flex items-center p-3 rounded-lg cursor-pointer border border-gray-100 bg-white bg-opacity-60"
                                                 onClick={() => handleSelectLocation(location)}
                                             >
                                                 <FontAwesomeIcon icon={faLocationDot}
@@ -147,7 +151,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
                         {/* 날짜 선택 카드 */}
                         <div
-                            className={`search-card bg-transparent backdrop-blur-sm rounded-xl shadow-md border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'date' ? 'search-card-collapsed' : ''}`}
+                            className={`search-card bg-white backdrop-blur-sm rounded-xl border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'date' ? 'search-card-collapsed' : ''}`}
                         >
                             {/* 카드 헤더 - 클릭 시 접기/펼치기 */}
                             <div
@@ -180,7 +184,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
                         {/* 인원 선택 카드 */}
                         <div
-                            className={`search-card bg-transparent backdrop-blur-sm rounded-xl shadow-md border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'guests' ? 'search-card-collapsed' : ''}`}
+                            className={`search-card bg-transparent backdrop-blur-sm rounded-xl  border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'guests' ? 'search-card-collapsed' : ''}`}
                         >
                             {/* 카드 헤더 - 클릭 시 접기/펼치기 */}
                             <div
@@ -235,11 +239,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                         </div>
                     </div>
 
-                    {/* 하단 검색 버튼 */}
-                    <div className="fixed bottom-0 left-0 right-0 p-3 md:p-4 bg-white bg-opacity-90 border-t border-gray-200 safe-area-bottom">
+                    {/* 하단 검색 버튼 - 고정 */}
+                    <div className="fixed bottom-0 left-0 right-0 p-3 md:p-4 bg-transparent bg-opacity-90 safe-area-bottom z-40">
                         <div className="mx-auto max-w-full md:max-w-2xl lg:max-w-3xl">
                             <button
-                                className="w-full p-2 md:p-3 bg-roomi hover:bg-roomi-3 text-white rounded-lg font-medium text-sm md:text-base"
+                                className="w-full p-2 md:p-3 bg-roomi text-white rounded-lg font-medium text-sm md:text-base"
                                 onClick={performSearch}
                             >
                                 {t('Search')}

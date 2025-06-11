@@ -280,5 +280,6 @@
   "고객센터": "customer support",
   "회원탈퇴": "delete account",
   "마이페이지": "My Page",
-  "언어설정 가이드": "Initially, the browser language is automatically applied, but you can change it to your desired language at any time below."
+  "언어설정 가이드": "Initially, the browser language is automatically applied, but you can change it to your desired language at any time below.",
+  "내 정보" : "my info."
 }

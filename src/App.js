@@ -32,6 +32,7 @@ import LineLoginCallback from "./components/util/LineLoginCallback";
 import Main from "./components/screens/Main";
 import MobileHostHeader from "./components/screens/MobileHostHeader";
 import FailPage from "./components/pay/FailPage";
+import {useFooterStore} from "./components/stores/FooterStore";
 
 const queryClient = new QueryClient();
 
@@ -55,7 +56,6 @@ function AppContent() {
     useEffect(() => {
         const isMyPage = location.pathname.startsWith("/myPage") || location.pathname.startsWith("/host");
         const isRoomDetail = location.pathname.includes("/detail/") && !location.pathname.includes("/reservation");
-
         // 모바일 && (마이페이지 또는 방 상세 페이지)면 헤더 숨김
         setVisibility(!isMobile || !(isMyPage || isRoomDetail));
     }, [location.pathname, isMobile]); // <- 경로 or 모바일 상태가 바뀔 때마다 재평가
@@ -77,14 +77,14 @@ function AppContent() {
             {isVisibleHostScreen && isMobile && (
                 <MobileHostHeader/>
             )}
-            <div className="app container xl:max-w-[1524px]"
+            <div className="app container xl:max-w-[1524px]]"
                 // style={{minHeight: window.innerHeight - 130,}}
             >
                 <Routes>
                     {/* hostMode === true 일 때 이 부분 전부 차단됨 */}
                     <Route element={<ProtectedGuestRoute />}>
                         <Route path="/" element={<MainHome/>}/>
-                        <Route path="/main" element={<Main/>}/>
+                        {/*<Route path="/main" element={<Main/>}/>*/}
                         <Route path="/naver" element={<NaverMap/>}/>
                         <Route path="/join" element={<UserJoinScreen/>}/>
                         <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>
@@ -115,6 +115,11 @@ function AppContent() {
                     </Route>
                 </Routes>
             </div>
+            <Routes>
+                <Route element={<ProtectedGuestRoute />}>
+                    <Route path="/map" element={<MainHome/>}/>
+                </Route>
+            </Routes>
             {isVisibleHostScreen && isMobile && <BottomNavigator />}
             <div className="hide-on-mobile">
                 <Footer/>

@@ -13,7 +13,6 @@ const BLOCKED_KEYWORDS = [
 ];
 const BLOCKED_PREFIXES = [
     "/host",
-
 ];
 
 export const useHostHeaderBtnStore = create<HostHeaderBtnState>((set) => ({

@@ -37,7 +37,7 @@
     transform-origin: top center;
     transition: all 0.3s ease;
     margin-bottom: 16px;
-    background-color: rgba(255, 255, 255, 0.4) !important; /* 카드 배경 투명도 */
+    background-color: rgba(255, 255, 255, 255) !important; /* 카드 배경 투명도 */
     backdrop-filter: blur(10px); /* 카드 블러 효과 */
 }
 
@@ -108,12 +108,12 @@
     background-color: rgba(255, 255, 255, 0.6); /* 목적지 아이템 배경 투명도 */
 }
 
-.popular-locations .grid > div:hover {
-    background-color: rgba(249, 250, 251, 0.8); /* 호버 시 배경색 */
-    border-color: #d1d5db;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-}
+/*.popular-locations .grid > div:hover {*/
+/*    background-color: rgba(249, 250, 251, 0.8); !* 호버 시 배경색 *!*/
+/*    border-color: #d1d5db;*/
+/*    transform: translateY(-2px);*/
+/*    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);*/
+/*}*/
 
 /* 인원 조절 버튼 */
 .guests-picker-container {
@@ -124,10 +124,10 @@
     transition: all 0.2s ease;
 }
 
-.guests-picker-container button:not(:disabled):hover {
-    border-color: #9ca3af;
-    background-color: rgba(249, 250, 251, 0.8);
-}
+/*.guests-picker-container button:not(:disabled):hover {*/
+/*    border-color: #9ca3af;*/
+/*    background-color: rgba(249, 250, 251, 0.8);*/
+/*}*/
 
 .guests-picker-container button:disabled {
     opacity: 0.5;
@@ -136,19 +136,19 @@
 
 /* 하단 검색 버튼 */
 .search-modal .fixed.bottom-0 {
-    background-color: rgba(255, 255, 255, 0.8) !important; /* 하단 버튼 영역 배경 투명도 */
-    backdrop-filter: blur(8px); /* 하단 영역 블러 효과 */
-    border-top: 1px solid rgba(229, 231, 235, 0.8);
+    /*background-color: rgba(255, 255, 255, 0.8) !important; !* 하단 버튼 영역 배경 투명도 *!*/
+    /*backdrop-filter: blur(8px); !* 하단 영역 블러 효과 *!*/
+    /*border-top: 1px solid rgba(229, 231, 235, 0.8);*/
 }
 
 .search-modal .fixed.bottom-0 button {
     transition: all 0.2s ease;
 }
 
-.search-modal .fixed.bottom-0 button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+/*.search-modal .fixed.bottom-0 button:hover {*/
+/*    transform: translateY(-1px);*/
+/*    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);*/
+/*}*/
 
 /* 날짜 선택 컴포넌트 스타일 조정 */
 .date-picker-container .date-modal {
