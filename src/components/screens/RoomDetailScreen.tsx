@@ -87,6 +87,7 @@ export default function RoomDetailScreen() {
 
     // 본인인증, 여권인증 모달
     const [certificationModal, setCertificationModal] = useState(false);
+    const [userIsKorean, setUserIsKorean] = useState(true);
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -484,6 +485,16 @@ export default function RoomDetailScreen() {
         navigate('/');
     };
 
+    useEffect(() => {
+        if (localStorage.getItem('isKorean')) {
+            if (localStorage.getItem('isKorean') === 'true') {
+                setUserIsKorean(true);
+            } else {
+                setUserIsKorean(false)
+            }
+        }
+    }, []);
+
     return (
         <div className="relative overflow-visible max-w-[1200px] mx-auto pb-24 md:pb-0 md:my-8 my-0">
             {authModalOpen && (
@@ -494,7 +505,7 @@ export default function RoomDetailScreen() {
                 <RoomDetailCertificationModal
                     visible={certificationModal}
                     onClose={() => setCertificationModal(false)}
-                    isKorean={!!localStorage.getItem('isKorean')}
+                    isKorean={userIsKorean}
                     onCertificationComplete={handleCertificationComplete}
                 />
             )}
