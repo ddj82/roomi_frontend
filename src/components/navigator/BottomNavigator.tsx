@@ -20,56 +20,29 @@ const BottomNavigation: React.FC = () => {
     const { t } = useTranslation();
     const { activeTab, setActiveTab } = useHostTabNavigation();
     const tabs = ["my_room", "contract_management", "room_status", "message"] as const;
-    const disconnect = useChatStore((state) => state.disconnect);
-    const [userVisible, setUserVisible] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-    const {resetUserMode} = useHostModeStore();
-    const {profileImg} = useAuthStore();
 
-    const toggleDropdown = () => {
-        setUserVisible((prev) => !prev);
-    };
-
-    const handleClickOutside = (event: MouseEvent) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-            setUserVisible(false);
-        }
-    };
-
-    const handleSetHostMode = () => {
-        resetUserMode();
-        window.location.href = '/';
-    };
-
-    const handleLogout = async () => {
-        const confirmCancel = window.confirm(t('로그아웃 하시겠습니까?'));
-        if (!confirmCancel) return;
-        try {
-            const response = await logout();
-            console.log(response);
-            resetUserMode();// hostMode 초기화
-            disconnect(); // 소켓 서버 닫기
-            window.location.reload();
-        } catch (error) {
-            console.error("로그아웃 실패:", error);
-        }
-    };
-
+    // 1) innerHeight 변화 감지해서 --vh 변수에 세팅
+    const [vh, setVh] = useState(window.innerHeight);
     useEffect(() => {
-        if (userVisible) {
-            document.addEventListener("mousedown", handleClickOutside);
-        } else {
-            document.removeEventListener("mousedown", handleClickOutside);
-        }
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [userVisible]);
+        const onResize = () => setVh(window.innerHeight);
+        window.addEventListener("resize", onResize);
+        return () => document.removeEventListener("resize", onResize);
+    }, []);
+    useEffect(() => {
+        // 1vh = window.innerHeight * 0.01px
+        document.documentElement.style.setProperty("--vh", `${vh * 0.01}px`);
+    }, [vh]);
+
+    // 2) 네비게이터 높이(px)
+    const navHeight = 56;
 
     return (
         <div
-            className="fixed bottom-0 left-0 w-full bg-white backdrop-blur-sm border-t border-gray-200/50 flex justify-center items-center h-14 z-50"
+            className="fixed bottom-0 left-0 w-full bg-white backdrop-blur-sm border-t border-gray-200/50 flex justify-center items-center z-50"
             style={{
+                height: `${navHeight}px`,
+                bottom: "env(safe-area-inset-bottom)",     // 홈바(safe-area) 위에 딱 붙이기
+                paddingBottom: "env(safe-area-inset-bottom)",
                 boxShadow: '0 -2px 8px rgba(167, 97, 97, 0.15)'
             }}
         >

@@ -38,40 +38,11 @@ export default function HostScreen({isMobile}: { isMobile: boolean; }) {
         }
     };
 
-    const { pathname } = useLocation();
-    const isBrowserMobile = /iPhone|Android/.test(navigator.userAgent);
-
-    // 1. window.innerHeight 를 읽어서 state 로 저장
-    const [vh, setVh] = useState(() => window.innerHeight);
-
-    useEffect(() => {
-        const onResize = () => setVh(window.innerHeight);
-        window.addEventListener('resize', onResize);
-        return () => window.removeEventListener('resize', onResize);
-    }, []);
-
-    // 2. wrapper 높이는 innerHeight(px) 그대로
-    // -> iOS 사파리 주소창/메뉴바 숨김 시 innerHeight 가 자동으로 바뀜
-
     return (
         <div className="my-4 px-3 h-[80vh]">
             {renderMenu()}
             <div className="h-16 md:hidden"></div>
-            {(isVisibleHostScreen && isMobile) && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        left: 0,
-                        right: 0,
-                        bottom: 'env(safe-area-inset-bottom)',  // 홈바 위에 붙이기
-                        height: 56,                             // 네비게이터 실제 높이
-                        paddingBottom: 'env(safe-area-inset-bottom)',
-                        background: '#fff',
-                    }}
-                >
-                    <BottomNavigator/>
-                </div>
-            )}
+            {(isVisibleHostScreen && isMobile) && <BottomNavigator/>}
         </div>
     );
 }
