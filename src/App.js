@@ -111,11 +111,14 @@ function AppContent() {
                     </Route>
                 </Routes>
             </div>
+
             <Routes>
+                {/* hostMode === true 일 때 이 부분 차단됨 */}
                 <Route element={<ProtectedGuestRoute />}>
                     <Route path="/map" element={<MainMap/>}/>
                 </Route>
             </Routes>
+
             {isVisibleHostScreen && isMobile && <BottomNavigator />}
             <div className="hide-on-mobile">
                 <Footer/>

@@ -30,6 +30,7 @@ import {
     List, LogOut,
     Megaphone, UserMinus, X
 } from "lucide-react";
+import i18n from "../../i18n";
 
 export default function GuestMyPage() {
     const { t } = useTranslation();
@@ -42,6 +43,7 @@ export default function GuestMyPage() {
     const [loading] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const {profileImg} = useAuthStore();
+    const currentLang = i18n.language;
 
     useEffect(() => {
         const handleResize = () => {
@@ -89,6 +91,10 @@ export default function GuestMyPage() {
         navigate(`/myPage/${selectMenu}`);
     };
 
+    useEffect(() => {
+        console.log('마이페이지에서 언어검색',currentLang);
+    }, []);
+
     return (
         <div className="w-full my-4 flex flex-col md:flex-row relative text-black">
             {/* 웹 버전 메뉴 */}
@@ -111,18 +117,18 @@ export default function GuestMyPage() {
                                 {localStorage.getItem('userEmail')}
                             </p>
                             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {isHost ? t('호스트') : t('게스트')}
-                        </span>
+                                {isHost ? t('호스트') : t('게스트')}
+                            </span>
                         </div>
                     </div>
                 </div>
 
                 {/* 호스트 등록 버튼 */}
-                {!isHost && (
+                {(!isHost && currentLang === 'ko') && (
                     <div className="px-6 pb-6">
                         <button
                             onClick={handleSetHostMode}
-                            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                            className="w-full bg-roomi text-white py-3 rounded-lg font-semibold hover:bg-roomi-3 transition-colors"
                         >
                             {t("호스트 등록")}
                         </button>

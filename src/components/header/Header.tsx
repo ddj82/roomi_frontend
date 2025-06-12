@@ -21,10 +21,11 @@ import '../../css/Header.css';
 import {SocialAuth} from "../util/SocialAuth";
 import {SearchBar} from "./SearchBar";
 import {Globe, MapPin, User} from "lucide-react";
-import {useMapStore, useMapVisibility} from "../stores/MapStore";
+import {useMapVisibility} from "../stores/MapStore";
+import Modal from "react-modal";
+import LanguageSet from "../screens/myPageMenu/LanguageSet";
+import MainLanguageSelector from "../util/MainLanguageSelector";
 
-type ModalSection = 'date' | 'location' | 'guests';
-type ModalPosition = { x: number; y: number };
 type LocationOption = {
     name: string;
     country: string;
@@ -46,23 +47,15 @@ const Header = () => {
     const disconnect = useChatStore((state) => state.disconnect);
     const [userVisible, setUserVisible] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const isLoggedIn = Boolean(authToken);
     const {profileImg} = useAuthStore();
     const isMapVisible = useMapVisibility();
+    const currentLang = i18n.language;
 
     // 검색 모달 관련 상태 추가
     const [searchModalOpen, setSearchModalOpen] = useState(false);
     const [activeCard, setActiveCard] = useState<ActiveCardType>('location');
     const searchBarRef = useRef<HTMLDivElement>(null);
     const modalRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (!isLoggedIn) {
-            localStorage.removeItem('i18nextLng');
-            const detectedLang = i18n.services.languageDetector?.detect();
-            i18n.changeLanguage(detectedLang || 'ko');
-        }
-    }, [isLoggedIn]);
 
     const openSearchModal = () => {
         if (window.location.pathname === '/map') {
@@ -189,12 +182,6 @@ const Header = () => {
     }, [userVisible]);
 
 
-    // 프로필/로그인 영역
-    const headerMainMenu = {
-
-    };
-
-
 
 
     // 헤더 설정
@@ -236,8 +223,25 @@ const Header = () => {
         background: 'linear-gradient(to top, rgba(255, 236, 236, 0.8) 0%, rgba(255, 236, 236, 0.4) 20%, rgba(255, 255, 255, 0) 100%)'
     };
 
+
+
+    // 헤더 메인 번역기능
+    const [userLanguageSetModal, setUserLanguageSetModal] = useState(false);
+    const [languageSetModal, setLanguageSetModal] = useState(false);
+    const handleLanguageSet = () => {
+        console.log('헤더 번역 버튼');
+        if (authToken) {
+            // 로그인 상태
+            setUserLanguageSetModal(true);
+        } else {
+            // 비로그인 상태
+            setLanguageSetModal(true);
+        }
+    };
+
     return (
         <>
+            {/* 기본 헤더 */}
             {isMapVisible ? (
                 <>
                     <div
@@ -316,7 +320,7 @@ const Header = () => {
                                                 {/*        방 등록하러 가기*/}
                                                 {/*    </button>*/}
                                                 {/*</div>*/}
-                                                {isHost && (
+                                                {(isHost && currentLang === 'ko') && (
                                                     <>
                                                         {hostMode ? (
                                                             <div className="flex_center md:text-xs text-xxs">
@@ -340,7 +344,10 @@ const Header = () => {
                                                         type="button"
                                                         className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
                                                     >
-                                                        <Globe className="w-6 h-6 text-black stroke-[1.3]"/>
+                                                        <Globe
+                                                            className="w-6 h-6 text-black stroke-[1.3]"
+                                                            onClick={handleLanguageSet}
+                                                        />
                                                     </button>
                                                 </div>
         
@@ -371,7 +378,7 @@ const Header = () => {
                                                                         {!hostMode && (<a href="/chat"
                                                                                           className="block px-4 py-2 hover:bg-gray-100/70">{t('메시지')}</a>)}
                                                                     </li>
-                                                                    {isHost && (
+                                                                    {(isHost && currentLang === 'ko') && (
                                                                         <li>
                                                                             <button onClick={handleSetHostMode}
                                                                                     className="w-full text-start block px-4 py-2 hover:bg-gray-100/70">
@@ -398,7 +405,10 @@ const Header = () => {
                                                         type="button"
                                                         className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
                                                     >
-                                                        <Globe className="w-6 h-6 text-black stroke-[1.3]"/>
+                                                        <Globe
+                                                            className="w-6 h-6 text-black stroke-[1.3]"
+                                                            onClick={handleLanguageSet}
+                                                        />
                                                     </button>
                                                 </div>
                                                 <div>
@@ -446,7 +456,7 @@ const Header = () => {
                                                     style={{borderRadius: '9999px', overflow: 'hidden'}}
                                                 >
                                                     <div className="search-simple-text flex items-center px-4 py- flex-1">
-                                                        <MapPin className="w-6 h-6 text-black"/>
+                                                        <MapPin className="w-6 h-6 text-black mr-2"/>
                                                         <span className="text-gray-500 truncate">
                                                                 {t('어디로 여행 가세요?')}
                                                             </span>
@@ -482,7 +492,7 @@ const Header = () => {
             ) : (
                 /* "/map" 일 때 한줄 헤더 */
                 <div
-                    className={`border-b border-gray-200 fixed top-0 left-0 w-full h-20 z-[9999] bg-white`}
+                    className={`border-b border-gray-200 fixed top-0 left-0 w-full h-20 z-[9999] bg-whit`}
                 >
                     <div className={`h header container mx-auto h-16 my-2`}>
                         <div className="mx-auto container md:px-0 px-4">
@@ -500,21 +510,21 @@ const Header = () => {
                                         ref={searchBarRef}
                                         onClick={openSearchModal}
                                         className="h-12 w-full max-w-3xl text-[11px] flex items-center justify-between
-                                                bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
-                                                ursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
+                                                    bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
+                                                    ursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
                                         style={{borderRadius: '9999px', overflow: 'hidden'}}
                                     >
                                         <div className="search-simple-text flex items-center px-4 py- flex-1">
                                             <MapPin className="w-6 h-6 text-black mr-2"/>
                                             <span className="text-gray-500 truncate">
-                                                {t('어디로 여행 가세요?')}
-                                            </span>
+                                                    {t('어디로 여행 가세요?')}
+                                                </span>
                                         </div>
 
                                         <button
                                             className="w-10 h-10 m-2 flex items-center justify-center
-                                                                bg-roomi hover:bg-roomi-3 rounded-full shadow-md
-                                                                transition-all duration-200 hover:scale-105"
+                                                                    bg-roomi hover:bg-roomi-3 rounded-full shadow-md
+                                                                    transition-all duration-200 hover:scale-105"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 performSearch();
@@ -540,7 +550,7 @@ const Header = () => {
                                             {/*        방 등록하러 가기*/}
                                             {/*    </button>*/}
                                             {/*</div>*/}
-                                            {isHost && (
+                                            {(isHost && currentLang === 'ko') && (
                                                 <>
                                                     {hostMode ? (
                                                         <div className="flex_center md:text-xs text-xxs">
@@ -564,7 +574,10 @@ const Header = () => {
                                                     type="button"
                                                     className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
                                                 >
-                                                    <Globe className="w-6 h-6 text-black stroke-[1.3]"/>
+                                                    <Globe
+                                                        className="w-6 h-6 text-black stroke-[1.3]"
+                                                        onClick={handleLanguageSet}
+                                                    />
                                                 </button>
                                             </div>
 
@@ -595,7 +608,7 @@ const Header = () => {
                                                                     {!hostMode && (<a href="/chat"
                                                                                       className="block px-4 py-2 hover:bg-gray-100/70">{t('메시지')}</a>)}
                                                                 </li>
-                                                                {isHost && (
+                                                                {(isHost && currentLang === 'ko') && (
                                                                     <li>
                                                                         <button onClick={handleSetHostMode}
                                                                                 className="w-full text-start block px-4 py-2 hover:bg-gray-100/70">
@@ -622,7 +635,10 @@ const Header = () => {
                                                     type="button"
                                                     className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
                                                 >
-                                                    <Globe className="w-6 h-6 text-black stroke-[1.3]"/>
+                                                    <Globe
+                                                        className="w-6 h-6 text-black stroke-[1.3]"
+                                                        onClick={handleLanguageSet}
+                                                    />
                                                 </button>
                                             </div>
                                             <div>
@@ -654,6 +670,28 @@ const Header = () => {
                     performSearch={performSearch}
                     handleSelectLocation={handleSelectLocation}
                 />
+            )}
+
+            {/* 헤더 번역 모달 */}
+            {userLanguageSetModal && (
+                <Modal
+                    isOpen={userLanguageSetModal}
+                    onRequestClose={() => setUserLanguageSetModal(false)}
+                    className="authModal auth-modal-container"
+                    overlayClassName="authModal overlay"
+                >
+                    <LanguageSet/>
+                </Modal>
+            )}
+            {languageSetModal && (
+                <Modal
+                    isOpen={languageSetModal}
+                    onRequestClose={() => setLanguageSetModal(false)}
+                    className="authModal auth-modal-container"
+                    overlayClassName="authModal overlay"
+                >
+                    <MainLanguageSelector/>
+                </Modal>
             )}
 
             <AuthModal visible={authModalVisible} onClose={() => setAuthModalVisible(false)} type="login"/>

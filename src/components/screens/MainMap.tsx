@@ -27,14 +27,14 @@ export default function MainMap() {
             {/*<FilterBar/>*/}
 
             {/* 70% 지도 + 30% 리스트 레이아웃 */}
-            <div className="flex h-screen w-full">
+            <div className="flex h-screen w-full pt-20">
                 {/* 왼쪽 지도 영역 - 70% */}
                 <div className="w-[70%] h-full relative">
                     <GoogleMap onRoomsUpdate={handleRoomsUpdate}/>
                 </div>
 
                 {/* 오른쪽 리스트 영역 - 30% */}
-                <div className="w-[30%] h-full overflow-hidden border-l border-gray-200">
+                <div className="w-[30%] h-full border-l border-gray-200 overflow-y-auto">
                     <HomeScreen rooms={rooms}/>
                 </div>
             </div>
