@@ -1015,7 +1015,7 @@ export default function RoomDetailScreen() {
                     </div>
 
                     {/*리모컨 영역*/}
-                    <div className="md:w-2/5 md:h-fit md:sticky md:top-10 md:rounded-xl
+                    <div className="md:w-2/5 md:h-fit md:sticky md:top-28 md:rounded-xl
                         border border-gray-200 md:p-6 p-4 break-words bg-white
                         w-full fixed bottom-0 z-[100]">
                         {/* 모바일 전용 아코디언 버튼 */}

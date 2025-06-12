@@ -3,26 +3,59 @@ import { useLocation } from "react-router-dom";
 import React from "react";
 
 interface HeaderState {
-    isVisible: boolean;
-    setVisibility: (isVisible: boolean) => void;
+    headerVisible: boolean;
+    setHeaderVisibility: (isVisible: boolean) => void;
+    headerNone: boolean;
+    setHeaderNone: (isVisible: boolean) => void;
 }
 
-// 차단할 경로 목록 (키워드 포함 방식)
-const BLOCKED_PREFIXES = ["/myPage"];
+// 허용할 경로 목록
+const ALLOWED_PREFIXES = [
+    "/map",
+    "/myPage",
+    "/chat",
+    "/host",
+    "/join",
+    "/reservation",
+];
+
+// 허용할 경로 키워드
+const ALLOWED_KEYWORDS = ["reservation", "detail"];
+
+// 차단할 경로 키워드
+const BLOCKED_KEYWORDS = ["myPage"];
 
 export const useHeaderStore = create<HeaderState>((set) => ({
-    isVisible: true,
-    setVisibility: (isVisible) => set({ isVisible }),
+    headerVisible: true,
+    setHeaderVisibility: (headerVisible) => set({ headerVisible }),
+    headerNone: true,
+    setHeaderNone: (headerNone) => set({ headerNone }),
 }));
 
 export const useHeaderVisibility = () => {
     const location = useLocation();
-    const { setVisibility } = useHeaderStore();
+    const { setHeaderVisibility } = useHeaderStore();
+    const { setHeaderNone } = useHeaderStore();
 
     React.useEffect(() => {
-        const isBlocked = BLOCKED_PREFIXES.some(prefix => location.pathname.startsWith(prefix));
-        setVisibility(!isBlocked); // 일단 경로 기준으로 설정
+        const pathSegments = location.pathname.split("/");
+
+        const isAllowed =
+            ALLOWED_KEYWORDS.some(keyword => pathSegments.includes(keyword)) ||
+            ALLOWED_PREFIXES.some(prefix => location.pathname.startsWith(prefix));
+
+        const isBlocked =
+            BLOCKED_KEYWORDS.some(keyword => pathSegments.includes(keyword));
+
+        setHeaderVisibility(isAllowed);
+        setHeaderNone(isBlocked);
+
+        console.log('url 주소',location.pathname);
+        console.log('허용할 경로 목록에 있냐?',isAllowed);
+        console.log('차단할 목록에 있냐?',isBlocked);
     }, [location.pathname]);
+
+    return useHeaderStore((state) => state.headerVisible);
 };
 
 

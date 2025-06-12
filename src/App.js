@@ -21,7 +21,7 @@ import ProtectedGuestRoute from "./api/ProtectedGuestRoute";
 import KakaoLoginCallback from "./components/util/KakaoLoginCallback";
 import SocialJoinScreen from "./components/screens/SocialJoinScreen";
 import SuccessPage from "./components/pay/SuccessPage";
-import {useHeaderStore} from "./components/stores/HeaderStore";
+import {useHeaderStore, useHeaderVisibility} from "./components/stores/HeaderStore";
 import {useHostHeaderBtnVisibility} from "./components/stores/HostHeaderBtnStore";
 import BottomNavigator from "./components/navigator/BottomNavigator";
 import MyRoomUpdate from "./components/hostMenu/myRooms/MyRoomUpdate";
@@ -31,6 +31,8 @@ import Main from "./components/screens/Main";
 import MobileHostHeader from "./components/screens/MobileHostHeader";
 import FailPage from "./components/pay/FailPage";
 import MainMap from "./components/screens/MainMap";
+import HeaderOneLine from "./components/header/HeaderOneLine";
+import SuccessVirtualAccountPage from "./components/pay/SuccessVirtualAccountPage";
 
 const queryClient = new QueryClient();
 
@@ -47,15 +49,17 @@ export default function App() {
 function AppContent() {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const location = useLocation();
-    const { setVisibility } = useHeaderStore();
+    const { setHeaderVisibility } = useHeaderStore();
     const isVisibleHostScreen = useHostHeaderBtnVisibility();
+    const headerVisible = useHeaderVisibility();
+    const headerNone = useHeaderVisibility();
 
     // 경로 변경 감지해서 헤더 visible 상태 설정
     useEffect(() => {
         const isMyPage = location.pathname.startsWith("/myPage") || location.pathname.startsWith("/host");
         const isRoomDetail = location.pathname.includes("/detail/") && !location.pathname.includes("/reservation");
         // 모바일 && (마이페이지 또는 방 상세 페이지)면 헤더 숨김
-        setVisibility(!isMobile || !(isMyPage || isRoomDetail));
+        // setHeaderVisibility(!isMobile || !(isMyPage || isRoomDetail));
     }, [location.pathname, isMobile]); // <- 경로 or 모바일 상태가 바뀔 때마다 재평가
 
     // resize에 대한 반응 처리
@@ -67,14 +71,27 @@ function AppContent() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const isVisible = useHeaderStore((state) => state.isVisible);
 
     return (
         <>
-            {isVisible && <Header />}
-            {isVisibleHostScreen && isMobile && (
-                <MobileHostHeader/>
+            {headerVisible ? (
+                <>
+                    {(isVisibleHostScreen && isMobile) ? (
+                        <MobileHostHeader/>
+                    ) : (
+                        <>
+                            {headerNone && isMobile ? (
+                                <></>
+                            ) : (
+                                <HeaderOneLine/>
+                            )}
+                        </>
+                    )}
+                </>
+            ) : (
+                <Header/>
             )}
+
             <div className="app container xl:max-w-[1524px]]"
                 // style={{minHeight: window.innerHeight - 130,}}
             >
@@ -95,9 +112,10 @@ function AppContent() {
                             <Route path="/chat" element={<UserMessage/>}/>
                             <Route path="/detail/:roomId/:locale/reservation" element={<GuestReservationSetScreen/>}/>
                             <Route path="/detail/:roomId/:locale/reservation/payment" element={<GuestReservationScreen/>}/>
-                            <Route path="/success" element={<SuccessPage/>}/>
-                            <Route path="/fail" element={<FailPage/>}/>
                             <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
+                            <Route path="/success" element={<SuccessPage/>}/>
+                            <Route path="/success/virtualAccount" element={<SuccessVirtualAccountPage/>}/>
+                            <Route path="/fail" element={<FailPage/>}/>
                         </Route>
                     </Route>
                     {/* hostMode === false 일 때 /host/* 페이지 차단 */}

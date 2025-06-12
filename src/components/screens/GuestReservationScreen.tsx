@@ -92,6 +92,7 @@ export default function GuestReservationScreen() {
 
     const [selectedPayment, setSelectedPayment] = useState<string>("CARD");
     const [portOneModal, setPortOneModal] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     // 결제 성공 상태
     const [paymentSuccessResponse, setPaymentSuccessResponse] = useState<PaymentSuccessResponse | null>(null);
     const [virtualAccountSuccessResponse, setVirtualAccountSuccessResponse] = useState<SuccessVirtualAccountResponse | null>(null);
@@ -169,6 +170,7 @@ export default function GuestReservationScreen() {
                 totalAmount: 1000,
                 currency: "CURRENCY_KRW",
                 payMethod: "VIRTUAL_ACCOUNT",
+                redirectUrl: window.location.origin + "/success/virtualAccount",
                 customer: {
                     customerId: formDataState.phone, // 변경해야함
                     fullName: formDataState.name,
@@ -180,7 +182,7 @@ export default function GuestReservationScreen() {
                     accountExpiry: {
                         dueDate: validUntil.toString(),   // 유효 기간을 validUntil로 설정
                     },
-                },
+                }
             });
 
             if (payment) {
@@ -279,6 +281,7 @@ export default function GuestReservationScreen() {
                 totalAmount: 1000,
                 currency: "CURRENCY_KRW",
                 payMethod: "CARD",
+                redirectUrl: window.location.origin + "/success/virtualAccount",
                 customer: {
                     customerId: formDataState.phone, // 변경해야함
                     fullName: formDataState.name,
@@ -326,8 +329,7 @@ export default function GuestReservationScreen() {
         selected: boolean;
         onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     }
-
-    function PaymentOption({id, label, selected, onChange}: PaymentOptionProps) {
+    function PaymentOption({id, label, selected, onChange}: Readonly<PaymentOptionProps>) {
         return (
             <div>
                 <input
@@ -545,7 +547,7 @@ export default function GuestReservationScreen() {
                     </div>
 
                     {/*리모컨 영역*/}
-                    <div className="md:w-2/5 md:h-fit md:sticky md:top-10 md:rounded-xl md:shadow-md
+                    <div className="md:w-2/5 md:h-fit md:sticky md:top-28 md:rounded-xl md:shadow-md
                         border border-gray-200 shadow-sm md:p-6 p-4 break-words bg-white
                         w-full fixed bottom-0 z-[100]">
                         {/* 모바일 전용 아코디언 버튼 */}
@@ -749,7 +751,7 @@ export default function GuestReservationScreen() {
                 </div>
             )}
 
-            {portOneModal && (
+            {(portOneModal && !isMobile) && (
                 <Modal
                     isOpen={portOneModal}
                     onRequestClose={() => setPortOneModal(false)}
