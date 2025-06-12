@@ -80,7 +80,7 @@ export default function AuthButton(
                     {/*<div className="flex_center md:text-xs text-xxs">*/}
                     {/*    <button*/}
                     {/*        type="button"*/}
-                    {/*        onClick={() => window.location.href = '/main'}*/}
+                    {/*        onClick={() => window.location.href = '/'}*/}
                     {/*    >*/}
                     {/*        방 등록하러 가기*/}
                     {/*    </button>*/}
@@ -90,31 +90,33 @@ export default function AuthButton(
                             {hostMode ? (
                                 <div className="flex_center md:text-xs text-xxs">
                                     <button onClick={handleSetHostMode}
-                                            className="w-full text-start block px-4 py-2">
+                                            className="w-full text-start block p-2">
                                         {t("게스트로 전환")}
                                     </button>
                                 </div>
                             ) : (
                                 <div className="flex_center md:text-xs text-xxs">
                                     <button onClick={handleSetHostMode}
-                                            className="w-full text-start block px-4 py-2 ">
+                                            className="w-full text-start block p-2">
                                         {t("호스트로 전환")}
                                     </button>
                                 </div>
                             )}
                         </>
                     )}
-                    <div className="flex_center">
-                        <button
-                            type="button"
-                            className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
-                        >
-                            <Globe
-                                className="w-6 h-6 text-black stroke-[1.3]"
-                                onClick={handleLanguageSet}
-                            />
-                        </button>
-                    </div>
+                    {!hostMode && (
+                        <div className="flex_center">
+                            <button
+                                type="button"
+                                className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-gray-100 backdrop-blur-sm rounded-full transition duration-200"
+                            >
+                                <Globe
+                                    className="w-6 h-6 text-black stroke-[1.3]"
+                                    onClick={handleLanguageSet}
+                                />
+                            </button>
+                        </div>
+                    )}
 
 
                     <div className="flex">
@@ -165,21 +167,23 @@ export default function AuthButton(
                 </div>
             ) : (
                 <div className="flex gap-3">
-                    <div className="flex_center">
-                        <button
-                            type="button"
-                            className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
-                        >
-                            <Globe
-                                className="w-6 h-6 text-black stroke-[1.3]"
-                                onClick={handleLanguageSet}
-                            />
-                        </button>
-                    </div>
+                    {!hostMode && (
+                        <div className="flex_center">
+                            <button
+                                type="button"
+                                className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-gray-100 backdrop-blur-sm rounded-full transition duration-200"
+                            >
+                                <Globe
+                                    className="w-6 h-6 text-black stroke-[1.3]"
+                                    onClick={handleLanguageSet}
+                                />
+                            </button>
+                        </div>
+                    )}
                     <div>
                         <button
                             type="button"
-                            className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
+                            className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-gray-100 backdrop-blur-sm rounded-full transition duration-200"
                             onClick={() => setAuthModalVisible(true)}
                         >
                             <User className="w-6 h-6 text-black stroke-[1.3]"/>

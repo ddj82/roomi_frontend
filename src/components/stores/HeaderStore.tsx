@@ -50,9 +50,6 @@ export const useHeaderVisibility = () => {
         setHeaderVisibility(isAllowed);
         setHeaderNone(isBlocked);
 
-        console.log('url 주소',location.pathname);
-        console.log('허용할 경로 목록에 있냐?',isAllowed);
-        console.log('차단할 목록에 있냐?',isBlocked);
     }, [location.pathname]);
 
     return useHeaderStore((state) => state.headerVisible);

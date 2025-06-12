@@ -267,12 +267,12 @@ const Header = () => {
 
                         {/* 호스트 모드가 아닐 때만 텍스트 표시 */}
                         {(isVisible && !hostMode) && (
-                            <div className={`flex flex-col items-center text-center mb-6 ${hasReached && 'hidden'}`}>
-                                <p className="text-roomi text-lg md:text-3xl font-semibold mb-2.5">
-                                    주단위부터 월단위까지, 보증금도 자유롭게
+                            <div className={`flex_center flex-col mb-6 ${hasReached && 'hidden'}`}>
+                                <p className="flex_center text-roomi text-lg md:text-3xl font-semibold mb-2.5">
+                                    {t("주단위부터 월단위까지, 보증금도 자유롭게")}
                                 </p>
-                                <p className=" text-xl md:text-3xl font-bold text-[#AF483E]">
-                                    전 세계 게스트와 연결되는 루미
+                                <p className="flex_center text-xl md:text-3xl font-bold text-[#AF483E]">
+                                    {t("전 세계 게스트와 연결되는 루미")}
                                 </p>
                             </div>
                         )}
@@ -340,6 +340,7 @@ const Header = () => {
             )}
 
             {/* 헤더 번역 모달 */}
+            {/* 비회원 */}
             {userLanguageSetModal && (
                 <Modal
                     isOpen={userLanguageSetModal}
@@ -350,6 +351,7 @@ const Header = () => {
                     <LanguageSet/>
                 </Modal>
             )}
+            {/* 회원 */}
             {languageSetModal && (
                 <Modal
                     isOpen={languageSetModal}

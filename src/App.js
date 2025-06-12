@@ -31,6 +31,7 @@ import MobileHostHeader from "./components/header/MobileHostHeader";
 import MainMap from "./components/screens/MainMap";
 import HeaderOneLine from "./components/header/HeaderOneLine";
 import PayMobileRedirect from "./components/pay/PayMobileRedirect";
+import {useMapVisibility} from "./components/stores/MapStore";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ function AppContent() {
     const isVisibleHostScreen = useHostHeaderBtnVisibility();
     const headerVisible = useHeaderVisibility();
     const headerNone = useHeaderVisibility();
+    const isMapVisible = useMapVisibility();
 
     // 경로 변경 감지해서 헤더 visible 상태 설정
     useEffect(() => {
@@ -79,7 +81,9 @@ function AppContent() {
                     ) : (
                         <>
                             {headerNone && isMobile ? (
-                                <></>
+                                <>
+                                    {isMapVisible && <HeaderOneLine/>}
+                                </>
                             ) : (
                                 <HeaderOneLine/>
                             )}
@@ -129,7 +133,7 @@ function AppContent() {
             <Routes>
                 {/* hostMode === true 일 때 이 부분 차단됨 */}
                 <Route element={<ProtectedGuestRoute />}>
-                    <Route path="/map" element={<MainMap/>}/>
+                    <Route path="/map" element={<MainMap isMobile={isMobile}/>}/>
                 </Route>
             </Routes>
 

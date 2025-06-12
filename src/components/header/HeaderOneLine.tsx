@@ -20,6 +20,7 @@ import '../../css/Header.css';
 import {useHeaderBtnVisibility} from "../stores/HeaderBtnStore";
 import {useHostHeaderBtnVisibility} from "../stores/HostHeaderBtnStore";
 import HostHeader from "./HostHeader";
+import {useMapVisibility} from "../stores/MapStore";
 
 type LocationOption = {
     name: string;
@@ -38,6 +39,7 @@ export default function HeaderOneLine() {
     const {selectedLocation, setSelectedLocation} = useLocationStore();
     const isVisible = useHeaderBtnVisibility();
     const isVisibleHostScreen = useHostHeaderBtnVisibility();
+    const isMapVisible = useMapVisibility();
     const currentLang = i18n.language;
 
     const [userVisible, setUserVisible] = useState(false);
@@ -167,6 +169,24 @@ export default function HeaderOneLine() {
                                 </div>
                             )}
 
+                            {/* "/map" 검색창 */}
+                            {(isMapVisible && isMobile) && (
+                                <div>
+                                    <button
+                                        type="button"
+                                        onClick={openSearchModal}
+                                        className="w-8 h-8 flex items-center justify-center
+                                                    bg-gray-100 rounded-full shadow-md
+                                                    transition-all duration-200 hover:scale-105"
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faSearch}
+                                            className="text-black text-base"
+                                        />
+                                    </button>
+                                </div>
+                            )}
+
                             {/* 프로필/로그인 영역 */}
                             <AuthButton
                                 currentLang={currentLang}
@@ -200,6 +220,7 @@ export default function HeaderOneLine() {
             )}
 
             {/* 헤더 번역 모달 */}
+            {/* 비회원 */}
             {userLanguageSetModal && (
                 <Modal
                     isOpen={userLanguageSetModal}
@@ -210,6 +231,7 @@ export default function HeaderOneLine() {
                     <LanguageSet/>
                 </Modal>
             )}
+            {/* 회원 */}
             {languageSetModal && (
                 <Modal
                     isOpen={languageSetModal}

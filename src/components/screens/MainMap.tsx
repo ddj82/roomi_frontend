@@ -4,10 +4,11 @@ import 'src/css/MainHome.css';
 import HomeScreen from "src/components/screens/HomeScreen";
 import {useTranslation} from "react-i18next";
 import GoogleMap from "../map/GoogleMap";
+import AccodionItem from "../util/AccodionItem";
 
-export default function MainMap() {
+export default function MainMap({isMobile}: { isMobile: boolean; }) {
     const [rooms, setRooms] = useState<RoomData[]>([]);
-    const {t} = useTranslation();
+    const [mobileRoomListOpen, setMobileRoomListOpen] = useState(false);
 
     const handleRoomsUpdate = useCallback((newRooms: RoomData[]) => {
         console.log('Rooms updated in App:', newRooms);
@@ -22,22 +23,61 @@ export default function MainMap() {
     }, []);
 
     return (
-        <div className="mainHome main-container">
-            {/* 상단 필터바 */}
-            {/*<FilterBar/>*/}
+        <div className="mainHome main-container !h-[calc(100vh-5rem)]">
+            {isMobile ? (
+                <>
+                    {/* 모바일 */}
+                    <div className="relative w-full !h-[calc(100vh-5rem)] overflow-hidden">
+                        {/* 지도 영역 */}
+                        <div
+                            className={`
+                                absolute inset-0
+                                transition-transform duration-300
+                                ${mobileRoomListOpen ? 'translate-y-full' : 'translate-y-0'}
+                            `}
+                        >
+                            <GoogleMap onRoomsUpdate={handleRoomsUpdate} />
+                        </div>
 
-            {/* 70% 지도 + 30% 리스트 레이아웃 */}
-            <div className="flex h-screen w-full pt-20">
-                {/* 왼쪽 지도 영역 - 70% */}
-                <div className="w-[70%] h-full relative">
-                    <GoogleMap onRoomsUpdate={handleRoomsUpdate}/>
-                </div>
+                        {/* 리스트 영역 */}
+                        <div
+                            className={`
+                                absolute inset-0 overflow-y-auto scrollbar-hidden
+                                transition-transform duration-300
+                                ${mobileRoomListOpen ? 'translate-y-0 pb-16' : 'translate-y-full'}
+                            `}
+                        >
+                            <HomeScreen rooms={rooms} />
+                        </div>
 
-                {/* 오른쪽 리스트 영역 - 30% */}
-                <div className="w-[30%] h-full border-l border-gray-200 overflow-y-auto">
-                    <HomeScreen rooms={rooms}/>
-                </div>
-            </div>
+                        {/* 토글 버튼 (컨테이너 안에 두셔도 되고, 밖에 두셔도 됩니다) */}
+                        <div className="absolute left-0 right-0 bottom-0">
+                            <button
+                                type="button"
+                                onClick={() => setMobileRoomListOpen(prev => !prev)}
+                                className="bg-roomi w-full p-2 text-white"
+                            >
+                                {mobileRoomListOpen ? '지도 보기' : '목록 보기'}
+                            </button>
+                        </div>
+                    </div>
+
+                </>
+            ) : (
+                <>
+                    {/* 브라우저 - 70% 지도 + 30% 리스트 레이아웃 */}
+                    <div className="flex !h-[calc(100vh-5rem)] w-full">
+                        {/* 왼쪽 지도 영역 - 70% */}
+                        <div className="w-[70%] h-full relative">
+                            <GoogleMap onRoomsUpdate={handleRoomsUpdate}/>
+                        </div>
+                        {/* 오른쪽 리스트 영역 - 30% */}
+                        <div className="w-[30%] h-full border-l border-gray-200 overflow-y-auto pb-4 scrollbar-hidden">
+                            <HomeScreen rooms={rooms}/>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 };
