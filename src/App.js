@@ -47,20 +47,10 @@ export default function App() {
 
 function AppContent() {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-    const location = useLocation();
-    const { setHeaderVisibility } = useHeaderStore();
     const isVisibleHostScreen = useHostHeaderBtnVisibility();
     const headerVisible = useHeaderVisibility();
     const headerNone = useHeaderVisibility();
     const isMapVisible = useMapVisibility();
-
-    // 경로 변경 감지해서 헤더 visible 상태 설정
-    useEffect(() => {
-        const isMyPage = location.pathname.startsWith("/myPage") || location.pathname.startsWith("/host");
-        const isRoomDetail = location.pathname.includes("/detail/") && !location.pathname.includes("/reservation");
-        // 모바일 && (마이페이지 또는 방 상세 페이지)면 헤더 숨김
-        // setHeaderVisibility(!isMobile || !(isMyPage || isRoomDetail));
-    }, [location.pathname, isMobile]); // <- 경로 or 모바일 상태가 바뀔 때마다 재평가
 
     // resize에 대한 반응 처리
     useEffect(() => {
@@ -120,8 +110,8 @@ function AppContent() {
                     </Route>
                     {/* hostMode === false 일 때 /host/* 페이지 차단 */}
                     <Route element={<ProtectedHostRoute />}>
-                        <Route path="/host" element={<HostScreen/>}/>
-                        <Route path="/host/teb/:menu" element={<HostScreen/>}/>
+                        <Route path="/host" element={<HostScreen isMobile={isMobile}/>}/>
+                        <Route path="/host/teb/:menu" element={<HostScreen isMobile={isMobile}/>}/>
                         <Route path="/host/insert" element={<MyRoomInsert/>}/>
                         <Route path="/host/update/:roomId" element={<MyRoomUpdate/>}/>
                         <Route path="/host/myPage" element={<HostMyPage/>}/>
@@ -137,7 +127,6 @@ function AppContent() {
                 </Route>
             </Routes>
 
-            {isVisibleHostScreen && isMobile && <BottomNavigator />}
             <div className="hide-on-mobile">
                 <Footer/>
             </div>

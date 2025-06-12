@@ -266,7 +266,7 @@ const Header = () => {
                         </div>
 
                         {/* 호스트 모드가 아닐 때만 텍스트 표시 */}
-                        {(isVisible && !hostMode) && (
+                        {((isVisible && !hasReached) && !hostMode) && (
                             <div className={`flex_center flex-col mb-6 ${hasReached && 'hidden'}`}>
                                 <p className="flex_center text-roomi text-lg md:text-3xl font-semibold mb-2.5">
                                     {t("주단위부터 월단위까지, 보증금도 자유롭게")}
@@ -289,15 +289,15 @@ const Header = () => {
                                     ref={searchBarRef}
                                     onClick={openSearchModal}
                                     className="md:h-16 h-12 w-full max-w-3xl text-[11px] flex items-center justify-between
-                                                    bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
-                                                    ursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
+                                            bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
+                                            ursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
                                     style={{borderRadius: '9999px', overflow: 'hidden'}}
                                 >
                                     <div className="search-simple-text flex items-center px-4 py- flex-1">
                                         <MapPin className="w-6 h-6 text-black mr-2"/>
                                         <span className="text-gray-500 truncate">
-                                                {t('어디로 여행 가세요?')}
-                                            </span>
+                                            {t('어디로 여행 가세요?')}
+                                        </span>
                                     </div>
 
                                     <button

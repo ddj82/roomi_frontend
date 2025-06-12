@@ -18,6 +18,7 @@ import GuestMyPageContent from "./GuestMyPageContent";
 import "src/css/MyPage.css"
 import MyReservations from "./myPageMenu/MyReservations";
 import {
+    ArrowLeft,
     Bell,
     ChevronRight,
     DollarSign,
@@ -96,7 +97,7 @@ export default function GuestMyPage() {
     }, []);
 
     return (
-        <div className="w-full my-4 flex flex-col md:flex-row relative text-black">
+        <div className="w-full mb-4 flex flex-col md:flex-row relative text-black">
             {/* 웹 버전 메뉴 */}
             <div className="guest-mypage-left md:border-r md:w-1/4 lg:w-1/5 hidden md:block bg-white">
                 {/* 프로필 섹션 */}
@@ -249,7 +250,7 @@ export default function GuestMyPage() {
             {/* 모바일 버전 메뉴 */}
             <div className="guest-mypage-left md:hidden bg-white min-h-screen">
                 {/* 상단 앱바 영역 */}
-                <div className="bg-white border-b border-gray-200 px-4 py-3">
+                <div className="bg-white border-b border-gray-200 p-4">
                     <div className="flex items-center justify-between">
                         <button
                             onClick={() => window.location.href = '/'}
@@ -490,7 +491,7 @@ export default function GuestMyPage() {
             {/* 데스크톱 전용 오른쪽 콘텐츠 */}
             <div className="guest-mypage-right md:w-3/4 lg:w-4/5 hidden md:flex flex-col bg-white">
                 {/* 제목 고정 */}
-                <div className="px-8 pt-6 pb-2 bg-white">
+                <div className="px-8 py-6 bg-white">
                     <h2 className="text-2xl font-bold text-gray-900">
                         {selectedMenu === '' ? t('예약 내역') : t(selectedMenu)}
                     </h2>
@@ -509,13 +510,13 @@ export default function GuestMyPage() {
             {isMobile && selectedMenu && (
                 <div className="fixed top-0 left-0 w-full h-full bg-white z-50 flex flex-col overflow-hidden">
                     {/* 상단 앱바 영역 */}
-                    <div className="bg-white border-b border-gray-200 px-4 py-3">
+                    <div className="bg-white border-b border-gray-200 p-4">
                         <div className="flex items-center justify-between">
                             <button
                                 onClick={() => handleSetSelectedMenu('')}
                                 className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                             >
-                                <FontAwesomeIcon icon={faArrowLeft} className="w-6 h-6 text-gray-700"/>
+                                <ArrowLeft className="w-6 h-6 text-gray-700"/>
                             </button>
                             <h1 className="text-lg font-semibold text-gray-900">{t(selectedMenu)}</h1>
                             <div className="w-10 h-10"></div>
