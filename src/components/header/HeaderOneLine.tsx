@@ -18,6 +18,8 @@ import AuthModal from "../modals/AuthModal";
 import AuthButton from "./util/AuthButton";
 import '../../css/Header.css';
 import {useHeaderBtnVisibility} from "../stores/HeaderBtnStore";
+import {useHostHeaderBtnVisibility} from "../stores/HostHeaderBtnStore";
+import HostHeader from "./HostHeader";
 
 type LocationOption = {
     name: string;
@@ -35,6 +37,7 @@ export default function HeaderOneLine() {
     const {guestCount} = useGuestsStore();
     const {selectedLocation, setSelectedLocation} = useLocationStore();
     const isVisible = useHeaderBtnVisibility();
+    const isVisibleHostScreen = useHostHeaderBtnVisibility();
     const currentLang = i18n.language;
 
     const [userVisible, setUserVisible] = useState(false);
@@ -176,6 +179,10 @@ export default function HeaderOneLine() {
                         </div>
                     </div>
                 </div>
+
+                {isVisibleHostScreen && (
+                    <HostHeader/>
+                )}
             </div>
 
             {/* 검색 모달 */}

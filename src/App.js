@@ -27,7 +27,7 @@ import MyRoomUpdate from "./components/hostMenu/myRooms/MyRoomUpdate";
 import LoginPage from "./components/screens/link/LoginPage";
 import LineLoginCallback from "./components/util/LineLoginCallback";
 import Main from "./components/screens/Main";
-import MobileHostHeader from "./components/screens/MobileHostHeader";
+import MobileHostHeader from "./components/header/MobileHostHeader";
 import MainMap from "./components/screens/MainMap";
 import HeaderOneLine from "./components/header/HeaderOneLine";
 import PayMobileRedirect from "./components/pay/PayMobileRedirect";
