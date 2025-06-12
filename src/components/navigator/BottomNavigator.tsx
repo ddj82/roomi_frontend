@@ -1,12 +1,8 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 import {useHostTabNavigation} from "../stores/HostTabStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendar, faComments, faFileLines, } from "@fortawesome/free-regular-svg-icons";
-import {useAuthStore} from "../stores/AuthStore";
-import {useChatStore} from "../stores/ChatStore";
-import {logout} from "../../api/api";
-import {useHostModeStore} from "../stores/HostModeStore";
 import {faHouseChimney} from "@fortawesome/free-solid-svg-icons";
 
 const tabIcons: Record<string, JSX.Element> = {
@@ -21,29 +17,33 @@ const BottomNavigation: React.FC = () => {
     const { activeTab, setActiveTab } = useHostTabNavigation();
     const tabs = ["my_room", "contract_management", "room_status", "message"] as const;
 
-    // 1) innerHeight 변화 감지해서 --vh 변수에 세팅
+    // --- 1) 동적 vh 계산 (옵션)
     const [vh, setVh] = useState(window.innerHeight);
     useEffect(() => {
         const onResize = () => setVh(window.innerHeight);
         window.addEventListener("resize", onResize);
-        return () => document.removeEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
     }, []);
     useEffect(() => {
-        // 1vh = window.innerHeight * 0.01px
         document.documentElement.style.setProperty("--vh", `${vh * 0.01}px`);
     }, [vh]);
 
-    // 2) 네비게이터 높이(px)
+    // --- 2) 네비게이터 높이
     const navHeight = 56;
+    const safeInset = "env(safe-area-inset-bottom)";
+    const safeInsetFallback = "constant(safe-area-inset-bottom)";
 
     return (
         <div
             className="fixed bottom-0 left-0 w-full bg-white backdrop-blur-sm border-t border-gray-200/50 flex justify-center items-center z-50"
             style={{
-                height: `${navHeight}px`,
-                bottom: "env(safe-area-inset-bottom)",     // 홈바(safe-area) 위에 딱 붙이기
-                paddingBottom: "env(safe-area-inset-bottom)",
-                boxShadow: '0 -2px 8px rgba(167, 97, 97, 0.15)'
+                bottom: 0,
+                // navHeight + safe-area-inset
+                height: `calc(${navHeight}px + ${safeInset})`,
+                // iOS 구버전용 fallback
+                WebkitPaddingEnd: safeInsetFallback,
+                paddingBottom: safeInsetFallback,
+                boxShadow: '0 -2px 8px rgba(167, 97, 97, 0.15)',
             }}
         >
             <div className="flex justify-around items-center w-full max-w-md">
