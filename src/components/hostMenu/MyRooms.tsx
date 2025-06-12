@@ -116,19 +116,25 @@ const MyRooms = () => {
                                 <button
                                     type="button"
                                     className="w-full flex items-center justify-between px-4 py-2.5 text-sm
-                                        bg-white border border-gray-300 rounded-full transition shadow-sm hover:ring-1 hover:ring-roomi transition"
+                                    bg-white border border-gray-100 rounded-xl transition shadow-sm hover:bg-gray-50"
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                 >
-                                    <span className="text-gray-700">{displayValue}</span>
-                                    <ChevronDown className="w-4 h-4 text-gray-500"/>
+                                    <span className="text-gray-700 font-medium">{displayValue}</span>
+                                    <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${
+                                        isDropdownOpen ? 'rotate-180' : ''
+                                    }`}/>
                                 </button>
                                 {isDropdownOpen && (
-                                    <div className="absolute w-full mt-1 bg-white rounded-lg border border-gray-200 rounder-lg shadow-lg">
+                                    <div
+                                        className="absolute w-full mt-1 bg-white rounded-xl border border-gray-100 shadow-lg overflow-hidden">
                                         {conditions.map((condition) => (
                                             <div
                                                 key={condition.value || 'empty'}
-                                                className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 
-                                                  ${roomCondition === condition.value ? 'bg-gray-100 font-medium text-roomi' : ''}`}
+                                                className={`px-4 py-2 text-sm cursor-pointer transition-colors
+                                              ${roomCondition === condition.value
+                                                    ? 'bg-roomi-0 text-roomi font-medium'
+                                                    : 'hover:bg-gray-50 text-gray-700'
+                                                }`}
                                                 onClick={() => {
                                                     setRoomCondition(condition.value);
                                                     setIsDropdownOpen(false);
@@ -147,8 +153,9 @@ const MyRooms = () => {
                                 </div>
                                 <input
                                     type="search"
-                                    className="w-full py-2.5 pl-10 pr-3 text-sm border border-gray-300 rounded-full
-                                        shadow-sm focus:outline-none focus:ring-1 focus:ring-roomi transition"
+                                    className="w-full py-2.5 pl-10 pr-3 text-sm border border-gray-100 rounded-xl
+                                    shadow-sm focus:outline-none focus:ring-2 focus:ring-roomi-1 focus:border-transparent
+                                    bg-white placeholder-gray-500"
                                     placeholder="제목 또는 주소 입력"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -159,10 +166,10 @@ const MyRooms = () => {
                         <div className="w-full sm:w-auto">
                             <button
                                 type="button"
-                                className="w-full sm:w-auto px-4 py-2.5 text-sm font-medium text-white bg-roomi rounded-lg shadow hover:bg-roomi-dark transition"
+                                className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold text-white bg-roomi rounded-xl shadow-sm hover:bg-blue-700 transition-colors"
                                 onClick={handleInsertBtn}
                             >
-                                <span className="text-base"></span> 방 등록하기
+                                <span className="mr-1">+</span> 방 등록하기
                             </button>
                         </div>
                     </div>
@@ -184,7 +191,7 @@ const MyRooms = () => {
                                     {/* 상태 및 가격 정보 */}
                                     <div className="flex justify-between items-center p-3 bg-gray-50">
                                         <span
-                                            className={`inline-block px-2 py-1 text-xs font-semibold rounded 
+                                            className={`rounded-l inline-block px-2 py-1 text-xs font-semibold rounded 
                                                 ${getRoomStatus(room) === "활성화"
                                                 ? "bg-roomi text-white"
                                                 : getRoomStatus(room) === "비활성화"
@@ -230,7 +237,7 @@ const MyRooms = () => {
                                     {/* 버튼 영역 */}
                                     <div className="p-3 pt-0 flex gap-2">
                                         <button
-                                            className="flex-1 text-sm px-3 py-2 border border-gray-300 text-black rounded hover:bg-gray-100 transition"
+                                            className="rounded-xl flex-1 text-sm px-3 py-2 border border-gray-300 text-black rounded hover:bg-gray-100 transition"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleRoomUpdateBtn(room.id);
@@ -239,7 +246,7 @@ const MyRooms = () => {
                                             수정
                                         </button>
                                         <button
-                                            className="flex-1 text-sm px-3 py-2 border border-gray-300 text-black rounded hover:bg-gray-100 transition"
+                                            className="rounded-xl flex-1 text-sm px-3 py-2 border border-gray-300 text-black rounded hover:bg-gray-100 transition"
                                             onClick={(e) => e.stopPropagation()}
                                         >
                                             삭제
@@ -293,7 +300,7 @@ const MyRooms = () => {
                                                 {/* 버튼 영역 - 가격과 같은 행에 배치 */}
                                                 <div className="flex gap-2">
                                                     <button
-                                                        className="text-sm px-3 py-1.5 border border-gray-300 text-black rounded hover:bg-gray-100 transition"
+                                                        className="rounded-xl text-sm px-5 py-1.5 border border-gray-300 text-black rounded hover:bg-gray-100 transition"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             handleRoomUpdateBtn(room.id);
@@ -302,7 +309,7 @@ const MyRooms = () => {
                                                         수정
                                                     </button>
                                                     <button
-                                                        className="text-sm px-3 py-1.5 border border-gray-300 text-black rounded hover:bg-gray-100 transition"
+                                                        className="rounded-xl text-sm px-5 py-1.5 border border-gray-300 text-black rounded hover:bg-gray-100 transition"
                                                         onClick={(e) => e.stopPropagation()}
                                                     >
                                                         삭제

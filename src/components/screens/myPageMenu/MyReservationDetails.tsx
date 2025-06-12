@@ -582,165 +582,190 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
 
     return (
         <div>
-            {/*예약 정보*/}
-            <div className="flex md:flex-row flex-col gap-4 bg-gray-100 my-4 rounded-lg md:p-2">
-                <div className="md:w-48 md:h-36 md:mr-4">
-                    <img
-                        className="object-cover rounded md:rounded w-full h-full"
-                        src={reservedDetails?.room.detail_urls?.[0]}
-                        alt="thumbnail"
-                    />
-                </div>
-                <div className="flex flex-col justify-center md:gap-2 md:p-0 px-4 pb-4">
-                    <span className={`text-xs text-white p-1 px-2.5 rounded w-fit mb-2 ${statusInfo.backgroundColor}`}>
+            {/* 예약 정보 카드 */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 my-4 overflow-hidden">
+                <div className="flex md:flex-row flex-col gap-4 p-6">
+                    <div className="md:w-48 md:h-36">
+                        <img
+                            className="object-cover rounded-xl w-full h-full"
+                            src={reservedDetails?.room.detail_urls?.[0]}
+                            alt="thumbnail"
+                        />
+                    </div>
+                    <div className="flex flex-col justify-center md:gap-2">
+                    <span className={`text-xs text-white px-3 py-1.5 rounded-full w-fit mb-2 font-medium ${statusInfo.backgroundColor}`}>
                         {statusInfo.message}
                     </span>
-                    <div className="font-bold text-lg">{reserveData.room.title}</div>
-                    <div className="font-bold text-lg">{reserveData.room.address}</div>
+                        <div className="font-semibold text-lg text-gray-900">{reserveData.room.title}</div>
+                        <div className="font-medium text-base text-gray-600">{reserveData.room.address}</div>
+                    </div>
                 </div>
             </div>
-            {/*기본 정보*/}
-            <div className="border border-gray-200 rounded-lg mb-4">
+
+            {/* 기본 정보 */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
                 <button
                     onClick={() => setBasicOpen(prev => !prev)}
-                    className="w-full p-3 px-4 focus:outline-none"
+                    className="w-full p-4 focus:outline-none hover:bg-gray-50 transition-colors"
                 >
-                    <div className="flex justify-between">
-                        <div className="font-bold">기본 정보</div>
-                        <div>
+                    <div className="flex justify-between items-center">
+                        <div className="font-semibold text-gray-900">{t('기본 정보')}</div>
+                        <div className="text-gray-500">
                             {basicOpen ? (<FontAwesomeIcon icon={faAngleUp}/>) : (
                                 <FontAwesomeIcon icon={faAngleDown}/>)}
                         </div>
                     </div>
                 </button>
                 <AccodionItem isOpen={basicOpen}>
-                    <div className="flex flex-col gap-2 text-sm p-5 text-gray-500">
-                        <div className="flex justify-between">
-                            <div className="font-bold">예약번호</div>
-                            <div>{reserveData.order_id}</div>
-                        </div>
-                        <div className="flex justify-between">
-                            <div className="font-bold">체크인</div>
-                            <div>{dayjs.utc(reserveData.check_in_date).format('YYYY-MM-DD')}</div>
-                        </div>
-                        <div className="flex justify-between">
-                            <div className="font-bold">체크아웃</div>
-                            <div>{dayjs.utc(reserveData.check_out_date).format('YYYY-MM-DD')}</div>
-                        </div>
-                        <div className="flex justify-between">
-                            <div className="font-bold">게스트</div>
-                            <div>{reserveData.guest_count}{t('명')}</div>
-                        </div>
-                        <div className="flex justify-between">
-                            <div className="font-bold">예약상태</div>
-                            <div>{statusInfo.message}</div>
-                        </div>
-                        <div className="flex justify-between">
-                            <div className="font-bold">예약날짜</div>
-                            <div>{dayjs.utc(reserveData.created_at).format('YYYY-MM-DD')}</div>
+                    <div className="px-4 pb-4">
+                        <div className="bg-gray-50 rounded-xl p-4">
+                            <div className="flex flex-col gap-3 text-sm">
+                                <div className="flex justify-between items-center">
+                                    <div className="font-medium text-gray-700">{t('예약번호')}</div>
+                                    <div className="text-gray-900">{reserveData.order_id}</div>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="font-medium text-gray-700">{t('체크인')}</div>
+                                    <div className="text-gray-900">{dayjs.utc(reserveData.check_in_date).format('YYYY-MM-DD')}</div>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="font-medium text-gray-700">{t('체크아웃')}</div>
+                                    <div className="text-gray-900">{dayjs.utc(reserveData.check_out_date).format('YYYY-MM-DD')}</div>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="font-medium text-gray-700">{t('게스트')}</div>
+                                    <div className="text-gray-900">{reserveData.guest_count}</div>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="font-medium text-gray-700">{t('예약상태')}</div>
+                                    <div className="text-gray-900">{t(statusInfo.message)}</div>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="font-medium text-gray-700">{t('예약날짜')}</div>
+                                    <div className="text-gray-900">{dayjs.utc(reserveData.created_at).format('YYYY-MM-DD')}</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </AccodionItem>
             </div>
-            {/*요금 정보*/}
-            <div className="border border-gray-200 rounded-lg mb-4">
+
+            {/* 요금 정보 */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
                 <button
                     onClick={() => setPriceOpen(prev => !prev)}
-                    className="w-full p-3 px-4 focus:outline-none"
+                    className="w-full p-4 focus:outline-none hover:bg-gray-50 transition-colors"
                 >
-                    <div className="flex justify-between">
-                        <div className="font-bold">요금 정보</div>
-                        <div>
+                    <div className="flex justify-between items-center">
+                        <div className="font-semibold text-gray-900">{t('요금 정보')}</div>
+                        <div className="text-gray-500">
                             {priceOpen ? (<FontAwesomeIcon icon={faAngleUp}/>) : (
                                 <FontAwesomeIcon icon={faAngleDown}/>)}
                         </div>
                     </div>
                 </button>
                 <AccodionItem isOpen={priceOpen}>
-                    <div className="flex flex-col gap-2 text-sm p-5 text-gray-500">
-                        <div className="flex justify-between">
-                            <div className="font-bold">이용요금</div>
-                            <div>{reserveData.symbol}{(reserveData.price_per_unit * reserveData.unit).toLocaleString()}</div>
-                        </div>
-                        <div className="flex justify-between">
-                            <div className="font-bold">보증금</div>
-                            <div>{reserveData.symbol}{reserveData.deposit.toLocaleString()}</div>
-                        </div>
-                        <div className="flex justify-between">
-                            <div className="font-bold">관리비</div>
-                            <div>{reserveData.symbol}{(reserveData.maintenance_per_unit * reserveData.unit).toLocaleString()}</div>
-                        </div>
-                        <div className="flex justify-between">
-                            <div className="font-bold">수수료</div>
-                            <div>{reserveData.symbol}{(reserveData.fee).toLocaleString()}</div>
-                        </div>
-                        <div className="flex justify-between">
-                            <div className="font-bold">총 결제 금액</div>
-                            <div>{reserveData.symbol}{reserveData.total_price.toLocaleString()}</div>
+                    <div className="px-4 pb-4">
+                        <div className="bg-gray-50 rounded-xl p-4">
+                            <div className="flex flex-col gap-3 text-sm">
+                                <div className="flex justify-between items-center">
+                                    <div className="font-medium text-gray-700">{t('이용요금')}</div>
+                                    <div className="text-gray-900">{reserveData.symbol}{(reserveData.price_per_unit * reserveData.unit).toLocaleString()}</div>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="font-medium text-gray-700">{t('보증금')}</div>
+                                    <div className="text-gray-900">{reserveData.symbol}{reserveData.deposit.toLocaleString()}</div>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="font-medium text-gray-700">{t('관리비')}</div>
+                                    <div className="text-gray-900">{reserveData.symbol}{(reserveData.maintenance_per_unit * reserveData.unit).toLocaleString()}</div>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="font-medium text-gray-700">{t('수수료')}</div>
+                                    <div className="text-gray-900">{reserveData.symbol}{(reserveData.fee).toLocaleString()}</div>
+                                </div>
+                                <div className="h-px bg-gray-200 my-2"></div>
+                                <div className="flex justify-between items-center">
+                                    <div className="font-semibold text-gray-900">{t('총 결제 금액')}</div>
+                                    <div className="font-semibold text-gray-900">{reserveData.symbol}{reserveData.total_price.toLocaleString()}</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </AccodionItem>
             </div>
-            {/*호스트 정보*/}
-            <div className="border border-gray-200 rounded-lg mb-4">
+
+            {/* 호스트 정보 */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
                 <button
                     onClick={() => setHostOpen(prev => !prev)}
-                    className="w-full p-3 px-4 focus:outline-none"
+                    className="w-full p-4 focus:outline-none hover:bg-gray-50 transition-colors"
                 >
-                    <div className="flex justify-between">
-                        <div className="font-bold">호스트 정보</div>
-                        <div>
+                    <div className="flex justify-between items-center">
+                        <div className="font-semibold text-gray-900">{t('호스트 정보')}</div>
+                        <div className="text-gray-500">
                             {hostOpen ? (<FontAwesomeIcon icon={faAngleUp}/>) : (
                                 <FontAwesomeIcon icon={faAngleDown}/>)}
                         </div>
                     </div>
                 </button>
                 <AccodionItem isOpen={hostOpen}>
-                    <div className="flex flex-col gap-2 text-sm p-5 text-gray-500">
-                        <div className="flex gap-6">
-                            <div className="flex_center">
-                                <img src={reserveData.room.host_profile_image} alt="프로필사진"
-                                     className="rounded-full w-16 h-16"/>
+                    <div className="px-4 pb-4">
+                        <div className="bg-gray-50 rounded-xl p-4">
+                            <div className="flex items-center gap-4">
+                                <div className="flex-shrink-0">
+                                    <img
+                                        src={reserveData.room.host_profile_image}
+                                        alt="프로필사진"
+                                        className="rounded-full w-16 h-16 object-cover border-2 border-gray-200"
+                                    />
+                                </div>
+                                <div className="font-medium text-gray-900">{reserveData.room.host_name}</div>
                             </div>
-                            <div className="flex_center">{reserveData.room.host_name}</div>
                         </div>
                     </div>
                 </AccodionItem>
             </div>
-            {/*이용 규칙 및 환불 정책*/}
-            <div className="border border-gray-200 rounded-lg mb-4">
+
+            {/* 이용 규칙 및 환불 정책 */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
                 <button
                     onClick={() => setRuleOpen(prev => !prev)}
-                    className="w-full p-3 px-4 focus:outline-none"
+                    className="w-full p-4 focus:outline-none hover:bg-gray-50 transition-colors"
                 >
-                    <div className="flex justify-between">
-                        <div className="font-bold">이용 규칙 및 환불 정책</div>
-                        <div>
+                    <div className="flex justify-between items-center">
+                        <div className="font-semibold text-gray-900">{t('이용 규칙 및 환불 정책')}</div>
+                        <div className="text-gray-500">
                             {ruleOpen ? (<FontAwesomeIcon icon={faAngleUp}/>) : (
                                 <FontAwesomeIcon icon={faAngleDown}/>)}
                         </div>
                     </div>
                 </button>
                 <AccodionItem isOpen={ruleOpen}>
-                    <div className="flex flex-col gap-2 text-sm p-5 text-gray-500">
-                        <div className="flex flex-col">
-                            <div className="font-bold mb-1">체크인/체크아웃</div>
-                            <div className="text-xs">체크인: {reserveData.room.check_in_time},
-                                체크아웃: {reserveData.room.check_out_time}</div>
-                        </div>
-                        <div className="flex flex-col">
-                            <div className="font-bold mb-1">환불 정책</div>
-                            <div className="text-xs whitespace-pre-line">
-                                {reserveData.room.refund_policy?.replace(/\\n/g, '\n')}
+                    <div className="px-4 pb-4">
+                        <div className="bg-gray-50 rounded-xl p-4">
+                            <div className="flex flex-col gap-4 text-sm">
+                                {/*<div className="flex flex-col">*/}
+                                {/*    <div className="font-medium text-gray-900 mb-2">체크인/체크아웃</div>*/}
+                                {/*    */}
+                                {/*</div>*/}
+                                {/*<div className="flex flex-col">*/}
+                                {/*    <div className="font-medium text-gray-900 mb-2">{t('환불 정책')}</div>*/}
+                                {/*    <div className="text-gray-600 whitespace-pre-line">*/}
+                                {/*        {reserveData.room.refund_policy?.replace(/\\n/g, '\n')}*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
                             </div>
                         </div>
                     </div>
                 </AccodionItem>
             </div>
-            {/*버튼*/}
-            <div className="flex_center mt-8">
+
+            {/* 버튼 영역 */}
+            <div className="flex justify-center mt-8">
                 {renderStatus(statusInfo.message)}
             </div>
+
             <EarlyCheckoutModal />
         </div>
     );

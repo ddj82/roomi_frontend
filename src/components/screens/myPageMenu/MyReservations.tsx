@@ -257,7 +257,7 @@ export default function MyReservations() {
                     /*예약 상세 정보*/
                     <button type="button" onClick={() => setReservedDetails(null)}
                             className="py-2 px-4 text-sm rounded font-bold">
-                        목록 보기
+                        {t('목록 보기')}
                     </button>
                 ) : (
                     /*예약 내역*/

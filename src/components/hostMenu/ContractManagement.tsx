@@ -305,32 +305,38 @@ const ContractManagement = () => {
                         {/* 검색 및 필터링 영역 */}
                         <div className="w-full flex flex-col gap-3">
                             {/* 첫 번째 줄: 필터 드롭다운들 */}
-                            <div className="flex flex-col sm:flex-row gap-3">
+                            <div className="flex gap-3">
                                 {/* 예약 상태 필터 드롭다운 */}
-                                <div className="relative w-full sm:w-1/6" ref={statusDropdownRef}>
+                                <div className="relative w-1/2 sm:w-1/6" ref={statusDropdownRef}>
                                     <button
                                         type="button"
                                         className="w-full flex items-center justify-between px-4 py-3 text-sm
-            bg-white border border-gray-300 rounded-full transition shadow-sm hover:ring-1 hover:ring-roomi"
+                bg-white border border-gray-100 rounded-2xl transition shadow-sm hover:bg-gray-50
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
                                         aria-haspopup="true"
                                         aria-expanded={isStatusDropdownOpen}
                                     >
-                                        <span className="text-gray-700">
-                                            {activeTab === "current" ? "현재 예약" : "지난 예약"}
-                                        </span>
-                                        <ChevronDown className="w-5 h-5 text-gray-500"/>
+                <span className="text-gray-700 font-medium">
+                    {activeTab === "current" ? "현재 예약" : "지난 예약"}
+                </span>
+                                        <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${
+                                            isStatusDropdownOpen ? 'rotate-180' : ''
+                                        }`}/>
                                     </button>
 
                                     {/* 드롭다운 메뉴 */}
                                     {isStatusDropdownOpen && (
                                         <div
-                                            className="absolute z-10 w-full mt-1 bg-white rounded-lg border border-gray-200 shadow-lg max-h-60 overflow-y-auto"
+                                            className="absolute z-10 w-full mt-2 bg-white rounded-2xl border border-gray-100 shadow-lg max-h-60 overflow-hidden"
                                             role="menu"
                                         >
                                             <div
-                                                className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
-                                                ${activeTab === "current" ? 'bg-roomi-1' : ''}`}
+                                                className={`px-4 py-3 cursor-pointer transition-colors
+                        ${activeTab === "current"
+                                                    ? 'bg-blue-50 text-blue-700 font-medium'
+                                                    : 'hover:bg-gray-50 text-gray-700'
+                                                }`}
                                                 onClick={() => {
                                                     setActiveTab("current");
                                                     setIsStatusDropdownOpen(false);
@@ -340,8 +346,11 @@ const ContractManagement = () => {
                                                 {t('현재 예약')}
                                             </div>
                                             <div
-                                                className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
-                                                ${activeTab === "past" ? 'bg-roomi-1' : ''}`}
+                                                className={`px-4 py-3 cursor-pointer transition-colors
+                        ${activeTab === "past"
+                                                    ? 'bg-blue-50 text-blue-700 font-medium'
+                                                    : 'hover:bg-gray-50 text-gray-700'
+                                                }`}
                                                 onClick={() => {
                                                     setActiveTab("past");
                                                     setIsStatusDropdownOpen(false);
@@ -355,32 +364,38 @@ const ContractManagement = () => {
                                 </div>
 
                                 {/* 방 선택 드롭다운 */}
-                                <div className="relative w-full sm:w-1/6" ref={roomDropdownRef}>
+                                <div className="relative w-1/2 sm:w-1/6" ref={roomDropdownRef}>
                                     <button
                                         type="button"
                                         className="w-full flex items-center justify-between px-4 py-3 text-sm
-            bg-white border border-gray-300 rounded-full transition shadow-sm hover:ring-1 hover:ring-roomi"
+                bg-white border border-gray-100 rounded-2xl transition shadow-sm hover:bg-gray-50
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         onClick={() => setIsRoomDropdownOpen(!isRoomDropdownOpen)}
                                         aria-haspopup="true"
                                         aria-expanded={isRoomDropdownOpen}
                                     >
-                                        <span className="text-gray-700">
-                                            {selectedRoomId
-                                                ? rooms.find(room => room.id === selectedRoomId)?.title || '선택된 방'
-                                                : '방 선택'}
-                                        </span>
-                                        <ChevronDown className="w-5 h-5 text-gray-500"/>
+                <span className="text-gray-700 font-medium">
+                    {selectedRoomId
+                        ? rooms.find(room => room.id === selectedRoomId)?.title || '선택된 방'
+                        : '방 선택'}
+                </span>
+                                        <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${
+                                            isRoomDropdownOpen ? 'rotate-180' : ''
+                                        }`}/>
                                     </button>
 
                                     {/* 드롭다운 메뉴 */}
                                     {isRoomDropdownOpen && (
                                         <div
-                                            className="absolute z-10 w-full mt-1 bg-white rounded-lg border border-gray-200 shadow-lg max-h-60 overflow-y-auto"
+                                            className="absolute z-10 w-full mt-2 bg-white rounded-2xl border border-gray-100 shadow-lg max-h-60 overflow-y-auto overflow-hidden"
                                             role="menu"
                                         >
                                             <div
-                                                className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
-                                                ${!selectedRoomId ? 'bg-roomi-1' : ''}`}
+                                                className={`px-4 py-3 cursor-pointer transition-colors
+                        ${!selectedRoomId
+                                                    ? 'bg-blue-50 text-blue-700 font-medium'
+                                                    : 'hover:bg-gray-50 text-gray-700'
+                                                }`}
                                                 onClick={() => {
                                                     setSelectedRoomId(null);
                                                     setIsRoomDropdownOpen(false);
@@ -392,8 +407,11 @@ const ContractManagement = () => {
                                             {rooms.map((room) => (
                                                 <div
                                                     key={room.id}
-                                                    className={`px-4 py-3 cursor-pointer hover:bg-roomi-000 
-                                                    ${selectedRoomId === room.id ? 'bg-roomi-1' : ''}`}
+                                                    className={`px-4 py-3 cursor-pointer transition-colors
+                            ${selectedRoomId === room.id
+                                                        ? 'bg-blue-50 text-blue-700 font-medium'
+                                                        : 'hover:bg-gray-50 text-gray-700'
+                                                    }`}
                                                     onClick={() => {
                                                         setSelectedRoomId(room.id || null);
                                                         setIsRoomDropdownOpen(false);
@@ -413,15 +431,16 @@ const ContractManagement = () => {
 
                             {/* 두 번째 줄: 검색창 */}
                             <div className="flex flex-col sm:flex-row gap-3">
-                                {/* 검색창 */}
+                                {/* 검색창 - 주석 처리된 부분 유지 */}
                                 {/*<div className="relative w-full sm:w-2/6">*/}
                                 {/*    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">*/}
                                 {/*        <Search className="w-4 h-4 text-gray-500" aria-hidden="true"/>*/}
                                 {/*    </div>*/}
                                 {/*    <input*/}
                                 {/*        type="search"*/}
-                                {/*        className="w-full py-3 pl-10 pr-3 text-base border border-gray-200 rounded-full*/}
-                                {/*        shadow-sm focus:outline-none"*/}
+                                {/*        className="w-full py-3 pl-10 pr-3 text-base border border-gray-100 rounded-2xl*/}
+                                {/*        shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent*/}
+                                {/*        bg-white placeholder-gray-500"*/}
                                 {/*        placeholder="제목 또는 주소 입력"*/}
                                 {/*        value={searchQuery}*/}
                                 {/*        onChange={handleSearchChange}*/}
@@ -429,19 +448,19 @@ const ContractManagement = () => {
                                 {/*    />*/}
                                 {/*</div>*/}
 
-                                {/* 모바일에서만 보이는 추가 버튼들 */}
+                                {/* 모바일에서만 보이는 추가 버튼들 - 주석 처리된 부분 유지 */}
                                 {/*<div className="flex sm:hidden gap-2">*/}
                                 {/*    <button*/}
                                 {/*        type="button"*/}
-                                {/*        className="flex-1 px-4 py-2 text-sm font-medium rounded-full transition*/}
-                                {/*        bg-gray-100 text-gray-700 hover:bg-gray-200"*/}
+                                {/*        className="flex-1 px-4 py-2 text-sm font-medium rounded-2xl transition*/}
+                                {/*        bg-white border border-gray-100 text-gray-700 hover:bg-gray-50 shadow-sm"*/}
                                 {/*    >*/}
                                 {/*        날짜 필터*/}
                                 {/*    </button>*/}
                                 {/*    <button*/}
                                 {/*        type="button"*/}
-                                {/*        className="flex-1 px-4 py-2 text-sm font-medium rounded-full transition*/}
-                                {/*        bg-gray-100 text-gray-700 hover:bg-gray-200"*/}
+                                {/*        className="flex-1 px-4 py-2 text-sm font-medium rounded-2xl transition*/}
+                                {/*        bg-white border border-gray-100 text-gray-700 hover:bg-gray-50 shadow-sm"*/}
                                 {/*    >*/}
                                 {/*        금액 필터*/}
                                 {/*    </button>*/}
@@ -457,7 +476,7 @@ const ContractManagement = () => {
                 {selectedReservation && (
                     <button type="button" onClick={() => setSelectedReservation(null)}
                             className="py-2 px-4 text-sm rounded font-bold">
-                        목록 보기
+                        {t('목록 보기')}
                     </button>
                 )}
             </div>
@@ -558,7 +577,7 @@ const ContractManagement = () => {
                                                 {/* 썸네일 */}
                                                 <div
                                                     className="w-20 h-20 bg-gray-200 flex-shrink-0 rounded-md overflow-hidden">
-                                                    {reservation.room?.detail_urls && reservation.room.detail_urls.length > 0 && (
+                                                {reservation.room?.detail_urls && reservation.room.detail_urls.length > 0 && (
                                                         <img
                                                             src={reservation.room.detail_urls[0]}
                                                             alt={reservation.room?.title || "Room"}
