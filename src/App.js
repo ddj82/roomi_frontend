@@ -20,7 +20,6 @@ import ProtectedHostRoute from "./api/ProtectedHostRoute";
 import ProtectedGuestRoute from "./api/ProtectedGuestRoute";
 import KakaoLoginCallback from "./components/util/KakaoLoginCallback";
 import SocialJoinScreen from "./components/screens/SocialJoinScreen";
-import SuccessPage from "./components/pay/SuccessPage";
 import {useHeaderStore, useHeaderVisibility} from "./components/stores/HeaderStore";
 import {useHostHeaderBtnVisibility} from "./components/stores/HostHeaderBtnStore";
 import BottomNavigator from "./components/navigator/BottomNavigator";
@@ -29,10 +28,9 @@ import LoginPage from "./components/screens/link/LoginPage";
 import LineLoginCallback from "./components/util/LineLoginCallback";
 import Main from "./components/screens/Main";
 import MobileHostHeader from "./components/screens/MobileHostHeader";
-import FailPage from "./components/pay/FailPage";
 import MainMap from "./components/screens/MainMap";
 import HeaderOneLine from "./components/header/HeaderOneLine";
-import SuccessVirtualAccountPage from "./components/pay/SuccessVirtualAccountPage";
+import PayMobileRedirect from "./components/pay/PayMobileRedirect";
 
 const queryClient = new QueryClient();
 
@@ -113,9 +111,7 @@ function AppContent() {
                             <Route path="/detail/:roomId/:locale/reservation" element={<GuestReservationSetScreen/>}/>
                             <Route path="/detail/:roomId/:locale/reservation/payment" element={<GuestReservationScreen/>}/>
                             <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
-                            <Route path="/success" element={<SuccessPage/>}/>
-                            <Route path="/success/virtualAccount" element={<SuccessVirtualAccountPage/>}/>
-                            <Route path="/fail" element={<FailPage/>}/>
+                            <Route path="/payMobile/redirect" element={<PayMobileRedirect/>}/>
                         </Route>
                     </Route>
                     {/* hostMode === false 일 때 /host/* 페이지 차단 */}

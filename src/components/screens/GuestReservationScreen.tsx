@@ -170,7 +170,7 @@ export default function GuestReservationScreen() {
                 totalAmount: 1000,
                 currency: "CURRENCY_KRW",
                 payMethod: "VIRTUAL_ACCOUNT",
-                redirectUrl: window.location.origin + "/success/virtualAccount",
+                redirectUrl: window.location.origin + "/payMobile/redirect",
                 customer: {
                     customerId: formDataState.phone, // 변경해야함
                     fullName: formDataState.name,
@@ -233,6 +233,7 @@ export default function GuestReservationScreen() {
                 locale : 'EN_US',
                 currency: "CURRENCY_USD",
                 payMethod: "CARD",
+                redirectUrl: window.location.origin + "/payMobile/redirect",
                 customer: {
                     customerId: formDataState.phone, // 변경해야함
                     fullName: formDataState.name,
@@ -281,7 +282,7 @@ export default function GuestReservationScreen() {
                 totalAmount: 1000,
                 currency: "CURRENCY_KRW",
                 payMethod: "CARD",
-                redirectUrl: window.location.origin + "/success/virtualAccount",
+                redirectUrl: window.location.origin + "/payMobile/redirect",
                 customer: {
                     customerId: formDataState.phone, // 변경해야함
                     fullName: formDataState.name,
