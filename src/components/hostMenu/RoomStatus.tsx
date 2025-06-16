@@ -4,7 +4,7 @@ import 'react-calendar/dist/Calendar.css';
 import {RoomData, Schedules} from "src/types/rooms";
 import {myRoomList, createBulkBlocks, unblockDate} from "src/api/api";
 import {useDataUpdateStore} from "../stores/DataUpdateStore";
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import dayjs, {Dayjs} from "dayjs";
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
@@ -87,7 +87,7 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
     };
 
     return (
-        <div className="w-full h-full overflow-y-auto scrollbar-hidden">
+        <div className="w-full h-full overflow-y-auto scrollbar-hidden p-2">
             <div className="">
                 {months.map((month, monthIndex) => (
                     <div key={monthIndex} className="mb-12">
@@ -111,10 +111,10 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
                         </div>
 
                         {/* 날짜 그리드 */}
-                        <div className="grid grid-cols-7 ">
+                        <div className="grid grid-cols-7 gap-0 rounded-2xl overflow-hidden border border-gray-200">
                             {generateDaysForMonth(month).map((dayObj, dayIndex) => {
                                 if (!dayObj.isCurrentMonth) {
-                                    return <div key={dayIndex} className="h-20"></div>;
+                                    return <div key={dayIndex} className="h-16 bg-gray-50"></div>;
                                 }
 
                                 const dateString = dayObj.date.format('YYYY-MM-DD');
@@ -132,16 +132,17 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
                                     <div
                                         key={dayIndex}
                                         className={`
-                h-20 border border-gray-100 relative transition-all duration-200
-                ${isStart || isEnd ? 'bg-gray-100 border-gray-200' : ''}
-                ${isRange ? 'bg-gray-50' : ''}
-                ${isBlocked ? 'bg-roomi-1' : ''}
-                ${isReserved ? 'bg-gray-300' : ''}
-                ${!isSelectable ? 'opacity-50' : ''}
-                ${isSelectable && !isReserved ? 'cursor-pointer hover:bg-gray-50' : ''}
-                ${isReserved ? 'cursor-not-allowed' : ''}
-                ${isBlocked ? 'cursor-pointer hover:bg-red-50' : ''}
-            `}
+                                            h-16 border-r border-b border-gray-100 relative transition-all duration-200 flex items-center justify-center
+                                            ${isStart || isEnd ? 'bg-roomi' : ''}
+                                            ${isRange ? 'bg-roomi-000' : ''}
+                                            ${isBlocked ? 'bg-red-100' : ''}
+                                            ${isReserved ? 'bg-gray-200' : ''}
+                                            ${!isSelectable ? 'opacity-50 bg-gray-50' : ''}
+                                            ${isSelectable && !isReserved ? 'cursor-pointer hover:bg-gray-50' : ''}
+                                            ${isReserved ? 'cursor-not-allowed' : ''}
+                                            ${isBlocked ? 'cursor-pointer hover:bg-red-50' : ''}
+                                            last:border-r-0
+                                        `}
                                         onClick={() => {
                                             if (isSelectable) {
                                                 onDateClick?.(dateString);
@@ -150,65 +151,27 @@ const AirbnbStyleCalendar: React.FC<AirbnbStyleCalendarProps> = ({
                                     >
                                         {/* 날짜 번호 */}
                                         <div className={`
-                absolute top-2 left-2 w-8 h-8 flex items-center justify-center
-                text-sm font-medium rounded-full
-                ${isToday ? 'bg-black text-white' : ''}
-                ${isStart || isEnd ? 'bg-gray-500 text-white' : ''}
-                ${isBlocked && !isStart && !isEnd ? 'text-gray-600 font-bold' : ''}
-                ${isReserved && !isStart && !isEnd ? 'text-gray-600 font-bold' : ''}
-                ${!isBlocked && !isReserved && !isStart && !isEnd && !isToday ? 'text-gray-900' : ''}
-            `}>
+                                            w-8 h-8 flex items-center justify-center text-sm font-medium rounded-full
+                                            ${isToday ? 'bg-black text-white' : ''}
+                                            ${isStart || isEnd ? 'bg-roomi text-white' : ''}
+                                            ${isBlocked && !isStart && !isEnd ? 'text-red-600 font-bold' : ''}
+                                            ${isReserved && !isStart && !isEnd ? 'text-gray-600 font-bold' : ''}
+                                            ${!isBlocked && !isReserved && !isStart && !isEnd && !isToday ? 'text-gray-900' : ''}
+                                        `}>
                                             {dayObj.date.date()}
                                         </div>
 
-                                        {/*/!* 상태 표시 아이콘/텍스트 *!/*/}
-                                        {/*<div className="absolute top-2 right-2">*/}
-                                        {/*    {isBlocked && (*/}
-                                        {/*        <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">*/}
-                                        {/*            <span className="text-white text-xs font-bold">X</span>*/}
-                                        {/*        </div>*/}
-                                        {/*    )}*/}
-                                        {/*    {isReserved && (*/}
-                                        {/*        <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">*/}
-                                        {/*            <span className="text-white text-xs font-bold">R</span>*/}
-                                        {/*        </div>*/}
-                                        {/*    )}*/}
-                                        {/*</div>*/}
-
-                                        {/* 하단 상태 텍스트 */}
-                                        {/*<div className="absolute bottom-1 left-1 right-1">*/}
-                                        {/*    {isBlocked && (*/}
-                                        {/*        <div className="text-xs font-medium text-red-600 text-center bg-red-50 rounded px-1">*/}
-                                        {/*            블락*/}
-                                        {/*        </div>*/}
-                                        {/*    )}*/}
-                                        {/*    {isReserved && (*/}
-                                        {/*        <div className="text-xs font-medium text-white text-center rounded px-1">*/}
-
-                                        {/*        </div>*/}
-                                        {/*    )}*/}
-                                        {/*</div>*/}
-
-                                        {/* 블락된 날짜의 사선 표시 (기존 유지하되 색상 변경) */}
-                                        {/*{isBlocked && (*/}
-                                        {/*    <div className="absolute inset-0 flex items-center justify-center">*/}
-                                        {/*        <div className="bg-red-500 h-0.5 w-1/2 rotate-45"></div>*/}
-                                        {/*    </div>*/}
-                                        {/*)}*/}
-
-                                        {/* 예약된 날짜의 점선 표시 */}
-                                        {isReserved && (
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div
-                                                    className="text-xs font-medium text-white text-center rounded px-1">
+                                        {/* 상태 텍스트 */}
+                                        {isReserved && !isStart && !isEnd && (
+                                            <div className="absolute bottom-1 left-0 right-0">
+                                                <div className="text-xs font-medium text-gray-600 text-center">
                                                     예약
                                                 </div>
                                             </div>
                                         )}
-                                        {isBlocked && (
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div
-                                                    className="text-xs font-medium text-white text-center rounded px-1">
+                                        {isBlocked && !isStart && !isEnd && (
+                                            <div className="absolute bottom-1 left-0 right-0">
+                                                <div className="text-xs font-medium text-red-600 text-center">
                                                     차단
                                                 </div>
                                             </div>
@@ -244,6 +207,7 @@ const RoomStatus = () => {
     const [calendarKey, setCalendarKey] = useState(0);
     const [userLocale, setUserLocale] = useState(i18n.language);
     const [isDesktop, setIsDesktop] = useState(false);
+    const [slideIsOpen, setSlideIsOpen] = useState(false);
 
     const selectedRoomData = data.find(room => room.id === selectedRoom);
     const displayValue = selectedRoomData ? `${selectedRoomData.title} ${selectedRoomData.id}` : '선택하세요';
@@ -302,16 +266,16 @@ const RoomStatus = () => {
     const [showBlockConflictModal, setShowBlockConflictModal] = useState(false);
     const handleDayClick = (dateString: string) => {
         if (reservationDatesRSC.includes(dateString)) return;
-
+        // ✅ 이미 블락된 날이면: 해제 모드 진입 (모달로)
         if (customBlockDatesRSC.includes(dateString)) {
-            setShowBlockConflictModal(true);
-            setIsReasonChk(true);
+            setShowModal(true); // 🔁 해제 확인 모달 띄우기
             setIsBlockDate(dateString);
             setStartDateRSC(null);
             setEndDateRSC(null);
             setDateRangeRSC([]);
             return;
         }
+
 
         const clicked = new Date(dateString);
         const start = startDateRSC ? new Date(startDateRSC) : null;
@@ -525,22 +489,24 @@ const RoomStatus = () => {
                     <button
                         type="button"
                         className="w-full flex items-center justify-between px-4 py-3 text-base
-                        bg-white border border-gray-300 rounded-full cursor-pointer focus:outline-none
+                        bg-white border border-gray-300 rounded-2xl cursor-pointer focus:outline-none
                         hover:border-gray-500 transition-colors shadow-sm"
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     >
                         <span className="text-gray-700 font-medium">{displayValue}</span>
-                        <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${isDropdownOpen ? 'transform rotate-180' : ''}`} />
+                        <ChevronDown
+                            className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${isDropdownOpen ? 'transform rotate-180' : ''}`}/>
                     </button>
 
                     {isDropdownOpen && (
-                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                        <div
+                            className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg max-h-64 overflow-y-auto">
                             {data.map((room) => (
                                 <div
                                     key={room.id}
-                                    className={`px-4 py-3 cursor-pointer transition-colors
+                                    className={`px-4 py-3 cursor-pointer transition-colors first:rounded-t-2xl last:rounded-b-2xl
                                     hover:bg-gray-50 
-                                    ${selectedRoom === room.id ? 'bg-gray-100 text-gray-700 font-medium' : 'text-gray-700'}`}
+                                    ${selectedRoom === room.id ? 'bg-roomi-light text-roomi font-medium' : 'text-gray-700'}`}
                                     onClick={() => handleSelectRoom(room.id)}
                                 >
                                     {room.title} {room.id}
@@ -552,9 +518,9 @@ const RoomStatus = () => {
             </div>
 
             {/* 메인 컨텐츠 */}
-            <div className="flex h-[calc(100vh-140px)] ">
+            <div className="flex h-[calc(100vh-140px)]">
                 {/* 캘린더 영역 */}
-                <div className="flex-1 bg-white md:pb-0 pb-64 ">
+                <div className="flex-1 bg-white md:pb-0">
                     <AirbnbStyleCalendar
                         blockDates={customBlockDatesRSC}
                         reservationDates={reservationDatesRSC}
@@ -567,28 +533,33 @@ const RoomStatus = () => {
 
                 {/* 데스크톱 사이드바 */}
                 <div className="w-80 bg-white border-l border-gray-200 p-6 flex-col hidden md:flex">
-                    <div className="mb-6">
-                        <h3 className="text-xl font-bold text-gray-900 mb-4">예약 차단</h3>
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <h3 className="text-xl font-bold text-gray-900 mb-6">예약 차단</h3>
 
                         {/* 선택된 날짜 */}
                         <div className="mb-6">
-                            <h4 className="text-sm font-medium text-gray-700 mb-2">선택된 날</h4>
+                            <h4 className="text-sm font-medium text-gray-700 mb-3">선택된 날</h4>
                             {startDateRSC ? (
-                                <div className="text-lg font-medium text-gray-900">
-                                    {startDateRSC}
-                                    {endDateRSC && ` - ${endDateRSC}`}
+                                <div className="p-3 bg-roomi-light rounded-lg border border-roomi">
+                                    <div className="text-base font-medium text-roomi">
+                                        {startDateRSC}
+                                        {endDateRSC && startDateRSC !== endDateRSC && ` ~ ${endDateRSC}`}
+                                    </div>
                                 </div>
                             ) : (
-                                <div className="text-gray-500">차단할 날을 선택해주세요</div>
+                                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200 text-gray-500">
+                                    차단할 날을 선택해주세요
+                                </div>
                             )}
                         </div>
 
                         {/* 사용불가 처리 체크박스 */}
                         <div className="mb-6">
-                            <label className="flex items-center space-x-3">
+                            <label
+                                className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    className="w-4 h-4 text-gray-600 border-gray-300 rounded focus:ring-gray-400 focus:ring-1"
+                                    className="w-4 h-4 text-roomi border-gray-300 rounded focus:ring-roomi focus:ring-2"
                                     checked={isReasonChk}
                                     onChange={(e) => setIsReasonChk(e.target.checked)}
                                     disabled={!startDateRSC || !endDateRSC}
@@ -599,7 +570,7 @@ const RoomStatus = () => {
 
                         {/* 완료 버튼 */}
                         <button
-                            className="w-full bg-roomi  text-white font-medium py-3 px-4 rounded-lg transition-colors disabled:cursor-not-allowed"
+                            className="w-full bg-roomi hover:bg-roomi-1 text-white font-medium py-3 px-4 rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed shadow-sm"
                             onClick={() => setShowUpdateModal(true)}
                             disabled={!startDateRSC || !isReasonChk}
                         >
@@ -607,28 +578,25 @@ const RoomStatus = () => {
                         </button>
                     </div>
 
-                    {/* Base Price */}
-                    {/*<div className="mb-6">*/}
-                    {/*    <h4 className="text-sm font-medium text-gray-700 mb-2">Base Price</h4>*/}
-                    {/*    <div className="text-2xl font-bold text-gray-900">₩66,600</div>*/}
-                    {/*    <div className="text-sm text-gray-500">per night</div>*/}
-                    {/*</div>*/}
-
                     {/* Legend */}
-                    <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-3">Legend</h4>
-                        <div className="space-y-2">
-                            <div className="flex items-center space-x-2">
-                                <div className="w-4 h-4 bg-gray-100 border border-gray-200 rounded"></div>
-                                <span className="text-sm text-gray-600">Selected</span>
+                    <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <h4 className="text-sm font-medium text-gray-700 mb-4">범례</h4>
+                        <div className="space-y-3">
+                            <div className="flex items-center space-x-3">
+                                <div className="w-5 h-5 bg-roomi-light border border-roomi rounded"></div>
+                                <span className="text-sm text-gray-600">선택됨</span>
                             </div>
-                            <div className="flex items-center space-x-2">
-                                <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
-                                <span className="text-sm text-gray-600">Unavailable</span>
+                            <div className="flex items-center space-x-3">
+                                <div className="w-5 h-5 bg-red-100 border border-red-200 rounded"></div>
+                                <span className="text-sm text-gray-600">차단됨</span>
                             </div>
-                            <div className="flex items-center space-x-2">
-                                <div className="w-4 h-4 bg-black rounded-full"></div>
-                                <span className="text-sm text-gray-600">Today</span>
+                            <div className="flex items-center space-x-3">
+                                <div className="w-5 h-5 bg-gray-200 border border-gray-300 rounded"></div>
+                                <span className="text-sm text-gray-600">예약됨</span>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                                <div className="w-5 h-5 bg-black rounded-full"></div>
+                                <span className="text-sm text-gray-600">오늘</span>
                             </div>
                         </div>
                     </div>
@@ -636,65 +604,88 @@ const RoomStatus = () => {
             </div>
 
             {/* 모바일 하단 고정 리모콘 */}
-            <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 p-4 shadow-lg">
-                <div className="mb-4">
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">예약 차단</h3>
-
-                    {/* 선택된 날짜 */}
-                    <div className="mb-4">
-                        <h4 className="text-sm font-medium text-gray-700 mb-1">선택된 날</h4>
-                        {startDateRSC ? (
-                            <div className="text-base font-medium text-gray-900">
-                                {startDateRSC}
-                                {endDateRSC && ` - ${endDateRSC}`}
-                            </div>
-                        ) : (
-                            <div className="text-gray-500 text-sm">날짜를 선택해주세요</div>
-                        )}
-                    </div>
-
-                    {/* 사용불가 처리 체크박스 */}
-                    <div className="mb-4">
-                        <label className="flex items-center space-x-3">
-                            <input
-                                type="checkbox"
-                                className="w-4 h-4 text-gray-600 border-gray-300 rounded focus:ring-gray-500"
-                                checked={isReasonChk}
-                                onChange={(e) => setIsReasonChk(e.target.checked)}
-                                disabled={!startDateRSC || !endDateRSC}
-                            />
-                            <span className="text-sm font-medium text-gray-900">차단하기</span>
-                        </label>
-                    </div>
-
-                    {/* 완료 버튼 */}
+            <div className="fixed bottom-[56px] left-0 right-0 z-[999] md:hidden">
+                {/* 아코디언 버튼 */}
+                <div className="w-full bg-roomi text-white">
                     <button
-                        className="w-full bg-roomi text-white font-medium py-3 px-4 rounded-lg transition-colors disabled:cursor-not-allowed"
-                        onClick={() => setShowUpdateModal(true)}
-                        disabled={!startDateRSC || !endDateRSC || !isReasonChk}
+                        type="button"
+                        className="w-full flex justify-between items-center p-4 hover:bg-roomi-1 transition-colors"
+                        onClick={() => setSlideIsOpen(!slideIsOpen)}
                     >
-                        확인
+                        <span className="font-bold text-base">예약 차단</span>
+                        {slideIsOpen ? <ChevronDown className="w-5 h-5"/> : <ChevronUp className="w-5 h-5"/>}
                     </button>
                 </div>
 
-                {/* Base Price & Legend (모바일에서는 간소화) */}
-                <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-                    <div>
-                        <div className="text-lg font-bold text-gray-900">₩66,600</div>
-                        <div className="text-xs text-gray-500">per night</div>
-                    </div>
-                    <div className="flex space-x-4 text-xs">
-                        <div className="flex items-center space-x-1">
-                            <div className="w-3 h-3 bg-gray-100 border border-gray-200 rounded"></div>
-                            <span className="text-gray-600">Selected</span>
+                {/* 아코디언 내용 */}
+                <div
+                    className={`transition-all duration-500 ease-in-out overflow-hidden bg-white
+      ${slideIsOpen ? "max-h-[60vh] opacity-100" : "max-h-0 opacity-0"}
+    `}
+                >
+                    <div className="p-5 space-y-6">
+                        {/* 선택된 날짜 */}
+                        <div>
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">선택된 날</h4>
+                            {startDateRSC ? (
+                                <div className="p-3 bg-roomi-light rounded-lg border border-roomi">
+                                    <div className="text-sm font-medium text-roomi">
+                                        {startDateRSC}
+                                        {endDateRSC && startDateRSC !== endDateRSC && ` ~ ${endDateRSC}`}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200 text-gray-500 text-sm">
+                                    날짜를 선택해주세요
+                                </div>
+                            )}
                         </div>
-                        <div className="flex items-center space-x-1">
-                            <div className="w-3 h-3 bg-red-100 border border-red-200 rounded"></div>
-                            <span className="text-gray-600">Unavailable</span>
+
+                        {/* 차단 체크박스 */}
+                        <div>
+                            <label
+                                className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    className="w-4 h-4 text-roomi border-gray-300 rounded focus:ring-roomi focus:ring-2"
+                                    checked={isReasonChk}
+                                    onChange={(e) => setIsReasonChk(e.target.checked)}
+                                    disabled={!startDateRSC || !endDateRSC}
+                                />
+                                <span className="text-sm font-medium text-gray-900">차단하기</span>
+                            </label>
                         </div>
-                        <div className="flex items-center space-x-1">
-                            <div className="w-3 h-3 bg-black rounded-full"></div>
-                            <span className="text-gray-600">Today</span>
+
+                        {/* 확인 버튼 */}
+                        <button
+                            className="w-full bg-roomi hover:bg-roomi-1 text-white font-medium py-3 px-4 rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed shadow-sm"
+                            onClick={() => setShowUpdateModal(true)}
+                            disabled={!startDateRSC || !endDateRSC || !isReasonChk}
+                        >
+                            확인
+                        </button>
+
+                        {/* 범례 */}
+                        <div className="pt-3 border-t border-gray-100">
+                            <h5 className="text-xs font-medium text-gray-500 mb-2">범례</h5>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                                <div className="flex items-center space-x-2">
+                                    <div className="w-3 h-3 bg-roomi-light border border-roomi rounded"></div>
+                                    <span className="text-gray-600">선택됨</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <div className="w-3 h-3 bg-red-100 border border-red-200 rounded"></div>
+                                    <span className="text-gray-600">차단됨</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <div className="w-3 h-3 bg-gray-200 border border-gray-300 rounded"></div>
+                                    <span className="text-gray-600">예약됨</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <div className="w-3 h-3 bg-black rounded-full"></div>
+                                    <span className="text-gray-600">오늘</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

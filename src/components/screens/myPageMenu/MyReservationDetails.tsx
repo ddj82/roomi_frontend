@@ -747,14 +747,14 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                             <div className="flex flex-col gap-4 text-sm">
                                 {/*<div className="flex flex-col">*/}
                                 {/*    <div className="font-medium text-gray-900 mb-2">체크인/체크아웃</div>*/}
-                                {/*    */}
+
                                 {/*</div>*/}
-                                {/*<div className="flex flex-col">*/}
-                                {/*    <div className="font-medium text-gray-900 mb-2">{t('환불 정책')}</div>*/}
-                                {/*    <div className="text-gray-600 whitespace-pre-line">*/}
-                                {/*        {reserveData.room.refund_policy?.replace(/\\n/g, '\n')}*/}
-                                {/*    </div>*/}
-                                {/*</div>*/}
+                                <div className="flex flex-col">
+                                    <div className="font-medium text-gray-900 mb-2">{t('환불 정책')}</div>
+                                    <div className="text-gray-600 whitespace-pre-line">
+                                        {reserveData.room.refund_policy?.replace(/\\n/g, '\n')}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

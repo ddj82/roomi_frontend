@@ -345,7 +345,7 @@ export default function GuestReservationScreen() {
                         selected ? "border-roomi text-roomi" : "border-gray-300 text-gray-500 hover:bg-gray-100"
                     }`}
                 >
-                    {label}
+                    {t(label)}
                 </label>
             </div>
         );
@@ -624,10 +624,10 @@ export default function GuestReservationScreen() {
                                             </div>
                                         </div>
                                         <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
-                                            전자금융거래 이용약관에 동의합니다. (필수)
+                                            {t("전자금융거래 이용약관에 동의합니다. (필수)")}
                                             <a href="https://roomi.co.kr/api/policies/e-terms" target="_blank" rel="noopener noreferrer"
                                                className="text-roomi underline ml-2">
-                                              [상세보기]
+                                              {t('[상세보기]')}
                                             </a>
                                           </span>
                                     </label>
@@ -653,10 +653,10 @@ export default function GuestReservationScreen() {
                                             </div>
                                         </div>
                                         <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
-                                            결제 취소 및 환불 규정에 동의합니다. (필수)
+                                            {t("결제 취소 및 환불 규정에 동의합니다. (필수)")}
                                             <a href="https://roomi.co.kr/api/policies/refund-policy" target="_blank" rel="noopener noreferrer"
                                                className="text-roomi underline ml-2">
-                                              [상세보기]
+                                              {t('[상세보기]')}
                                             </a>
                                           </span>
                                     </label>
@@ -682,10 +682,10 @@ export default function GuestReservationScreen() {
                                             </div>
                                         </div>
                                         <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
-                                            개인정보 제3자 제공에 동의합니다. (필수)
+                                            {t("개인정보 제3자 제공에 동의합니다. (필수)")}
                                             <a href="https://roomi.co.kr/api/policies/third-party" target="_blank" rel="noopener noreferrer"
                                                className="text-roomi underline ml-2">
-                                              [상세보기]
+                                              {t('[상세보기]')}
                                             </a>
                                           </span>
                                     </label>
@@ -711,10 +711,10 @@ export default function GuestReservationScreen() {
                                             </div>
                                         </div>
                                         <span className="text-gray-600 group-hover:text-gray-800 transition-colors">
-                                            마케팅 이메일 수신에 동의합니다. (선택)
+                                            {t("마케팅 이메일 수신에 동의합니다. (선택)")}
                                             <a href="https://roomi.co.kr/api/policies/marketing-policy" target="_blank" rel="noopener noreferrer"
                                                className="text-roomi underline ml-2">
-                                              [상세보기]
+                                              {t('[상세보기]')}
                                             </a>
                                           </span>
                                     </label>
@@ -744,7 +744,7 @@ export default function GuestReservationScreen() {
                                 d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
                                 fill="currentFill"/>
                         </svg>
-                        <span className="mt-3 text-gray-500">로딩중...</span>
+                        <span className="mt-3 text-gray-500">{t('로딩중...')}</span>
                     </div>
                 </div>
             )}

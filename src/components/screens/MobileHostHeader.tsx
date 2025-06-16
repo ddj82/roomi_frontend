@@ -23,7 +23,7 @@ const MobileHostHeader: React.FC = () => {
 
     const handleSetHostMode = () => {
         resetUserMode();
-        window.location.href = '/main';
+        window.location.href = '/';
     };
 
     const toggleDropdown = () => {

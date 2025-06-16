@@ -225,17 +225,17 @@ export default function RoomDetailCertificationModal({visible, onClose, isKorean
                             </div>
                             <div className="flex flex-col justify-center">
                                 <div className="text-xl font-bold">
-                                    여권 인증
+                                    {t('여권 인증')}
                                 </div>
                                 <div>
-                                    여권과 얼굴 인증으로 빠른 확인
+                                    {t('여권과 얼굴 인증으로 빠른 확인')}
                                 </div>
                             </div>
                         </div>
                         <div>
-                            <div>• 여권 촬영</div>
-                            <div>• 얼굴 인증</div>
-                            <div>• 약 2-3분 소요</div>
+                            <div>• {t('여권 촬영')}</div>
+                            <div>• {t('얼굴 인증')}</div>
+                            <div>• {t('약 2-3분 소요')}</div>
                         </div>
                         <div>
                             <button
@@ -244,7 +244,7 @@ export default function RoomDetailCertificationModal({visible, onClose, isKorean
                                 className={`flex_center text-lg rounded-lg p-4 w-full
                                 ${metaMapLoading ? 'bg-gray-300 text-black' : 'bg-roomi text-white'}`}
                             >
-                                {metaMapLoading ? '진행중...' : 'MetaMap 인증하기'}
+                                {metaMapLoading ? t('진행중...') : t('MetaMap 인증하기')}
                             </button>
                         </div>
                     </div>

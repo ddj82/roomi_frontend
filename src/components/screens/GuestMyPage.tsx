@@ -116,7 +116,7 @@ export default function GuestMyPage() {
                             <p className="text-sm text-gray-600 mb-3">
                                 {localStorage.getItem('userEmail')}
                             </p>
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-roomi-1 text-roomi">
                                 {isHost ? t('호스트') : t('게스트')}
                             </span>
                         </div>
@@ -286,7 +286,7 @@ export default function GuestMyPage() {
                                 <p className="text-sm text-gray-500">{localStorage.getItem('userEmail')}</p>
                                 <div className="mt-2">
                                 <span
-                                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-roomi-1 text-roomi">
                                     {isHost ? t('호스트') : t('게스트')}
                                 </span>
                                 </div>
@@ -301,7 +301,7 @@ export default function GuestMyPage() {
                     <div className="mx-4 mb-6">
                         <button
                             onClick={handleSetHostMode}
-                            className="w-full bg-blue-600 text-white py-4 rounded-2xl font-semibold text-base shadow-sm hover:bg-blue-700 transition-colors"
+                            className="w-full bg-roomi-1 text-white py-4 rounded-2xl font-semibold text-base shadow-sm hover:bg-roomi-1 transition-colors"
                         >
                             {t("호스트 등록")}
                         </button>

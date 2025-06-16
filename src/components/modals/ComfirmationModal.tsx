@@ -37,15 +37,15 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
         switch (icon) {
             case 'warning':
-                return <AlertTriangle className={`${iconClasses} text-gray-700`} />;
+                return <AlertTriangle className={`${iconClasses} text-roomi`} />;
             case 'danger':
-                return <AlertCircle className={`${iconClasses} text-gray-700`} />;
+                return <AlertCircle className={`${iconClasses} text-roomi`} />;
             case 'question':
-                return <HelpCircle className={`${iconClasses} text-gray-700`} />;
+                return <HelpCircle className={`${iconClasses} text-roomi`} />;
             case 'info':
-                return <Info className={`${iconClasses} text-gray-700`} />;
+                return <Info className={`${iconClasses} text-roomi`} />;
             default:
-                return <Info className={`${iconClasses} text-gray-700`} />;
+                return <Info className={`${iconClasses} text-roomi`} />;
         }
     };
 
@@ -55,12 +55,12 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
         switch (confirmButtonStyle) {
             case 'danger':
-                return `text-white bg-gray-700 hover:bg-gray-800 focus:ring-red-300 ${baseClass}`;
+                return `text-white bg-roomi hover:bg-roomi-dark focus:ring-roomi-light ${baseClass}`;
             case 'warning':
-                return `text-white bg-gray-700 hover:bg-gray-800 focus:ring-yellow-300 ${baseClass}`;
+                return `text-white bg-roomi hover:bg-roomi-dark focus:ring-roomi-light ${baseClass}`;
             case 'primary':
             default:
-                return `text-white bg-gray-700 hover:bg-gray-800 focus:ring-roomi-light ${baseClass}`;
+                return `text-white bg-roomi hover:bg-roomi-dark focus:ring-roomi-light ${baseClass}`;
         }
     };
 
@@ -69,7 +69,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <div className="relative w-full max-w-sm md:max-w-md bg-white dark:bg-gray-800 rounded-xl md:rounded-lg shadow-2xl animate-in zoom-in-95 duration-200">
                 {/* 닫기 버튼 */}
                 <button
-                    className="absolute top-3 right-3 md:top-4 md:right-4 text-gray-500 dark:text-gray-400 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200 rounded-full text-sm p-2 transition duration-200 touch-manipulation"
+                    className="absolute top-3 right-3 md:top-4 md:right-4 text-roomi-0 dark:text-roomi-0 bg-transparent hover:bg-roomi-light dark:hover:bg-gray-700 hover:text-roomi dark:hover:text-roomi rounded-full text-sm p-2 transition duration-200 touch-manipulation"
                     onClick={onClose}
                 >
                     <svg className="w-4 h-4 md:w-5 md:h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -81,31 +81,31 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 {/* 모달 내용 */}
                 <div className="p-5 md:p-6 text-center">
                     {renderIcon()}
-                    <h3 className="mb-3 md:mb-4 text-lg md:text-xl font-semibold md:font-medium text-gray-800 dark:text-gray-200 leading-tight">
+                    <h3 className="mb-3 md:mb-4 text-lg md:text-xl font-semibold md:font-medium text-roomi dark:text-roomi leading-tight">
                         {title}
                     </h3>
                     {message && (
-                        <p className="mb-5 md:mb-6 text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
+                        <p className="mb-5 md:mb-6 text-sm md:text-base text-roomi-0 dark:text-roomi-0 leading-relaxed">
                             {message}
                         </p>
                     )}
 
                     {/* 버튼 그룹 */}
-                    <div className="flex flex-col gap-3 w-full">
-                        <button
-                            className={getConfirmButtonClass()}
-                            onClick={onConfirm}
-                        >
-                            {confirmText}
-                        </button>
+                    <div className="flex gap-3 w-full">
                         {cancelText && (
                             <button
-                                className="w-full text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-600 hover:bg-gray-100 dark:hover:bg-gray-500 border border-gray-300 dark:border-gray-500 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-600 font-medium rounded-lg text-base px-6 py-3.5 md:py-4 transition duration-300 ease-in-out touch-manipulation"
+                                className="flex-1 text-roomi-0 dark:text-roomi-0 bg-white dark:bg-gray-600 hover:bg-roomi-light dark:hover:bg-gray-500 border border-roomi-0 dark:border-roomi-0 focus:ring-4 focus:outline-none focus:ring-roomi-light dark:focus:ring-roomi-light font-medium rounded-lg text-base px-6 py-3.5 md:py-4 transition duration-300 ease-in-out touch-manipulation"
                                 onClick={onClose}
                             >
                                 {cancelText}
                             </button>
                         )}
+                        <button
+                            className={`${cancelText ? 'flex-1' : 'w-full'} ${getConfirmButtonClass().replace('w-full', '')}`}
+                            onClick={onConfirm}
+                        >
+                            {confirmText}
+                        </button>
                     </div>
                 </div>
             </div>

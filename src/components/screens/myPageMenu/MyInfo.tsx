@@ -142,7 +142,7 @@ export default function MyInfo({user}: MyInfoEditProps) {
                                 <button
                                     type="button"
                                     onClick={() => setCertificationModal(true)}
-                                    className="px-4 py-2 bg-roomi text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                                    className="px-4 py-2 bg-roomi text-white rounded-lg hover:bg-roomi-1 transition-colors font-medium text-sm"
                                 >
                                     {t('인증하기')}
                                 </button>

@@ -248,7 +248,6 @@ export default function MyReservations() {
             </div>
         ));
     };
-
     return (
         <div className="p-4 py-0 md:px-8 relative">
             {/*타이틀*/}

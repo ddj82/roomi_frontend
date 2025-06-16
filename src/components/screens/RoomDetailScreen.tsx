@@ -55,6 +55,7 @@ import utc from 'dayjs/plugin/utc';
 import isBetween from 'dayjs/plugin/isBetween';
 import {faBell, faCopy} from "@fortawesome/free-regular-svg-icons";
 import RoomDetailCertificationModal from "../modals/RoomDetailCertificationModal";
+import ImagePreviewModal from "./ImagePreviewModal";
 
 dayjs.extend(utc);
 dayjs.extend(isBetween);
@@ -88,6 +89,10 @@ export default function RoomDetailScreen() {
     // 본인인증, 여권인증 모달
     const [certificationModal, setCertificationModal] = useState(false);
     const [userIsKorean, setUserIsKorean] = useState(true);
+
+    //사진 미리보기
+    const [imageModalOpen, setImageModalOpen] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -209,6 +214,7 @@ export default function RoomDetailScreen() {
             }
         }
     };
+
     const handleDayClick = (date: Date) => {
         const dateString = dayjs(date).format('YYYY-MM-DD');
 
@@ -484,6 +490,26 @@ export default function RoomDetailScreen() {
     const handleGoBack = () => {
         navigate('/');
     };
+    // 2. useState 추가 (기존 state들 다음에 추가)
+
+
+    // 3. 이미지 모달 관련 핸들러 함수들 추가
+    const handleImageClick = (index: number) => {
+        setCurrentImageIndex(index);
+        setImageModalOpen(true);
+    };
+
+    const handlePreviousImage = () => {
+        setCurrentImageIndex((prev) =>
+            prev === 0 ? (room?.detail_urls?.length || 1) - 1 : prev - 1
+        );
+    };
+
+    const handleNextImage = () => {
+        setCurrentImageIndex((prev) =>
+            prev === (room?.detail_urls?.length || 1) - 1 ? 0 : prev + 1
+        );
+    };
 
     useEffect(() => {
         if (localStorage.getItem('isKorean')) {
@@ -532,19 +558,21 @@ export default function RoomDetailScreen() {
                             </button>
 
                             {room.detail_urls && room.detail_urls.length > 0 ? (
-                                <ImgCarousel
-                                    images={room.detail_urls}
-                                    customClass="md:rounded-lg h-64 md:h-[30rem] object-cover"
-                                />
+                                <div onClick={() => handleImageClick(0)} className="cursor-pointer">
+                                    <ImgCarousel
+                                        images={room.detail_urls}
+                                        customClass="md:rounded-lg h-64 md:h-[30rem] object-cover"
+                                    />
+                                </div>
                             ) : (
                                 <img
                                     src="/default-image.jpg"
                                     alt="thumbnail"
-                                    className="w-full md:h-[30rem] h-64 object-cover rounded-lg"
+                                    className="w-full md:h-[30rem] h-64 object-cover rounded-lg cursor-pointer"
+                                    onClick={() => handleImageClick(0)}
                                 />
                             )}
                         </div>
-
                         <div className="px-4 md:px-1 space-y-8">
                             {room.is_verified && (
                                 <div
@@ -573,7 +601,7 @@ export default function RoomDetailScreen() {
                                                 <h3 className="text-lg font-medium text-gray-800 mb-2 pb-1 border-b border-gray-200 flex items-center">
                                                     <FontAwesomeIcon icon={faCalendarAlt}
                                                                      className="text-roomi mr-2 text-sm"/>
-                                                    월 단위
+                                                    {t('월 단위')}
                                                 </h3>
                                                 <div
                                                     className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
@@ -599,7 +627,7 @@ export default function RoomDetailScreen() {
                                                 <h3 className="text-lg font-medium text-gray-800 mb-2 pb-1 border-b border-gray-200 flex items-center">
                                                     <FontAwesomeIcon icon={faCalendarWeek}
                                                                      className="text-roomi mr-2 text-sm"/>
-                                                    주 단위
+                                                    {t('주 단위')}
                                                 </h3>
                                                 <div
                                                     className="flex justify-between items-center py-2 rounded-md px-2 transition-all">
@@ -656,7 +684,7 @@ export default function RoomDetailScreen() {
                                             <FontAwesomeIcon icon={faDoorOpen}
                                                              className="text-xl sm:text-2xl text-gray-700"/>
                                         </div>
-                                        <p className="font-medium text-sm sm:text-base">{t("방")} {room.room_count ?? 0}{t("개")}</p>
+                                        <p className="font-medium text-sm sm:text-base">{t('방')} : {room.room_count ?? 0}</p>
                                     </div>
 
                                     <div className="flex flex-col items-center text-center">
@@ -665,7 +693,7 @@ export default function RoomDetailScreen() {
                                             <FontAwesomeIcon icon={faBath}
                                                              className="text-xl sm:text-2xl text-gray-700"/>
                                         </div>
-                                        <p className="font-medium text-sm sm:text-base">{t("화장실")} {room.bathroom_count ?? 0}{t("개")}</p>
+                                        <p className="font-medium text-sm sm:text-base">{t('화장실')} : {room.bathroom_count ?? 0}</p>
                                     </div>
 
                                     <div className="flex flex-col items-center text-center">
@@ -674,7 +702,9 @@ export default function RoomDetailScreen() {
                                             <FontAwesomeIcon icon={faSquareParking}
                                                              className="text-xl sm:text-2xl text-gray-700"/>
                                         </div>
-                                        <p className="font-medium text-sm sm:text-base">{room.has_parking ? "주차가능" : "주차불가"}</p>
+                                        <p className="font-medium text-sm sm:text-base">
+                                            {t('주차')} : {room.has_parking ? "⭕" : "🚫"}
+                                        </p>
                                     </div>
 
                                     <div className="flex flex-col items-center text-center">
@@ -683,7 +713,9 @@ export default function RoomDetailScreen() {
                                             <FontAwesomeIcon icon={faElevator}
                                                              className="text-xl sm:text-2xl text-gray-700"/>
                                         </div>
-                                        <p className="font-medium text-sm sm:text-base">{room.has_elevator ? "있음" : "없음"}</p>
+                                        <p className="font-medium text-sm sm:text-base">
+                                            {t('엘리베이터')} :  {room.has_elevator ? "⭕" : "🚫"}
+                                        </p>
                                     </div>
                                 </div>
 
@@ -702,7 +734,7 @@ export default function RoomDetailScreen() {
                                             className="flex justify-between items-center py-2 border-b border-gray-100">
                                             <span className="text-gray-600 text-sm sm:text-base">{t("건물 유형")}</span>
                                             <span
-                                                className="font-medium text-sm sm:text-base">{room.building_type || "-"}</span>
+                                                className="font-medium text-sm sm:text-base">{t(room.building_type ?? "")}</span>
                                         </div>
 
 
@@ -727,7 +759,7 @@ export default function RoomDetailScreen() {
                                             className="flex justify-between items-center py-2 border-b border-gray-100">
                                             <span className="text-gray-600 text-sm sm:text-base">{t("층수")}</span>
                                             <span
-                                                className="font-medium text-sm sm:text-base">{`${room.floor ?? 0}층`}</span>
+                                                className="font-medium text-sm sm:text-base">{`${room.floor ?? 0}`}</span>
                                         </div>
 
 
@@ -957,7 +989,7 @@ export default function RoomDetailScreen() {
                                             onClick={createChatRoom}
                                         >
                                             <FontAwesomeIcon icon={faCommentDots} className="mr-2"/>
-                                            채팅하기
+                                            {t('채팅하기')}
                                         </button>
                                     </div>
                                 </div>
@@ -967,7 +999,7 @@ export default function RoomDetailScreen() {
                             <div className="space-y-4 pb-6">
                                 <h2 className="text-xl font-semibold text-gray-800 flex items-center">
                                     <FontAwesomeIcon icon={faMoneyBillTransfer} className="text-roomi mr-2"/>
-                                    {t("환불정책")}
+                                    {t("환불 정책")}
                                 </h2>
 
                                 <div className="bg-gray-50 rounded-lg p-4">
@@ -1020,14 +1052,14 @@ export default function RoomDetailScreen() {
                         w-full fixed bottom-0 z-[100]">
                         {/* 모바일 전용 아코디언 버튼 */}
                         <div
-                            className="md:hidden w-full items-center p-4 rounded-lg cursor-pointer bg-roomi text-white">
+                            className="md:hidden w-full items-center p-4 rounded-lg cursor-pointer bg-roomi text-white scrollbar-hidden">
                             <button type="button" className="w-full flex justify-between items-center"
                                     onClick={() => setSlideIsOpen(!slideIsOpen)}>
                                 <span className="font-bold">{t("price_info")}</span>
                                 <FontAwesomeIcon icon={slideIsOpen ? faChevronDown : faChevronUp}/>
                             </button>
                         </div>
-                        <div className={`transition-all duration-300 ease-in-out md:max-h-none md:opacity-100 md:overflow-visible
+                        <div className={`transition-all duration-300 ease-in-out md:max-h-none md:opacity-100 md:overflow-visible scrollbar-hidden
                             ${slideIsOpen
                             // 아코디언이 열릴 때: 화면 높이 - 여유공간(예: 헤더/상단여백 80px)
                             ? "max-h-[calc(60vh)] overflow-y-auto opacity-100"
@@ -1147,6 +1179,17 @@ export default function RoomDetailScreen() {
                     </div>
                 </div>
             )}
-        </div>
+            {room?.detail_urls && (
+                    <ImagePreviewModal
+                        images={room.detail_urls}
+                        currentIndex={currentImageIndex}
+                        isOpen={imageModalOpen}
+                        onClose={() => setImageModalOpen(false)}
+                        onPrevious={handlePreviousImage}
+                        onNext={handleNextImage}
+                    />
+                )}
+
+            </div>
     );
 }

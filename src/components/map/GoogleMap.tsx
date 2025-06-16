@@ -152,8 +152,8 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
                         bottom: '-6px',
                         left: '50%',
                         transform: 'translateX(-50%)',
-                        borderLeft: '6px solid transparent',
-                        borderRight: '6px solid transparent',
+                        borderLeft: '6px solid #ff8282',
+                        borderRight: '6px solid #ff8282',
                         borderTop: '8px solid #ff8282',
                     }}
                 ></div>
@@ -705,8 +705,28 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
                     map: map,
                     markers: newMarkers,
                     algorithm: new window.GridAlgorithm({ gridSize: 100 }),
+                    renderer: {
+                        render: (cluster: any) => {
+                            const div = document.createElement('div');
+                            div.style.cssText = `
+                background: #ff8282;
+                color: white;
+                border-radius: 50%;
+                width: 60px;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                font-size: 16px;
+                border: 3px solid white;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            `;
+                            div.textContent = cluster.count.toString();
+                            return div;
+                        }
+                    }
                 });
-                console.log('✅ MarkerClusterer 초기화 성공');
             } else {
                 console.warn('⚠️ MarkerClusterer 없음, 개별 마커 사용');
                 newMarkers.forEach(marker => marker.setMap(map));

@@ -249,14 +249,13 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
 
         return null;
     };
-    const [showModal, setShowModal] = useState(false);
-    const [isAlreadyRequested, setIsAlreadyRequested] = useState(false);
-    const [requestedAmount, setRequestedAmount] = useState(0);
+
     const handleCheckoutModal = () => {
         const alreadyRequested = reservation.request_fee_refund_amount > 0;
         setIsAlreadyRequested(alreadyRequested);
         setShowModal(true);
     };
+
     // Render checkout request info if applicable
     const renderCheckoutRequestInfo = () => {
         if (!reservation || !reservation.is_checkout_requested ||
@@ -286,19 +285,23 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
         );
     };
 
+    const [showModal, setShowModal] = useState(false);
+    const [isAlreadyRequested, setIsAlreadyRequested] = useState(false);
+    const [requestedAmount, setRequestedAmount] = useState(0);
+
+
     function nl2br(str: string) {
         const result = [];
         const lines = str.split('\n');
-
         for (let i = 0; i < lines.length; i++) {
             result.push(lines[i]);
             if (i < lines.length - 1) {
                 result.push(<br key={i} />);
             }
         }
-
         return result;
     }
+
     if (!reservation) return null;
 
     return (
@@ -325,7 +328,6 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                         {getStatusBadge()}
                     </div>
                 </div>
-
                 {/* Accordion Sections */}
                 <div className="px-6">
                     {/* Basic Info Accordion */}
@@ -509,17 +511,14 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                         )}
                     </div>
                 </div>
-
                 {/* Checkout Request Info */}
                 <div className="px-6">
                     {renderCheckoutRequestInfo()}
                 </div>
-
                 {/* Action Buttons */}
                 <div className="p-6">
                     {renderActionButtons()}
                 </div>
-
             </div>
                 {showModal && (
                     <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
@@ -614,11 +613,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                     </div>
                 )}
         </>
-
-
-
-)
-    ;
+    );
 };
 
 export default ContractDetail;

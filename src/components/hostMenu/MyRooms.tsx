@@ -166,7 +166,7 @@ const MyRooms = () => {
                         <div className="w-full sm:w-auto">
                             <button
                                 type="button"
-                                className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold text-white bg-roomi rounded-xl shadow-sm hover:bg-blue-700 transition-colors"
+                                className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold text-white bg-roomi rounded-xl shadow-sm hover:bg-roomi-1 transition-colors"
                                 onClick={handleInsertBtn}
                             >
                                 <span className="mr-1">+</span> 방 등록하기
