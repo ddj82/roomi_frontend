@@ -447,7 +447,7 @@ export const confirmPayment = async (paymentId: string, orderId: string) => {
     });
 };
 
-// 결제(가상계좌 발급) 후 검증 API
+// 결제(또는 가상계좌 발급) 후 검증 API
 export const verifyPayment = async (paymentId: string) => {
     return request(`/payment/verify`, true, 'POST', {
         paymentId: paymentId,

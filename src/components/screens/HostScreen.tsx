@@ -1,15 +1,18 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {useHostTabNavigation} from "../stores/HostTabStore";
 import {useHostModeStore} from "../stores/HostModeStore";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import HostScreenContent from "./HostScreenContent";
+import {useHostHeaderBtnVisibility} from "../stores/HostHeaderBtnStore";
+import BottomNavigator from "../navigator/BottomNavigator";
 
 
-export default function HostScreen() {
+export default function HostScreen({isMobile}: { isMobile: boolean; }) {
     const {activeTab, setActiveTab} = useHostTabNavigation(); // 전역 상태에서 activeTab 가져오기
     const {hostMode} = useHostModeStore();
     const navigate = useNavigate();
     const { menu } = useParams<{ menu?: string }>();
+    const isVisibleHostScreen = useHostHeaderBtnVisibility();
 
     /* 호스트 모드가 아니면 홈으로 */
     useEffect(() => {
@@ -39,6 +42,7 @@ export default function HostScreen() {
         <div className="my-4 px-3 h-[80vh]">
             {renderMenu()}
             <div className="h-16 md:hidden"></div>
+            {(isVisibleHostScreen && isMobile) && <BottomNavigator/>}
         </div>
     );
 }

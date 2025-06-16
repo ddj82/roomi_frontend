@@ -1,10 +1,8 @@
 import React, {useEffect} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBuildingColumns, faCheck, faX} from "@fortawesome/free-solid-svg-icons";
+import {faBuildingColumns} from "@fortawesome/free-solid-svg-icons";
 import {useNavigate} from "react-router-dom";
 import {SuccessVirtualAccountResponse} from "../../types/PaymentResponse";
-import {faCopy} from "@fortawesome/free-regular-svg-icons";
-import {t} from "i18next";
 
 
 const SuccessVirtualAccountPage = ({res, modalClose}: { res: SuccessVirtualAccountResponse; modalClose: () => void; }) => {

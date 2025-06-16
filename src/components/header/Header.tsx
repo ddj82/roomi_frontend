@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useAuthStore} from "src/components/stores/AuthStore";
 import AuthModal from "src/components/modals/AuthModal";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -13,18 +13,14 @@ import {useGuestsStore} from "../stores/GuestsStore";
 import {useLocationStore} from "../stores/LocationStore";
 import {useHostModeStore} from "../stores/HostModeStore";
 import {useTranslation} from "react-i18next";
-import {logout} from "../../api/api";
-import {useChatStore} from "../stores/ChatStore";
-import {useIsHostStore} from "../stores/IsHostStore";
 import i18n from "i18next";
 import '../../css/Header.css';
-import {SocialAuth} from "../util/SocialAuth";
-import {SearchBar} from "./SearchBar";
-import {Globe, MapPin, User} from "lucide-react";
-import {useMapVisibility} from "../stores/MapStore";
+import {SearchBar} from "./util/SearchBar";
+import {MapPin} from "lucide-react";
 import Modal from "react-modal";
 import LanguageSet from "../screens/myPageMenu/LanguageSet";
-import MainLanguageSelector from "../util/MainLanguageSelector";
+import MainLanguageSelector from "./util/MainLanguageSelector";
+import AuthButton from "./util/AuthButton";
 
 type LocationOption = {
     name: string;
@@ -40,15 +36,10 @@ const Header = () => {
     const isVisible = useHeaderBtnVisibility();
     const isVisibleHostScreen = useHostHeaderBtnVisibility();
     const {startDate, endDate,} = useDateStore();
-    const {guestCount, setGuestCount} = useGuestsStore();
+    const {guestCount} = useGuestsStore();
     const {selectedLocation, setSelectedLocation} = useLocationStore();
     const {hostMode, setHostMode, resetUserMode} = useHostModeStore();
-    const {isHost} = useIsHostStore();
-    const disconnect = useChatStore((state) => state.disconnect);
     const [userVisible, setUserVisible] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-    const {profileImg} = useAuthStore();
-    const isMapVisible = useMapVisibility();
     const currentLang = i18n.language;
 
     // 검색 모달 관련 상태 추가
@@ -86,10 +77,6 @@ const Header = () => {
         toggleCard('date');
     };
 
-    const handleSaveDate = () => {
-        toggleCard('guests');
-    };
-
     const performSearch = () => {
         closeSearchModal();
         console.log('Search performed with:', {
@@ -125,35 +112,6 @@ const Header = () => {
         }
     };
 
-    const toggleDropdown = () => {
-        setUserVisible((prev) => !prev);
-    };
-
-    const handleClickOutside = (event: MouseEvent) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-            setUserVisible(false);
-        }
-    };
-
-    const handleLogout = async () => {
-        const confirmCancel = window.confirm(t('로그아웃 하시겠습니까?'));
-        if (!confirmCancel) return;
-        try {
-            if (localStorage.getItem('authMode') && localStorage.getItem('authMode') === 'kakao') {
-                const response = await SocialAuth.kakaoLogout();
-                console.log('소셜로그아웃 메소드 실행 후', response);
-                if (!response) return;
-            }
-            const response = await logout();
-            console.log(response);
-            resetUserMode();
-            disconnect();
-            window.location.reload();
-        } catch (error) {
-            console.error("로그아웃 실패:", error);
-        }
-    };
-
     useEffect(() => {
         const handleSearchModalClickOutside = (event: MouseEvent) => {
             if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
@@ -170,18 +128,6 @@ const Header = () => {
         };
     }, [searchModalOpen]);
 
-    useEffect(() => {
-        if (userVisible) {
-            document.addEventListener("mousedown", handleClickOutside);
-        } else {
-            document.removeEventListener("mousedown", handleClickOutside);
-        }
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [userVisible]);
-
-
 
 
     // 헤더 설정
@@ -190,6 +136,7 @@ const Header = () => {
 
     useEffect(() => {
         const handleScroll = () => {
+            // 모바일
             if (window.innerWidth < 768) {
                 setIsMobile(true);
                 const y = window.scrollY;
@@ -242,421 +189,141 @@ const Header = () => {
     return (
         <>
             {/* 기본 헤더 */}
-            {isMapVisible ? (
-                <>
-                    <div
-                        className={`h-[387px] bg-white
-                            ${!hasReached && 'hidden'}
-                        `}
-                    />
-                    <div
-                        className={`border-b border-gray-200 
-                            ${hasReached ? 'fixed top-0 left-0 w-full h-20 z-[9999] bg-white' : ''}
-                        `}
-                        style={hasReached ? {} : gradientStyle}
-                    >
+            <div
+                className={`bg-white
+                    ${!hasReached && 'hidden'}
+                    ${isMobile ? 'h-[307px]' : 'h-[387px]'}
+                `}
+            />
+            <div
+                className={`border-b border-gray-200 
+                    ${hasReached ? 'fixed top-0 left-0 w-full h-20 z-[9999] bg-white' : ''}
+                `}
+                style={hasReached ? {} : gradientStyle}
+            >
+                <div
+                    className={`
+                        h header container mx-auto 
+                        ${hasReached ? 'h-16 my-2' : 'md:mt-8 mt-6'}
+                    `}
+                >
+                    <div className="mx-auto container md:px-0 px-4">
                         <div
-                            className={`
-                                h header container mx-auto 
-                                ${hasReached ? 'h-16 my-2' : 'md:mt-8 mt-6'}
+                            className={`h top-row flex items-center
+                                ${hasReached ? 'h-16' : 'md:mb-8 mb-6'}
                             `}
                         >
-                            <div className="mx-auto container md:px-0 px-4">
+                            {/* 로고 영역 */}
+                            <div className="h logo-container">
+                                <button onClick={handleLogo}>
+                                    <img src="/assets/images/roomi.png" alt="Logo" className="md:h-10 h-6"/>
+                                </button>
+                            </div>
+
+                            {/* 검색창 */}
+                            {((hasReached && !isMobile) && !hostMode) && (
                                 <div
-                                    className={`h top-row flex items-center
-                                        ${hasReached ? 'h-16' : 'md:mb-8 mb-6'}
-                                    `}
+                                    ref={searchBarRef}
+                                    onClick={openSearchModal}
+                                    className="h-12 w-full max-w-3xl text-[11px] flex items-center justify-between
+                                        bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
+                                        ursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
+                                    style={{borderRadius: '9999px', overflow: 'hidden'}}
                                 >
-                                    {/* 로고 영역 */}
-                                    <div className="h logo-container">
-                                        <button onClick={handleLogo}>
-                                            <img src="/assets/images/roomi.png" alt="Logo" className="md:h-10 h-6"/>
-                                        </button>
+                                    <div className="search-simple-text flex items-center px-4 py- flex-1">
+                                        <MapPin className="w-6 h-6 text-black mr-2"/>
+                                        <span className="text-gray-500 truncate">
+                                                {t('어디로 여행 가세요?')}
+                                            </span>
                                     </div>
 
-                                    {/* 검색창 */}
-                                    {((hasReached && !isMobile) && !hostMode) && (
-                                        <div
-                                            ref={searchBarRef}
-                                            onClick={openSearchModal}
-                                            className="h-12 w-full max-w-3xl text-[11px] flex items-center justify-between
-                                                bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
-                                                ursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
-                                            style={{borderRadius: '9999px', overflow: 'hidden'}}
-                                        >
-                                            <div className="search-simple-text flex items-center px-4 py- flex-1">
-                                                <MapPin className="w-6 h-6 text-black mr-2"/>
-                                                <span className="text-gray-500 truncate">
-                                                        {t('어디로 여행 가세요?')}
-                                                    </span>
-                                            </div>
-        
-                                            <button
-                                                className="w-10 h-10 m-2 flex items-center justify-center
-                                                                bg-roomi hover:bg-roomi-3 rounded-full shadow-md
-                                                                transition-all duration-200 hover:scale-105"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    performSearch();
-                                                }}
-                                            >
-                                                <FontAwesomeIcon
-                                                    icon={faSearch}
-                                                    className="text-white text-base md:text-lg"
-                                                />
-                                            </button>
-                                        </div>
-                                    )}
-        
-                                    {/* 프로필/로그인 영역 */}
-                                    <div className="md:mr-4 mr-1.5">
-                                        {authToken ? (
-                                            <div className="flex gap-3">
-                                                {/*<div className="flex_center md:text-xs text-xxs">*/}
-                                                {/*    <button*/}
-                                                {/*        type="button"*/}
-                                                {/*        onClick={() => window.location.href = '/main'}*/}
-                                                {/*    >*/}
-                                                {/*        방 등록하러 가기*/}
-                                                {/*    </button>*/}
-                                                {/*</div>*/}
-                                                {(isHost && currentLang === 'ko') && (
-                                                    <>
-                                                        {hostMode ? (
-                                                            <div className="flex_center md:text-xs text-xxs">
-                                                                <button onClick={handleSetHostMode}
-                                                                        className="w-full text-start block px-4 py-2">
-                                                                    {t("게스트로 전환")}
-                                                                </button>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="flex_center md:text-xs text-xxs">
-                                                                <button onClick={handleSetHostMode}
-                                                                        className="w-full text-start block px-4 py-2 ">
-                                                                    {t("호스트로 전환")}
-                                                                </button>
-                                                            </div>
-                                                        )}
-                                                    </>
-                                                )}
-                                                <div className="flex_center">
-                                                    <button
-                                                        type="button"
-                                                        className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
-                                                    >
-                                                        <Globe
-                                                            className="w-6 h-6 text-black stroke-[1.3]"
-                                                            onClick={handleLanguageSet}
-                                                        />
-                                                    </button>
-                                                </div>
-        
-        
-                                                <div className="flex">
-                                                    <div className="relative" ref={dropdownRef}>
-                                                        <button
-                                                            className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-roomi-000 text-roomi rounded-full shadow-md"
-                                                            onClick={toggleDropdown}
-                                                        >
-                                                            <img src={profileImg} alt="프로필사진"
-                                                                 className="rounded-full md:w-10 md:h-10 w-8 h-8"/>
-                                                        </button>
-                                                        {userVisible && (
-                                                            <div
-                                                                className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg shadow-lg w-40 z-[9000] border border-gray-200">
-                                                                <ul className="py-2 text-sm text-gray-700">
-                                                                    <li>
-                                                                        {hostMode ? (
-                                                                            <a href="/host/myPage"
-                                                                               className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
-                                                                        ) : (
-                                                                            <a href="/myPage"
-                                                                               className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
-                                                                        )}
-                                                                    </li>
-                                                                    <li>
-                                                                        {!hostMode && (<a href="/chat"
-                                                                                          className="block px-4 py-2 hover:bg-gray-100/70">{t('메시지')}</a>)}
-                                                                    </li>
-                                                                    {(isHost && currentLang === 'ko') && (
-                                                                        <li>
-                                                                            <button onClick={handleSetHostMode}
-                                                                                    className="w-full text-start block px-4 py-2 hover:bg-gray-100/70">
-                                                                                {hostMode ? t("게스트로 전환") : t("호스트로 전환")}
-                                                                            </button>
-                                                                        </li>
-                                                                    )}
-                                                                </ul>
-                                                                <div className="py-2">
-                                                                    <button onClick={handleLogout}
-                                                                            className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/70">
-                                                                        {t('로그아웃')}
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="flex gap-3">
-                                                <div className="flex_center">
-                                                    <button
-                                                        type="button"
-                                                        className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
-                                                    >
-                                                        <Globe
-                                                            className="w-6 h-6 text-black stroke-[1.3]"
-                                                            onClick={handleLanguageSet}
-                                                        />
-                                                    </button>
-                                                </div>
-                                                <div>
-                                                    <button
-                                                        className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
-                                                        onClick={() => setAuthModalVisible(true)}
-                                                    >
-                                                        <User className="w-6 h-6 text-black stroke-[1.3]"/>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-        
-                                {/* "/map" 이 아닐때 */}
-                                {isMapVisible && (
-                                    <>
-                                        {/* 호스트 모드가 아닐 때만 텍스트 표시 */}
-                                        {!hostMode && (
-                                            <div className={`flex flex-col items-center text-center mb-6 ${hasReached && 'hidden'}`}>
-                                                <p className="text-roomi text-lg md:text-3xl font-semibold mb-2.5">
-                                                    {t('주단위부터 월단위까지, 보증금도 자유롭게')}
-                                                </p>
-                                                <p className=" text-xl md:text-3xl font-bold text-[#AF483E]">
-                                                    {t('전 세계 게스트와 연결되는 루미')}
-                                                </p>
-                                            </div>
-                                        )}
-        
-                                        {/* 서치바 영역 */}
-                                        {(isVisible && !hasReached) && (
-                                            <div className="h search-bar-container w-full flex justify-center mb-8">
-                                                <img
-                                                    src="/assets/images/thumbnail.png"
-                                                    alt="Roomi 캐릭터"
-                                                    className={`h-12 md:h-20 mr-30 md:mr-50 ${hasReached && 'hidden'}`}
-                                                />
-                                                <div
-                                                    ref={searchBarRef}
-                                                    onClick={openSearchModal}
-                                                    className="md:h-16 h-12 w-full max-w-3xl text-[11px] flex items-center justify-between
-                                                                    bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
-                                                                    ursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
-                                                    style={{borderRadius: '9999px', overflow: 'hidden'}}
-                                                >
-                                                    <div className="search-simple-text flex items-center px-4 py- flex-1">
-                                                        <MapPin className="w-6 h-6 text-black mr-2"/>
-                                                        <span className="text-gray-500 truncate">
-                                                                {t('어디로 여행 가세요?')}
-                                                            </span>
-                                                    </div>
-        
-                                                    <button
-                                                        className="md:w-12 md:h-12 w-10 h-10 m-2 flex items-center justify-center
-                                                                        bg-roomi hover:bg-roomi-3 rounded-full shadow-md
-                                                                        transition-all duration-200 hover:scale-105"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            performSearch();
-                                                        }}
-                                                    >
-                                                        <FontAwesomeIcon
-                                                            icon={faSearch}
-                                                            className="text-white text-base md:text-lg"
-                                                        />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </>
-                                )}
-                            </div>
-        
-                            {isVisibleHostScreen && (
-                                <HostHeader/>
-                            )}
-                        </div>
-                    </div>
-                </>
-            ) : (
-                /* "/map" 일 때 한줄 헤더 */
-                <div
-                    className={`border-b border-gray-200 fixed top-0 left-0 w-full h-20 z-[9999] bg-whit`}
-                >
-                    <div className={`h header container mx-auto h-16 my-2`}>
-                        <div className="mx-auto container md:px-0 px-4">
-                            <div className={`h top-row flex items-center h-16`}>
-                                {/* 로고 영역 */}
-                                <div className="h logo-container">
-                                    <button onClick={handleLogo}>
-                                        <img src="/assets/images/roomi.png" alt="Logo" className="md:h-10 h-6"/>
+                                    <button
+                                        className="w-10 h-10 m-2 flex items-center justify-center
+                                                        bg-roomi hover:bg-roomi-3 rounded-full shadow-md
+                                                        transition-all duration-200 hover:scale-105"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            performSearch();
+                                        }}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faSearch}
+                                            className="text-white text-base md:text-lg"
+                                        />
                                     </button>
                                 </div>
+                            )}
 
-                                {/* 검색창 */}
-                                {(!isMobile && !hostMode) && (
-                                    <div
-                                        ref={searchBarRef}
-                                        onClick={openSearchModal}
-                                        className="h-12 w-full max-w-3xl text-[11px] flex items-center justify-between
-                                                    bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
-                                                    ursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
-                                        style={{borderRadius: '9999px', overflow: 'hidden'}}
-                                    >
-                                        <div className="search-simple-text flex items-center px-4 py- flex-1">
-                                            <MapPin className="w-6 h-6 text-black mr-2"/>
-                                            <span className="text-gray-500 truncate">
-                                                    {t('어디로 여행 가세요?')}
-                                                </span>
-                                        </div>
+                            {/* 프로필/로그인 영역 */}
+                            <AuthButton
+                                currentLang={currentLang}
+                                handleSetHostMode={handleSetHostMode}
+                                handleLanguageSet={handleLanguageSet}
+                                userVisible={userVisible}
+                                setUserVisible={setUserVisible}
+                                setAuthModalVisible={setAuthModalVisible}
+                            />
+                        </div>
 
-                                        <button
-                                            className="w-10 h-10 m-2 flex items-center justify-center
-                                                                    bg-roomi hover:bg-roomi-3 rounded-full shadow-md
-                                                                    transition-all duration-200 hover:scale-105"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                performSearch();
-                                            }}
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={faSearch}
-                                                className="text-white text-base md:text-lg"
-                                            />
-                                        </button>
+                        {/* 호스트 모드가 아닐 때만 텍스트 표시 */}
+                        {((isVisible && !hasReached) && !hostMode) && (
+                            <div className={`flex_center flex-col mb-6 ${hasReached && 'hidden'}`}>
+                                <p className="flex_center text-roomi text-lg md:text-3xl font-semibold mb-2.5">
+                                    {t("주단위부터 월단위까지, 보증금도 자유롭게")}
+                                </p>
+                                <p className="flex_center text-xl md:text-3xl font-bold text-[#AF483E]">
+                                    {t("전 세계 게스트와 연결되는 루미")}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* 서치바 영역 */}
+                        {(isVisible && !hasReached) && (
+                            <div className="h search-bar-container w-full flex justify-center mb-8">
+                                <img
+                                    src="/assets/images/thumbnail.png"
+                                    alt="Roomi 캐릭터"
+                                    className={`h-12 md:h-20 mr-30 md:mr-50 ${hasReached && 'hidden'}`}
+                                />
+                                <div
+                                    ref={searchBarRef}
+                                    onClick={openSearchModal}
+                                    className="md:h-16 h-12 w-full max-w-3xl text-[11px] flex items-center justify-between
+                                            bg-white/90 backdrop-blur-sm shadow-[0_4px_8px_rgba(167,97,97,0.2)]
+                                            ursor-pointer transition-all duration-300 hover:bg-white/95 hover:shadow-[0_6px_12px_rgba(167,97,97,0.2)]"
+                                    style={{borderRadius: '9999px', overflow: 'hidden'}}
+                                >
+                                    <div className="search-simple-text flex items-center px-4 py- flex-1">
+                                        <MapPin className="w-6 h-6 text-black mr-2"/>
+                                        <span className="text-gray-500 truncate">
+                                            {t('어디로 여행 가세요?')}
+                                        </span>
                                     </div>
-                                )}
 
-                                {/* 프로필/로그인 영역 */}
-                                <div className="md:mr-4 mr-1.5">
-                                    {authToken ? (
-                                        <div className="flex gap-3">
-                                            {/*<div className="flex_center md:text-xs text-xxs">*/}
-                                            {/*    <button*/}
-                                            {/*        type="button"*/}
-                                            {/*        onClick={() => window.location.href = '/main'}*/}
-                                            {/*    >*/}
-                                            {/*        방 등록하러 가기*/}
-                                            {/*    </button>*/}
-                                            {/*</div>*/}
-                                            {(isHost && currentLang === 'ko') && (
-                                                <>
-                                                    {hostMode ? (
-                                                        <div className="flex_center md:text-xs text-xxs">
-                                                            <button onClick={handleSetHostMode}
-                                                                    className="w-full text-start block px-4 py-2">
-                                                                {t("게스트로 전환")}
-                                                            </button>
-                                                        </div>
-                                                    ) : (
-                                                        <div className="flex_center md:text-xs text-xxs">
-                                                            <button onClick={handleSetHostMode}
-                                                                    className="w-full text-start block px-4 py-2 ">
-                                                                {t("호스트로 전환")}
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </>
-                                            )}
-                                            <div className="flex_center">
-                                                <button
-                                                    type="button"
-                                                    className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
-                                                >
-                                                    <Globe
-                                                        className="w-6 h-6 text-black stroke-[1.3]"
-                                                        onClick={handleLanguageSet}
-                                                    />
-                                                </button>
-                                            </div>
-
-
-                                            <div className="flex">
-                                                <div className="relative" ref={dropdownRef}>
-                                                    <button
-                                                        className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-roomi-000 text-roomi rounded-full shadow-md"
-                                                        onClick={toggleDropdown}
-                                                    >
-                                                        <img src={profileImg} alt="프로필사진"
-                                                             className="rounded-full md:w-10 md:h-10 w-8 h-8"/>
-                                                    </button>
-                                                    {userVisible && (
-                                                        <div
-                                                            className="absolute right-0 mt-2 bg-white/95 backdrop-blur-sm divide-y divide-gray-100 rounded-lg shadow-lg w-40 z-[9000] border border-gray-200">
-                                                            <ul className="py-2 text-sm text-gray-700">
-                                                                <li>
-                                                                    {hostMode ? (
-                                                                        <a href="/host/myPage"
-                                                                           className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
-                                                                    ) : (
-                                                                        <a href="/myPage"
-                                                                           className="block px-4 py-2 hover:bg-gray-100/70">{t('마이페이지')}</a>
-                                                                    )}
-                                                                </li>
-                                                                <li>
-                                                                    {!hostMode && (<a href="/chat"
-                                                                                      className="block px-4 py-2 hover:bg-gray-100/70">{t('메시지')}</a>)}
-                                                                </li>
-                                                                {(isHost && currentLang === 'ko') && (
-                                                                    <li>
-                                                                        <button onClick={handleSetHostMode}
-                                                                                className="w-full text-start block px-4 py-2 hover:bg-gray-100/70">
-                                                                            {hostMode ? t("게스트로 전환") : t("호스트로 전환")}
-                                                                        </button>
-                                                                    </li>
-                                                                )}
-                                                            </ul>
-                                                            <div className="py-2">
-                                                                <button onClick={handleLogout}
-                                                                        className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/70">
-                                                                    {t('로그아웃')}
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="flex gap-3">
-                                            <div className="flex_center">
-                                                <button
-                                                    type="button"
-                                                    className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
-                                                >
-                                                    <Globe
-                                                        className="w-6 h-6 text-black stroke-[1.3]"
-                                                        onClick={handleLanguageSet}
-                                                    />
-                                                </button>
-                                            </div>
-                                            <div>
-                                                <button
-                                                    className="w-7 h-7 md:w-10 md:h-10 flex items-center justify-center bg-[#F1F1F1] backdrop-blur-sm rounded-full transition duration-200"
-                                                    onClick={() => setAuthModalVisible(true)}
-                                                >
-                                                    <User className="w-6 h-6 text-black stroke-[1.3]"/>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
+                                    <button
+                                        className="md:w-12 md:h-12 w-10 h-10 m-2 flex items-center justify-center
+                                                        bg-roomi hover:bg-roomi-3 rounded-full shadow-md
+                                                        transition-all duration-200 hover:scale-105"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            performSearch();
+                                        }}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faSearch}
+                                            className="text-white text-base md:text-lg"
+                                        />
+                                    </button>
                                 </div>
                             </div>
-                        </div>
+                        )}
                     </div>
+
+                    {isVisibleHostScreen && (
+                        <HostHeader/>
+                    )}
                 </div>
-            )}
+            </div>
 
             {/* 검색 모달 */}
             {searchModalOpen && (
@@ -673,6 +340,7 @@ const Header = () => {
             )}
 
             {/* 헤더 번역 모달 */}
+            {/* 비회원 */}
             {userLanguageSetModal && (
                 <Modal
                     isOpen={userLanguageSetModal}
@@ -683,6 +351,7 @@ const Header = () => {
                     <LanguageSet/>
                 </Modal>
             )}
+            {/* 회원 */}
             {languageSetModal && (
                 <Modal
                     isOpen={languageSetModal}

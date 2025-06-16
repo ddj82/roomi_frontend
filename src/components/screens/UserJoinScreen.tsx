@@ -546,7 +546,7 @@ const UserJoinScreen = () => {
 
             {/* 모달 */}
             {showModal && (
-                <div className="fixed inset-0 flex_center bg-black bg-opacity-40">
+                <div className="fixed inset-0 flex_center bg-black bg-opacity-40 z-[9999]">
                     <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-2xl">
                         <div className="mb-4">
                             회원가입을 종료하시겠습니까?

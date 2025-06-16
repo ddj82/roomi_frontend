@@ -15,7 +15,7 @@ const RoomAccommodationCard = memo(
         return (
             <div className="bg-transparent border-none shadow-none cursor-pointer" onClick={onClick}>
                 <div className="relative mb-2">
-                    <div className="absolute top-2 right-2 z-10">
+                    <div className="absolute top-0 right-0 z-10">
                         <WishListButton roomId={item.id} isFavorite={item.is_favorite}/>
                     </div>
                     {item.detail_urls && item.detail_urls.length > 0 ? (
@@ -33,7 +33,7 @@ const RoomAccommodationCard = memo(
                 </div>
                 <div className="p-0">
                     <div className="mb-1">
-                        <h3 className="text-xs md:text-sm font-bold text-gray-900 line-clamp-1 mb-1">{item.title || '제목 없음'}</h3>
+                        <h3 className="text-xs md:text-sm font-bold text-gray-900 line-clamp-2 mb-1">{item.title || '제목 없음'}</h3>
                         {typeof item.month_price === 'number' && item.month_price > 0 && (
                             <p className="text-xs md:text-sm font-light text-gray-500 m-0">{formatPrice(item.month_price)} / {t('월')}</p>
                         )}

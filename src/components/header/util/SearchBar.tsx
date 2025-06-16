@@ -12,10 +12,10 @@ import dayjs from "dayjs";
 import AccordionCalendar from "./AccordionCalendar";
 import Modal from "react-modal";
 import {useTranslation} from "react-i18next";
-import {useLocationStore} from "../stores/LocationStore";
-import {useDateStore} from "../stores/DateStore";
-import {useGuestsStore} from "../stores/GuestsStore";
-import '../../css/SearchModal.css';
+import {useLocationStore} from "../../stores/LocationStore";
+import {useDateStore} from "../../stores/DateStore";
+import {useGuestsStore} from "../../stores/GuestsStore";
+import '../../../css/SearchModal.css';
 
 type LocationOption = {
     name: string;

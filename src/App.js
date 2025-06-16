@@ -20,17 +20,18 @@ import ProtectedHostRoute from "./api/ProtectedHostRoute";
 import ProtectedGuestRoute from "./api/ProtectedGuestRoute";
 import KakaoLoginCallback from "./components/util/KakaoLoginCallback";
 import SocialJoinScreen from "./components/screens/SocialJoinScreen";
-import SuccessPage from "./components/pay/SuccessPage";
-import {useHeaderStore} from "./components/stores/HeaderStore";
+import {useHeaderStore, useHeaderVisibility} from "./components/stores/HeaderStore";
 import {useHostHeaderBtnVisibility} from "./components/stores/HostHeaderBtnStore";
 import BottomNavigator from "./components/navigator/BottomNavigator";
 import MyRoomUpdate from "./components/hostMenu/myRooms/MyRoomUpdate";
 import LoginPage from "./components/screens/link/LoginPage";
 import LineLoginCallback from "./components/util/LineLoginCallback";
 import Main from "./components/screens/Main";
-import MobileHostHeader from "./components/screens/MobileHostHeader";
-import FailPage from "./components/pay/FailPage";
+import MobileHostHeader from "./components/header/MobileHostHeader";
 import MainMap from "./components/screens/MainMap";
+import HeaderOneLine from "./components/header/HeaderOneLine";
+import PayMobileRedirect from "./components/pay/PayMobileRedirect";
+import {useMapVisibility} from "./components/stores/MapStore";
 
 const queryClient = new QueryClient();
 
@@ -46,17 +47,10 @@ export default function App() {
 
 function AppContent() {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-    const location = useLocation();
-    const { setVisibility } = useHeaderStore();
     const isVisibleHostScreen = useHostHeaderBtnVisibility();
-
-    // 경로 변경 감지해서 헤더 visible 상태 설정
-    useEffect(() => {
-        const isMyPage = location.pathname.startsWith("/myPage") || location.pathname.startsWith("/host");
-        const isRoomDetail = location.pathname.includes("/detail/") && !location.pathname.includes("/reservation");
-        // 모바일 && (마이페이지 또는 방 상세 페이지)면 헤더 숨김
-        setVisibility(!isMobile || !(isMyPage || isRoomDetail));
-    }, [location.pathname, isMobile]); // <- 경로 or 모바일 상태가 바뀔 때마다 재평가
+    const headerVisible = useHeaderVisibility();
+    const headerNone = useHeaderVisibility();
+    const isMapVisible = useMapVisibility();
 
     // resize에 대한 반응 처리
     useEffect(() => {
@@ -67,14 +61,29 @@ function AppContent() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const isVisible = useHeaderStore((state) => state.isVisible);
 
     return (
         <>
-            {isVisible && <Header />}
-            {isVisibleHostScreen && isMobile && (
-                <MobileHostHeader/>
+            {headerVisible ? (
+                <>
+                    {(isVisibleHostScreen && isMobile) ? (
+                        <MobileHostHeader/>
+                    ) : (
+                        <>
+                            {headerNone && isMobile ? (
+                                <>
+                                    {isMapVisible && <HeaderOneLine/>}
+                                </>
+                            ) : (
+                                <HeaderOneLine/>
+                            )}
+                        </>
+                    )}
+                </>
+            ) : (
+                <Header/>
             )}
+
             <div className="app container xl:max-w-[1524px]]"
                 // style={{minHeight: window.innerHeight - 130,}}
             >
@@ -95,15 +104,14 @@ function AppContent() {
                             <Route path="/chat" element={<UserMessage/>}/>
                             <Route path="/detail/:roomId/:locale/reservation" element={<GuestReservationSetScreen/>}/>
                             <Route path="/detail/:roomId/:locale/reservation/payment" element={<GuestReservationScreen/>}/>
-                            <Route path="/success" element={<SuccessPage/>}/>
-                            <Route path="/fail" element={<FailPage/>}/>
                             <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
+                            <Route path="/payMobile/redirect" element={<PayMobileRedirect/>}/>
                         </Route>
                     </Route>
                     {/* hostMode === false 일 때 /host/* 페이지 차단 */}
                     <Route element={<ProtectedHostRoute />}>
-                        <Route path="/host" element={<HostScreen/>}/>
-                        <Route path="/host/teb/:menu" element={<HostScreen/>}/>
+                        <Route path="/host" element={<HostScreen isMobile={isMobile}/>}/>
+                        <Route path="/host/teb/:menu" element={<HostScreen isMobile={isMobile}/>}/>
                         <Route path="/host/insert" element={<MyRoomInsert/>}/>
                         <Route path="/host/update/:roomId" element={<MyRoomUpdate/>}/>
                         <Route path="/host/myPage" element={<HostMyPage/>}/>
@@ -115,11 +123,10 @@ function AppContent() {
             <Routes>
                 {/* hostMode === true 일 때 이 부분 차단됨 */}
                 <Route element={<ProtectedGuestRoute />}>
-                    <Route path="/map" element={<MainMap/>}/>
+                    <Route path="/map" element={<MainMap isMobile={isMobile}/>}/>
                 </Route>
             </Routes>
 
-            {isVisibleHostScreen && isMobile && <BottomNavigator />}
             <div className="hide-on-mobile">
                 <Footer/>
             </div>

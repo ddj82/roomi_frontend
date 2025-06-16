@@ -150,7 +150,7 @@
 </div>
 
 <script>
-    window.location.reload = 'https://roomi.co.kr/indicator.html';
+    // window.location.reload = 'https://roomi.co.kr/indicator.html';
     // 은행 코드 매핑
     const bankMapping = {
         'BANK_OF_KOREA': '한국은행',
@@ -240,8 +240,13 @@
                 document.getElementById("expiration").textContent = formattedDate;
 
                 // 로딩 스타일 제거
-                document.querySelectorAll('.loading').forEach(el => {
-                    el.classList.remove('loading');
+                document.querySelectorAll('.loading-spinner').forEach(el => {
+                    el.classList.remove('loading-spinner');
+                });
+
+                // 히든 스타일 제거
+                document.querySelectorAll('.hidden-container').forEach(el => {
+                    el.classList.remove('hidden-container');
                 });
             })
             .catch(error => {

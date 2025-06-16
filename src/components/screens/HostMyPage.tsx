@@ -14,6 +14,7 @@ import FAQ from "./myPageMenu/FAQ";
 import HelpCenter from "./myPageMenu/HelpCenter";
 import MyInfoEdit from "./myPageMenu/MyInfoEdit";
 import HostFAQ from "./myPageMenu/HostFAQ";
+import {ArrowLeft, LogOut, X} from "lucide-react";
 
 export default function HostMyPage() {
     const { t } = useTranslation();
@@ -122,7 +123,7 @@ export default function HostMyPage() {
     };
 
     return (
-        <div className="w-full my-4 flex flex-col md:flex-row relative text-black">
+        <div className="w-full mb-4 flex flex-col md:flex-row relative text-black">
             {/* 웹 버전 메뉴 */}
             <div className="host-mypage-left md:border-r md:w-1/4 lg:w-1/5 hidden md:block bg-white">
                 {/* 프로필 섹션 */}
@@ -230,20 +231,20 @@ export default function HostMyPage() {
             {/* 모바일 버전 메뉴 */}
             <div className="host-mypage-left md:hidden bg-white min-h-screen">
                 {/* 상단 앱바 영역 */}
-                <div className="bg-white border-b border-gray-200 px-4 py-3">
+                <div className="bg-white border-b border-gray-200 p-4">
                     <div className="flex items-center justify-between">
                         <button
                             onClick={() => window.location.href = '/'}
                             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                         >
-                            <FontAwesomeIcon icon={faTimes} className="w-6 h-6 text-gray-700"/>
+                            <X className="w-6 h-6 text-gray-700"/>
                         </button>
                         <h1 className="text-lg font-semibold text-gray-900">{t('마이 루미')}</h1>
                         <button
                             onClick={handleLogout}
                             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                         >
-                            <FontAwesomeIcon icon={faSignOutAlt} className="w-6 h-6 text-red-500"/>
+                            <LogOut className="w-6 h-6 text-red-500"/>
                         </button>
                     </div>
                 </div>
@@ -417,13 +418,13 @@ export default function HostMyPage() {
             {isMobile && selectedMenu && (
                 <div className="fixed top-0 left-0 w-full h-full bg-white z-50 flex flex-col overflow-hidden">
                     {/* 상단 앱바 영역 */}
-                    <div className="bg-white border-b border-gray-200 px-4 py-3">
+                    <div className="bg-white border-b border-gray-200 p-4">
                         <div className="flex items-center justify-between">
                             <button
                                 onClick={() => handleSetSelectedMenu('')}
                                 className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                             >
-                                <FontAwesomeIcon icon={faArrowLeft} className="w-6 h-6 text-gray-700"/>
+                                <ArrowLeft className="w-6 h-6 text-gray-700"/>
                             </button>
                             <h1 className="text-lg font-semibold text-gray-900">{t(selectedMenu)}</h1>
                             <div className="w-10 h-10"></div>

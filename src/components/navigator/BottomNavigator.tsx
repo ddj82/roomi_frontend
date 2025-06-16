@@ -1,12 +1,8 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 import {useHostTabNavigation} from "../stores/HostTabStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendar, faComments, faFileLines, } from "@fortawesome/free-regular-svg-icons";
-import {useAuthStore} from "../stores/AuthStore";
-import {useChatStore} from "../stores/ChatStore";
-import {logout} from "../../api/api";
-import {useHostModeStore} from "../stores/HostModeStore";
 import {faHouseChimney} from "@fortawesome/free-solid-svg-icons";
 
 const tabIcons: Record<string, JSX.Element> = {
@@ -20,57 +16,34 @@ const BottomNavigation: React.FC = () => {
     const { t } = useTranslation();
     const { activeTab, setActiveTab } = useHostTabNavigation();
     const tabs = ["my_room", "contract_management", "room_status", "message"] as const;
-    const disconnect = useChatStore((state) => state.disconnect);
-    const [userVisible, setUserVisible] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-    const {resetUserMode} = useHostModeStore();
-    const {profileImg} = useAuthStore();
 
-    const toggleDropdown = () => {
-        setUserVisible((prev) => !prev);
-    };
-
-    const handleClickOutside = (event: MouseEvent) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-            setUserVisible(false);
-        }
-    };
-
-    const handleSetHostMode = () => {
-        resetUserMode();
-        window.location.href = '/';
-    };
-
-    const handleLogout = async () => {
-        const confirmCancel = window.confirm(t('로그아웃 하시겠습니까?'));
-        if (!confirmCancel) return;
-        try {
-            const response = await logout();
-            console.log(response);
-            resetUserMode();// hostMode 초기화
-            disconnect(); // 소켓 서버 닫기
-            window.location.reload();
-        } catch (error) {
-            console.error("로그아웃 실패:", error);
-        }
-    };
-
+    // --- 1) 동적 vh 계산 (옵션)
+    const [vh, setVh] = useState(window.innerHeight);
     useEffect(() => {
-        if (userVisible) {
-            document.addEventListener("mousedown", handleClickOutside);
-        } else {
-            document.removeEventListener("mousedown", handleClickOutside);
-        }
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [userVisible]);
+        const onResize = () => setVh(window.innerHeight);
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
+    }, []);
+    useEffect(() => {
+        document.documentElement.style.setProperty("--vh", `${vh * 0.01}px`);
+    }, [vh]);
+
+    // --- 2) 네비게이터 높이
+    const navHeight = 56;
+    const safeInset = "env(safe-area-inset-bottom)";
+    const safeInsetFallback = "constant(safe-area-inset-bottom)";
 
     return (
         <div
-            className="fixed bottom-0 left-0 w-full bg-white backdrop-blur-sm border-t border-gray-200/50 flex justify-center items-center h-14 z-50"
+            className="fixed bottom-0 left-0 w-full bg-white backdrop-blur-sm border-t border-gray-200/50 flex justify-center items-center z-50"
             style={{
-                boxShadow: '0 -2px 8px rgba(167, 97, 97, 0.15)'
+                bottom: 0,
+                // navHeight + safe-area-inset
+                height: `calc(${navHeight}px + ${safeInset})`,
+                // iOS 구버전용 fallback
+                WebkitPaddingEnd: safeInsetFallback,
+                paddingBottom: safeInsetFallback,
+                boxShadow: '0 -2px 8px rgba(167, 97, 97, 0.15)',
             }}
         >
             <div className="flex justify-around items-center w-full max-w-md">

@@ -8,7 +8,7 @@ import {faCalendarDay} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { LuCirclePlus, LuCircleMinus } from "react-icons/lu";
 import i18n from "i18next";
-import '../../css/AccordionCalendar.css'; // 새로운 CSS 파일 생성
+import '../../../css/AccordionCalendar.css'; // 새로운 CSS 파일 생성
 
 interface AccordionCalendarProps {
     onSave?: () => void; // 날짜 선택 완료 시 호출될 콜백 함수

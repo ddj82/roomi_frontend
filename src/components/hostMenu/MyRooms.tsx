@@ -108,7 +108,7 @@ const MyRooms = () => {
     return (
         <div className="min-h-screen">
             {/* 고정 헤더 */}
-            <div className="bg-white py-3.5 sticky top-0">
+            <div className="bg-white py-3.5 sticky top-0 md:static">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 sm:gap-4">
                     <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                         <div className="flex flex-row gap-3 w-full sm:w-auto">
