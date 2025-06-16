@@ -7,6 +7,7 @@ import RoomScrollList from "../util/RoomScrollList";
 import {mainPopularRegion} from "../../types/MainSlideList";
 import MainSlides from "../util/MainSlides";
 import {useQuery} from "@tanstack/react-query";
+import MainBannerSlide from "../util/MainBannerSlide";
 
 interface MainProps {
     rooms: RoomData[];
@@ -101,6 +102,9 @@ const Main: React.FC<MainProps> = () => {
 
     return (
         <div className="p-4">
+            <div>
+                <MainBannerSlide/>
+            </div>
             {/* 인기 있는 장소 */}
             <div className="flex flex-col gap-2">
                 <div className="font-bold text-lg px-4">{t('인기 있는 장소')}</div>

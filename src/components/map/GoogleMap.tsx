@@ -599,7 +599,19 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
 
         adjustWithRetry();
     };
-
+    const clusterStyles = [
+        {
+            url: "", // 이미지 사용 안 할 경우 비워두고 대신 `backgroundColor` 사용
+            height: 40,
+            width: 40,
+            textColor: "#ffffff",
+            textSize: 14,
+            backgroundPosition: "center",
+            anchorText: [0, 0],
+            // 아래 CSS 설정을 통해 색상 및 모양 지정
+            className: "roomi-cluster-marker",
+        },
+    ];
 // 3. 마커 클릭 이벤트 핸들러 수정
     const updateMarkers = (map: google.maps.Map, rooms: RoomData[]): void => {
         clearMarkers();
@@ -706,28 +718,27 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
                     markers: newMarkers,
                     algorithm: new window.GridAlgorithm({ gridSize: 100 }),
                     renderer: {
-                        render: (cluster: any) => {
-                            const div = document.createElement('div');
-                            div.style.cssText = `
-                background: #ff8282;
-                color: white;
-                border-radius: 50%;
-                width: 60px;
-                height: 60px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-                font-size: 16px;
-                border: 3px solid white;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            `;
-                            div.textContent = cluster.count.toString();
-                            return div;
+                        render({ count, position }) {
+                            const div = document.createElement("div");
+                            div.className = "roomi-cluster";
+                            div.textContent = String(count);
+
+                            return new google.maps.Marker({
+                                position,
+                                icon: {
+                                    url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+            <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="20" r="20" fill="#f47366" />
+              <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-size="14" font-weight="bold">${count}</text>
+            </svg>
+          `),
+                                    scaledSize: new google.maps.Size(40, 40),
+                                },
+                            });
                         }
                     }
                 });
-            } else {
+            }else {
                 console.warn('⚠️ MarkerClusterer 없음, 개별 마커 사용');
                 newMarkers.forEach(marker => marker.setMap(map));
             }
@@ -786,11 +797,10 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
     useEffect(() => {
         const initMap = async (): Promise<void> => {
             if (!window.google || !window.google.maps) return;
-
             const mapOptions: google.maps.MapOptions = {
-                center: new window.google.maps.LatLng(37.5558634, 126.9317907), // 서울시청
-                zoom: 15,
-                minZoom: 9,
+                center: new window.google.maps.LatLng(37.554722, 126.970833), // 서울시청
+                zoom: 12,
+                minZoom: 6,
                 maxZoom: 18,
                 mapTypeControl: false,
                 streetViewControl: false,
@@ -851,7 +861,8 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
                 }
 
                 const supportedLanguages = ["ko", "en", "ja", "zh-CN", "zh-TW"];
-                const locale = supportedLanguages.includes(i18n.language) ? i18n.language : "en";
+                const locale = supportedLanguages.includes(i18n.language) ?
+                    (i18n.language.startsWith('zh') ? 'zh' : i18n.language) : "en";
 
                 window.initMap = () => {
                     initMap().then(resolve).catch(reject);
@@ -859,7 +870,7 @@ const GoogleMap: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
 
                 const script = document.createElement('script');
                 script.type = 'text/javascript';
-                script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_API_KEY}&language=${locale}&libraries=marker&callback=initMap`;
+                script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_API_KEY}&language=${locale}&libraries=marker&callback=initMap&language=${i18n.language}`;
                 script.onerror = reject;
                 document.head.appendChild(script);
 
