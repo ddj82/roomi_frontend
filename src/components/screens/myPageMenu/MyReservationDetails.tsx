@@ -214,7 +214,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
 
     const renderStatusUI = (backgroundColor: string, message: string, onClick: () => void) => {
         return (
-            <button onClick={onClick} type="button" className={`w-1/2 text-white p-2 rounded ${backgroundColor}`}>
+            <button onClick={onClick} type="button" className={`rounded-xl w-1/2 text-white p-2 rounded ${backgroundColor}`}>
                 {message}
             </button>
         );

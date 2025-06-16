@@ -43,7 +43,7 @@ export default function CurrencySet() {
                     <div className="flex items-center">
                         <span className="text-lg font-medium mr-2">{currentCurrency.label}</span>
                         <span className="text-xl mr-3">{currentCurrency.symbol}</span>
-                        <span className="text-sm text-gray-500">{currentCurrency.name}</span>
+                        <span className="text-sm text-gray-500">{t(currentCurrency.name)}</span>
                     </div>
                     <div className="bg-roomi text-white px-3 py-1 rounded-full text-xs">
                         {t('현재')}
@@ -71,7 +71,7 @@ export default function CurrencySet() {
                             <div className="flex items-center">
                                 <span className="text-lg font-medium mr-2">{currency.label}</span>
                                 <span className="text-xl mr-3">{currency.symbol}</span>
-                                <span className="text-sm text-gray-500">{currency.name}</span>
+                                <span className="text-sm text-gray-500">{t(currency.name)}</span>
                             </div>
                             {currencyCode === currency.code && (
                                 <div className="w-5 h-5 rounded-full bg-roomi flex items-center justify-center">
@@ -97,7 +97,7 @@ export default function CurrencySet() {
                     }`}
                     disabled={!currencyCode || currencyCode === userCurrency}
                 >
-                    {t('통화 변경하기')}
+                    {t('저장')}
                 </button>
             </div>
         </div>

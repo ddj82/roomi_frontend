@@ -150,9 +150,9 @@ const DesktopChatView: React.FC<DesktopChatViewProps> = ({
             {/* 데스크톱용 메시지 입력창 - 더 넓은 공간 활용 */}
             <div className="p-4 bg-white border-t border-gray-200">
                 <div className="flex items-center bg-gray-100 rounded-full px-4 py-2">
-                    <button className="p-2 text-gray-500 hover:bg-gray-200 rounded-full mr-1">
-                        <FontAwesomeIcon icon={faImage} />
-                    </button>
+                    {/*<button className="p-2 text-gray-500 hover:bg-gray-200 rounded-full mr-1">*/}
+                    {/*    <FontAwesomeIcon icon={faImage} />*/}
+                    {/*</button>*/}
                     <input
                         ref={inputRef}
                         className="flex-1 bg-transparent px-3 py-2.5 focus:outline-none"

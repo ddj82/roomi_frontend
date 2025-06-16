@@ -77,7 +77,7 @@ export default function MessageList(): React.ReactElement {
                                 value={searchQuery}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                             />
-                            <Search className="absolute left-3 top-2.5 text-gray-400 h-4 w-4" />
+                            <Search className="absolute left-3 top-2.5 text-gray-400 h-4 w-4"/>
                         </div>
                     </div>
 
@@ -88,26 +88,28 @@ export default function MessageList(): React.ReactElement {
                                     <button
                                         type="button"
                                         onClick={() => handleSetSelectedChatRoom(chatRoom)}
-                                        className={`flex p-4 hover:bg-gray-50 w-full transition-colors ${
+                                        className={`flex items-center p-4 hover:bg-gray-50 w-full transition-colors ${
                                             selectedChatRoomId === chatRoom.id ? 'bg-blue-50' : ''
                                         }`}
                                     >
-                                        <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0 overflow-hidden">
-                                            <User className="h-6 w-6 text-gray-500" />
+                                        <div
+                                            className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0 overflow-hidden">
+                                            <User className="h-6 w-6 text-gray-500"/>
                                         </div>
-                                        <div className="w-full flex flex-col items-start text-sm overflow-hidden">
-                                            <div className="flex justify-between w-full">
-                                                <span className="font-medium truncate">{chatRoom.title}</span>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex justify-between items-center mb-1">
+                                                <span
+                                                    className="font-medium text-gray-900 truncate">{chatRoom.room?.roomName ?? ""}</span>
                                                 <span className="text-xs text-gray-500 ml-2 whitespace-nowrap">
                                                     {formatTimeOrDate(chatRoom.timestamp)}
                                                 </span>
                                             </div>
-                                            <div className="font-semibold mt-1 truncate w-full">이름</div>
-                                            <div className="text-gray-500 truncate w-full mt-0.5">{chatRoom.lastMessage}</div>
+                                            <div className="text-sm text-gray-500 truncate">{chatRoom.lastMessage}</div>
                                         </div>
                                         {chatRoom.unreadCount > 0 && (
-                                            <div className="ml-2 flex-shrink-0">
-                                                <span className="bg-blue-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                                            <div className="ml-3 flex-shrink-0">
+                                                <span
+                                                    className="bg-blue-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                                                     {chatRoom.unreadCount > 99 ? '99+' : chatRoom.unreadCount}
                                                 </span>
                                             </div>
@@ -117,7 +119,7 @@ export default function MessageList(): React.ReactElement {
                             ))
                         ) : (
                             <div className="flex flex-col items-center justify-center text-gray-500 h-full p-8">
-                                <MessageCircle className="h-12 w-12 text-gray-300 mb-3" />
+                                <MessageCircle className="h-12 w-12 text-gray-300 mb-3"/>
                                 {searchQuery ? (
                                     <p>검색 결과가 없습니다.</p>
                                 ) : (
@@ -142,7 +144,7 @@ export default function MessageList(): React.ReactElement {
                         </div>
                     ) : (
                         <div className="flex flex-col items-center justify-center text-gray-500 h-full">
-                            <MessageCircle className="h-16 w-16 text-gray-300 mb-4" />
+                            <MessageCircle className="h-16 w-16 text-gray-300 mb-4"/>
                             <p className="text-lg">📭 채팅방을 선택하세요.</p>
                             <p className="text-sm text-gray-400 mt-2">왼쪽에서 대화를 선택하여 시작하세요</p>
                         </div>

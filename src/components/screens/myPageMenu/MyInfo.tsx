@@ -107,10 +107,10 @@ export default function MyInfo({user}: MyInfoEditProps) {
                                     </svg>
                                 </div>
                                 <div className="flex-1">
-                                    <h3 className="font-semibold text-lg text-gray-900">{t('인증완료')}</h3>
-                                    <p className="text-sm text-gray-500">
-                                        {userIsKorean ? t('내국인') : t('외국인')} 본인인증이 완료되었습니다
-                                    </p>
+                                    <h3 className="font-semibold text-lg text-gray-900">{t('본인 인증완료')}</h3>
+                                    {/*<p className="text-sm text-gray-500">*/}
+                                    {/*    {userIsKorean ? t('내국인') : t('외국인')} 본인인증 완료*/}
+                                    {/*</p>*/}
                                 </div>
                             </div>
                         ) : (

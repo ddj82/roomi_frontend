@@ -143,7 +143,8 @@ export default function HostMyPage() {
                             <p className="text-sm text-gray-600 mb-3">
                                 {localStorage.getItem('userEmail')}
                             </p>
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <span
+                                className="inline-flex items-center px-3 py-1 rounded-xl text-xs font-medium bg-roomi-1 text-white">
                             {t('호스트')}
                         </span>
                         </div>

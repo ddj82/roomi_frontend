@@ -70,12 +70,12 @@ export default function MyFavoriteList() {
                                     <div className="mt-1">
                                         {(room.month_price! > 0) && (
                                             <div className="text-sm font-bold text-gray-700 mt-1">
-                                                {t('원')}{room.month_price!.toLocaleString()} / {t('month_symbol')}
+                                                {room.symbol}{room.month_price!.toLocaleString()} / {t('month_symbol')}
                                             </div>
                                         )}
                                         {(room.week_price! > 0) && (
                                             <div className="text-sm font-bold text-gray-700 mt-1">
-                                                {t('원')}{room.week_price!.toLocaleString()} / {t('week_symbol')}
+                                                {room.symbol}{room.week_price!.toLocaleString()} / {t('week_symbol')}
                                             </div>
                                         )}
                                     </div>
@@ -118,12 +118,12 @@ export default function MyFavoriteList() {
                                     <div className="mt-1">
                                         {(room.month_price! > 0) && (
                                             <div className="text-sm text-gray-700 mt-1">
-                                                {t('원')}{room.month_price!.toLocaleString()} / {t('month_symbol')}
+                                                {room.symbol ?? '₩'}{room.month_price!.toLocaleString()} / {t('month_symbol')}
                                             </div>
                                         )}
                                         {(room.week_price! > 0) && (
                                             <div className="text-sm text-gray-700mt-1">
-                                                {t('원')}{room.week_price!.toLocaleString()} / {t('week_symbol')}
+                                                {room.symbol ?? '₩'}{room.week_price!.toLocaleString()} / {t('week_symbol')}
                                             </div>
                                         )}
                                     </div>

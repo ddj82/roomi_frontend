@@ -21,13 +21,13 @@ const RoomAccommodationCard = memo(
                     {item.detail_urls && item.detail_urls.length > 0 ? (
                         <ImgCarousel
                             images={item.detail_urls}
-                            customClass="w-full h-32 md:h-48 object-cover rounded-xl"
+                            customClass="w-full aspect-square object-cover rounded-xl"
                         />
                     ) : (
                         <img
                             src="/default-image.jpg"
                             alt="thumbnail"
-                            className="w-full h-32 md:h-48 object-cover rounded-xl"
+                            className="w-full aspect-square object-cover rounded-xl"
                         />
                     )}
                 </div>

@@ -27,7 +27,7 @@ export default function FAQ() {
     const faqList2: FAQList[] = [
         { id: 1, title: t('전입신고가 가능한 공간인가요?'), content: t('전입신고내용') },
         { id: 2, title: t('공간을 실제로 보고 계약할 수 있나요?'), content: t('공간내용') },
-        { id: 3, title: t('"설명된 계약 조건과 공간 상태가 다르면 어떻게 해야 하나요?'), content: t('계약설명1') },
+        { id: 3, title: t('설명된 계약 조건과 공간 상태가 다르면 어떻게 해야 하나요?'), content: t('계약설명1') },
         { id: 4, title: t('원하는 날짜만 골라서 계약할 수 있나요?'), content: t('날짜내용') },
         { id: 5, title: t('입주 후 시설 고장이 생기면 어떻게 해야 하나요?'), content: t('입주설명') },
     ];

@@ -4,6 +4,7 @@ export interface ChatRoom {
     lastMessage: string;
     timestamp: string;
     unreadCount: number;
+    room? : ChatRoomDetail;
 }
 
 export interface Messages {
@@ -13,4 +14,9 @@ export interface Messages {
     createdAt: string;
     senderId: number | string;
     isRead: boolean;
+}
+
+export interface ChatRoomDetail {
+    id : string,
+    roomName: string;
 }

@@ -149,9 +149,9 @@ const MobileChatView: React.FC<MobileChatViewProps> = ({
             {/* 모바일용 메시지 입력창 - 더 컴팩트하게 */}
             <div className="p-2 bg-white border-t border-gray-200">
                 <div className="flex items-center bg-gray-100 rounded-full px-2 py-1">
-                    <button className="p-1.5 text-gray-500">
-                        <FontAwesomeIcon icon={faImage} className="text-sm" />
-                    </button>
+                    {/*<button className="p-1.5 text-gray-500">*/}
+                    {/*    <FontAwesomeIcon icon={faImage} className="text-sm" />*/}
+                    {/*</button>*/}
                     <input
                         ref={inputRef}
                         className="flex-1 bg-transparent px-2 py-1.5 text-sm focus:outline-none"

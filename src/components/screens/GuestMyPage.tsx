@@ -117,7 +117,7 @@ export default function GuestMyPage() {
                             <p className="text-sm text-gray-600 mb-3">
                                 {localStorage.getItem('userEmail')}
                             </p>
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-roomi-1 text-roomi">
+                            <span className="inline-flex items-center px-3 py-1 rounded-xl text-xs font-medium bg-roomi-1 text-white">
                                 {isHost ? t('호스트') : t('게스트')}
                             </span>
                         </div>
