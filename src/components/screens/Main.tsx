@@ -150,6 +150,7 @@ const Main: React.FC<MainProps> = () => {
                                         <img
                                             src={region.image}
                                             alt={region.title}
+                                            loading="lazy"
                                             className="rounded-lg w-40 h-36 md:w-52 md:h-48"
                                         />
                                     </div>

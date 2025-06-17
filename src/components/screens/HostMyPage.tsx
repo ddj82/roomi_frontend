@@ -17,11 +17,11 @@ import HostFAQ from "./myPageMenu/HostFAQ";
 import {ArrowLeft, LogOut, X} from "lucide-react";
 
 export default function HostMyPage() {
-    const { t } = useTranslation();
-    const { resetUserMode } = useHostModeStore();
+    const {t} = useTranslation();
+    const {resetUserMode} = useHostModeStore();
     const disconnect = useChatStore((state) => state.disconnect);
     const navigate = useNavigate();
-    const { menu } = useParams();
+    const {menu} = useParams();
     const selectedMenu = menu ?? "";
     const [loading, setLoading] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -41,7 +41,7 @@ export default function HostMyPage() {
     }, []);
 
     useEffect(() => {
-        window.scrollTo({ top: 0 });
+        window.scrollTo({top: 0});
     }, [selectedMenu]);
 
     const handleLogout = async () => {
@@ -97,28 +97,28 @@ export default function HostMyPage() {
                 );
 
             case '공지사항':
-                return <Notices />;
+                return <Notices/>;
 
             case 'FAQ':
-                return <HostFAQ />;
+                return <HostFAQ/>;
 
             case '고객센터':
-                return <HelpCenter />;
+                return <HelpCenter/>;
 
             case '내 정보':
                 return <MyInfoEdit/>;
 
             default:
                 return <MyInfoEdit/>;
-                // return (
-                //     <div className="flex items-center justify-center h-64">
-                //         <p className="text-gray-500">{t("선택된 메뉴가 없습니다.")}</p>
-                //     </div>
-                // );
+            // return (
+            //     <div className="flex items-center justify-center h-64">
+            //         <p className="text-gray-500">{t("선택된 메뉴가 없습니다.")}</p>
+            //     </div>
+            // );
         }
     };
 
-    const handleSetSelectedMenu = (selectMenu:string) => {
+    const handleSetSelectedMenu = (selectMenu: string) => {
         navigate(`/host/myPage/${selectMenu}`);
     };
 
@@ -268,7 +268,8 @@ export default function HostMyPage() {
                                 <h2 className="text-lg font-semibold text-gray-900">{localStorage.getItem('userName')}</h2>
                                 <p className="text-sm text-gray-500">{localStorage.getItem('userEmail')}</p>
                                 <div className="mt-2">
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <span
+                                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                     {t('호스트')}
                                 </span>
                                 </div>
@@ -439,4 +440,4 @@ export default function HostMyPage() {
             )}
         </div>
     );
-};
+}
