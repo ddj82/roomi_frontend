@@ -319,10 +319,25 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                     {/*</div>*/}
 
                     {/* Room Image and Info */}
+                    {/* Room Image and Info */}
                     <div className="mt-4">
-                        <h3 className="mt-4 text-lg font-semibold">{reservation.room?.title || "방 정보 없음"}</h3>
-                        <p className="text-gray-600">{reservation.room?.address || "주소 정보 없음"}</p>
-                        <p className="text-gray-600">{reservation.room?.address_detail || ""}</p>
+                        {reservation.room?.detail_urls?.[0] ? (
+                            <img
+                                src={reservation.room.detail_urls[0]}
+                                alt="Room image"
+                                className="w-full h-full object-cover rounded-xl mb-2"
+                                style={{ imageRendering: 'auto' }}
+                            />
+                        ) : (
+                            <div className="w-full h-48 bg-gray-200 rounded-xl flex items-center justify-center text-gray-500 text-sm mb-2">
+                                이미지 없음
+                            </div>
+                        )}
+
+                        <h3 className="mt-2 text-lg font-semibold">
+                            {reservation.room?.title || "방 정보 없음"}
+                        </h3>
+                        <p className="text-gray-600">{reservation.room?.address || "주소 정보 없음"} , {reservation.room?.address_detail || ""}</p>
 
                         {/* Status Badges */}
                         {getStatusBadge()}
