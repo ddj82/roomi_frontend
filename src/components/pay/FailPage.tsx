@@ -1,12 +1,10 @@
 import React, {useEffect} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faX} from "@fortawesome/free-solid-svg-icons";
-import {useNavigate} from "react-router-dom";
 import {PaymentFailedResponse} from "../../types/PaymentResponse";
 
 
 const FailPage = ({res, modalClose}: { res: PaymentFailedResponse; modalClose: () => void; }) => {
-    const navigate = useNavigate();
 
     useEffect(() => {
         redirectToApp();

@@ -5,7 +5,7 @@ import {uploadIdentification} from "../../api/api";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck, faX} from "@fortawesome/free-solid-svg-icons";
 
-export default function CertificationRedirect() {
+export default function CertificationModalRedirect() {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();

@@ -31,7 +31,7 @@ import MainMap from "./components/screens/MainMap";
 import HeaderOneLine from "./components/header/HeaderOneLine";
 import PayMobileRedirect from "./components/pay/PayMobileRedirect";
 import {useMapVisibility} from "./components/stores/MapStore";
-import CertificationRedirect from "./components/modals/CertificationRedirect";
+import CertificationModalRedirect from "./components/modals/CertificationModalRedirect";
 
 const queryClient = new QueryClient();
 
@@ -106,7 +106,7 @@ function AppContent() {
                             <Route path="/detail/:roomId/:locale/reservation/payment" element={<GuestReservationScreen/>}/>
                             <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
                             <Route path="/payMobile/redirect" element={<PayMobileRedirect/>}/>
-                            <Route path="/certification/redirect" element={<CertificationRedirect/>}/>
+                            <Route path="/certification/redirect" element={<CertificationModalRedirect/>}/>
                         </Route>
                     </Route>
                     {/* hostMode === false 일 때 /host/* 페이지 차단 */}
