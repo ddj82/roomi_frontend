@@ -27,10 +27,11 @@ export default function MainMap({isMobile}: { isMobile: boolean; }) {
             {isMobile ? (
                 <>
                     {/* 모바일 */}
+                    {/* !h-[calc(100dvh-5rem)] */}
                     <div
                         className="
                             relative w-full
-                            !h-[calc(100dvh-5rem)]
+                            !h-[100dvh]
                             pt-[env(safe-area-inset-top)]
                             pb-[env(safe-area-inset-bottom)]
                             overflow-hidden
