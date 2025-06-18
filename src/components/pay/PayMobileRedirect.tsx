@@ -93,11 +93,6 @@ export default function PayMobileRedirect() {
         }
     };
 
-    const handleGoMyInfo = () => {
-        navigate('/myPage/내%20정보');
-        window.location.reload();
-    };
-
     return (
         <div>
             {(paymentSuccess) ? (
