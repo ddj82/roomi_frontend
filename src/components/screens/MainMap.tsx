@@ -27,7 +27,15 @@ export default function MainMap({isMobile}: { isMobile: boolean; }) {
             {isMobile ? (
                 <>
                     {/* 모바일 */}
-                    <div className="relative w-full !h-[calc(100vh-5rem)] overflow-hidden">
+                    <div
+                        className="
+                            relative w-full
+                            !h-[calc(100dvh-5rem)]
+                            pt-[env(safe-area-inset-top)]
+                            pb-[env(safe-area-inset-bottom)]
+                            overflow-hidden
+                        "
+                    >
                         {/* 지도 영역 */}
                         <div
                             className={`
@@ -36,7 +44,7 @@ export default function MainMap({isMobile}: { isMobile: boolean; }) {
                                 ${mobileRoomListOpen ? 'translate-y-full' : 'translate-y-0'}
                             `}
                         >
-                            <GoogleMap onRoomsUpdate={handleRoomsUpdate} />
+                            <GoogleMap onRoomsUpdate={handleRoomsUpdate}/>
                         </div>
 
                         {/* 리스트 영역 */}
@@ -47,7 +55,7 @@ export default function MainMap({isMobile}: { isMobile: boolean; }) {
                                 ${mobileRoomListOpen ? 'translate-y-0 pb-16' : 'translate-y-full'}
                             `}
                         >
-                            <HomeScreen rooms={rooms} />
+                            <HomeScreen rooms={rooms}/>
                         </div>
 
                         {/* 토글 버튼 (컨테이너 안에 두셔도 되고, 밖에 두셔도 됩니다) */}
@@ -67,7 +75,7 @@ export default function MainMap({isMobile}: { isMobile: boolean; }) {
                 <>
                     {/* 브라우저 - 70% 지도 + 30% 리스트 레이아웃 */}
                     <div className="flex !h-[calc(100vh-5rem)] w-full">
-                        {/* 왼쪽 지도 영역 - 70% */}
+                    {/* 왼쪽 지도 영역 - 70% */}
                         <div className="w-[70%] h-full relative">
                             <GoogleMap onRoomsUpdate={handleRoomsUpdate}/>
                         </div>
