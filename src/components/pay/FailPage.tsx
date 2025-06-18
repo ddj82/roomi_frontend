@@ -1,11 +1,18 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faX} from "@fortawesome/free-solid-svg-icons";
 import {PaymentFailedResponse} from "../../types/PaymentResponse";
 
 
 const FailPage = ({res, modalClose}: { res: PaymentFailedResponse; modalClose: () => void; }) => {
-    const message = res.failure?.pgMessage;
+    const [message, setMessage] = useState<string>();
+
+    // res 가 바뀔 때마다 이펙트가 재실행됩니다.
+    useEffect(() => {
+        if (res && res.failure) {
+            setMessage(res.failure.pgMessage);
+        }
+    }, [res]);
 
     return (
         <div className="max-w-3xl mx-auto px-4 py-6 text-center font-sans">
