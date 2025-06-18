@@ -23,7 +23,7 @@ export default function MainMap({isMobile}: { isMobile: boolean; }) {
     }, []);
 
     return (
-        <div className="mainHome main-container !h-[calc(100vh-5rem)]">
+        <div className="mainHome main-container !h-[calc(100dvh-5rem)]">
             {isMobile ? (
                 <>
                     {/* 모바일 */}
