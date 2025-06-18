@@ -475,10 +475,32 @@ const ContractManagement = () => {
                 )}
 
                 {selectedReservation && (
-                    <button type="button" onClick={() => setSelectedReservation(null)}
-                            className="py-2 px-4 text-sm rounded font-bold">
-                        {t('목록 보기')}
-                    </button>
+                    <div className="flex items-center justify-between w-full">
+                        {/* ← 뒤로가기 버튼 */}
+                        <button
+                            onClick={() => setSelectedReservation(null)}
+                            className="flex items-center gap-1 text-sm text-gray-700 font-medium"
+                        >
+                            <svg
+                                className="w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                            </svg>
+                            <span className="hidden sm:inline">뒤로가기</span>
+                        </button>
+
+                        {/* 가운데 "예약 상세정보" 텍스트 */}
+                        <h2 className="text-xl text-center flex-1 -ml-5 sm:ml-0">
+                            예약 상세정보
+                        </h2>
+
+                        {/* 오른쪽 비움 (중앙정렬 위해 공간 확보) */}
+                        <div className="w-5 sm:w-20" />
+                    </div>
                 )}
             </div>
 

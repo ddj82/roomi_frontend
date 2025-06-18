@@ -177,24 +177,24 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
         // Confirmed/IN_USE and paid
         if ((status === 'CONFIRMED' || status === 'IN_USE') && paymentStatus === 'PAID') {
             if (isReservationInProgress() || status === 'IN_USE') {
-                return (
-                    <div className="flex gap-4">
-                        <button
-                            onClick={() => {/* Handle message */}}
-                            className="flex-1 py-3 px-4 flex items-center justify-center text-gray-700 border border-gray-300 rounded-lg"
-                        >
-                            <MessageSquare className="w-4 h-4 mr-2" />
-                            메시지 보내기
-                        </button>
-                        {/*<button*/}
-                        {/*    onClick={() => onComplete && onComplete(reservation.id)}*/}
-                        {/*    className="flex-1 py-3 px-4 flex items-center justify-center text-white bg-blue-600 rounded-lg"*/}
-                        {/*>*/}
-                        {/*    <CheckCircle className="w-4 h-4 mr-2" />*/}
-                        {/*    퇴실 확인*/}
-                        {/*</button>*/}
-                    </div>
-                );
+                return (<div></div>);
+                //     <div className="flex gap-4">
+                //         <button
+                //             onClick={() => {/* Handle message */}}
+                //             className="flex-1 py-3 px-4 flex items-center justify-center text-gray-700 border border-gray-300 rounded-lg"
+                //         >
+                //             <MessageSquare className="w-4 h-4 mr-2" />
+                //             메시지 보내기
+                //         </button>
+                //         {/*<button*/}
+                //         {/*    onClick={() => onComplete && onComplete(reservation.id)}*/}
+                //         {/*    className="flex-1 py-3 px-4 flex items-center justify-center text-white bg-blue-600 rounded-lg"*/}
+                //         {/*>*/}
+                //         {/*    <CheckCircle className="w-4 h-4 mr-2" />*/}
+                //         {/*    퇴실 확인*/}
+                //         {/*</button>*/}
+                //     </div>
+                // );
             }
              else {
                 // Confirmed but not in progress yet
@@ -306,21 +306,11 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
 
     return (
         <>
-            <div className="bg-white rounded-lg overflow-hidden max-w-2xl w-full mx-auto ">
+            <div className="bg-white rounded-lg overflow-hidden max-w-2xl w-full mx-auto">
                 {/* Header */}
-                <div className="p-6">
-                    {/*<div className="flex justify-between items-start">*/}
-                    {/*    <button*/}
-                    {/*        onClick={onClose}*/}
-                    {/*        className="p-1 rounded-full hover:bg-gray-100"*/}
-                    {/*    >*/}
-                    {/*        <X className="w-5 h-5" />*/}
-                    {/*    </button>*/}
-                    {/*</div>*/}
-
+                <div className="p-2">
                     {/* Room Image and Info */}
-                    {/* Room Image and Info */}
-                    <div className="mt-4">
+                    <div className="mt-2">
                         {reservation.room?.detail_urls?.[0] ? (
                             <img
                                 src={reservation.room.detail_urls[0]}
@@ -337,182 +327,128 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                         <h3 className="mt-2 text-lg font-semibold">
                             {reservation.room?.title || "방 정보 없음"}
                         </h3>
-                        <p className="text-gray-600">{reservation.room?.address || "주소 정보 없음"} , {reservation.room?.address_detail || ""}</p>
+                        <p className="text-gray-600 mt-1 mb-3">{reservation.room?.address || "주소 정보 없음"} , {reservation.room?.address_detail || ""}</p>
 
                         {/* Status Badges */}
-                        {getStatusBadge()}
+                        {/*{getStatusBadge()}*/}
                     </div>
                 </div>
-                {/* Accordion Sections */}
-                <div className="px-6">
-                    {/* Basic Info Accordion */}
-                    <div className="border border-gray-300 rounded-lg mb-4">
-                        <button
-                            onClick={() => setIsBasicInfoExpanded(!isBasicInfoExpanded)}
-                            className="w-full flex justify-between items-center p-4"
-                        >
-                            <span className="font-semibold">기본 예약 정보</span>
-                            {isBasicInfoExpanded ? (
-                                <ChevronUp className="w-5 h-5 text-gray-500"/>
-                            ) : (
-                                <ChevronDown className="w-5 h-5 text-gray-500"/>
-                            )}
-                        </button>
 
-                        {isBasicInfoExpanded && (
-                            <div className="p-4 pt-0 border-t border-gray-200">
-                                <table className="w-full">
-                                    <tbody>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="py-2 text-gray-600">예약 번호</td>
-                                        <td className="py-2 text-right">{reservation.order_id || "-"}</td>
-                                    </tr>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="py-2 text-gray-600">예약 날짜</td>
-                                        <td className="py-2 text-right">{formatDate(reservation.created_at.toString())}</td>
-                                    </tr>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="py-2 text-gray-600">입실</td>
-                                        <td className="py-2 text-right">{formatDate(reservation.check_in_date.toString())}</td>
-                                    </tr>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="py-2 text-gray-600">퇴실</td>
-                                        <td className="py-2 text-right">{formatDate(reservation.check_out_date.toString())}</td>
-                                    </tr>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="py-2 text-gray-600">게스트 수</td>
-                                        <td className="py-2 text-right">{reservation.guest_count || 1}명</td>
-                                    </tr>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="py-2 text-gray-600">예약 상태</td>
-                                        <td className="py-2 text-right">{getStatusText(reservation.status)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="py-2 text-gray-600">결제 상태</td>
-                                        <td className="py-2 text-right">{getPaymentStatusText(reservation.payment_status)}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
+                {/* All Info Sections */}
+                <div className="px-1 pb-2 space-y-4">
+                    {/* Basic Info */}
+                    <div className="rounded-lg p-2">
+                        <h4 className="font-semibold mb-2">기본 예약 정보</h4>
+                        <table className="w-full">
+                            <tbody>
+                            <tr className="">
+                                <td className="py-2 font-light text-gray-600">예약 번호</td>
+                                <td className="py-2 font-light text-right">{reservation.order_id || "-"}</td>
+                            </tr>
+                            <tr className="">
+                                <td className="py-2 font-light text-gray-600">예약 날짜</td>
+                                <td className="py-2 font-light text-right">{formatDate(reservation.created_at.toString())}</td>
+                            </tr>
+                            <tr className="">
+                                <td className="py-2 font-light text-gray-600">입실</td>
+                                <td className="py-2 font-light text-right">{formatDate(reservation.check_in_date.toString())}</td>
+                            </tr>
+                            <tr className="">
+                                <td className="py-2 font-light text-gray-600">퇴실</td>
+                                <td className="py-2 font-light text-right">{formatDate(reservation.check_out_date.toString())}</td>
+                            </tr>
+                            <tr className="">
+                                <td className="py-2 font-light text-gray-600">게스트 수</td>
+                                <td className="py-2 font-light text-right">{reservation.guest_count || 1}명</td>
+                            </tr>
+                            <tr className="">
+                                <td className="py-2 font-light text-gray-600">예약 상태</td>
+                                <td className="py-2 font-light text-right">{getStatusText(reservation.status)}</td>
+                            </tr>
+                            <tr>
+                                <td className="py-2 font-light text-gray-600 border-b border-gray-300">결제 상태</td>
+                                <td className="py-2 font-light text-right border-b border-gray-300 ">{getPaymentStatusText(reservation.payment_status)}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    {/* Pricing Info Accordion */}
-                    <div className="border border-gray-300 rounded-lg mb-4">
-                        <button
-                            onClick={() => setIsPricingExpanded(!isPricingExpanded)}
-                            className="w-full flex justify-between items-center p-4"
-                        >
-                            <span className="font-semibold">요금 정보</span>
-                            {isPricingExpanded ? (
-                                <ChevronUp className="w-5 h-5 text-gray-500"/>
-                            ) : (
-                                <ChevronDown className="w-5 h-5 text-gray-500"/>
-                            )}
-                        </button>
-
-                        {isPricingExpanded && (
-                            <div className="p-4 pt-0 border-t border-gray-200">
-                                <table className="w-full">
-                                    <tbody>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="py-2 text-gray-600">이용 기간</td>
-                                        <td className="py-2 text-right">{formatDateRange(reservation.check_in_date.toString(), reservation.check_out_date.toString())}</td>
-                                    </tr>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="py-2 text-gray-600">기본 요금</td>
-                                        <td className="py-2 text-right">{reservation.symbol}{formatPrice(reservation.price)}</td>
-                                    </tr>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="py-2 text-gray-600">관리비</td>
-                                        <td className="py-2 text-right">{reservation.symbol}{formatPrice(reservation.maintenance_fee)}</td>
-                                    </tr>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="py-2 text-gray-600">보증금</td>
-                                        <td className="py-2 text-right">{reservation.symbol}{formatPrice(reservation.deposit)}</td>
-                                    </tr>
-                                    <tr className="border-t border-gray-300">
-                                        <td className="py-3 text-gray-800 font-semibold">총 요금</td>
-                                        <td className="py-3 text-right font-bold">{reservation.symbol}{formatPrice(reservation.price + reservation.deposit + reservation.maintenance_fee)}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
+                    {/* Pricing Info */}
+                    <div className="rounded-lg p-2">
+                        <h4 className="font-semibold mb-2">요금 정보</h4>
+                        <table className="w-full">
+                            <tbody>
+                            <tr className="">
+                                <td className="py-2 font-light text-gray-600">이용 기간</td>
+                                <td className="py-2 font-light text-right">{formatDateRange(reservation.check_in_date.toString(), reservation.check_out_date.toString())}</td>
+                            </tr>
+                            <tr className="">
+                                <td className="py-2 font-light text-gray-600">기본 요금</td>
+                                <td className="py-2 font-light text-right">{reservation.symbol}{formatPrice(reservation.price)}</td>
+                            </tr>
+                            <tr className="">
+                                <td className="py-2 font-light text-gray-600">관리비</td>
+                                <td className="py-2 font-light text-right">{reservation.symbol}{formatPrice(reservation.maintenance_fee)}</td>
+                            </tr>
+                            <tr className="">
+                                <td className="py-2 font-light text-gray-600">보증금</td>
+                                <td className="py-2 font-light text-right">{reservation.symbol}{formatPrice(reservation.deposit)}</td>
+                            </tr>
+                            <tr className="">
+                                <td className="py-3 text-gray-800">총 요금</td>
+                                <td className="py-3 text-right font-semibold">{reservation.symbol}{formatPrice(reservation.price + reservation.deposit + reservation.maintenance_fee)}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    {/* Guest Info Accordion */}
-                    <div className="border border-gray-300 rounded-lg mb-4">
-                        <button
-                            onClick={() => setIsGuestInfoExpanded(!isGuestInfoExpanded)}
-                            className="w-full flex justify-between items-center p-4"
-                        >
-                            <span className="font-semibold">게스트 정보</span>
-                            {isGuestInfoExpanded ? (
-                                <ChevronUp className="w-5 h-5 text-gray-500"/>
-                            ) : (
-                                <ChevronDown className="w-5 h-5 text-gray-500"/>
-                            )}
-                        </button>
+                    {/* Guest Info */}
+                    <div className="bg-gray-50 rounded-lg p-2 ">
+                        <h4 className="font-semibold mb-2">게스트 정보</h4>
+                        <div className="flex items-start">
+                            <div className="flex-1">
+                                <h5 className=" flex items-center mt-2 text-sm text-gray-600">예약자 : {reservation.guest?.name || "게스트 정보"}</h5>
 
-                        {isGuestInfoExpanded && (
-                            <div className="p-4 pt-0 border-t border-gray-200 ">
-                                <div className="flex items-start">
-                                    <div className="flex-1">
-                                        <h4 className="font-semibold text-base mt-2">{reservation.guest?.name || "게스트 정보"}</h4>
-
-                                        {reservation.guest?.email && (
-                                            <div className="flex items-center mt-2 text-sm text-gray-600">
-                                                <span className="mr-2">이메일:</span>
-                                                <span>{reservation.guest.email}</span>
-                                            </div>
-                                        )}
-
-                                        {reservation.guest?.phone && (
-                                            <div className="flex items-center mt-1 text-sm text-gray-600">
-                                                <span className="mr-2">전화번호:</span>
-                                                <span>{reservation.guest.phone}</span>
-                                            </div>
-                                        )}
+                                {reservation.guest?.email && (
+                                    <div className="flex items-center mt-1 text-sm text-gray-600">
+                                        <span className="mr-2">이메일:</span>
+                                        <span>{reservation.guest.email}</span>
                                     </div>
+                                )}
 
-                                    <button
-                                        onClick={() => {/* Handle message */
-                                        }}
-                                        className="px-3 py-2 border border-roomi-0 text-roomi rounded-lg flex items-center mt-4"
-                                    >
-                                        <MessageSquare className="w-4 h-4 mr-1"/>
-                                        메시지
-                                    </button>
-                                </div>
+                                {reservation.guest?.phone && (
+                                    <div className="flex items-center mt-1 text-sm text-gray-600">
+                                        <span className="mr-2">전화번호:</span>
+                                        <span>{reservation.guest.phone}</span>
+                                    </div>
+                                )}
                             </div>
-                        )}
+
+                            <button
+                                onClick={() => {/* Handle message */}}
+                                className="px-3 py-2 border border-roomi-0 text-roomi rounded-lg flex items-center"
+                            >
+                                <MessageSquare className="w-4 h-4 mr-1"/>
+                                메시지
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Policies Accordion */}
-                    <div className="border border-gray-300 rounded-lg mb-4">
-                        <button
-                            onClick={() => setIsPoliciesExpanded(!isPoliciesExpanded)}
-                            className="w-full flex justify-between items-center p-4"
-                        >
-                            <span className="font-semibold">이용 규칙 및 환불 정책</span>
-                            {isPoliciesExpanded ? (
-                                <ChevronUp className="w-5 h-5 text-gray-500"/>
-                            ) : (
-                                <ChevronDown className="w-5 h-5 text-gray-500"/>
-                            )}
-                        </button>
-
-                        {isPoliciesExpanded && (
-                            <div className="p-4 pt-0 border-t border-gray-200">
-                                <h4 className="font-semibold mb-2 mt-2">입실/퇴실</h4>
-                                <p className="text-sm text-gray-700 mb-4">
+                    {/* Policies */}
+                    <div className="bg-gray-50 rounded-lg p-2">
+                        <h4 className="font-semibold mb-2">이용 규칙 및 환불 정책</h4>
+                        <div className="px-2 space-y-2">
+                            <div>
+                                <h5 className="text-sm font-semibold mb-2">입실/퇴실</h5>
+                                <p className="text-sm text-gray-700">
                                     입실: {reservation.room?.check_in_time || '15:00'},
                                     퇴실: {reservation.room?.check_out_time || '11:00'}
                                 </p>
+                            </div>
 
-                                <h4 className="font-semibold mb-2">환불 정책</h4>
-                                <div className="text-sm text-gray-700 mb-4 whitespace-pre-line">
+                            <div>
+                                <h5 className="text-sm font-semibold mb-2">환불 정책</h5>
+                                <div className="text-sm text-gray-700 whitespace-pre-line">
                                     {reservation.room?.refund_policy
                                         ? reservation.room.refund_policy.replace(/\\n/g, '\n').split('\n').map((line, index) => (
                                             <div key={index}>{line}</div>
@@ -523,110 +459,112 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                                     }
                                 </div>
                             </div>
-                        )}
+                        </div>
                     </div>
                 </div>
+
                 {/* Checkout Request Info */}
-                <div className="px-6">
+                <div className="px-2">
                     {renderCheckoutRequestInfo()}
                 </div>
+
                 {/* Action Buttons */}
-                <div className="p-6">
+                <div className="p-2">
                     {renderActionButtons()}
                 </div>
             </div>
-                {showModal && (
-                    <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
-                        <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
 
-                            {isAlreadyRequested ? (
-                                // ✅ 모달 ①: 퇴실 요청 정보 확인용
-                                <>
-                                    <h3 className="text-lg font-bold text-blue-700 mb-3 flex items-center">
-                                        <LogOut className="w-5 h-5 mr-2" />
-                                        퇴실 요청 정보
-                                    </h3>
-                                    <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm space-y-2">
-                                        <div>요청 시간: {dayjs(reservation.checkout_requested_at).format('YYYY-MM-DD HH:mm')}</div>
-                                        <div>요청 금액: {reservation.symbol}{reservation.request_fee_refund_amount.toLocaleString()}</div>
-                                        {reservation.request_fee_refund_reason && (
-                                            <div>사유: {reservation.request_fee_refund_reason}</div>
-                                        )}
-                                        <div>
-                                            게스트 승인 여부:{" "}
-                                            {reservation.guest_accepted_fee
-                                                ? <span className="text-green-700 font-semibold">승인 완료</span>
-                                                : <span className="text-yellow-700 font-semibold">승인 대기 중</span>}
-                                        </div>
+            {showModal && (
+                <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
+                    <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+                        {isAlreadyRequested ? (
+                            // ✅ 모달 ①: 퇴실 요청 정보 확인용
+                            <>
+                                <h3 className="text-lg font-bold text-blue-700 mb-3 flex items-center">
+                                    <LogOut className="w-5 h-5 mr-2" />
+                                    퇴실 요청 정보
+                                </h3>
+                                <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm space-y-2">
+                                    <div>요청 시간: {dayjs(reservation.checkout_requested_at).format('YYYY-MM-DD HH:mm')}</div>
+                                    <div>요청 금액: {reservation.symbol}{reservation.request_fee_refund_amount.toLocaleString()}</div>
+                                    {reservation.request_fee_refund_reason && (
+                                        <div>사유: {reservation.request_fee_refund_reason}</div>
+                                    )}
+                                    <div>
+                                        게스트 승인 여부:{" "}
+                                        {reservation.guest_accepted_fee
+                                            ? <span className="text-green-700 font-semibold">승인 완료</span>
+                                            : <span className="text-yellow-700 font-semibold">승인 대기 중</span>}
                                     </div>
-                                    <div className="flex justify-end mt-6">
-                                        <button
-                                            onClick={() => setShowModal(false)}
-                                            className="px-4 py-2 text-gray-700 border rounded hover:bg-gray-100"
-                                        >
-                                            닫기
-                                        </button>
-                                    </div>
-                                </>
-                            ) : (
-                                // ✅ 모달 ②: 퇴실 요청 입력용
-                                <>
-                                    <h3 className="text-lg font-bold text-red-700 mb-3 flex items-center">
-                                        <LogOut className="w-5 h-5 mr-2" />
-                                        퇴실 요청 보내기
-                                    </h3>
+                                </div>
+                                <div className="flex justify-end mt-6">
+                                    <button
+                                        onClick={() => setShowModal(false)}
+                                        className="px-4 py-2 text-gray-700 border rounded hover:bg-gray-100"
+                                    >
+                                        닫기
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            // ✅ 모달 ②: 퇴실 요청 입력용
+                            <>
+                                <h3 className="text-lg font-bold text-red-700 mb-3 flex items-center">
+                                    <LogOut className="w-5 h-5 mr-2" />
+                                    퇴실 요청 보내기
+                                </h3>
 
-                                    <label className="block text-sm mb-1 text-gray-700">차감할 금액 (₩)</label>
-                                    <input
-                                        type="number"
-                                        className="w-full border rounded px-3 py-2 mb-4"
-                                        placeholder="예: 30000"
-                                        value={requestedAmount}
-                                        onChange={(e) => setRequestedAmount(Number(e.target.value))}
-                                    />
+                                <label className="block text-sm mb-1 text-gray-700">차감할 금액 (₩)</label>
+                                <input
+                                    type="number"
+                                    className="w-full border rounded px-3 py-2 mb-4"
+                                    placeholder="예: 30000"
+                                    value={requestedAmount}
+                                    onChange={(e) => setRequestedAmount(Number(e.target.value))}
+                                />
 
-                                    <label className="block text-sm mb-1 text-gray-700">차감 사유 (선택)</label>
-                                    <textarea
-                                        className="w-full border rounded px-3 py-2"
-                                        rows={3}
-                                        placeholder="예: 청소비, 파손 등"
-                                        value={refundReason}
-                                        onChange={(e) => setRefundReason(e.target.value)}
-                                    ></textarea>
+                                <label className="block text-sm mb-1 text-gray-700">차감 사유 (선택)</label>
+                                <textarea
+                                    className="w-full border rounded px-3 py-2"
+                                    rows={3}
+                                    placeholder="예: 청소비, 파손 등"
+                                    value={refundReason}
+                                    onChange={(e) => setRefundReason(e.target.value)}
+                                ></textarea>
 
-                                    <div className="flex justify-end gap-2 mt-6">
-                                        <button
-                                            onClick={() => setShowModal(false)}
-                                            className="px-4 py-2 text-gray-700 border rounded hover:bg-gray-100"
-                                        >
-                                            취소
-                                        </button>
-                                        <button
-                                            onClick={async () => {
-                                                if (requestedAmount <= 0) {
-                                                    alert('차감 금액을 입력해주세요.');
-                                                    return;
-                                                }
+                                <div className="flex justify-end gap-2 mt-6">
+                                    <button
+                                        onClick={() => setShowModal(false)}
+                                        className="px-4 py-2 text-gray-700 border rounded hover:bg-gray-100"
+                                    >
+                                        취소
+                                    </button>
+                                    <button
+                                        onClick={async () => {
+                                            if (requestedAmount <= 0) {
+                                                alert('차감 금액을 입력해주세요.');
+                                                return;
+                                            }
 
-                                                try {
-                                                    await requestPartialRefundFee(reservation.id, requestedAmount, refundReason);
-                                                    setShowModal(false);
-                                                    window.location.reload(); // ✅ 요청 완료 후 새로고침
-                                                } catch (e) {
-                                                    console.error(e);
-                                                    alert('요청 중 오류가 발생했습니다.');
-                                                }
-                                            }}
-                                            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                                        >
-                                            요청 보내기
-                                        </button>
-                                    </div>
-                                </>
-                            )}
-                        </div>
+                                            try {
+                                                await requestPartialRefundFee(reservation.id, requestedAmount, refundReason);
+                                                setShowModal(false);
+                                                window.location.reload(); // ✅ 요청 완료 후 새로고침
+                                            } catch (e) {
+                                                console.error(e);
+                                                alert('요청 중 오류가 발생했습니다.');
+                                            }
+                                        }}
+                                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                                    >
+                                        요청 보내기
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
-                )}
+                </div>
+            )}
         </>
     );
 };

@@ -20,6 +20,7 @@ const Footer: React.FC = () => {
                     </div>
                     <div className="text-xs text-gray-400 mt-3 leading-[20px]">
                         루미(Roomi)는 모든 거래에 대한 책임과 배송, 교환, 환불 민원 등의 처리를 (주) 룸메이트에서 진행합니다.
+                        <br/>통신판매업 신고번호: 제 2025-서울마포-1699 호
                         <br/>자세한 문의는 e-mail: help@roomi.co.kr, 유선: 02-303-1455 로 가능합니다.
                     </div>
                     <div className="text-xs text-gray-400 mt-3 leading-[20px]">
