@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {BrowserRouter as Router, Routes, Route, useLocation} from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Footer from "./components/footer/Footer";
 import Header from "./components/header/Header";
@@ -20,9 +20,8 @@ import ProtectedHostRoute from "./api/ProtectedHostRoute";
 import ProtectedGuestRoute from "./api/ProtectedGuestRoute";
 import KakaoLoginCallback from "./components/util/KakaoLoginCallback";
 import SocialJoinScreen from "./components/screens/SocialJoinScreen";
-import {useHeaderStore, useHeaderVisibility} from "./components/stores/HeaderStore";
+import {useHeaderVisibility} from "./components/stores/HeaderStore";
 import {useHostHeaderBtnVisibility} from "./components/stores/HostHeaderBtnStore";
-import BottomNavigator from "./components/navigator/BottomNavigator";
 import MyRoomUpdate from "./components/hostMenu/myRooms/MyRoomUpdate";
 import LoginPage from "./components/screens/link/LoginPage";
 import LineLoginCallback from "./components/util/LineLoginCallback";
@@ -32,6 +31,7 @@ import MainMap from "./components/screens/MainMap";
 import HeaderOneLine from "./components/header/HeaderOneLine";
 import PayMobileRedirect from "./components/pay/PayMobileRedirect";
 import {useMapVisibility} from "./components/stores/MapStore";
+import CertificationRedirect from "./components/modals/CertificationRedirect";
 
 const queryClient = new QueryClient();
 
@@ -106,6 +106,7 @@ function AppContent() {
                             <Route path="/detail/:roomId/:locale/reservation/payment" element={<GuestReservationScreen/>}/>
                             <Route path="/hostAgree" element={<HostModeAgreeScreen/>}/>
                             <Route path="/payMobile/redirect" element={<PayMobileRedirect/>}/>
+                            <Route path="/certification/redirect" element={<CertificationRedirect/>}/>
                         </Route>
                     </Route>
                     {/* hostMode === false 일 때 /host/* 페이지 차단 */}

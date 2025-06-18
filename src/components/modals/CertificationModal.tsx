@@ -11,7 +11,7 @@ declare global {
     }
 }
 
-export default function RoomDetailCertificationModal({visible, onClose, isKorean, onCertificationComplete}: {
+export default function CertificationModal({visible, onClose, isKorean, onCertificationComplete}: {
     visible: boolean,
     onClose: () => void,
     isKorean: boolean,
@@ -94,7 +94,7 @@ export default function RoomDetailCertificationModal({visible, onClose, isKorean
             // carrier: '',  // 사용자 선택
             // name: '',     // 사용자 입력
             // phone: '',    // 사용자 입력
-            // m_redirect_url: window.location.origin + '/verification-result', // 모바일 리다이렉트 URL
+            m_redirect_url: window.location.origin + '/certification/redirect', // 모바일 리다이렉트 URL
         }, (rsp: any) => {
             console.log('📱 본인인증 결과:', rsp);
 

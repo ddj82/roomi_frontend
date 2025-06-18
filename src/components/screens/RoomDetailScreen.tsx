@@ -54,7 +54,7 @@ import i18n from "i18next";
 import utc from 'dayjs/plugin/utc';
 import isBetween from 'dayjs/plugin/isBetween';
 import {faBell, faCopy} from "@fortawesome/free-regular-svg-icons";
-import RoomDetailCertificationModal from "../modals/RoomDetailCertificationModal";
+import CertificationModal from "../modals/CertificationModal";
 import ImagePreviewModal from "./ImagePreviewModal";
 
 dayjs.extend(utc);
@@ -528,7 +528,7 @@ export default function RoomDetailScreen() {
             )}
             {/*인증 모달 컴포넌트 (조건부 렌더링)*/}
             {certificationModal && (
-                <RoomDetailCertificationModal
+                <CertificationModal
                     visible={certificationModal}
                     onClose={() => setCertificationModal(false)}
                     isKorean={userIsKorean}

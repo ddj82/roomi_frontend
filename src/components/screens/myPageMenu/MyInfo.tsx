@@ -3,7 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {useIsHostStore} from '../../stores/IsHostStore';
 import {User} from '../../../types/user';
 import dayjs from 'dayjs';
-import RoomDetailCertificationModal from "../../modals/RoomDetailCertificationModal";
+import CertificationModal from "../../modals/CertificationModal";
 import {uploadIdentification} from "../../../api/api";
 
 interface MyInfoEditProps {
@@ -58,7 +58,7 @@ export default function MyInfo({user}: MyInfoEditProps) {
         <div>
             {/*인증 모달 컴포넌트 (조건부 렌더링)*/}
             {certificationModal && (
-                <RoomDetailCertificationModal
+                <CertificationModal
                     visible={certificationModal}
                     onClose={() => setCertificationModal(false)}
                     isKorean={userIsKorean}
