@@ -18,6 +18,7 @@ const ALLOWED_PREFIXES = [
     "/join",
     "/reservation",
     "/certification/redirect",
+    "/payMobile/redirect",
 ];
 
 // 허용할 경로 키워드
