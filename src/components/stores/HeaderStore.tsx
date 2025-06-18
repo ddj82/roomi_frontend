@@ -17,13 +17,14 @@ const ALLOWED_PREFIXES = [
     "/host",
     "/join",
     "/reservation",
+    "/certification/redirect",
 ];
 
 // 허용할 경로 키워드
-const ALLOWED_KEYWORDS = ["reservation", "detail"];
+const ALLOWED_KEYWORDS = ["reservation", "detail",];
 
 // 차단할 경로 키워드
-const BLOCKED_KEYWORDS = ["myPage"];
+const BLOCKED_KEYWORDS = ["myPage",];
 
 export const useHeaderStore = create<HeaderState>((set) => ({
     headerVisible: true,
