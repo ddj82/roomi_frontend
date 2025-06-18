@@ -8,14 +8,16 @@ const FailPage = ({res, modalClose}: { res: PaymentFailedResponse; modalClose: (
 
     useEffect(() => {
         redirectToApp();
+        console.log('res',res);
     }, []);
 
     const redirectToApp = () => {
         const detailsElement = document.getElementById("payment-details");
+        console.log('detailsElement',detailsElement);
         if (detailsElement && res) {
             detailsElement.innerHTML = `
                 ${res.failure ?
-                `<p class="flex"><span>${res.failure.reason}</span></p>` : ""}
+                `<p class="flex"><span>${res.failure.pgMessage}</span></p>` : ""}
               `;
         }
     };

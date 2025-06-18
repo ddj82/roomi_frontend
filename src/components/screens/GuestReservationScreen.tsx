@@ -282,7 +282,7 @@ export default function GuestReservationScreen() {
                 totalAmount: 1000,
                 currency: "CURRENCY_KRW",
                 payMethod: "CARD",
-                redirectUrl: window.location.origin + "/payMobile/redirect",
+                redirectUrl: window.location.origin + "/payMobile/redirect" + `?${bookData.reservation.id.toString()}`,
                 customer: {
                     customerId: formDataState.phone, // 변경해야함
                     fullName: formDataState.name,
