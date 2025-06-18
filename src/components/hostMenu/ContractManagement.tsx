@@ -4,6 +4,7 @@ import {hostAcceptReservation, hostRejectReservation, myContractList, myRoomList
 import { ReservationHistory, RoomData } from "../../types/rooms";
 import { Search, ChevronDown, X } from 'lucide-react';
 import ReservationDetail from './ContractDetail';
+import dayjs from "dayjs";
 
 const ContractManagement = () => {
     const { t } = useTranslation();
@@ -334,7 +335,7 @@ const ContractManagement = () => {
                                             <div
                                                 className={`px-4 py-3 cursor-pointer transition-colors
                         ${activeTab === "current"
-                                                    ? 'bg-blue-50 text-blue-700 font-medium'
+                                                    ? 'bg-roomi-0 text-roomi font-medium'
                                                     : 'hover:bg-gray-50 text-gray-700'
                                                 }`}
                                                 onClick={() => {
@@ -348,7 +349,7 @@ const ContractManagement = () => {
                                             <div
                                                 className={`px-4 py-3 cursor-pointer transition-colors
                         ${activeTab === "past"
-                                                    ? 'bg-blue-50 text-blue-700 font-medium'
+                                                    ? 'bg-roomi-0 text-roomi font-medium'
                                                     : 'hover:bg-gray-50 text-gray-700'
                                                 }`}
                                                 onClick={() => {
@@ -369,7 +370,7 @@ const ContractManagement = () => {
                                         type="button"
                                         className="w-full flex items-center justify-between px-4 py-3 text-sm
                 bg-white border border-gray-100 rounded-2xl transition shadow-sm hover:bg-gray-50
-                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                focus:outline-none focus:ring-2 focus:ring-roomi focus:border-transparent"
                                         onClick={() => setIsRoomDropdownOpen(!isRoomDropdownOpen)}
                                         aria-haspopup="true"
                                         aria-expanded={isRoomDropdownOpen}
@@ -393,7 +394,7 @@ const ContractManagement = () => {
                                             <div
                                                 className={`px-4 py-3 cursor-pointer transition-colors
                         ${!selectedRoomId
-                                                    ? 'bg-blue-50 text-blue-700 font-medium'
+                                                    ? 'bg-roomi-0 text-roomi font-medium'
                                                     : 'hover:bg-gray-50 text-gray-700'
                                                 }`}
                                                 onClick={() => {
@@ -409,7 +410,7 @@ const ContractManagement = () => {
                                                     key={room.id}
                                                     className={`px-4 py-3 cursor-pointer transition-colors
                             ${selectedRoomId === room.id
-                                                        ? 'bg-blue-50 text-blue-700 font-medium'
+                                                        ? 'bg-roomi-1 text-roomi font-medium'
                                                         : 'hover:bg-gray-50 text-gray-700'
                                                     }`}
                                                     onClick={() => {
@@ -474,10 +475,32 @@ const ContractManagement = () => {
                 )}
 
                 {selectedReservation && (
-                    <button type="button" onClick={() => setSelectedReservation(null)}
-                            className="py-2 px-4 text-sm rounded font-bold">
-                        {t('목록 보기')}
-                    </button>
+                    <div className="flex items-center justify-between w-full">
+                        {/* ← 뒤로가기 버튼 */}
+                        <button
+                            onClick={() => setSelectedReservation(null)}
+                            className="flex items-center gap-1 text-sm text-gray-700 font-medium"
+                        >
+                            <svg
+                                className="w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                            </svg>
+                            <span className="hidden sm:inline">뒤로가기</span>
+                        </button>
+
+                        {/* 가운데 "예약 상세정보" 텍스트 */}
+                        <h2 className="text-xl text-center flex-1 -ml-5 sm:ml-0">
+                            예약 상세정보
+                        </h2>
+
+                        {/* 오른쪽 비움 (중앙정렬 위해 공간 확보) */}
+                        <div className="w-5 sm:w-20" />
+                    </div>
                 )}
             </div>
 
@@ -587,19 +610,21 @@ const ContractManagement = () => {
                                                 </div>
 
                                                 {/* 방 내용 */}
-                                                <div className="ml-3 flex-1">
-                                                    <h3 className="font-medium text-base">
+                                                <div className="ml-3 flex-1 px-2">
+                                                    <h3 className=" text-sm">
                                                         {reservation.room?.title || "Unnamed Room"}
                                                     </h3>
+                                                    {/*<p className="text-xs text-gray-600 mt-1">*/}
+                                                    {/*    {reservation.room?.address || "No address provided"} , {reservation.room?.address_detail || "No address provided"}*/}
+                                                    {/*</p>*/}
                                                     <p className="text-xs text-gray-600 mt-1">
-                                                        {reservation.room?.address || "No address provided"}<br/>
-                                                        {reservation.room?.address_detail || "No address provided"}
+                                                      예약자   : {reservation.guest?.name || "No address provided"}
                                                     </p>
-                                                    <p className="text-xs text-gray-600 mt-1">
-                                                        {reservation.guest?.name || "No address provided"}
+                                                    <p className="text-xs text-gray-600 ">
+                                                        {`예약일   : ${reservation.created_at ? dayjs(reservation.created_at).format('YYYY-MM-DD') : 'No date provided'}`}
                                                     </p>
-                                                    <p className="text-sm font-bold mt-1">
-                                                        {reservation.symbol}{formatPrice(reservation.price + reservation.deposit + reservation.maintenance_fee)}
+                                                    <p className="text-sm font-medium mt-1 mb-3">
+                                                    {reservation.symbol}{formatPrice(reservation.price + reservation.deposit + reservation.maintenance_fee)}
                                                     </p>
                                                 </div>
                                             </div>
@@ -620,10 +645,10 @@ const ContractManagement = () => {
                                             </div>
 
                                             {/* Content */}
-                                            <div className="flex-1 p-4 flex flex-col justify-between">
+                                            <div className="flex-1 p-4 m-2 flex flex-col justify-between">
                                                 <div>
-                                                    <div className="flex justify-between items-start">
-                                                        <h3 className="font-medium text-base">
+                                                    <div className="flex justify-between items-start mb-1">
+                                                        <h3 className="text-base">
                                                             {reservation.room?.title || "Unnamed Room"}
                                                         </h3>
                                                         <span className="text-sm text-gray-500">
@@ -633,36 +658,35 @@ const ContractManagement = () => {
                                                         )}
                                                     </span>
                                                     </div>
-                                                    <p className="text-sm text-gray-600 mt-1">
-                                                        {reservation.room?.address || "No address provided"}<br/>
-                                                        {reservation.room?.address_detail || "No address provided"}
+                                                    <p className="text-xs text-gray-600 mb-1">
+                                                        예약자 : {reservation.guest?.name || "No address provided"}
                                                     </p>
-                                                    <p className="text-xs text-gray-600 mt-2">
-                                                        {reservation.guest?.name || "No address provided"}
+                                                    <p className="text-xs text-gray-600 ">
+                                                        {`예약일   : ${reservation.created_at ? dayjs(reservation.created_at).format('YYYY-MM-DD') : 'No date provided'}`}
                                                     </p>
-                                                    <div className="flex justify-between items-center mt-1">
-                                                        <p className="text-sm text-gray-800">
-                                                            총
+                                                    <div className="flex justify-between items-center mt-1 ">
+                                                        <p className="font-base text-sm text-gray-800">
+                                                        총
                                                             금액: {reservation.symbol}{formatPrice(reservation.price + reservation.deposit + reservation.maintenance_fee)}
                                                         </p>
                                                         <span
                                                             className={`text-xs px-2 py-1 rounded text-white ${
                                                                 reservation.status === 'PENDING'
-                                                                    ? 'bg-yellow-700'
+                                                                    ? 'bg-[#4e4e4e]'
                                                                     : reservation.status === 'CONFIRMED'
                                                                         ? reservation.payment_status === 'UNPAID'
-                                                                            ? 'bg-roomi'
+                                                                            ? 'bg-[#999999]'
                                                                             : reservation.payment_status === 'PAID'
-                                                                                ? 'bg-blue-700'
-                                                                                : 'bg-blue-700'
+                                                                                ? 'bg-roomi'
+                                                                                : 'bg-roomi'
                                                                         : reservation.status === 'COMPLETED'
-                                                                            ? 'bg-green-700'
+                                                                            ? 'bg-[#999999]'
                                                                             : reservation.status === 'CANCELLED'
-                                                                                ? 'bg-gray-700'
+                                                                                ? 'bg-[#999999]'
                                                                                 : reservation.status === 'IN_USE'
-                                                                                    ? 'bg-gray-700'
+                                                                                    ? 'bg-[#67b988]'
                                                                                     : reservation.status === 'CHECKED_OUT'
-                                                                                        ? 'bg-gray-700'
+                                                                                        ? 'bg-[#999999]'
                                                                                         : reservation.status === 'REJECTED'
                                                                                             ? 'bg-red-700'
                                                                                             : 'bg-black'
@@ -671,20 +695,20 @@ const ContractManagement = () => {
                                                         {
                                                             reservation.status === 'CONFIRMED'
                                                                 ? reservation.payment_status === 'UNPAID'
-                                                                    ? '결제대기'
+                                                                    ? '결제 대기'
                                                                     : reservation.payment_status === 'PAID'
-                                                                        ? '결제완료'
-                                                                        : '이용중'
+                                                                        ? '예약 완료'
+                                                                        : '예약 완료'
                                                                 : reservation.status === 'COMPLETED'
                                                                     ? '이용 완료'
                                                                     : reservation.status === 'CANCELLED'
                                                                         ? '예약 취소'
                                                                         : reservation.status === 'IN_USE'
-                                                                            ? '이용중'
+                                                                            ? ' 이용중 '
                                                                             : reservation.status === 'CHECKED_OUT'
                                                                                 ? '퇴실 완료'
                                                                                 : reservation.status === 'PENDING'
-                                                                                    ? '승인 대기중'
+                                                                                    ? '승인 대기'
                                                                                     : reservation.status === 'REJECTED'
                                                                                         ? '거절됨'
                                                                                         : '상태 미정'
