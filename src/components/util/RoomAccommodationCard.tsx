@@ -15,9 +15,7 @@ const RoomAccommodationCard = memo(
         return (
             <div className="bg-transparent border-none shadow-none cursor-pointer" onClick={onClick}>
                 <div className="relative mb-2">
-                    <div className="absolute top-0 right-0 z-10">
-                        <WishListButton roomId={item.id} isFavorite={item.is_favorite}/>
-                    </div>
+                    <WishListButton roomId={item.id} isFavorite={item.is_favorite}/>
                     {item.detail_urls && item.detail_urls.length > 0 ? (
                         <ImgCarousel
                             images={item.detail_urls}

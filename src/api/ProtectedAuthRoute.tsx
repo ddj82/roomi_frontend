@@ -5,7 +5,7 @@ const ProtectedAuthRoute = () => {
     if (isAuthenticated) {
         return <Outlet />;
     } else {
-        alert('로그인 후 이용 가능합니다.');
+        // alert('로그인 후 이용 가능합니다.');
         return <Navigate to="/" replace />;
     }
 };

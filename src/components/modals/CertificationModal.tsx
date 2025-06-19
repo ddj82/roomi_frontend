@@ -11,12 +11,12 @@ declare global {
     }
 }
 
-export default function CertificationModal({visible, onClose, isKorean, onCertificationComplete}: {
+export default function CertificationModal({visible, onClose, isKorean, onCertificationComplete}: Readonly<{
     visible: boolean,
     onClose: () => void,
     isKorean: boolean,
     onCertificationComplete: (isSuccess: boolean, imp_uid: string) => void;
-}) {
+}>) {
     const [isMetaMapLoaded, setIsMetaMapLoaded] = useState(false);
     const [metaMapLoading, setMetaMapLoading] = useState(false);
     const {t} = useTranslation();

@@ -15,6 +15,10 @@
     outline: none;
 }
 
-.modal-animation {
+.modal-animation-forwards {
     animation: modal-fade-in 0.3s ease-out forwards;
+}
+
+.modal-animation-ease-in {
+    animation: modal-fade-in 0.3s ease-in forwards;
 }

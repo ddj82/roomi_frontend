@@ -497,7 +497,8 @@ const UserJoinScreen = () => {
                                         href={
                                             item.label.includes('개인정보') ? 'https://roomi.co.kr/api/policies/privacy-policy' :
                                                 item.label.includes('약관') ? 'https://roomi.co.kr/api/policies/terms-of-use' :
-                                                    item.label.includes('마케팅') ? 'https://roomi.co.kr/api/policies/marketing-policy' : '#'
+                                                    item.label.includes('마케팅') ? 'https://roomi.co.kr/api/policies/marketing-policy' :
+                                                        '#'
                                         }
                                         target="_blank"
                                         rel="noopener noreferrer"

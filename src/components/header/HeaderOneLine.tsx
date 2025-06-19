@@ -21,7 +21,7 @@ import {useHeaderBtnVisibility} from "../stores/HeaderBtnStore";
 import {useHostHeaderBtnVisibility} from "../stores/HostHeaderBtnStore";
 import HostHeader from "./HostHeader";
 import {useMapVisibility} from "../stores/MapStore";
-import CommonModal from "../modals/CommonModal";
+import CommonModal from "../util/CommonModal";
 
 type LocationOption = {
     name: string;
@@ -52,7 +52,7 @@ export default function HeaderOneLine() {
     const [activeCard, setActiveCard] = useState<ActiveCardType>('location');
 
     // 헤더 메인 번역기능
-    const [userLanguageSetModal, setUserLanguageSetModal] = useState(false);
+    const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
     const [languageSetModal, setLanguageSetModal] = useState(false);
 
     const handleLogo = () => {
@@ -97,14 +97,12 @@ export default function HeaderOneLine() {
 
     // 헤더 메인 번역기능
     const handleLanguageSet = () => {
-        console.log('헤더 번역 버튼');
         if (authToken) {
             // 로그인 상태
-            setUserLanguageSetModal(true);
-        } else {
-            // 비로그인 상태
-            setLanguageSetModal(true);
+            setIsUserLoggedIn(true);
         }
+
+        setLanguageSetModal(true);
     };
 
     // 검색 모달
@@ -257,28 +255,13 @@ export default function HeaderOneLine() {
             )}
 
             {/* 헤더 번역 모달 */}
-
-            {/* 회원 */}
-            {userLanguageSetModal && (
-                <CommonModal
-                    isOpen={userLanguageSetModal}
-                    onRequestClose={() => setUserLanguageSetModal(false)}
-                    title="언어 설정"
-                    contentClassName="md:mx-32"
-                >
-                    <LanguageSet/>
-                </CommonModal>
-            )}
-
-            {/* 비회원 */}
             {languageSetModal && (
                 <CommonModal
                     isOpen={languageSetModal}
                     onRequestClose={() => setLanguageSetModal(false)}
                     title="언어 설정"
-                    contentClassName="md:mx-32"
                 >
-                    <LanguageSet headerMode={true}/>
+                    <LanguageSet userLoggedIn={isUserLoggedIn}/>
                 </CommonModal>
             )}
 

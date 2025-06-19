@@ -9,7 +9,7 @@ import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {handleLogin, SocialLogin} from "../util/authUtils";
 import {validateUser} from "../../api/api";
-import CommonModal from "./CommonModal";
+import CommonModal from "../util/CommonModal";
 
 const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () => void; type: 'login' | 'signup' }) => {
     const [email, setEmail] = useState('');
@@ -183,7 +183,6 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
             // className="authModal auth-modal-container"
             // overlayClassName="authModal overlay" // 오버레이 스타일
             title="로그인"
-            contentClassName="md:w-1/2 md:m-auto"
         >
             <div className="authModal modal-content">
                 {/*<div className="text-lg font-bold mb-4">{t('로그인').toUpperCase()}</div>*/}

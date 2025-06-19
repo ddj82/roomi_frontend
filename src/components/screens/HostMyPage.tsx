@@ -15,6 +15,7 @@ import HelpCenter from "./myPageMenu/HelpCenter";
 import MyInfoEdit from "./myPageMenu/MyInfoEdit";
 import HostFAQ from "./myPageMenu/HostFAQ";
 import {ArrowLeft, LogOut, X} from "lucide-react";
+import CommonAlert from "../util/CommonAlert";
 
 export default function HostMyPage() {
     const {t} = useTranslation();
@@ -26,6 +27,13 @@ export default function HostMyPage() {
     const [loading, setLoading] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const [profileImg, setProfileImg] = useState('');
+
+    // 공용 얼럿창 상태
+    const [alertOpen, setAlertOpen] = useState(false);
+    const handleConfirm = (result: boolean) => {
+        setAlertOpen(false);
+        if (result) handleLogout();
+    };
 
     useEffect(() => {
         const img = localStorage.getItem('userProfileImg');
@@ -45,8 +53,8 @@ export default function HostMyPage() {
     }, [selectedMenu]);
 
     const handleLogout = async () => {
-        const confirmCancel = window.confirm(t('로그아웃 하시겠습니까?'));
-        if (!confirmCancel) return;
+        // const confirmCancel = window.confirm(t('로그아웃 하시겠습니까?'));
+        // if (!confirmCancel) return;
         try {
             const response = await logout();
             console.log(response);
@@ -214,8 +222,10 @@ export default function HostMyPage() {
                                 {t("내 정보")}
                             </button>
                             <button
+                                type="button"
                                 className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors text-sm flex items-center"
-                                onClick={handleLogout}>
+                                onClick={() => setAlertOpen(true)}
+                            >
                                 <FontAwesomeIcon icon={faSignOutAlt} className="w-4 h-4 mr-3 text-gray-500"/>
                                 {t("로그아웃")}
                             </button>
@@ -242,7 +252,8 @@ export default function HostMyPage() {
                         </button>
                         <h1 className="text-lg font-semibold text-gray-900">{t('마이 루미')}</h1>
                         <button
-                            onClick={handleLogout}
+                            type="button"
+                            onClick={() => setAlertOpen(true)}
                             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                         >
                             <LogOut className="w-6 h-6 text-red-500"/>
@@ -437,6 +448,17 @@ export default function HostMyPage() {
                         {renderMenuContent()}
                     </div>
                 </div>
+            )}
+
+            {/* 로그아웃 얼럿 */}
+            {alertOpen && (
+                <CommonAlert
+                    isOpen={alertOpen}
+                    onRequestClose={() => setAlertOpen(false)}
+                    confirm={true}
+                    content="로그아웃 하시겠습니까?"
+                    confirmResponse={handleConfirm}
+                />
             )}
         </div>
     );

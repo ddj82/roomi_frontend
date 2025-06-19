@@ -1,10 +1,7 @@
-import React, { useState, useEffect, memo, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import 'src/css/HomeScreen.css';
 import { RoomData } from "src/types/rooms";
-import WishListButton from "src/components/util/WishListButton";
 import i18n from "src/i18n";
-import ImgCarousel from "src/components/util/ImgCarousel";
-import {useTranslation} from "react-i18next";
 import GoogleMap from "../map/GoogleMap";
 import RoomAccommodationCard from "../util/RoomAccommodationCard";
 

@@ -6,6 +6,7 @@ import { logout } from "../../api/api";
 import { SocialAuth } from "../util/SocialAuth";
 import { useChatStore } from "../stores/ChatStore";
 import {useIsHostStore} from "../stores/IsHostStore";
+import CommonAlert from "../util/CommonAlert";
 
 const MobileHostHeader: React.FC = () => {
     const { t } = useTranslation();
@@ -16,6 +17,13 @@ const MobileHostHeader: React.FC = () => {
     const dropdownRef = useRef<HTMLDivElement>(null);
     const {hostMode, setHostMode, resetUserMode} = useHostModeStore();
     const {isHost} = useIsHostStore();
+
+    // 공용 얼럿창 상태
+    const [alertOpen, setAlertOpen] = useState(false);
+    const handleConfirm = (result: boolean) => {
+        setAlertOpen(false);
+        if (result) handleLogout();
+    };
 
     const handleLogo = () => {
         window.location.href = '/';
@@ -37,8 +45,8 @@ const MobileHostHeader: React.FC = () => {
     };
 
     const handleLogout = async () => {
-        const confirmCancel = window.confirm(t('로그아웃 하시겠습니까?'));
-        if (!confirmCancel) return;
+        // const confirmCancel = window.confirm(t('로그아웃 하시겠습니까?'));
+        // if (!confirmCancel) return;
         try {
             if (localStorage.getItem('authMode') && localStorage.getItem('authMode') === 'kakao') {
                 const response = await SocialAuth.kakaoLogout();
@@ -141,8 +149,11 @@ const MobileHostHeader: React.FC = () => {
                                         </li>
                                     </ul>
                                     <div className="py-2">
-                                        <button onClick={handleLogout}
-                                                className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/70">
+                                        <button
+                                            type="button"
+                                            onClick={() => setAlertOpen(true)}
+                                            className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/70"
+                                        >
                                             {t('로그아웃')}
                                         </button>
                                     </div>
@@ -152,6 +163,17 @@ const MobileHostHeader: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {/* 로그아웃 얼럿 */}
+            {alertOpen && (
+                <CommonAlert
+                    isOpen={alertOpen}
+                    onRequestClose={() => setAlertOpen(false)}
+                    confirm={true}
+                    content="로그아웃 하시겠습니까?"
+                    confirmResponse={handleConfirm}
+                />
+            )}
 
             {/* 헤더 높이만큼 여백 - 항상 유지 */}
             <div className="h-14"></div>

@@ -32,7 +32,6 @@ import HeaderOneLine from "./components/header/HeaderOneLine";
 import PayMobileRedirect from "./components/pay/PayMobileRedirect";
 import {useMapVisibility} from "./components/stores/MapStore";
 import CertificationModalRedirect from "./components/modals/CertificationModalRedirect";
-import Test from "./components/modals/Test";
 
 const queryClient = new QueryClient();
 
@@ -91,7 +90,6 @@ function AppContent() {
                 <Routes>
                     {/* hostMode === true 일 때 이 부분 전부 차단됨 */}
                     <Route element={<ProtectedGuestRoute />}>
-                        <Route path="/t" element={<Test/>}/>
                         <Route path="/" element={<Main/>}/>
                         <Route path="/join" element={<UserJoinScreen/>}/>
                         <Route path="/detail/:roomId/:locale" element={<RoomDetailScreen/>}/>

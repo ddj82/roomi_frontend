@@ -56,6 +56,7 @@ import isBetween from 'dayjs/plugin/isBetween';
 import {faBell, faCopy} from "@fortawesome/free-regular-svg-icons";
 import CertificationModal from "../modals/CertificationModal";
 import ImagePreviewModal from "./ImagePreviewModal";
+import CommonAlert from "../util/CommonAlert";
 
 dayjs.extend(utc);
 dayjs.extend(isBetween);
@@ -93,6 +94,13 @@ export default function RoomDetailScreen() {
     //사진 미리보기
     const [imageModalOpen, setImageModalOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // 공용 얼럿창 상태
+    const [alertOpen, setAlertOpen] = useState(false);
+    const handleConfirm = (result: boolean) => {
+        setAlertOpen(false);
+        if (result) setAuthModalOpen(true);
+    };
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -361,8 +369,9 @@ export default function RoomDetailScreen() {
         // 로그인 여부 확인
         const isAuthenticated = !!localStorage.getItem("authToken");
         if (!isAuthenticated) {
-            alert('로그인 후 이용 가능합니다.');
-            setAuthModalOpen(true);
+            // alert('로그인 후 이용 가능합니다.');
+            // setAuthModalOpen(true);
+            setAlertOpen(true);
             return;
         }
 
@@ -463,8 +472,9 @@ export default function RoomDetailScreen() {
     const createChatRoom = () => {
         const isAuthenticated = !!localStorage.getItem("authToken"); // 로그인 여부 확인
         if (!isAuthenticated) {
-            alert('로그인 후 이용 가능합니다.');
-            setAuthModalOpen(true);
+            // alert('로그인 후 이용 가능합니다.');
+            // setAuthModalOpen(true);
+            setAlertOpen(true);
             return;
         }
 
@@ -1180,16 +1190,26 @@ export default function RoomDetailScreen() {
                 </div>
             )}
             {room?.detail_urls && (
-                    <ImagePreviewModal
-                        images={room.detail_urls}
-                        currentIndex={currentImageIndex}
-                        isOpen={imageModalOpen}
-                        onClose={() => setImageModalOpen(false)}
-                        onPrevious={handlePreviousImage}
-                        onNext={handleNextImage}
-                    />
-                )}
+                <ImagePreviewModal
+                    images={room.detail_urls}
+                    currentIndex={currentImageIndex}
+                    isOpen={imageModalOpen}
+                    onClose={() => setImageModalOpen(false)}
+                    onPrevious={handlePreviousImage}
+                    onNext={handleNextImage}
+                />
+            )}
 
-            </div>
+            {alertOpen && (
+                <CommonAlert
+                    isOpen={alertOpen}
+                    onRequestClose={() => setAlertOpen(false)}
+                    content="로그인 후 이용 가능합니다."
+                    confirm={true}
+                    confirmResponse={handleConfirm}
+                />
+            )}
+
+        </div>
     );
 }
