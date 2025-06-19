@@ -9,6 +9,7 @@ import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {handleLogin, SocialLogin} from "../util/authUtils";
 import {validateUser} from "../../api/api";
+import CommonModal from "./CommonModal";
 
 const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () => void; type: 'login' | 'signup' }) => {
     const [email, setEmail] = useState('');
@@ -175,15 +176,17 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
         : platforms.filter(p => ['Kakao', 'Google', 'Line'].includes(p)); // Apple 제외
 
     return (
-        <Modal
+        <CommonModal
             isOpen={visible}
             onRequestClose={onClose}
-            contentLabel="Authentication Modal"
-            className="authModal auth-modal-container"
-            overlayClassName="authModal overlay" // 오버레이 스타일
+            // contentLabel="Authentication Modal"
+            // className="authModal auth-modal-container"
+            // overlayClassName="authModal overlay" // 오버레이 스타일
+            title="로그인"
+            contentClassName="md:w-1/2 md:m-auto"
         >
             <div className="authModal modal-content">
-                <div className="text-lg font-bold mb-4">{t('로그인').toUpperCase()}</div>
+                {/*<div className="text-lg font-bold mb-4">{t('로그인').toUpperCase()}</div>*/}
                 <form onSubmit={handleSubmit} className="authModal input-container">
                     <div className="authModal input-container">
                         <input
@@ -237,7 +240,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
                     </div>
                 )}
             </div>
-        </Modal>
+        </CommonModal>
     );
 };
 

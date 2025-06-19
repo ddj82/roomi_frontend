@@ -14,3 +14,7 @@
 .modal-container:focus {
     outline: none;
 }
+
+.modal-animation {
+    animation: modal-fade-in 0.3s ease-out forwards;
+}

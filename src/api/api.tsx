@@ -125,7 +125,7 @@ export const channelLogin = async (channel_uid: string, channel: string, setAuth
             'channel': channel,
         });
         const token = response.headers.get('Authorization'); // 응답에서 토큰 추출
-        console.log('토큰:', token);
+        // console.log('토큰:', token); 토큰 로그
         if (token) {
             localStorage.setItem('authToken', token); // 토큰 저장
             setAuthToken(token); // 전역 상태 업데이트
@@ -136,7 +136,7 @@ export const channelLogin = async (channel_uid: string, channel: string, setAuth
         const data = await response.json();
 
         if (data.success) {
-            console.log('사용자 정보:', data.data);
+            // console.log('사용자 정보:', data.data); 사용자 정보 로그
             localStorage.setItem('userId', data.data.id);
             localStorage.setItem('userEmail', data.data.email);
             localStorage.setItem('userName', data.data.name);

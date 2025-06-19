@@ -8,6 +8,7 @@ import {mainPopularRegion} from "../../types/MainSlideList";
 import MainSlides from "../util/MainSlides";
 import {useQuery} from "@tanstack/react-query";
 import MainBannerSlide from "../util/MainBannerSlide";
+import {useNavigate} from "react-router-dom";
 
 interface MainProps {
     rooms: RoomData[];

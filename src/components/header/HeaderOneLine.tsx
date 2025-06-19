@@ -21,6 +21,7 @@ import {useHeaderBtnVisibility} from "../stores/HeaderBtnStore";
 import {useHostHeaderBtnVisibility} from "../stores/HostHeaderBtnStore";
 import HostHeader from "./HostHeader";
 import {useMapVisibility} from "../stores/MapStore";
+import CommonModal from "../modals/CommonModal";
 
 type LocationOption = {
     name: string;
@@ -256,38 +257,29 @@ export default function HeaderOneLine() {
             )}
 
             {/* 헤더 번역 모달 */}
-            {/* 비회원 */}
+
+            {/* 회원 */}
             {userLanguageSetModal && (
-                <Modal
+                <CommonModal
                     isOpen={userLanguageSetModal}
                     onRequestClose={() => setUserLanguageSetModal(false)}
-                    className="authModal auth-modal-container"
-                    overlayClassName="authModal overlay"
+                    title="언어 설정"
+                    contentClassName="md:mx-32"
                 >
                     <LanguageSet/>
-                </Modal>
+                </CommonModal>
             )}
-            {/* 회원 */}
+
+            {/* 비회원 */}
             {languageSetModal && (
-                <Modal
+                <CommonModal
                     isOpen={languageSetModal}
                     onRequestClose={() => setLanguageSetModal(false)}
-                    className="authModal auth-modal-container"
-                    overlayClassName="authModal overlay"
-                    style={{
-                        content: {
-                            maxWidth: '400px',
-                            width: '90%',
-                            maxHeight: '80vh',
-                            overflow: 'auto',
-                            padding: '24px',
-                            inset: '50% auto auto 50%',
-                            transform: 'translate(-50%, -50%)'
-                        }
-                    }}
+                    title="언어 설정"
+                    contentClassName="md:mx-32"
                 >
-                    <MainLanguageSelector/>
-                </Modal>
+                    <LanguageSet headerMode={true}/>
+                </CommonModal>
             )}
 
             <AuthModal visible={authModalVisible} onClose={() => setAuthModalVisible(false)} type="login"/>

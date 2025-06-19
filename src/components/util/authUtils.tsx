@@ -35,7 +35,7 @@ export async function UserSetting(
     connect: (token: string) => void) {
     // 2. isHost 처리
     const hostStatus = localStorage.getItem("userIsHost") === "true";
-    console.log("hostStatus값 :", hostStatus);
+    // console.log("hostStatus값 :", hostStatus);
     setIsHost(hostStatus);
 
     // 3. WebSocket 연결
@@ -43,7 +43,7 @@ export async function UserSetting(
     if (token) {
         token = token.replace(/^Bearer\s/, "");
         connect(token);
-        console.log('로그인 성공, AuthToken, isHost 업데이트 완료');
+        console.log('로그인 성공! AuthToken isHost 업데이트 완료');
     } else {
         console.error("❌ Auth Token이 없습니다.");
     }

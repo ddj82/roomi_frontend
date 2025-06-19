@@ -37,7 +37,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     connect: (token: string) => {
         token = token.replace(/^Bearer\s/, ""); // 🔥 "Bearer " 제거
-        console.log("🔗 WebSocket 연결 시도 :", token);
+        // console.log("🔗 WebSocket 연결 시도 :", token);
 
         if (get().isConnected) {
             console.warn("⚠️ 이미 WebSocket이 연결됨, 중복 실행 방지");
@@ -68,8 +68,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
         // ✅ 서버에서 초기 데이터를 받아와 Zustand 상태에 저장
         socket.on("initial_data", (data) => {
-            console.log("📥 서버에서 받은 초기 데이터:", data);
-            // console.log("📥 서버에서 받은 초기 데이터 저장");
+            // console.log("📥 서버에서 받은 초기 데이터:", data);
+            console.log("📥 서버에서 받은 초기 데이터 저장");
             if (data.rooms) {
                 const filteredRooms = data.rooms.filter((room: ChatRoom) => room.messages.length !== 0);
                 set({ rooms: filteredRooms });
