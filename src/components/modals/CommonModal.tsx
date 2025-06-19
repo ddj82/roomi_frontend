@@ -57,7 +57,7 @@ const CommonModal = ({
             }}
             overlayClassName={`fixed inset-0 bg-black/50 flex items-center justify-center`}
             className={`
-                bg-white/95 px-4 shadow-lg outline-none modal-animation
+                bg-white/95 px-4 shadow-lg outline-none modal-animation overflow-y-auto
                 ${customClassName} ${widthClassName} ${heightClassName}
             `}
         >
