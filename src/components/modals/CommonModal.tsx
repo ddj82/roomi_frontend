@@ -57,11 +57,11 @@ const CommonModal = ({
             }}
             overlayClassName={`fixed inset-0 bg-black/50 flex items-center justify-center`}
             className={`
-                bg-white/95 px-4 shadow-lg outline-none modal-animation overflow-y-auto
+                bg-white/95 shadow-lg outline-none modal-animation overflow-y-auto
                 ${customClassName} ${widthClassName} ${heightClassName}
             `}
         >
-            <div className="sticky top-0 bg-transparent z-[9999] flex items-center py-4 md:py-6">
+            <div className="sticky top-0 bg-transparent flex items-center p-4 md:py-6 bg-white mb-2">
                 <button
                     className="p-2 rounded-full"
                     onClick={onRequestClose}
@@ -73,7 +73,7 @@ const CommonModal = ({
                 )}
                 <div className="w-8"></div>
             </div>
-            <div className={`${contentClassName}`}>{children}</div>
+            <div className={`px-4 ${contentClassName}`}>{children}</div>
         </Modal>
     );
 };
