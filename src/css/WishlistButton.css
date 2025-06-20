@@ -5,8 +5,9 @@ button.wishListBtn {
     width: 36px; /* 원형 버튼 크기 */
     height: 36px;
     border-radius: 25px;
-    background-color: rgba(255, 255, 255, 1); /* 반투명 흰색 배경 */
+    background-color: rgba(0, 0, 0, 0.3); /* 반투명 흰색 배경 */
     border-width: 1px;
+    border-color: rgba(128, 128, 128, 0); /* 테두리 색상 */
     display: flex;
     justify-content: center;
     align-items: center;

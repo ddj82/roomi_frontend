@@ -50,7 +50,6 @@ import {
     faLock,
     faShield
 } from "@fortawesome/free-solid-svg-icons";
-
 export const facilityIcons: Record<string, IconDefinition> = {
     'bbq': faUtensils,
     'cafe': faCoffee,
@@ -64,6 +63,7 @@ export const facilityIcons: Record<string, IconDefinition> = {
     'tv': faTv,
     'kitchen': faKitchenSet,
     'ac_unit': faSnowflake,
+    'local_laundry_service': faSoap,
     'washing_machine': faSoap,
     'dry': faHandsWash,
     'bathtub': faBath,
