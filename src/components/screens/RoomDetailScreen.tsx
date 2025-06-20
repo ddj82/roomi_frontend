@@ -56,6 +56,31 @@ import isBetween from 'dayjs/plugin/isBetween';
 import {faBell, faCopy} from "@fortawesome/free-regular-svg-icons";
 import CertificationModal from "../modals/CertificationModal";
 import ImagePreviewModal from "./ImagePreviewModal";
+import {
+    Export,
+    MinusCircle
+
+} from "phosphor-react";
+import {
+    ChatCenteredDots,
+    Copy,
+    House,
+    Money,
+    PlusCircle,
+    Prohibit,
+    Toilet, UserCircle, Warning,
+    WarningCircle,
+    Buildings,
+    CalendarDot,
+    CalendarDots,
+    City,
+    Door,
+    Elevator,
+    LetterCircleP, MapPinArea, MapPinSimpleArea,
+    MapTrifold, ReceiptX, SealCheck
+} from "@phosphor-icons/react";
+import {ArrowLeft, Building2, CheckCircle, Info} from "lucide-react";
+import GoogleMapRoom from "../map/GoolgeMapRoom";
 
 dayjs.extend(utc);
 dayjs.extend(isBetween);
@@ -93,6 +118,7 @@ export default function RoomDetailScreen() {
     //사진 미리보기
     const [imageModalOpen, setImageModalOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    //아이콘 매핑
 
     useEffect(() => {
         const loadRoomData = async () => {
@@ -546,7 +572,7 @@ export default function RoomDetailScreen() {
                                 onClick={handleGoBack}
                                 className="absolute left-4 top-4 z-10 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md md:hidden"
                             >
-                                <FontAwesomeIcon icon={faArrowLeft} className="text-gray-800"/>
+                                <ArrowLeft size={22} />
                             </button>
 
                             {/* 공유 버튼 추가 - 모바일에서만 표시 */}
@@ -554,7 +580,7 @@ export default function RoomDetailScreen() {
                                 onClick={handleShare}
                                 className="absolute right-4 top-4 z-10 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md md:hidden"
                             >
-                                <FontAwesomeIcon icon={faShareFromSquare} className="text-gray-800"/>
+                                <Export size={24} />
                             </button>
 
                             {room.detail_urls && room.detail_urls.length > 0 ? (
@@ -577,19 +603,19 @@ export default function RoomDetailScreen() {
                             {room.is_verified && (
                                 <div
                                     className="inline-flex items-center px-4 py-1.5 bg-indigo-50 rounded-full text-sm font-medium text-indigo-600 mb-2">
-                                    <FontAwesomeIcon icon={faCheckCircle} className="mr-2"/>
+                                    <SealCheck size={32} />
                                     {t('[인증숙박업소]')}
                                 </div>
                             )}
 
                             {/* 제목 */}
-                            <h1 className="text-3xl font-bold mb-4 text-gray-800">{room.title}</h1>
+                            <h1 className="text-2xl font-bold mb-4 text-gray-800">{room.title}</h1>
 
                             {/* 가격 및 관리비 설명 */}
                             <div className="space-y-4 pb-6 border-b border-gray-200">
                                 <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                                    <FontAwesomeIcon icon={faMoneyBillWave} className="text-roomi mr-2"/>
-                                    {t("가격")}
+                                    {/*<Money size={32} />*/}
+                                    {" "}{t("가격")}
                                 </h2>
 
                                 {/* Main pricing grid */}
@@ -599,8 +625,7 @@ export default function RoomDetailScreen() {
                                         {typeof room.month_price === 'number' && room.month_price > 0 && (
                                             <div className="space-y-2">
                                                 <h3 className="text-lg font-medium text-gray-800 mb-2 pb-1 border-b border-gray-200 flex items-center">
-                                                    <FontAwesomeIcon icon={faCalendarAlt}
-                                                                     className="text-roomi mr-2 text-sm"/>
+                                                    {/*<CalendarDots size={32} />*/}
                                                     {t('월 단위')}
                                                 </h3>
                                                 <div
@@ -625,8 +650,7 @@ export default function RoomDetailScreen() {
                                         {typeof room.week_price === 'number' && room.week_price > 0 && (
                                             <div className="space-y-2">
                                                 <h3 className="text-lg font-medium text-gray-800 mb-2 pb-1 border-b border-gray-200 flex items-center">
-                                                    <FontAwesomeIcon icon={faCalendarWeek}
-                                                                     className="text-roomi mr-2 text-sm"/>
+                                                    {/*<CalendarDot size={32} />*/}
                                                     {t('주 단위')}
                                                 </h3>
                                                 <div
@@ -653,8 +677,8 @@ export default function RoomDetailScreen() {
                                 {/* Maintenance details */}
                                 <div className="mt-6 ml-1">
                                     <h3 className="text-gray-800 font-medium mb-3 flex items-center">
-                                        <FontAwesomeIcon icon={faInfoCircle} className="text-roomi mr-2"/>
-                                        {t('서비스 비용 포함 내역')}
+                                        <Info size={13} />
+                                        {" "}{t('서비스 비용 포함 내역')}
                                     </h3>
                                     <p className="text-xs text-gray-500 leading-relaxed whitespace-pre-line pl-1">
                                         {t('종합 시설 관리 서비스 비용 (인터넷, 운영비 포함)\n청소 서비스, 보안 서비스, 시설 유지 관리 서비스 이용료 포함\n공용 공간 편의 서비스, 24시간 안전 관리 서비스 포함 실내 환경 관리(냉난방), 엘리베이터 유지 서비스, 주차 편의 서비스 이용료, 공용 시설 이용 서비스, 인터넷 연결 서비스, 종합 생활 편의 서비스 비용 포함')}
@@ -664,7 +688,7 @@ export default function RoomDetailScreen() {
 
                             <div className="space-y-4 pb-6 border-b border-gray-200">
                                 <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                                    <FontAwesomeIcon icon={faHome} className="text-roomi mr-2"/>
+                                    {/*<House size={32} />*/}
                                     {t("공간 안내")}
                                 </h2>
                                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap ml-1">{room.description}</p>
@@ -672,7 +696,7 @@ export default function RoomDetailScreen() {
 
                             <div className="mb-10">
                                 <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                                    <FontAwesomeIcon icon={faHouseUser} className="text-roomi mr-2"/>
+                                    {/*<Buildings size={32} />*/}
                                     {t("room_info")}
                                 </h2>
 
@@ -681,8 +705,7 @@ export default function RoomDetailScreen() {
                                     <div className="flex flex-col items-center text-center">
                                         <div
                                             className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mb-2">
-                                            <FontAwesomeIcon icon={faDoorOpen}
-                                                             className="text-xl sm:text-2xl text-gray-700"/>
+                                            <Door size={32} />
                                         </div>
                                         <p className="font-medium text-sm sm:text-base">{t('방')} : {room.room_count ?? 0}</p>
                                     </div>
@@ -690,8 +713,7 @@ export default function RoomDetailScreen() {
                                     <div className="flex flex-col items-center text-center">
                                         <div
                                             className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mb-2">
-                                            <FontAwesomeIcon icon={faBath}
-                                                             className="text-xl sm:text-2xl text-gray-700"/>
+                                            <Toilet size={32} />
                                         </div>
                                         <p className="font-medium text-sm sm:text-base">{t('화장실')} : {room.bathroom_count ?? 0}</p>
                                     </div>
@@ -699,22 +721,22 @@ export default function RoomDetailScreen() {
                                     <div className="flex flex-col items-center text-center">
                                         <div
                                             className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mb-2">
-                                            <FontAwesomeIcon icon={faSquareParking}
-                                                             className="text-xl sm:text-2xl text-gray-700"/>
+                                            <LetterCircleP size={32} />
+
                                         </div>
-                                        <p className="font-medium text-sm sm:text-base">
-                                            {t('주차')} : {room.has_parking ? "⭕" : "🚫"}
+                                        <p className="font-medium text-sm sm:text-base flex items-center gap-1">
+                                            {t('주차')} : {room.has_parking ? <CheckCircle size={20}/> : <Prohibit size={20}/>}
                                         </p>
                                     </div>
 
                                     <div className="flex flex-col items-center text-center">
                                         <div
                                             className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mb-2">
-                                            <FontAwesomeIcon icon={faElevator}
-                                                             className="text-xl sm:text-2xl text-gray-700"/>
+                                            <Elevator size={32} />
                                         </div>
-                                        <p className="font-medium text-sm sm:text-base">
-                                            {t('엘리베이터')} :  {room.has_elevator ? "⭕" : "🚫"}
+                                        <p className="font-medium text-sm sm:text-base flex items-center gap-1">
+                                            <span>{t('엘리베이터')}:</span>
+                                            {room.has_elevator ? <CheckCircle size={20}/> : <Prohibit size={20}/>}
                                         </p>
                                     </div>
                                 </div>
@@ -777,7 +799,7 @@ export default function RoomDetailScreen() {
                             {(room.breakfast_service || room.checkin_service) && (
                                 <div className="space-y-4 pb-6 border-b border-gray-200">
                                     <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                                        <FontAwesomeIcon icon={faBell} className="text-roomi mr-2"/>
+                                        {/*<FontAwesomeIcon icon={faBell} className="text-roomi mr-2"/>*/}
                                         {t("제공 서비스")}
                                     </h2>
 
@@ -822,7 +844,7 @@ export default function RoomDetailScreen() {
                             {/* 편의시설 */}
                             <div className="space-y-4 pb-6 border-b border-gray-200">
                                 <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                                    <FontAwesomeIcon icon={faSwimmingPool} className="text-roomi mr-2"/>
+                                    {/*<City size={32} />*/}
                                     {t("기본 옵션")}
                                 </h2>
 
@@ -846,7 +868,7 @@ export default function RoomDetailScreen() {
                             {/* 추가 시설 */}
                             <div className="space-y-4 pb-6 border-b border-gray-200">
                                 <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                                    <FontAwesomeIcon icon={faPlusCircle} className="text-roomi mr-2"/>
+                                    {/*<PlusCircle size={32} />*/}
                                     {t("추가시설")}
                                 </h2>
 
@@ -870,14 +892,14 @@ export default function RoomDetailScreen() {
                             {/* 위치 정보 */}
                             <div className="space-y-4 pb-6 border-b border-gray-200">
                                 <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                                    <FontAwesomeIcon icon={faLocationDot} className="text-roomi mr-2"/>
+                                    {/*<MapTrifold size={32} />*/}
                                     {t("위치정보")}
                                 </h2>
 
                                 <div className="bg-gray-50 rounded-lg p-4 mb-4">
                                     <div className="flex items-start">
                                         <div className="flex_center mr-3 mt-1 w-4 h-4">
-                                            <FontAwesomeIcon icon={faMapLocationDot} className="text-gray-600 text-lg"/>
+                                            <MapPinArea size={32} />
                                         </div>
                                         <div>
                                             <h3 className="text-sm font-medium text-gray-800 mb-1">{t("교통 안내")}</h3>
@@ -888,7 +910,7 @@ export default function RoomDetailScreen() {
                                     {room.address && (
                                         <div className="flex items-start mt-3">
                                             <div className="flex_center mr-3 mt-1 w-4 h-4">
-                                                <FontAwesomeIcon icon={faMapPin} className="text-gray-600 text-lg"/>
+                                                <MapPinSimpleArea size={32} />
                                             </div>
                                             <div className="flex-grow">
                                                 <h3 className="text-sm font-medium text-gray-800 mb-1">{t("주소")}</h3>
@@ -904,7 +926,7 @@ export default function RoomDetailScreen() {
                                                         className="ml-2 p-1.5 text-gray-500 hover:text-roomi hover:bg-gray-100 rounded-full transition-colors"
                                                         title={t("주소 복사")}
                                                     >
-                                                        <FontAwesomeIcon icon={faCopy} className="text-sm"/>
+                                                        <Copy size={24} />
                                                     </button>
                                                 </div>
                                             </div>
@@ -914,14 +936,15 @@ export default function RoomDetailScreen() {
 
                                 <div
                                     className="h-60 md:h-80 rounded-lg overflow-hidden shadow-sm border border-gray-100">
-                                    <NaverMapRoom room={room}/>
+                                    {/*<NaverMapRoom room={room}/>*/}
+                                    <GoogleMapRoom room={room}/>
                                 </div>
                             </div>
 
                             {/* 유의사항 */}
                             <div className="space-y-4 pb-6 border-b border-gray-200">
                                 <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                                    <FontAwesomeIcon icon={faExclamationCircle} className="text-roomi mr-2"/>
+                                    {/*<WarningCircle size={32} />*/}
                                     {t("유의사항")}
                                 </h2>
 
@@ -940,17 +963,15 @@ export default function RoomDetailScreen() {
                                     {room.prohibitions && room.prohibitions.length > 0 && (
                                         <div className="mt-6 pt-4 border-t border-gray-200">
                                             <h3 className="text-base font-medium text-gray-800 mb-3 flex items-center">
-                                                <FontAwesomeIcon icon={faBan} className="text-red-500 mr-2 text-sm"/>
+                                                <Warning size={20} className="mr-2"/>
                                                 {t("금지사항")}
+                                                <Warning size={20} className="ml-2"/>
                                             </h3>
                                             <ul className="space-y-2.5 text-gray-700">
                                                 {room.prohibitions.map((item, index) => (
                                                     <li key={index} className="flex items-baseline">
-                                                        <FontAwesomeIcon
-                                                            icon={faCircleXmark}
-                                                            className="text-red-400 mr-3 text-sm flex-shrink-0"
-                                                        />
-                                                        <span className="text-sm text-gray-700">{t(item)}</span>
+                                                        {/*<Prohibit size={16} />*/}
+                                                        <span className="ml-1 text-sm text-gray-700">{t(item)}</span>
                                                     </li>
                                                 ))}
                                             </ul>
@@ -963,7 +984,7 @@ export default function RoomDetailScreen() {
                             {/* 호스트 정보 */}
                             <div className="space-y-4 pb-6 border-b border-gray-200">
                                 <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                                    <FontAwesomeIcon icon={faUserCircle} className="text-roomi mr-2"/>
+                                    {/*<UserCircle size={32} />*/}
                                     {t("호스트 정보")}
                                 </h2>
 
@@ -980,7 +1001,7 @@ export default function RoomDetailScreen() {
                                             <div>
                                                 <div
                                                     className="font-medium text-gray-800 text-lg">{room.host.name}</div>
-                                                <div className="text-gray-500 text-sm">호스트</div>
+                                                {/*<div className="text-gray-500 text-sm">호스트</div>*/}
                                             </div>
                                         </div>
                                         <button
@@ -988,7 +1009,7 @@ export default function RoomDetailScreen() {
                                             className="px-5 py-2.5 rounded-lg bg-roomi text-white text-sm font-medium hover:bg-roomi-1 transition-colors shadow-sm flex items-center"
                                             onClick={createChatRoom}
                                         >
-                                            <FontAwesomeIcon icon={faCommentDots} className="mr-2"/>
+                                            <ChatCenteredDots size={16} className="mr-2" />
                                             {t('채팅하기')}
                                         </button>
                                     </div>
@@ -998,7 +1019,7 @@ export default function RoomDetailScreen() {
                             {/* 환불정책 */}
                             <div className="space-y-4 pb-6">
                                 <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                                    <FontAwesomeIcon icon={faMoneyBillTransfer} className="text-roomi mr-2"/>
+                                    {/*<ReceiptX size={32} />*/}
                                     {t("환불 정책")}
                                 </h2>
 
@@ -1009,7 +1030,7 @@ export default function RoomDetailScreen() {
                                                 <div key={index} className="flex items-baseline">
                                                     {line.startsWith('•') ? (
                                                         <>
-                                                            <FontAwesomeIcon icon={faCircleDot}
+                                                            <CheckCircle size={15}
                                                                              className="text-roomi mr-3 text-sm flex-shrink-0"/>
                                                             <span
                                                                 className="text-sm text-gray-700">{line.substring(1).trim()}</span>
@@ -1069,7 +1090,7 @@ export default function RoomDetailScreen() {
                             {/* 가격 정보 헤더 */}
                             {/* calUnit : true = 월 */}
                             {/* calUnit : false = 주 */}
-                            <div className="p-3 border-b border-gray-100">
+                            <div className="p-3">
                                 <h2 className="text-lg font-bold text-gray-800">
                                     {room.symbol}{calUnit ? room.month_price?.toLocaleString() : room.week_price?.toLocaleString()}
                                     <span className="text-sm font-normal text-gray-600 ml-1">
@@ -1078,53 +1099,58 @@ export default function RoomDetailScreen() {
                                 </h2>
                             </div>
                             {/* 옵션 선택 탭 */}
-                            <div className="flex justify-center text-sm bg-roomi-light rounded-lg p-1 mb-6">
+                            <div
+                                className="flex justify-center text-sm bg-gray-100 rounded-lg p-1 mb-6 w-full gap-2">
                                 <button
-                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
-                                    ${calUnit ? "text-gray-700 hover:bg-roomi-000" : "bg-roomi text-white"}`}
+                                    className={`w-1/2 flex items-center justify-center px-4 py-2 rounded-lg cursor-pointer transition-all
+                                    ${calUnit ? "text-gray-700 " : "bg-roomi text-white"}`}
                                     onClick={weekUnit}
                                 >
-                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("주")}
+                                    <CalendarDot size={16} className="mr-1"/>
+                                    {t("주")}
                                 </button>
+
                                 <button
-                                    className={`flex items-center justify-center mx-1 px-4 py-2 rounded-lg cursor-pointer transition-all 
-                                    ${calUnit ? "bg-roomi text-white" : "text-gray-700 hover:bg-roomi-000"}`}
+                                    className={`w-1/2 flex items-center justify-center px-4 py-2 rounded-lg cursor-pointer transition-all 
+                                    ${calUnit ? "bg-roomi text-white" : "text-gray-700 "}`}
                                     onClick={monthUnit}
                                 >
-                                    <FontAwesomeIcon icon={faCalendarDay} className="mr-1.5"/>{t("월")}
+                                    <CalendarDots size={16} className="mr-1"/>
+                                    {t("월")}
                                 </button>
                             </div>
                             {/* 주 단위 선택기 */}
                             {!calUnit ? (
                                 <div className="flex_center mb-3 text-sm">
                                     <button
-                                        className="w-8 h-8 flex_center rounded-full border border-gray-200 text-roomi"
+                                        className="w-8 h-8 flex_center rounded-full  text-gray-400 hover:text-roomi"
                                         onClick={() => handleWeekValue(false)}
                                     >
-                                        <LuCircleMinus/>
+                                        <MinusCircle size={24}/>
+
                                     </button>
                                     <div className="mx-4 font-semibold">{weekValue} {t("주")}</div>
                                     <button
-                                        className="w-8 h-8 flex_center rounded-full border border-gray-200 text-roomi"
+                                        className="w-8 h-8 flex_center rounded-full  text-gray-400 hover:text-roomi"
                                         onClick={() => handleWeekValue(true)}
                                     >
-                                        <LuCirclePlus/>
+                                        <PlusCircle size={24}/>
                                     </button>
                                 </div>
                             ) : (
                                 <div className="flex_center mb-3 text-sm">
                                     <button
-                                        className="w-8 h-8 flex_center rounded-full border border-gray-200 text-roomi"
+                                        className="w-8 h-8 flex_center rounded-full text-gray-400 hover:text-roomi"
                                         onClick={() => handleMonthValue(false)}
                                     >
-                                        <LuCircleMinus/>
+                                        <MinusCircle size={24}/>
                                     </button>
                                     <div className="mx-4 font-semibold">{monthValue} {t("달")}</div>
                                     <button
-                                        className="w-8 h-8 flex_center rounded-full border border-gray-200 text-roomi"
+                                        className="w-8 h-8 flex_center rounded-full text-gray-400 hover:text-roomi"
                                         onClick={() => handleMonthValue(true)}
                                     >
-                                        <LuCirclePlus/>
+                                        <PlusCircle size={24}/>
                                     </button>
                                 </div>
                             )}
@@ -1135,7 +1161,7 @@ export default function RoomDetailScreen() {
                                     minDate={new Date()}
                                     next2Label={null} // 추가로 넘어가는 버튼 제거
                                     prev2Label={null} // 이전으로 돌아가는 버튼 제거
-                                    className="custom-calendar"
+                                    className="custom-calendar accordion-custom-calendar"
                                     formatDay={(locale, date) => dayjs(date).format('D')}
                                     locale={userLocale}
                                 />

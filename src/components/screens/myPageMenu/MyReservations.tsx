@@ -44,9 +44,41 @@ export default function MyReservations() {
                         dayjs.utc(reservation.check_out_date).format('YYYY-MM-DD') < today ||
                         reservation.status === 'CANCELLED'
                 );
+                const sortedNowReserved = nowReservedData.sort((a: ReservationHistory, b: ReservationHistory) => {
+                    const today = dayjs().format('YYYY-MM-DD');
 
-                setNowReserved(nowReservedData);
-                setBeforeReserved(beforeReservedData);
+                    // 이용중 상태 확인
+                    const aIsInUse = (
+                        (a.status === 'CONFIRMED' && a.payment_status === 'PAID' &&
+                            dayjs.utc(a.check_out_date).format('YYYY-MM-DD') >= today &&
+                            dayjs.utc(a.check_in_date).format('YYYY-MM-DD') <= today) ||
+                        a.status === 'IN_USE'
+                    );
+
+                    const bIsInUse = (
+                        (b.status === 'CONFIRMED' && b.payment_status === 'PAID' &&
+                            dayjs.utc(b.check_out_date).format('YYYY-MM-DD') >= today &&
+                            dayjs.utc(b.check_in_date).format('YYYY-MM-DD') <= today) ||
+                        b.status === 'IN_USE'
+                    );
+
+                    // 이용중인 것을 최상단으로
+                    if (aIsInUse && !bIsInUse) return -1;
+                    if (!aIsInUse && bIsInUse) return 1;
+
+                    // 같은 상태면 체크인 날짜 기준 정렬 (최신순)
+                    return dayjs.utc(a.check_in_date).valueOf() - dayjs.utc(b.check_in_date).valueOf();
+                });
+
+                // 지난 예약 데이터 정렬 (체크인 날짜 기준 최신순)
+                const sortedBeforeReserved = beforeReservedData.sort((a: ReservationHistory, b: ReservationHistory) => {
+                    return dayjs.utc(a.check_in_date).valueOf() - dayjs.utc(b.check_in_date).valueOf();
+                });
+                // setNowReserved(nowReservedData);
+                // setBeforeReserved(beforeReservedData);
+                // 이렇게 바꿔야 합니다:
+                setNowReserved(sortedNowReserved);      // ✅ 정렬된 데이터
+                setBeforeReserved(sortedBeforeReserved); // ✅ 정렬된 데이터
             } catch (e) {
                 console.error('예약내역 가져오기 실패', e);
             }
@@ -66,24 +98,24 @@ export default function MyReservations() {
 
         if (status === 'CONFIRMED') { // 승인 완료
             if (paymentStatus === 'UNPAID') { // 승인 완료, 결제전
-                return renderStatusUI('bg-roomi-0', t('결제대기'));
+                return renderStatusUI('bg-[#999999]', t('결제대기'));
             } else if (paymentStatus === 'PAID') { // 승인 완료, 결제 완료
                 if (checkOut >= today && checkIn <= today) { // 이용중
-                    return renderStatusUI('bg-green-500',  t('이용중'));
+                    return renderStatusUI('bg-[#67b988]',  t('이용중'));
                 }
                 return renderStatusUI('bg-roomi',  t('예약완료'));
             }
         } else if (status === 'COMPLETED') { // 계약 종료
             // 보증금환불여부 확인
-            return renderStatusUI('bg-black',  t('계약종료'));
+            return renderStatusUI('bg-[#999999]',  t('계약종료'));
         } else if (status === 'CANCELLED') { // 취소
-            return renderStatusUI('bg-gray-700',  t('계약취소'));
+            return renderStatusUI('bg-[#999999]',  t('계약취소'));
         } else if (status === 'REJECTED') { // 승인 거절
-            return renderStatusUI('bg-gray-700',  t('승인거절'));
+            return renderStatusUI('bg-red-700',  t('승인거절'));
         }else if (status === 'IN_USE') { // 승인 거절
-            return renderStatusUI('bg-green-500',  t('이용중'));
+            return renderStatusUI('bg-[#67b988]',  t('이용중'));
         }else if (status === 'CHECKED_OUT') { // 승인 거절
-            return renderStatusUI('bg-roomi',  t('환급대기'));
+            return renderStatusUI('bg-[#999999]',  t('환급대기'));
         }
 
         else { // 승인 대기, 결제전, 기본값
@@ -100,12 +132,7 @@ export default function MyReservations() {
     };
 
     // 텍스트 메시지를 결정하는 로직만 따로 분리
-    const getStatusMessage = (
-        status: string,
-        paymentStatus: string,
-        checkIn: string,
-        checkOut: string
-    ): { backgroundColor: string, message: string } => {
+    const getStatusMessage = (status: string, paymentStatus: string, checkIn: string, checkOut: string): { backgroundColor: string, message: string } => {
         const today = dayjs().format('YYYY-MM-DD');
 
         if (status === 'CONFIRMED') {
@@ -120,7 +147,7 @@ export default function MyReservations() {
         } else if (status === 'COMPLETED') {
             return { backgroundColor: 'bg-gray-500', message: '계약종료' };
         } else if (status === 'IN_USE') {
-            return { backgroundColor: 'bg-green-500', message: '이용중' };
+            return { backgroundColor: 'bg-[#67b988]', message: '이용중' };
         }else if (status === 'CHECKED_OUT') {
             return { backgroundColor: 'bg-gray-700', message: '환급대기' };
         }
@@ -130,7 +157,6 @@ export default function MyReservations() {
 
         return { backgroundColor: 'bg-gray-500', message: '승인대기' };
     };
-
 
     const renderReservationList = (list: ReservationHistory[]) => {
         return list.map((item) => (
@@ -249,7 +275,7 @@ export default function MyReservations() {
         ));
     };
     return (
-        <div className="p-4 py-0 md:px-8 relative">
+        <div className=" py-0 md:px-8 relative">
             {/*타이틀*/}
             <div className="flex justify-between items-center mb-4">
                 {reservedDetails ? (

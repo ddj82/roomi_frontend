@@ -61,9 +61,9 @@ const WishListButton: React.FC<WishlistButtonProps> = ({onToggle, roomId, isFavo
                 onClick={toggleWishlist} // `onClick` 사용
             >
                 {isLiked ? (
-                    <FaHeart size={21} color="rgba(255, 69, 0, 0.8)"/> // 찜 상태일 때
+                    <FaHeart size={21} color="#FF8282"/> // 찜 상태일 때
                 ) : (
-                    <FaRegHeart size={21} color="#A9A9A9"/> // 찜 안된 상태일 때
+                    <FaRegHeart size={21} color="#FFFFFF"/> // 찜 안된 상태일 때
                 )}
             </button>
         </div>

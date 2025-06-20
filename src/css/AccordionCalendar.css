@@ -220,11 +220,11 @@
     height: 42px !important;
     background-color: #ff8282;
 }
-
+/* 모바일 일때 원 크기*/
 @media screen and (max-width: 768px) {
     .react-calendar__tile.end-date::before, .react-calendar__tile.start-date::before {
-        width: 30px !important;
-        height: 30px !important;
+        width: 33px !important;
+        height: 33px !important;
     }
 }
 /* 화면 크기별 대응 */

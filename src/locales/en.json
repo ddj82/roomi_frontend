@@ -356,14 +356,14 @@
   "전주": "Jeonju",
   "통화 선택": "select currency",
   "중요": "important",
-  "결제대기": "Awaiting Payment",
+  "결제대기": "Unpaid",
   "이용중": "In Use",
   "예약완료": "Confirmed",
   "계약종료": "Checked Out",
   "계약취소": "Canceled",
   "승인거절": "Denied",
-  "환급대기": "Awaiting Settlement",
-  "승인대기": "Awaiting Approval",
+  "환급대기": "Checked-out",
+  "승인대기": "Pending",
   "월" : "month",
   "관심 목록이 없습니다.": "your wishlist is empty",
   "마이 루미" : "My Roomi",
@@ -493,6 +493,24 @@
   "입주일 선택": "Select Date",
   "인원": "Guests",
   "인원 선택": "Select",
-  "본인 인증완료" : "Identity Verified"
+  "본인 인증완료" : "Identity Verified",
+
+  "퇴실하실 날짜를 선택해주세요." : "Please select your move-out date.",
+  "중도 퇴실 요청" : "Request Early Check-out",
+  "선택한 날짜" : "Selected Date",
+  "중도 퇴실 시 환불 정책에 따라 환불 금액이 결정됩니다. 자세한 내용은 호스트에게 문의하세요.": "Refund amount will be determined based on the refund policy. Please contact the host for more details.",
+  "취소" : "Cancel",
+  "날짜를 선택해주세요." : "Please select a date.",
+  "에 중도 퇴실하시겠습니까?" : " - Would you like to check out early?",
+  "오류가 발생했습니다." : "An error occurred.",
+  "신청" : "Apply",
+  "중도퇴실" : "early check-out",
+  "일반퇴실" : "check-out"
+
+
+
+
+
+
 
 }

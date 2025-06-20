@@ -15,6 +15,8 @@ import {
 } from "../../../api/api";
 import {useNavigate} from "react-router-dom";
 import Calendar from "react-calendar";
+import {MessageSquare} from "lucide-react";
+import {ChatCenteredDots} from "@phosphor-icons/react";
 
 dayjs.extend(utc);
 
@@ -144,7 +146,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                             />
                         </svg>
                         <div className="text-sm text-yellow-800 leading-relaxed">
-                            <div className="font-semibold">중도퇴실 요청됨</div>
+                            <div className="font-semibold">{t('중도퇴실 요청됨')}</div>
                             <div>호스트가 퇴실 요청을 검토 중입니다.</div>
                             <div className="mt-1 text-xs text-yellow-700">
                             요청 퇴실일: {dayjs(reserveData.checkout_requested_at).format('YYYY-MM-DD')}
@@ -190,8 +192,9 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
             case '이용중':
                 return (
                     <div className="flex space-x-2 w-full">
-                        {renderStatusUI('bg-gray-500', '일반퇴실', handleCheckout)}
-                        {renderStatusUI('bg-red-500', '중도퇴실', handleEarlyCheckout)}
+                        {renderStatusUI('bg-roomi', '중도퇴실', handleEarlyCheckout)}
+                        {renderStatusUI('bg-[#82A5FF]', '일반퇴실', handleCheckout)}
+
                     </div>
                 );
 
@@ -487,8 +490,8 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
         return (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div className="bg-white rounded-lg p-6 w-96">
-                    <h3 className="text-lg font-bold mb-4">중도 퇴실</h3>
-                    <p className="text-sm text-gray-600 mb-4">퇴실하실 날짜를 선택해주세요.</p>
+                    <h3 className="text-lg font-bold mb-4">{t('중도 퇴실 요청')}</h3>
+                    <p className="text-sm text-gray-600 mb-4">{t('퇴실하실 날짜를 선택해주세요.')}</p>
 
                     <div className="dateModal mb-4">
                         <Calendar
@@ -507,9 +510,16 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
 
                     {selectedDate && (
                         <p className="text-center mb-4 text-sm">
-                            선택한 날짜: {dayjs(selectedDate).format('YYYY-MM-DD')}
+                            {t('선택한 날짜')}: {dayjs(selectedDate).format('YYYY-MM-DD')}
                         </p>
                     )}
+
+                    {/* 정보 박스 추가 */}
+                    <div className="mb-4 p-3 bg-roomi-000 border border-roomi rounded-xl">
+                        <p className="text-sm text-roomi">
+                            {t('중도 퇴실 시 환불 정책에 따라 환불 금액이 결정됩니다. 자세한 내용은 호스트에게 문의하세요.')}
+                        </p>
+                    </div>
 
                     <div className="flex gap-2">
                         <button
@@ -517,20 +527,20 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                                 setShowDateModal(false);
                                 setSelectedDate(new Date());
                             }}
-                            className="flex-1 px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+                            className="flex-1 px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50"
                         >
-                            취소
+                            {t('취소')}
                         </button>
                         <button
                             onClick={async () => {
                                 if (!selectedDate) {
-                                    alert('날짜를 선택해주세요.');
+                                    alert(t('날짜를 선택해주세요.'));
                                     return;
                                 }
 
                                 const formattedDate = dayjs(selectedDate).format('YYYY-MM-DD');
 
-                                if (window.confirm(`${formattedDate}에 중도 퇴실하시겠습니까?`)) {
+                                if (window.confirm(`${formattedDate}${t('에 중도 퇴실하시겠습니까?')}`)) {
                                     try {
                                         // API 호출 예시
                                         await earlyCheckOut(reserveData.id.toString(), selectedDate);
@@ -544,19 +554,20 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                                         window.location.reload();
                                     } catch (error) {
                                         console.error('Error:', error);
-                                        alert('오류가 발생했습니다.');
+                                        alert(t('오류가 발생했습니다.'));
                                     }
                                 }
                             }}
-                            className="flex-1 px-4 py-2 bg-roomi text-white rounded hover:bg-roomi-0"
+                            className="flex-1 px-4 py-2 bg-roomi text-white rounded-xl hover:bg-roomi-0"
                         >
-                            확인
+                            {t('신청')}
                         </button>
                     </div>
                 </div>
             </div>
         );
     };
+
 
 // HTML 날짜 입력을 사용한 버전
 //     const handleEarlyCheckoutWithDateInput = () => {
@@ -593,9 +604,9 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                         />
                     </div>
                     <div className="flex flex-col justify-center md:gap-2">
-                    <span className={`text-xs text-white px-3 py-1.5 rounded-full w-fit mb-2 font-medium ${statusInfo.backgroundColor}`}>
-                        {statusInfo.message}
-                    </span>
+                        {/*<span className={`text-xs text-white px-3 py-1.5 rounded-full w-fit mb-2 font-medium ${statusInfo.backgroundColor}`}>*/}
+                        {/*    {statusInfo.message}*/}
+                        {/*</span>*/}
                         <div className="font-semibold text-lg text-gray-900">{reserveData.room.title}</div>
                         <div className="font-medium text-base text-gray-600">{reserveData.room.address}</div>
                     </div>
@@ -618,7 +629,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                 </button>
                 <AccodionItem isOpen={basicOpen}>
                     <div className="px-4 pb-4">
-                        <div className="bg-gray-50 rounded-xl p-4">
+                        <div className="bg-white rounded-xl p-4">
                             <div className="flex flex-col gap-3 text-sm">
                                 <div className="flex justify-between items-center">
                                     <div className="font-medium text-gray-700">{t('예약번호')}</div>
@@ -626,11 +637,13 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="font-medium text-gray-700">{t('체크인')}</div>
-                                    <div className="text-gray-900">{dayjs.utc(reserveData.check_in_date).format('YYYY-MM-DD')}</div>
+                                    <div
+                                        className="text-gray-900">{dayjs.utc(reserveData.check_in_date).format('YYYY-MM-DD')}</div>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="font-medium text-gray-700">{t('체크아웃')}</div>
-                                    <div className="text-gray-900">{dayjs.utc(reserveData.check_out_date).format('YYYY-MM-DD')}</div>
+                                    <div
+                                        className="text-gray-900">{dayjs.utc(reserveData.check_out_date).format('YYYY-MM-DD')}</div>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="font-medium text-gray-700">{t('게스트')}</div>
@@ -642,7 +655,8 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="font-medium text-gray-700">{t('예약날짜')}</div>
-                                    <div className="text-gray-900">{dayjs.utc(reserveData.created_at).format('YYYY-MM-DD')}</div>
+                                    <div
+                                        className="text-gray-900">{dayjs.utc(reserveData.created_at).format('YYYY-MM-DD')}</div>
                                 </div>
                             </div>
                         </div>
@@ -654,7 +668,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
                 <button
                     onClick={() => setPriceOpen(prev => !prev)}
-                    className="w-full p-4 focus:outline-none hover:bg-gray-50 transition-colors"
+                    className="w-full p-4 focus:outline-none hover:white transition-colors"
                 >
                     <div className="flex justify-between items-center">
                         <div className="font-semibold text-gray-900">{t('요금 정보')}</div>
@@ -666,28 +680,33 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                 </button>
                 <AccodionItem isOpen={priceOpen}>
                     <div className="px-4 pb-4">
-                        <div className="bg-gray-50 rounded-xl p-4">
+                        <div className="bg-white rounded-xl p-4">
                             <div className="flex flex-col gap-3 text-sm">
                                 <div className="flex justify-between items-center">
                                     <div className="font-medium text-gray-700">{t('이용요금')}</div>
-                                    <div className="text-gray-900">{reserveData.symbol}{(reserveData.price_per_unit * reserveData.unit).toLocaleString()}</div>
+                                    <div
+                                        className="text-gray-900">{reserveData.symbol}{(reserveData.price_per_unit * reserveData.unit).toLocaleString()}</div>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="font-medium text-gray-700">{t('보증금')}</div>
-                                    <div className="text-gray-900">{reserveData.symbol}{reserveData.deposit.toLocaleString()}</div>
+                                    <div
+                                        className="text-gray-900">{reserveData.symbol}{reserveData.deposit.toLocaleString()}</div>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="font-medium text-gray-700">{t('관리비')}</div>
-                                    <div className="text-gray-900">{reserveData.symbol}{(reserveData.maintenance_per_unit * reserveData.unit).toLocaleString()}</div>
+                                    <div
+                                        className="text-gray-900">{reserveData.symbol}{(reserveData.maintenance_per_unit * reserveData.unit).toLocaleString()}</div>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="font-medium text-gray-700">{t('수수료')}</div>
-                                    <div className="text-gray-900">{reserveData.symbol}{(reserveData.fee).toLocaleString()}</div>
+                                    <div
+                                        className="text-gray-900">{reserveData.symbol}{(reserveData.fee).toLocaleString()}</div>
                                 </div>
                                 <div className="h-px bg-gray-200 my-2"></div>
                                 <div className="flex justify-between items-center">
                                     <div className="font-semibold text-gray-900">{t('총 결제 금액')}</div>
-                                    <div className="font-semibold text-gray-900">{reserveData.symbol}{reserveData.total_price.toLocaleString()}</div>
+                                    <div
+                                        className="font-semibold text-gray-900">{reserveData.symbol}{reserveData.total_price.toLocaleString()}</div>
                                 </div>
                             </div>
                         </div>
@@ -699,7 +718,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
                 <button
                     onClick={() => setHostOpen(prev => !prev)}
-                    className="w-full p-4 focus:outline-none hover:bg-gray-50 transition-colors"
+                    className="w-full p-4 focus:outline-none hover:white transition-colors"
                 >
                     <div className="flex justify-between items-center">
                         <div className="font-semibold text-gray-900">{t('호스트 정보')}</div>
@@ -711,7 +730,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                 </button>
                 <AccodionItem isOpen={hostOpen}>
                     <div className="px-4 pb-4">
-                        <div className="bg-gray-50 rounded-xl p-4">
+                        <div className="bg-white rounded-xl p-4">
                             <div className="flex items-center gap-4">
                                 <div className="flex-shrink-0">
                                     <img
@@ -720,7 +739,17 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                                         className="rounded-full w-16 h-16 object-cover border-2 border-gray-200"
                                     />
                                 </div>
-                                <div className="font-medium text-gray-900">{reserveData.room.host_name}</div>
+                                <div className="flex-1">
+                                    <div className="font-medium text-gray-900">{reserveData.room.host_name}</div>
+                                </div>
+                                <button
+                                    onClick={() => {/* Handle message */
+                                    }}
+                                    className="px-3 py-2 border border-roomi-0 text-roomi rounded-lg flex items-center flex-shrink-0"
+                                >
+                                    <ChatCenteredDots size={32} className="w-4 h-4 mr-1"/>
+                                    메시지
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -731,7 +760,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
                 <button
                     onClick={() => setRuleOpen(prev => !prev)}
-                    className="w-full p-4 focus:outline-none hover:bg-gray-50 transition-colors"
+                    className="w-full p-4 focus:outline-none hover:white transition-colors"
                 >
                     <div className="flex justify-between items-center">
                         <div className="font-semibold text-gray-900">{t('이용 규칙 및 환불 정책')}</div>
@@ -766,7 +795,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                 {renderStatus(statusInfo.message)}
             </div>
 
-            <EarlyCheckoutModal />
+            <EarlyCheckoutModal/>
         </div>
     );
 };
