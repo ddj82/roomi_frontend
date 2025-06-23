@@ -4,12 +4,13 @@ import {useHostTabNavigation} from "../stores/HostTabStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCalendar, faComments, faFileLines, } from "@fortawesome/free-regular-svg-icons";
 import {faHouseChimney} from "@fortawesome/free-solid-svg-icons";
+import {House, Calendar, ChatText,Article} from "@phosphor-icons/react";
 
 const tabIcons: Record<string, JSX.Element> = {
-    my_room: <FontAwesomeIcon icon={faHouseChimney} />,
-    contract_management: <FontAwesomeIcon icon={faFileLines} />,
-    room_status: <FontAwesomeIcon icon={faCalendar} />,
-    message: <FontAwesomeIcon icon={faComments} />,
+    my_room: <House size ={24}/>,
+    contract_management: <Article size ={24}/>,
+    room_status: <Calendar size={24} />,
+    message: <ChatText size={24} />,
 };
 
 const BottomNavigation: React.FC = () => {

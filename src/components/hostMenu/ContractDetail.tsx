@@ -3,6 +3,7 @@ import { ChevronUp, ChevronDown, MessageSquare, Check, X, CheckCircle, AlertTria
 import {ReservationHistory} from "../../types/rooms";
 import dayjs from "dayjs";
 import {requestPartialRefundFee} from "../../api/api";
+import CommonAlert from "../util/CommonAlert";
 
 interface ContractDetailProps {
     reservation: ReservationHistory;
@@ -20,6 +21,8 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
     const [isPricingExpanded, setIsPricingExpanded] = useState(false);
     const [isGuestInfoExpanded, setIsGuestInfoExpanded] = useState(false);
     const [isPoliciesExpanded, setIsPoliciesExpanded] = useState(false);
+    const [alertOpen, setAlertOpen] = useState(false);
+    const [errorAlertOpen, setErrorAlertOpen] = useState(false);
 
     // Refund input states
     const [refundAmount, setRefundAmount] = useState("");
@@ -542,7 +545,7 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                                     <button
                                         onClick={async () => {
                                             if (requestedAmount <= 0) {
-                                                alert('차감 금액을 입력해주세요.');
+                                                setAlertOpen(true);
                                                 return;
                                             }
 
@@ -552,7 +555,8 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                                                 window.location.reload(); // ✅ 요청 완료 후 새로고침
                                             } catch (e) {
                                                 console.error(e);
-                                                alert('요청 중 오류가 발생했습니다.');
+                                                setErrorAlertOpen(true);
+                                                // alert('요청 중 오류가 발생했습니다.');
                                             }
                                         }}
                                         className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
@@ -564,6 +568,20 @@ const ContractDetail = ({ reservation, onClose, onAccept, onReject, onCancel, on
                         )}
                     </div>
                 </div>
+            )}
+            {alertOpen && (
+                <CommonAlert
+                    isOpen={alertOpen}
+                    onRequestClose={() => setAlertOpen(false)}
+                    content="차감 금액을 입력해주세요."
+                />
+            )}
+            {errorAlertOpen && (
+                <CommonAlert
+                    isOpen={errorAlertOpen}
+                    onRequestClose={() => setErrorAlertOpen(false)}
+                    content="요청 중 오류가 발생했습니다."
+                />
             )}
         </>
     );

@@ -220,7 +220,7 @@ export default function AuthButton(
                 <CommonAlert
                     isOpen={alertOpen}
                     onRequestClose={() => setAlertOpen(false)}
-                    content="로그아웃 하시겠습니까?"
+                    content={t("로그아웃 하시겠습니까?")}
                     confirm={true}
                     confirmResponse={handleConfirm}
                 />

@@ -1229,7 +1229,7 @@ export default function RoomDetailScreen() {
                 <CommonAlert
                     isOpen={alertOpen}
                     onRequestClose={() => setAlertOpen(false)}
-                    content="로그인 후 이용 가능합니다."
+                    content={t("로그인 후 이용 가능합니다.")}
                     confirm={true}
                     confirmResponse={handleConfirm}
                 />
