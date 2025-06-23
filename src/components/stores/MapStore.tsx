@@ -11,7 +11,7 @@ interface MapStore {
 const ALLOWED_PREFIXES = ["/map"];
 
 export const useMapStore = create<MapStore>((set) => ({
-    isMapVisible: true,
+    isMapVisible: false,
     setMapVisibility: (isMapVisible) => set({ isMapVisible }),
 }));
 

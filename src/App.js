@@ -84,9 +84,7 @@ function AppContent() {
                 <Header/>
             )}
 
-            <div className="app container xl:max-w-[1524px]]"
-                // style={{minHeight: window.innerHeight - 130,}}
-            >
+            <div className="app container xl:max-w-[1524px]">
                 <Routes>
                     {/* hostMode === true 일 때 이 부분 전부 차단됨 */}
                     <Route element={<ProtectedGuestRoute />}>

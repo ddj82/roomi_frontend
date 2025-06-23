@@ -22,36 +22,34 @@ export default function MainSlides() {
     return (
         <div className="relative w-full bg-white">
             {/* 데스크톱: 3개 그리드 */}
-            <div className="hidden md:block px-4 py-6">
-                <div className="overflow-x-auto scrollbar-hidden">
-                    <div className="flex gap-14 w-max px-1 mx-auto justify-center">
-                        {slides.map((slide, index) => (
-                            <div
-                                key={index}
-                                className="min-w-[444px] max-w-[444px] bg-gray-100 rounded-2xl p-4 flex items-start gap-5 flex-shrink-0 hover:shadow-md transition-all duration-300"
-                            >
-                                {/* 이미지 왼쪽 */}
-                                <div className="flex-shrink-0">
-                                    <img
-                                        src={slide.image}
-                                        alt={`Slide ${index + 1}`}
-                                        className="w-24 h-24 object-cover rounded-xl inline-block"
-                                    />
-                                </div>
-
-                                {/* 텍스트 오른쪽 */}
-                                <div className="flex-1">
-                                    <h3 className="text-base font-bold text-gray-900 mb-2">{t(slide.title)}</h3>
-                                    <p className="text-sm text-gray-600 leading-snug">{t(slide.description)}</p>
-                                </div>
+            <div className="hidden lg:block py-6">
+                <div className="flex xl:gap-14 lg:gap-10 w-full px-1 mx-auto justify-center">
+                    {slides.map((slide, index) => (
+                        <div
+                            key={index}
+                            className="bg-gray-100 rounded-2xl p-4 flex items-start gap-5 hover:shadow-md transition-all duration-300"
+                        >
+                            {/* 이미지 왼쪽 */}
+                            <div className="flex-shrink-0">
+                                <img
+                                    src={slide.image}
+                                    alt={`Slide ${index + 1}`}
+                                    className="w-24 h-24 object-cover rounded-xl inline-block"
+                                />
                             </div>
-                        ))}
-                    </div>
+
+                            {/* 텍스트 오른쪽 */}
+                            <div className="flex-1">
+                                <h3 className="text-base font-bold text-gray-900 mb-2">{t(slide.title)}</h3>
+                                <p className="text-sm text-gray-600 leading-snug">{t(slide.description)}</p>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
 
             {/* 모바일: 슬라이드 (더 작게) */}
-            <div className="md:hidden relative">
+            <div className="lg:hidden relative">
                 <div className="relative overflow-hidden rounded-lg h-40">
                     <div
                         className="flex transition-transform duration-700 ease-in-out h-full"

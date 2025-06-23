@@ -45,8 +45,6 @@ export default function AuthButton(
     };
 
     const handleLogout = async () => {
-        // const confirmCancel = window.confirm(t('로그아웃 하시겠습니까?'));
-        // if (!confirmCancel) return;
         try {
             if (localStorage.getItem('authMode') && localStorage.getItem('authMode') === 'kakao') {
                 const response = await SocialAuth.kakaoLogout();
@@ -84,7 +82,7 @@ export default function AuthButton(
         <div className="md:mr-4 mr-1.5">
             {/* 프로필/로그인 영역 */}
             {authToken ? (
-                <div className="flex gap-3">
+                <div className="flex_center gap-3">
                     {/*<div className="flex_center md:text-xs text-xxs">*/}
                     {/*    <button*/}
                     {/*        type="button"*/}

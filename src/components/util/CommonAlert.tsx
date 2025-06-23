@@ -78,7 +78,7 @@ const CommonAlert = ({
                                     confirmResponse?.(true);
                                     onRequestClose();
                                 }}
-                                className="rounded-lg p-2 bg-roomi w-16 text-white"
+                                className="rounded-lg p-2 px-4 bg-roomi w-fit text-white"
                             >
                                 {t('확인')}
                             </button>
@@ -88,7 +88,7 @@ const CommonAlert = ({
                                     confirmResponse?.(false);
                                     onRequestClose();
                                 }}
-                                className="rounded-lg p-2 bg-gray-300 w-16"
+                                className="rounded-lg p-2 px-4 bg-gray-300 w-fit"
                             >
                                 {t('취소')}
                             </button>
@@ -101,7 +101,7 @@ const CommonAlert = ({
                                 onClick={() => {
                                     onRequestClose();
                                 }}
-                                className="rounded-lg p-2 bg-roomi w-16 text-white"
+                                className="rounded-lg p-2 px-4 bg-roomi w-fit text-white"
                             >
                                 {t('확인')}
                             </button>

@@ -1,5 +1,4 @@
-import React, {useRef, useState} from 'react';
-import {MapPin} from "lucide-react";
+import React, {useEffect, useState} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 import {useTranslation} from "react-i18next";
@@ -7,13 +6,7 @@ import {useNavigate} from "react-router-dom";
 import {useHostModeStore} from "../stores/HostModeStore";
 import {useAuthStore} from "../stores/AuthStore";
 import i18n from "i18next";
-import {useDateStore} from "../stores/DateStore";
-import {useGuestsStore} from "../stores/GuestsStore";
-import {useLocationStore} from "../stores/LocationStore";
-import {SearchBar} from "./util/SearchBar";
-import Modal from "react-modal";
 import LanguageSet from "../screens/myPageMenu/LanguageSet";
-import MainLanguageSelector from "./util/MainLanguageSelector";
 import AuthModal from "../modals/AuthModal";
 import AuthButton from "./util/AuthButton";
 import '../../css/Header.css';
@@ -22,38 +15,50 @@ import {useHostHeaderBtnVisibility} from "../stores/HostHeaderBtnStore";
 import HostHeader from "./HostHeader";
 import {useMapVisibility} from "../stores/MapStore";
 import CommonModal from "../util/CommonModal";
-
-type LocationOption = {
-    name: string;
-    country: string;
-};
-type ActiveCardType = 'location' | 'date' | 'guests' | null;
+import SearchBar from "./util/SearchBar";
+import {useSearchVisibility} from "../stores/MapSearchStore";
 
 export default function HeaderOneLine() {
     const {t} = useTranslation();
     const navigate = useNavigate();
-    const isMobile = window.innerWidth <= 768;
     const {hostMode, setHostMode, resetUserMode} = useHostModeStore();
     const {authToken} = useAuthStore();
-    const {startDate, endDate,} = useDateStore();
-    const {guestCount} = useGuestsStore();
-    const {selectedLocation, setSelectedLocation} = useLocationStore();
     const isVisible = useHeaderBtnVisibility();
     const isVisibleHostScreen = useHostHeaderBtnVisibility();
     const isMapVisible = useMapVisibility();
+    const isSearchVisible = useSearchVisibility();
     const currentLang = i18n.language;
+
+    // 반응형 (테블릿, lg:, 1024px)
+    const [isTeblet, setIsTeblet] = useState(window.innerWidth <= 1024);
+    useEffect(() => {
+        const handleResize = () => {
+            setIsTeblet(window.innerWidth <= 1024);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const [userVisible, setUserVisible] = useState(false);
     const [authModalVisible, setAuthModalVisible] = useState(false);
 
     // 검색 모달 관련 상태 추가
     const [searchModalOpen, setSearchModalOpen] = useState(false);
-    const searchBarRef = useRef<HTMLDivElement>(null);
-    const [activeCard, setActiveCard] = useState<ActiveCardType>('location');
 
     // 헤더 메인 번역기능
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
     const [languageSetModal, setLanguageSetModal] = useState(false);
+
+    const openSearchModal = () => {
+        if (window.location.pathname === '/map') {
+            // 이미 /map 페이지면 모달 열기
+            setSearchModalOpen(true);
+            document.body.style.overflow = 'hidden';
+        } else {
+            // 아니라면 /map 으로 이동
+            navigate('/map');
+        }
+    };
 
     const handleLogo = () => {
         navigate('/');
@@ -70,31 +75,6 @@ export default function HeaderOneLine() {
         }
     };
 
-    const openSearchModal = () => {
-        if (window.location.pathname === '/map') {
-            // 이미 /map 페이지면 모달 열기
-            setSearchModalOpen(true);
-            document.body.style.overflow = 'hidden';
-        } else {
-            // 아니라면 /map 으로 이동
-            navigate('/map');
-        }
-    };
-
-    const performSearch = () => {
-        closeSearchModal();
-        console.log('Search performed with:', {
-            location: selectedLocation,
-            dates: {startDate, endDate},
-            guests: guestCount
-        });
-    };
-
-    const closeSearchModal = () => {
-        setSearchModalOpen(false);
-        document.body.style.overflow = 'auto';
-    };
-
     // 헤더 메인 번역기능
     const handleLanguageSet = () => {
         if (authToken) {
@@ -104,21 +84,6 @@ export default function HeaderOneLine() {
 
         setLanguageSetModal(true);
     };
-
-    // 검색 모달
-    const toggleCard = (cardName: ActiveCardType) => {
-        if (activeCard === cardName) {
-            setActiveCard(null);
-        } else {
-            setActiveCard(cardName);
-        }
-    };
-
-    const handleSelectLocation = (location: LocationOption) => {
-        setSelectedLocation(location.name);
-        toggleCard('date');
-    };
-
 
     return (
         <>
@@ -135,91 +100,27 @@ export default function HeaderOneLine() {
                             </div>
 
                             {/* 검색창 */}
-                            {(!isMobile && !hostMode) && isVisible && (
-                                <div
-                                    ref={searchBarRef}
-                                    onClick={openSearchModal}
-                                    className="h-12 w-full max-w-3xl text-sm flex items-center justify-between bg-white shadow-lg border border-gray-200 cursor-pointer transition-all duration-300 hover:shadow-xl"
-                                    style={{borderRadius: '40px', overflow: 'hidden'}}
-                                >
-                                    {/* 장소 섹션 */}
-                                    <div
-                                        className="flex-1 flex items-center px-6 py-3 hover:bg-gray-50 transition-colors duration-200">
-                                        <MapPin className="w-4 h-4 text-gray-600 mr-3"/>
-                                        <div className="flex flex-col">
-                                            <span className="text-xs font-semibold text-gray-900">
-                                                {t('장소')}
-                                            </span>
-                                            <span className="text-gray-500 text-xs truncate">
-                                                {t('장소, 이름, 키워드 검색')}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* 구분선 */}
-                                    <div className="hidden md:block w-px h-8 bg-gray-300"></div>
-
-                                    {/* 입주일 섹션 */}
-                                    <div
-                                        className="hidden md:flex flex-1 items-center px-6 py-3 hover:bg-gray-50 transition-colors duration-200">
-                                        <div className="flex flex-col">
-                                            <span className="text-xs font-semibold text-gray-900">
-                                                {t('입주일')}
-                                            </span>
-                                            <span className="text-gray-500 text-xs">
-                                                {t('입주일 선택')}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* 구분선 */}
-                                    <div className="hidden md:block w-px h-8 bg-gray-300"></div>
-
-                                    {/* 퇴거일 섹션 */}
-                                    <div
-                                        className="hidden md:flex flex-1 items-center px-6 py-3 hover:bg-gray-50 transition-colors duration-200">
-                                        <div className="flex flex-col">
-                                            <span className="text-xs font-semibold text-gray-900">
-                                                {t('인원')}
-                                            </span>
-                                            <span className="text-gray-500 text-xs">
-                                                {t('인원 선택')}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* 검색 버튼 */}
-                                    <button
-                                        className="w-8 h-8 m-2 flex items-center justify-center bg-roomi hover:bg-roomi-3 rounded-full shadow-md transition-all duration-200 hover:scale-105"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            performSearch();
-                                        }}
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={faSearch}
-                                            className="text-white text-xs"
-                                        />
-                                    </button>
-                                </div>
-                            )}
-
-                            {/* "/map" 검색창 */}
-                            {(isMapVisible && isMobile) && (
-                                <div>
-                                    <button
-                                        type="button"
-                                        onClick={openSearchModal}
-                                        className="w-8 h-8 flex items-center justify-center
+                            {((!isTeblet && !hostMode) && isVisible) ? (
+                                <SearchBar searchModalOpen={searchModalOpen} setSearchModalOpen={setSearchModalOpen} oneLine={true}/>
+                            ) : (
+                                <>
+                                    {(isMapVisible || isSearchVisible) && (
+                                        <div>
+                                            <button
+                                                type="button"
+                                                onClick={openSearchModal}
+                                                className="w-8 h-8 flex items-center justify-center
                                                     bg-gray-100 rounded-full shadow-md
                                                     transition-all duration-200 hover:scale-105"
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={faSearch}
-                                            className="text-black text-base"
-                                        />
-                                    </button>
-                                </div>
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faSearch}
+                                                    className="text-black text-base"
+                                                />
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
                             )}
 
                             {/* 프로필/로그인 영역 */}
@@ -239,20 +140,6 @@ export default function HeaderOneLine() {
                     <HostHeader/>
                 )}
             </div>
-
-            {/* 검색 모달 */}
-            {searchModalOpen && (
-                <SearchBar
-                    visible={searchModalOpen}
-                    onClose={() => setSearchModalOpen(false)}
-                    openSearchModal={openSearchModal}
-                    closeSearchModal={closeSearchModal}
-                    toggleCard={toggleCard}
-                    activeCard={activeCard}
-                    performSearch={performSearch}
-                    handleSelectLocation={handleSelectLocation}
-                />
-            )}
 
             {/* 헤더 번역 모달 */}
             {languageSetModal && (
