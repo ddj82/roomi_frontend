@@ -17,6 +17,8 @@ import {useDateStore} from "../../stores/DateStore";
 import {useGuestsStore} from "../../stores/GuestsStore";
 import '../../../css/SearchModal.css';
 import CommonModal from 'src/components/util/CommonModal';
+import {MapPin} from "lucide-react";
+import {Calendar, MapPinSimple, UserPlus} from "@phosphor-icons/react";
 
 type LocationOption = {
     name: string;
@@ -54,10 +56,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
     // 위치 옵션 데이터
     const locationOptions: LocationOption[] = [
-        {name: 'Seoul', country: '대한민국'},
-        {name: 'Busan', country: '대한민국'},
-        {name: 'Jeju', country: '대한민국'},
-        {name: 'Daejeon', country: '대한민국'}
+        {name: '서울', country: '대한민국'},
+        {name: '부산', country: '대한민국'},
+        {name: '대전', country: '대한민국'},
+        {name: '제주', country: '대한민국'}
     ];
 
     return (
@@ -79,6 +81,17 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             <div className="search-modal inset-0 bg-transparent z-[9999] overflow-y-auto">
                 <div className="container mx-auto px-4 max-w-full md:max-w-2xl lg:max-w-3xl">
                     {/* 모달 헤더 - 고정 */}
+                    <div className="sticky top-0 bg-transparent z-[9999] flex items-center py-4 md:py-6">
+                        <button
+                            className="p-2 rounded-full "
+                            onClick={closeSearchModal}
+                        >
+                            <FontAwesomeIcon icon={faTimes} className="text-gray-800 text-lg"/>
+                        </button>
+                        <h1 className="text-lg md:text-xl font-semibold text-center flex-1">{t('검색')}</h1>
+                        <div className="w-8"></div>
+                        {/* 정렬을 위한 여백 */}
+                    </div>
                     {/*<div className="sticky top-0 bg-transparent z-[9999] flex items-center py-4 md:py-6">*/}
                     {/*    <button*/}
                     {/*        className="p-2 rounded-full "*/}
@@ -94,7 +107,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                     <div ref={modalRef} className="search-content py-4 pb-24">
                         {/* 위치 선택 카드 */}
                         <div
-                            className={`search-card bg-white backdrop-blur-sm rounded-xl  border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'location' ? 'search-card-collapsed' : ''}`}
+                            className={`search-card bg-white backdrop-blur-sm rounded-2xl  border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'location' ? 'search-card-collapsed' : ''}`}
                         >
                             {/* 카드 헤더 - 클릭 시 접기/펼치기 */}
                             <div
@@ -102,11 +115,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                                 onClick={() => toggleCard('location')}
                             >
                                 <div className="flex items-center">
-                                    <FontAwesomeIcon icon={faLocationDot} className="text-roomi text-lg mr-2 md:mr-3"/>
+                                    <MapPinSimple size={28} className="text-roomi text-lg mr-2 md:mr-3"/>
                                     <div>
-                                        <h2 className="text-base md:text-lg font-semibold">{t('Where')}</h2>
+                                        <h2 className="text-base md:text-lg font-semibold">{t('장소')}</h2>
                                         <p className="text-xs md:text-sm text-gray-500">
-                                            {selectedLocation || t('Add destination')}
+                                            {selectedLocation || t('장소 선택')}
                                         </p>
                                     </div>
                                 </div>
@@ -134,15 +147,15 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                                 </div>
 
                                 <div className="popular-locations">
-                                    <h3 className="text-md font-medium mb-2 md:mb-3">{t('Popular destinations')}</h3>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
+                                    <h3 className="text-md font-medium mb-2 md:mb-3">{t('추천 장소')}</h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3 ">
                                         {locationOptions.map((location, index) => (
                                             <div
                                                 key={index}
                                                 className="flex items-center p-3 rounded-lg cursor-pointer border border-gray-100 bg-white bg-opacity-60"
                                                 onClick={() => handleSelectLocation(location)}
                                             >
-                                                <FontAwesomeIcon icon={faLocationDot}
+                                                <MapPin
                                                                  className="text-gray-400 mr-3"/>
                                                 <div>
                                                     <p className="font-medium">{t(location.name.toLowerCase())}</p>
@@ -157,7 +170,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
                         {/* 날짜 선택 카드 */}
                         <div
-                            className={`search-card bg-white backdrop-blur-sm rounded-xl border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'date' ? 'search-card-collapsed' : ''}`}
+                            className={`search-card bg-white backdrop-blur-sm rounded-2xl border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'date' ? 'search-card-collapsed' : ''}`}
                         >
                             {/* 카드 헤더 - 클릭 시 접기/펼치기 */}
                             <div
@@ -165,13 +178,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                                 onClick={() => toggleCard('date')}
                             >
                                 <div className="flex items-center">
-                                    <FontAwesomeIcon icon={faCalendarDay} className="text-roomi text-lg mr-2 md:mr-3"/>
+                                    <Calendar size ={32} className="text-roomi text-lg mr-2 md:mr-3"/>
                                     <div>
-                                        <h2 className="text-base md:text-lg font-semibold">{t('When')}</h2>
+                                        <h2 className="text-base md:text-lg font-semibold">{t('날짜')}</h2>
                                         <p className="text-xs md:text-sm text-gray-500">
                                             {(startDate && endDate)
                                                 ? `${dayjs(startDate).format('MM-DD')} ~ ${dayjs(endDate).format('MM-DD')}`
-                                                : t('Add dates')}
+                                                : t('머물 날 선택')}
                                         </p>
                                     </div>
                                 </div>
@@ -190,7 +203,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
                         {/* 인원 선택 카드 */}
                         <div
-                            className={`search-card bg-transparent backdrop-blur-sm rounded-xl  border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'guests' ? 'search-card-collapsed' : ''}`}
+                            className={`search-card bg-transparent backdrop-blur-sm rounded-2xl  border border-gray-200 mb-4 overflow-hidden transition-all duration-300 ${activeCard !== 'guests' ? 'search-card-collapsed' : ''}`}
                         >
                             {/* 카드 헤더 - 클릭 시 접기/펼치기 */}
                             <div
@@ -198,13 +211,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                                 onClick={() => toggleCard('guests')}
                             >
                                 <div className="flex items-center">
-                                    <FontAwesomeIcon icon={faUserPlus} className="text-roomi text-lg mr-2 md:mr-3"/>
+                                    <UserPlus size={30} className="text-roomi text-lg mr-2 md:mr-3"/>
                                     <div>
-                                        <h2 className="text-base md:text-lg font-semibold">{t('Who')}</h2>
+                                        <h2 className="text-base md:text-lg font-semibold">{t('인원')}</h2>
                                         <p className="text-xs md:text-sm text-gray-500">
                                             {guestCount > 0
                                                 ? `${t('guest')} ${guestCount}${t('guest_unit')}`
-                                                : t('Add guests')}
+                                                : t('사용 인원 선택')}
                                         </p>
                                     </div>
                                 </div>
@@ -220,8 +233,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                                 <div className="guests-picker-container p-4 bg-white bg-opacity-60 rounded-xl">
                                     <div className="flex justify-between items-center py-2">
                                         <div>
-                                            <h4 className="text-sm md:font-medium">{t('Adults')}</h4>
-                                            <p className="text-xs md:text-sm text-gray-500">{t('Age 13+')}</p>
+                                            <h4 className="text-sm md:font-medium">{t('게스트')}</h4>
+                                            <p className="text-xs md:text-sm text-gray-500">{t('만 13세 이상')}</p>
                                         </div>
                                         <div className="flex items-center">
                                             <button
@@ -252,7 +265,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                                 className="w-full p-2 md:p-3 bg-roomi text-white rounded-lg font-medium text-sm md:text-base"
                                 onClick={performSearch}
                             >
-                                {t('Search')}
+                                {t('검색')}
                             </button>
                         </div>
                     </div>

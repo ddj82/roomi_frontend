@@ -129,7 +129,8 @@
   "위치정보" : "Location Information",
   "추가시설" : "Additional Facilities",
   "일" : "Day",
-  "주" : "Week",
+  "주" : "week",
+  "달" : "month",
   "방 이용 시 주의사항" : "Room Usage Guidelines",
   "추가 시설" : "Additional Facilities",
   "제공 서비스":  "Services Provided",
@@ -506,7 +507,35 @@
   "오류가 발생했습니다." : "An error occurred.",
   "신청" : "Apply",
   "중도퇴실" : "early check-out",
-  "일반퇴실" : "check-out"
+  "일반퇴실" : "check-out",
+  "장소": "Location",
+  "장소 선택": "Select location",
+  "어디로 가시나요?": "Where to",
+  "추천 장소": "Popular destinations",
+  "seoul": "Seoul",
+  "busan": "Busan",
+  "daejeon": "Daejeon",
+  "jeju": "Jeju",
+  "대한민국": "South Korea",
+  "날짜": "Dates",
+  "머물 날 선택": "Select your stay dates",
+  "인원": "Guests",
+  "guest": "guest",
+  "guest_unit": "s",
+  "사용 인원 선택": "Add guests",
+  "게스트": "Guests",
+  "만 13세 이상": "Ages 13+",
+  "검색": "Search",
+  "날짜를 선택하세요" : "Select dates",
+  "목록 보기": "List view",
+  "지도 보기": "Map view",
+  "로그아웃 하시겠습니까?" : "Are you sure you want to log out?",
+  "로그인 후 이용 가능합니다.": "Please log in to continue.",
+
+  "예약 수락에 실패했습니다" : ""
+
+
+
 
 
 

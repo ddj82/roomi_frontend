@@ -9,7 +9,7 @@ import AccodionItem from "../util/AccodionItem";
 export default function MainMap({isMobile}: { isMobile: boolean; }) {
     const [rooms, setRooms] = useState<RoomData[]>([]);
     const [mobileRoomListOpen, setMobileRoomListOpen] = useState(false);
-
+    const {t} = useTranslation();
     const handleRoomsUpdate = useCallback((newRooms: RoomData[]) => {
         console.log('Rooms updated in App:', newRooms);
         setRooms(newRooms);
@@ -57,7 +57,7 @@ export default function MainMap({isMobile}: { isMobile: boolean; }) {
                                 onClick={() => setMobileRoomListOpen(prev => !prev)}
                                 className="bg-roomi w-full p-2 text-white"
                             >
-                                {mobileRoomListOpen ? '지도 보기' : '목록 보기'}
+                                {mobileRoomListOpen ? t('지도 보기') : t('목록 보기')}
                             </button>
                         </div>
                     </div>

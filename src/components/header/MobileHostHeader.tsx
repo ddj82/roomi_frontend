@@ -169,8 +169,8 @@ const MobileHostHeader: React.FC = () => {
                 <CommonAlert
                     isOpen={alertOpen}
                     onRequestClose={() => setAlertOpen(false)}
+                    content={t("로그아웃 하시겠습니까?")}
                     confirm={true}
-                    content="로그아웃 하시겠습니까?"
                     confirmResponse={handleConfirm}
                 />
             )}

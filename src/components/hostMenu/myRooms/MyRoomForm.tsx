@@ -32,6 +32,7 @@ import Modal from "react-modal";
 import DaumPostcode from "react-daum-postcode";
 import RoomPreviewModal from "../../modals/RoomPreviewModal";
 import ConfirmationModal from "../../modals/ComfirmationModal";
+import CommonAlert from "../../util/CommonAlert";
 
 export interface MyRoomFormProps {
     mode: "insert" | "update";
@@ -51,7 +52,12 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
     const [roomFormData, setRoomFormData] = useState<RoomFormData>(initialData);
     const [loading, setLoading] = useState(false);
     const [roomPreview, setRoomPreview] = useState(false);
+    //alert 모달
+    const [imageAlertOpen, setImageAlertOpen] = useState(false);
+    const [uploadAlertOpen, setUploadAlertOpen] = useState(false);
+    const [tagAlertOpen, setTagAlertOpen] = useState(false);
 
+    //
     const totalSteps = useMemo(() => {
         if (roomFormData.room_type === "LODGE") return 15;
         if (roomFormData.room_type === "LEASE") return 14;
@@ -2547,6 +2553,28 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                 icon="question"
                 confirmButtonStyle="danger"
             />
+            //
+            {imageAlertOpen && (
+                <CommonAlert
+                    isOpen={imageAlertOpen}
+                    onRequestClose={() => setImageAlertOpen(false)}
+                    content="최대 50장까지만 업로드가 가능합니다."
+                />
+            )}
+            {uploadAlertOpen && (
+                <CommonAlert
+                    isOpen={uploadAlertOpen}
+                    onRequestClose={() => setUploadAlertOpen(false)}
+                    content="이미지 파일만 업로드 가능합니다."
+                />
+            )}
+            {tagAlertOpen && (
+                <CommonAlert
+                    isOpen={tagAlertOpen}
+                    onRequestClose={() => setTagAlertOpen(false)}
+                    content="이미 추가된 태그입니다."
+                />
+            )}
         </form>
     );
 };

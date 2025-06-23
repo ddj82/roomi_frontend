@@ -390,7 +390,7 @@ export default function MyReservationDetails({reserveData, statusInfo}: MyReserv
                 console.log('🚨 예약 취소 확인 → 취소 API 호출');
 
                 // API 호출 코드 (예시)
-                // cancelReservation(reservation.id)
+                // await cancelReservation(reservation.id)
                 //   .then(() => {
                 //     alert('예약이 성공적으로 취소되었습니다.');
                 //   })

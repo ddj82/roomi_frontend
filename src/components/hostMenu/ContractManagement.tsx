@@ -5,6 +5,7 @@ import { ReservationHistory, RoomData } from "../../types/rooms";
 import { Search, ChevronDown, X } from 'lucide-react';
 import ReservationDetail from './ContractDetail';
 import dayjs from "dayjs";
+import CommonAlert from "../util/CommonAlert";
 
 const ContractManagement = () => {
     const { t } = useTranslation();
@@ -13,7 +14,7 @@ const ContractManagement = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState("current"); // "current" or "past"
-
+    const [alertOpen, setAlertOpen] = useState(false);
     // Room data for room title filtering
     const [rooms, setRooms] = useState<RoomData[]>([]);
     const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
@@ -232,7 +233,8 @@ const ContractManagement = () => {
             window.location.reload(); // ✅ 수락 후 새로고침
         } catch (e) {
             console.error('수락 중 오류 발생:', e);
-            alert('예약 수락에 실패했습니다.');
+
+            setAlertOpen(true);
         } finally {
             setSelectedReservation(null);
         }
@@ -725,7 +727,17 @@ const ContractManagement = () => {
                     </div>
                 )}
             </div>
+            //예약실패 알람 모달
+            {alertOpen && (
+                <CommonAlert
+                    isOpen={alertOpen}
+                    onRequestClose={() => setAlertOpen(false)}
+                    content="예약 수락에 실패했습니다."
+                />
+            )}
         </div>
+
+
     );
 };
 
