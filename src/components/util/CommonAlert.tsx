@@ -80,7 +80,7 @@ const CommonAlert = ({
                                 }}
                                 className="rounded-lg p-2 bg-roomi w-16 text-white"
                             >
-                                확인
+                                {t('확인')}
                             </button>
                             <button
                                 type="button"
@@ -90,7 +90,7 @@ const CommonAlert = ({
                                 }}
                                 className="rounded-lg p-2 bg-gray-300 w-16"
                             >
-                                취소
+                                {t('취소')}
                             </button>
                         </div>
                     ) : (
@@ -103,7 +103,7 @@ const CommonAlert = ({
                                 }}
                                 className="rounded-lg p-2 bg-roomi w-16 text-white"
                             >
-                                확인
+                                {t('확인')}
                             </button>
                         </div>
                     )}

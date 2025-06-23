@@ -186,7 +186,7 @@ const AuthModal = ({ visible, onClose, type }: { visible: boolean; onClose: () =
         >
             <div className="authModal modal-content">
                 {/*<div className="text-lg font-bold mb-4">{t('로그인').toUpperCase()}</div>*/}
-                <form onSubmit={handleSubmit} className="authModal input-container">
+                <form onSubmit={handleSubmit} className="authModal input-container mt-2">
                     <div className="authModal input-container">
                         <input
                             type="text"
