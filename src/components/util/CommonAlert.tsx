@@ -9,10 +9,6 @@ interface  CommonAlertProps {
     confirm?: boolean;
     confirmResponse?: (result: boolean) => void;
     zIndex?: number;
-    // widthClassName?: string; // Tailwind width 클래스 (선택)
-    // heightClassName?: string; // Tailwind width 클래스 (선택)
-    // customClassName?: string;
-    // contentClassName?: string;
 }
 
 const CommonAlert = ({
@@ -22,10 +18,6 @@ const CommonAlert = ({
                          confirm,
                          confirmResponse,
                          zIndex = 10001,
-                         // widthClassName = "w-full",
-                         // heightClassName = "h-[100dvh]",
-                         // customClassName,
-                         // contentClassName,
 }: CommonAlertProps) => {
     const {t} = useTranslation();
 
@@ -69,8 +61,8 @@ const CommonAlert = ({
                 id="alert-main"
                 className="
                     bg-white rounded-lg p-4 absolute transform
-                    md:w-1/3 md:top-0 md:-translate-y-0 -translate-x-1/2 left-1/2
-                    w-full top-1/2 -translate-y-1/2
+                    md:m-0 md:w-1/3 md:top-0 md:-translate-y-0
+                    w-[90%] top-1/2 -translate-y-1/2 -translate-x-1/2 left-1/2
                 "
             >
                 <div id="alert-content" className="mb-2">

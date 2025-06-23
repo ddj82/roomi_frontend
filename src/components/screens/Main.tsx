@@ -103,12 +103,12 @@ const Main: React.FC<MainProps> = () => {
 
     return (
         <div className="p-4">
-            <div>
+            <div className="mb-6">
                 <MainBannerSlide/>
             </div>
             {/* 인기 있는 장소 */}
             <div className="flex flex-col gap-2">
-                <div className="font-bold text-lg px-4">{t('인기 있는 장소')}</div>
+                <div className="font-bold text-lg">{t('인기 있는 장소')}</div>
 
                 {/* 화살표와 그리드를 감싸는 컨테이너 */}
                 <div className="relative flex items-center">
@@ -137,7 +137,7 @@ const Main: React.FC<MainProps> = () => {
                     {/* 가로 스크롤 */}
                     <div
                         ref={scrollContainerRef}
-                        className="p-4 overflow-x-auto scrollbar-none scrollbar-hidden w-full"
+                        className="overflow-x-auto scrollbar-none scrollbar-hidden w-full mb-6"
                     >
                         <div
                             className="grid grid-rows-1 gap-4 md:gap-4 w-max"
@@ -167,19 +167,19 @@ const Main: React.FC<MainProps> = () => {
 
             {/* 모든 공간 */}
             <div className="flex flex-col gap-2">
-                <div className="font-bold text-lg px-4">{t('모든 공간')}</div>
+                <div className="font-bold text-lg">{t('모든 공간')}</div>
                 <RoomScrollList rooms={rooms}/>
             </div>
 
             {/* 인기 있는 공간 */}
             <div className="flex flex-col gap-2">
-                <div className="font-bold text-lg px-4">{t('인기 있는 공간 둘러보기')}</div>
+                <div className="font-bold text-lg">{t('인기 있는 공간 둘러보기')}</div>
                 <RoomScrollList rooms={rooms}/>
             </div>
 
             {/* 신규 등록한 공간 둘러보기 */}
             <div className="flex flex-col gap-2">
-                <div className="font-bold text-lg px-4">{t('신규 등록한 공간 둘러보기')}</div>
+                <div className="font-bold text-lg">{t('신규 등록한 공간 둘러보기')}</div>
                 <RoomScrollList rooms={rooms}/>
             </div>
 

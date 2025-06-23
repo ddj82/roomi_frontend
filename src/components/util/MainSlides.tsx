@@ -66,7 +66,7 @@ export default function MainSlides() {
                                 key={index}
                                 className="w-full flex-shrink-0 relative"
                             >
-                            <img
+                                <img
                                     src={slide.image}
                                     className="w-full h-full object-cover"
                                     alt={`Slide ${index + 1}`}

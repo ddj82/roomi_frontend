@@ -16,6 +16,7 @@ import {useLocationStore} from "../../stores/LocationStore";
 import {useDateStore} from "../../stores/DateStore";
 import {useGuestsStore} from "../../stores/GuestsStore";
 import '../../../css/SearchModal.css';
+import CommonModal from 'src/components/util/CommonModal';
 
 type LocationOption = {
     name: string;
@@ -60,30 +61,35 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     ];
 
     return (
-        <Modal
+        <CommonModal
             isOpen={visible}
             onRequestClose={onClose}
-            overlayClassName="overlay-searchBar"
-            className="w-full md:w-3/4 lg:w-1/2 h-[100vh] overflow-auto focus:outline-none scrollbar-hidden"
-            style={{
-                overlay: { zIndex: 10000 },
-                content: { zIndex: 10000 }
-            }}
+            title={t('Search')}
         >
+        {/*<Modal*/}
+        {/*    isOpen={visible}*/}
+        {/*    onRequestClose={onClose}*/}
+        {/*    overlayClassName="overlay-searchBar"*/}
+        {/*    className="w-full md:w-3/4 lg:w-1/2 h-[100vh] overflow-auto focus:outline-none scrollbar-hidden"*/}
+        {/*    style={{*/}
+        {/*        overlay: { zIndex: 10000 },*/}
+        {/*        content: { zIndex: 10000 }*/}
+        {/*    }}*/}
+        {/*>*/}
             <div className="search-modal inset-0 bg-transparent z-[9999] overflow-y-auto">
                 <div className="container mx-auto px-4 max-w-full md:max-w-2xl lg:max-w-3xl">
                     {/* 모달 헤더 - 고정 */}
-                    <div className="sticky top-0 bg-transparent z-[9999] flex items-center py-4 md:py-6">
-                        <button
-                            className="p-2 rounded-full "
-                            onClick={closeSearchModal}
-                        >
-                            <FontAwesomeIcon icon={faTimes} className="text-gray-800 text-lg"/>
-                        </button>
-                        <h1 className="text-lg md:text-xl font-semibold text-center flex-1">{t('Search')}</h1>
-                        <div className="w-8"></div>
-                        {/* 정렬을 위한 여백 */}
-                    </div>
+                    {/*<div className="sticky top-0 bg-transparent z-[9999] flex items-center py-4 md:py-6">*/}
+                    {/*    <button*/}
+                    {/*        className="p-2 rounded-full "*/}
+                    {/*        onClick={closeSearchModal}*/}
+                    {/*    >*/}
+                    {/*        <FontAwesomeIcon icon={faTimes} className="text-gray-800 text-lg"/>*/}
+                    {/*    </button>*/}
+                    {/*    <h1 className="text-lg md:text-xl font-semibold text-center flex-1">{t('Search')}</h1>*/}
+                    {/*    <div className="w-8"></div>*/}
+                    {/*    /!* 정렬을 위한 여백 *!/*/}
+                    {/*</div>*/}
 
                     <div ref={modalRef} className="search-content py-4 pb-24">
                         {/* 위치 선택 카드 */}
@@ -252,6 +258,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                     </div>
                 </div>
             </div>
-        </Modal>
+        </CommonModal>
     );
 };

@@ -65,7 +65,7 @@ export default function MainBannerSlide() {
             {/* 모바일: 슬라이더 */}
             <div className="md:hidden overflow-hidden">
                 <div
-                    className="flex transition-transform duration-500 ease-in-out px-4 py-4"
+                    className="flex transition-transform duration-500 ease-in-out p-4"
                     style={{ transform: `translateX(-${currentIndex * 100}%)` }}
                 >
                     {banners.map((banner, index) => (

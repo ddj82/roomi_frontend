@@ -105,7 +105,7 @@ const RoomScrollList: React.FC<RoomScrollListProps> = ({ rooms }) => {
             {/* 통합된 스크롤 컨테이너 */}
             <div
                 ref={scrollContainerRef}
-                className="overflow-x-auto h-fit scrollbar-none scrollbar-hidden p-4"
+                className="overflow-x-auto h-fit scrollbar-none scrollbar-hidden mb-6"
             >
                 <div
                     className="grid grid-rows-1 gap-4 w-max"
