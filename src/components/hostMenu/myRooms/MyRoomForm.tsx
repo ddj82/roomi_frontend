@@ -2058,15 +2058,16 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                             <div className="md:flex mt-4 gap-4">
                                 {/* 즉시 예약 */}
                                 <div className="md:w-1/2">
-                                    <label htmlFor="auto_true"
-                                           className={`block p-4 border rounded-xl cursor-pointer transition mb-4 md:mb-0 
-                               ${roomFormData.is_auto_accepted ?
-                                               "bg-roomi-000 border-roomi" : "border-gray-300 text-gray-700 hover:bg-gray-50"}`}
+                                    <label
+                                        htmlFor="auto_true"
+                                        className={`block p-4 border rounded-xl cursor-pointer transition mb-4 md:mb-0 
+                                            ${roomFormData.is_auto_accepted ?
+                                            "bg-roomi-000 border-roomi" : "border-gray-300 text-gray-700 hover:bg-gray-50"}`}
                                     >
                                         <div className="flex">
                                             <div
                                                 className={`flex_center p-2 text-gray-300
-                                    ${roomFormData.is_auto_accepted && "text-roomi"}`}
+                                                ${roomFormData.is_auto_accepted && "text-roomi"}`}
                                             >
                                                 {roomFormData.is_auto_accepted ? (
                                                     <FontAwesomeIcon icon={faCheckCircle} className="w-6 h-6"/>
@@ -2077,7 +2078,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                             <div className="w-full ml-4">
                                                 <div
                                                     className={`font-bold 
-                                    ${roomFormData.is_auto_accepted && "text-roomi"}`}
+                                                    ${roomFormData.is_auto_accepted && "text-roomi"}`}
                                                 >
                                                     즉시 예약
                                                 </div>
@@ -2095,15 +2096,16 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                 </div>
                                 {/* 승인 필요 */}
                                 <div className="md:w-1/2">
-                                    <label htmlFor="auto_false"
-                                           className={`block p-4 border rounded-xl cursor-pointer transition 
-                               ${!roomFormData.is_auto_accepted ?
-                                               "bg-roomi-000 border-roomi" : "border-gray-300 text-gray-700 hover:bg-gray-50"}`}
+                                    <label
+                                        htmlFor="auto_false"
+                                        className={`block p-4 border rounded-xl cursor-pointer transition 
+                                            ${!roomFormData.is_auto_accepted ?
+                                            "bg-roomi-000 border-roomi" : "border-gray-300 text-gray-700 hover:bg-gray-50"}`}
                                     >
                                         <div className="flex">
                                             <div
                                                 className={`flex_center p-2 text-gray-300
-                                    ${!roomFormData.is_auto_accepted && "text-roomi"}`}
+                                                ${!roomFormData.is_auto_accepted && "text-roomi"}`}
                                             >
                                                 {!roomFormData.is_auto_accepted ? (
                                                     <FontAwesomeIcon icon={faCheckCircle} className="w-6 h-6"/>
@@ -2114,7 +2116,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                             <div className="w-full ml-4">
                                                 <div
                                                     className={`font-bold 
-                                    ${!roomFormData.is_auto_accepted && "text-roomi"}`}
+                                                    ${!roomFormData.is_auto_accepted && "text-roomi"}`}
                                                 >
                                                     승인 필요
                                                 </div>
@@ -2137,16 +2139,18 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                             <div className="mt-4">
                                 {/* 유연한 */}
                                 <div className="mb-2">
-                                    <label htmlFor="policy_easy"
-                                           className={`block p-4 border rounded-xl cursor-pointer transition mb-4 md:mb-0 
-                               ${(roomFormData.refund_policy.startsWith('유연한') ||
-                                               roomFormData.refund_policy === "3") ?
-                                               "bg-roomi-000 border-roomi" : "border-gray-300 text-gray-700 hover:bg-gray-50"}`}
+                                    <label
+                                        htmlFor="policy_easy"
+                                        className={`block p-4 border rounded-xl cursor-pointer transition mb-4 md:mb-0 
+                                            ${(roomFormData.refund_policy.startsWith('유연한') ||
+                                            roomFormData.refund_policy === "3") ?
+                                            "bg-roomi-000 border-roomi" : "border-gray-300 text-gray-700 hover:bg-gray-50"}
+                                        `}
                                     >
                                         <div className="flex">
                                             <div
                                                 className={`flex_center p-2 text-gray-300
-                                    ${(roomFormData.refund_policy.startsWith('유연한') ||
+                                                    ${(roomFormData.refund_policy.startsWith('유연한') ||
                                                     roomFormData.refund_policy === "3") && "text-roomi"}`}
                                             >
                                                 {(roomFormData.refund_policy.startsWith('유연한') ||
@@ -2159,7 +2163,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                             <div className="w-full ml-4">
                                                 <div
                                                     className={`font-bold 
-                                    ${(roomFormData.refund_policy.startsWith('유연한') ||
+                                                        ${(roomFormData.refund_policy.startsWith('유연한') ||
                                                         roomFormData.refund_policy === "3") && "text-roomi"}`}
                                                 >
                                                     유연한 환불 정책
@@ -2178,7 +2182,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                         <div className="flex text-gray-500 md:text-sm text-xs mt-2">
                                             <div
                                                 className={`w-full ml-4 p-3 
-                                    ${(roomFormData.refund_policy.startsWith('유연한') ||
+                                                    ${(roomFormData.refund_policy.startsWith('유연한') ||
                                                     roomFormData.refund_policy === "3") && "bg-gray-50 rounded-xl"}`}
                                             >
                                                 <div className="my-2">
@@ -2198,14 +2202,14 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                 <div className="mb-2">
                                     <label htmlFor="policy_basic"
                                            className={`block p-4 border rounded-xl cursor-pointer transition mb-4 md:mb-0 
-                               ${(roomFormData.refund_policy.startsWith('일반') ||
+                                               ${(roomFormData.refund_policy.startsWith('일반') ||
                                                roomFormData.refund_policy === "4") ?
                                                "bg-roomi-000 border-roomi" : "border-gray-300 text-gray-700 hover:bg-gray-50"}`}
                                     >
                                         <div className="flex">
                                             <div
                                                 className={`flex_center p-2 text-gray-300
-                                    ${(roomFormData.refund_policy.startsWith('일반') ||
+                                                    ${(roomFormData.refund_policy.startsWith('일반') ||
                                                     roomFormData.refund_policy === "4") && "text-roomi"}`}
                                             >
                                                 {(roomFormData.refund_policy.startsWith('일반') ||
@@ -2218,7 +2222,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                             <div className="w-full ml-4">
                                                 <div
                                                     className={`font-bold 
-                                    ${(roomFormData.refund_policy.startsWith('일반') ||
+                                                        ${(roomFormData.refund_policy.startsWith('일반') ||
                                                         roomFormData.refund_policy === "4") && "text-roomi"}`}
                                                 >
                                                     일반 환불 정책
@@ -2237,7 +2241,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                         <div className="flex text-gray-500 md:text-sm text-xs mt-2">
                                             <div
                                                 className={`w-full ml-4 p-3 
-                                    ${(roomFormData.refund_policy.startsWith('일반') ||
+                                                    ${(roomFormData.refund_policy.startsWith('일반') ||
                                                     roomFormData.refund_policy === "4") && "bg-gray-50 rounded-xl"}`}
                                             >
                                                 <div className="my-2">
@@ -2257,7 +2261,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                                 <div className="">
                                     <label htmlFor="policy_strict"
                                            className={`block p-4 border rounded-xl cursor-pointer transition mb-4 md:mb-0 
-                               ${(roomFormData.refund_policy.startsWith('엄격한') ||
+                                               ${(roomFormData.refund_policy.startsWith('엄격한') ||
                                                roomFormData.refund_policy === "5") ?
                                                "bg-roomi-000 border-roomi" : "border-gray-300 text-gray-700 hover:bg-gray-50"}`}
                                     >
@@ -2553,7 +2557,7 @@ const MyRoomForm: React.FC<MyRoomFormProps> = ({
                 icon="question"
                 confirmButtonStyle="danger"
             />
-            //
+
             {imageAlertOpen && (
                 <CommonAlert
                     isOpen={imageAlertOpen}

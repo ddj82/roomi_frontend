@@ -4,7 +4,6 @@ import { RoomData } from "src/types/rooms";
 import i18n from "src/i18n";
 import GoogleMap from "../map/GoogleMap";
 import RoomAccommodationCard from "../util/RoomAccommodationCard";
-import GoogleMap22 from "../map/GoogleMap22";
 
 interface HomeScreenProps {
     rooms: RoomData[];
@@ -31,7 +30,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ rooms: externalRooms }) => {
     };
 
     const renderMap = useCallback(
-        () => <GoogleMap22 onRoomsUpdate={handleRoomsUpdate} />,
+        () => <GoogleMap onRoomsUpdate={handleRoomsUpdate} />,
         [handleRoomsUpdate]
     );
 

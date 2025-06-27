@@ -58,17 +58,17 @@ const CommonModal = ({
                 ${customClassName} ${widthClassName} ${heightClassName}
             `}
         >
-            <div className="sticky top-0 bg-transparent flex items-center p-4 md:py-6 bg-white mb-2">
+            <div className="sticky top-0 bg-transparent flex items-center justify-between p-4 md:py-6 bg-white mb-2">
+                <div className="w-8"/>
+                {(title && title !== '') && (
+                    <div className="w-full flex_center text-lg md:text-xl font-semibold">{t(title)}</div>
+                )}
                 <button
                     className="p-2 rounded-full"
                     onClick={onRequestClose}
                 >
                     <FontAwesomeIcon icon={faTimes} className="text-gray-800 text-lg"/>
                 </button>
-                {(title && title !== '') && (
-                    <div className="w-full flex_center text-lg md:text-xl font-semibold">{t(title)}</div>
-                )}
-                <div className="w-8"/>
             </div>
             <div className={`px-4 md:m-auto md:w-1/2 ${contentClassName}`}>{children}</div>
         </Modal>

@@ -1,16 +1,11 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { ApiResponse, RoomData } from "src/types/rooms";
 import i18n from "../../i18n";
 import { mainRoomData } from "../../api/api";
 import ReactDOMServer from "react-dom/server";
+import ImgCarousel from "../util/ImgCarousel";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCaretDown, faXmark} from "@fortawesome/free-solid-svg-icons";
-import {
-    MarkerClusterer,
-    SuperClusterAlgorithm,
-    type Renderer,           // ← 여기가 핵심
-} from "@googlemaps/markerclusterer";
-
+import {faCaretDown} from "@fortawesome/free-solid-svg-icons";
 
 // Google Maps 및 MarkerClusterer 타입 선언
 declare global {
@@ -30,43 +25,43 @@ declare global {
             };
         };
         // @googlemaps/markerclusterer 라이브러리
-        // MarkerClusterer: new (options: MarkerClustererOptions) => MarkerClustererInstance;
-        // GridAlgorithm: new (options: { gridSize: number }) => any;
-        // SuperClusterAlgorithm: new (options?: any) => any;
+        MarkerClusterer: new (options: MarkerClustererOptions) => MarkerClustererInstance;
+        GridAlgorithm: new (options: { gridSize: number }) => any;
+        SuperClusterAlgorithm: new (options?: any) => any;
         initMap: () => void;
     }
 }
 
 // MarkerClusterer 관련 타입 정의
-// interface MarkerClustererOptions {
-//     map: google.maps.Map;
-//     markers: google.maps.Marker[];
-//     algorithm?: any;
-//     renderer?: ClusterRenderer;
-//     onClusterClick?: (event: any, cluster: any, map: google.maps.Map) => void;
-// }
+interface MarkerClustererOptions {
+    map: google.maps.Map;
+    markers: google.maps.Marker[];
+    algorithm?: any;
+    renderer?: ClusterRenderer;
+    onClusterClick?: (event: any, cluster: any, map: google.maps.Map) => void;
+}
 
-// interface MarkerClustererInstance {
-//     clearMarkers(): void;
-//     addMarkers(markers: google.maps.Marker[]): void;
-//     removeMarkers(markers: google.maps.Marker[]): void;
-//     addMarker(marker: google.maps.Marker): void;
-//     removeMarker(marker: google.maps.Marker): void;
-//     getMarkers(): google.maps.Marker[];
-//     getClusters(): any[];
-//     render(): void;
-// }
-//
-// interface ClusterRenderer {
-//     render: (cluster: ClusterRenderData, stats: any) => google.maps.Marker | HTMLElement;
-// }
-//
-// interface ClusterRenderData {
-//     count: number;
-//     position: google.maps.LatLng;
-//     markers: google.maps.Marker[];
-// }
-//
+interface MarkerClustererInstance {
+    clearMarkers(): void;
+    addMarkers(markers: google.maps.Marker[]): void;
+    removeMarkers(markers: google.maps.Marker[]): void;
+    addMarker(marker: google.maps.Marker): void;
+    removeMarker(marker: google.maps.Marker): void;
+    getMarkers(): google.maps.Marker[];
+    getClusters(): any[];
+    render(): void;
+}
+
+interface ClusterRenderer {
+    render: (cluster: ClusterRenderData, stats: any) => google.maps.Marker | HTMLElement;
+}
+
+interface ClusterRenderData {
+    count: number;
+    position: google.maps.LatLng;
+    markers: google.maps.Marker[];
+}
+
 interface GoogleMapViewProps {
     onRoomsUpdate: (rooms: RoomData[]) => void;
 }
@@ -76,11 +71,8 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
     const markers = useRef<google.maps.Marker[]>([]);
     const debounceTimer = useRef<NodeJS.Timeout | null>(null);
     const mapRef = useRef<google.maps.Map | null>(null);
-    const markerCluster = useRef<MarkerClusterer | null>(null);
+    const markerCluster = useRef<MarkerClustererInstance | null>(null);
     const infoWindow = useRef<google.maps.InfoWindow | null>(null);
-
-    const selectedRoomId = useRef<number|null>(null);
-    const [modalContent, setModalContent] = useState<JSX.Element | null>(null);
 
     // 마커 초기화
     const clearMarkers = (): void => {
@@ -166,7 +158,6 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
         return div.firstElementChild as HTMLElement;
     };
 
-
     // 표준 마커 생성 헬퍼 함수
     const createStandardMarker = (position: google.maps.LatLng, room: RoomData): google.maps.Marker => {
         const svgIcon: google.maps.Icon = {
@@ -191,9 +182,8 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
         });
     };
 
-    // 마커 업데이트 (클러스터링 포함)
-    // 주요 수정사항들
 
+    // 마커 업데이트 (클러스터링 포함)
 
     // InfoWindow 컨텐츠 생성 함수 - 완전히 수정
     const createInfoWindowContent = (room: RoomData): string => {
@@ -411,7 +401,6 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
     `;
     };
 
-
     // InfoWindow 스타일 조정 함수 - 더 안정적으로 수정
     const adjustInfoWindowStyles = () => {
         const adjustWithRetry = (attempt = 0) => {
@@ -432,9 +421,9 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
                         // border: none !important;
                         // box-shadow: none !important;
                         // background: transparent !important;
-                    //     iwContainer.style.cssText = `
-                    //     padding: 0;
-                    // `;
+                        //     iwContainer.style.cssText = `
+                        //     padding: 0;
+                        // `;
                     }
 
                     // InfoWindow 내부 컨테이너 (gm-style-iw-chr)
@@ -496,36 +485,33 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
         adjustWithRetry();
     };
 
-
-
+    // 3. 마커 클릭 이벤트 핸들러 수정
     const updateMarkers = (map: google.maps.Map, rooms: RoomData[]): void => {
-        // 1) 기존 마커를 id → 마커 객체 맵으로 변환
-        const oldMap = new Map<number, google.maps.Marker>();
-        markers.current.forEach(m => {
-            const id = (m as any).roomId as number;
-            oldMap.set(id, m);
+        clearMarkers();
+
+        // InfoWindow 재생성
+        if (infoWindow.current) {
+            infoWindow.current.close();
+            infoWindow.current = null;
+        }
+
+        infoWindow.current = new window.google.maps.InfoWindow({
+            disableAutoPan: false,
+            pixelOffset: new window.google.maps.Size(0, -10),
         });
 
-        // 2) 다음에 쓸 마커 배열 생성
-        const nextMarkers: google.maps.Marker[] = rooms.map(room => {
-            // 이미 있던 마커가 있으면 재사용
-            const existing = oldMap.get(room.id);
-            if (existing) {
-                oldMap.delete(room.id);
-                return existing;
-            }
-
-            // 없다면 새로 생성
+        const newMarkers: google.maps.Marker[] = rooms.map(room => {
             const position = new window.google.maps.LatLng(
                 room.coordinate_lat,
                 room.coordinate_long
             );
 
             let marker: google.maps.Marker;
-            const hasMapId = mapRef.current && (mapRef.current as any).mapId;
-            const hasAdvanced = window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement;
 
-            if (hasMapId && hasAdvanced) {
+            const hasMapId = mapRef.current && (mapRef.current as any).mapId;
+            const hasAdvancedMarker = window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement;
+
+            if (hasMapId && hasAdvancedMarker) {
                 try {
                     const content = createMarkerContent(room);
                     content.setAttribute("gmp-clickable", "false");
@@ -533,7 +519,7 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
                         position,
                         map: null,
                         title: room.title,
-                        content,
+                        content: content,
                     });
                 } catch (error) {
                     console.warn('Advanced Marker 생성 실패:', error);
@@ -543,188 +529,98 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
                 marker = createStandardMarker(position, room);
             }
 
-            (marker as any).roomId = room.id;
-            // marker.addListener('click', () => handleMarkerClick(room, marker, map));
-            marker.addListener('click', () => handleMarkerClick2(room));
+            // 마커 클릭 이벤트
+            marker.addListener('click', () => {
+                console.log('🎯 마커 클릭됨:', room.id);
+
+                // 이전 InfoWindow 닫기
+                if (infoWindow.current) {
+                    infoWindow.current.close();
+                }
+
+                setTimeout(() => {
+                    try {
+                        // 네이티브 구조를 활용한 컨텐츠 생성
+                        const content = createInfoWindowContent(room);
+
+                        if (infoWindow.current) {
+                            // room ID를 데이터 속성으로 추가
+                            const contentWithId = content.replace(
+                                'class="custom-room-info"',
+                                `class="custom-room-info" data-room-id="${room.id}"`
+                            );
+
+                            infoWindow.current.setContent(contentWithId);
+                            infoWindow.current.open(map, marker);
+
+                            console.log('✅ InfoWindow 열림 성공');
+
+                            // 네이티브 구조에 맞춘 스타일 조정
+                            adjustInfoWindowStyles();
+
+                            // 닫힘 이벤트 리스너
+                            const closeListener = infoWindow.current.addListener('closeclick', () => {
+                                console.log('🔒 InfoWindow 닫힘');
+                                try {
+                                    window.google.maps.event.removeListener(closeListener);
+                                } catch (e) {
+                                    console.warn('리스너 제거 실패:', e);
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error('❌ InfoWindow 열기 실패:', error);
+                    }
+                }, 120);
+            });
+
             return marker;
         });
 
-        // 3) oldMap에 남아있는(사라진) 마커만 제거
-        oldMap.forEach(m => {
-            m.setMap(null);
+        markers.current = newMarkers;
+
+        // 클러스터링 로직은 기존과 동일
+        try {
             if (markerCluster.current) {
-                markerCluster.current.removeMarker(m);
+                markerCluster.current.clearMarkers();
             }
-        });
 
-        // 4) markers.current 업데이트
-        markers.current = nextMarkers;
+            if (window.MarkerClusterer && window.GridAlgorithm) {
+                markerCluster.current = new window.MarkerClusterer({
+                    map: map,
+                    markers: newMarkers,
+                    algorithm: new window.GridAlgorithm({ gridSize: 100 }),
+                    renderer: {
+                        render({ count, position }) {
+                            const div = document.createElement("div");
+                            div.className = "roomi-cluster";
+                            div.textContent = String(count);
 
-        // 클러스터링 로직
-        if (markerCluster.current) {
-            markerCluster.current.clearMarkers();
-            markerCluster.current.addMarkers(markers.current);
-            // addMarkers 후 자동으로 렌더링
-        } else {
-            // (폴백) 뷰에 직접 그리기
-            markers.current.forEach(m => m.setMap(map));
+                            return new google.maps.Marker({
+                                position,
+                                icon: {
+                                    url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+                                        <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+                                          <circle cx="20" cy="20" r="20" fill="#f47366" />
+                                          <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-size="14" font-weight="bold">${count}</text>
+                                        </svg>
+                                        `)
+                                    ,
+                                    scaledSize: new google.maps.Size(40, 40),
+                                },
+                            });
+                        }
+                    }
+                });
+            }else {
+                console.warn('⚠️ MarkerClusterer 없음, 개별 마커 사용');
+                newMarkers.forEach(marker => marker.setMap(map));
+            }
+        } catch (error) {
+            console.warn('❌ 클러스터링 실패:', error);
+            newMarkers.forEach(marker => marker.setMap(map));
         }
     };
-
-    // 클릭 핸들러도 분리해두면 더 깔끔합니다
-    const handleMarkerClick = (
-        room: RoomData,
-        marker: google.maps.Marker,
-        map: google.maps.Map
-    ) => {
-        selectedRoomId.current = room.id;
-        const content = createInfoWindowContent(room).replace(
-            'class="custom-room-info"',
-            `class="custom-room-info" data-room-id="${room.id}"`
-        );
-
-        if (infoWindow.current) {
-            infoWindow.current.setContent(content);
-            infoWindow.current.open(map, marker);
-            adjustInfoWindowStyles();
-            setupInfoWindowEventListeners();
-        }
-    };
-
-
-    const handleMarkerClick2 = (room: RoomData) => {
-        console.log('마커클릭2 함수');
-        setModalContent(
-            <div className="-translate-y-1/2 -translate-x-1/2 left-1/2 w-[300px] rounded-xl"
-                 style={{
-                     position: 'absolute',
-                     bottom: '-10.75rem',
-                     background: 'white',
-                     boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                     zIndex: 1000,
-                 }}
-            >
-                <button
-                    className="flex_center hover:bg-[rgba(0,0,0,0.8)] bg-[rgba(0,0,0,0.6)]"
-                    style={{
-                        position: 'absolute',
-                        top: '8px',
-                        right: '8px',
-                        zIndex: 1001,
-                        width: '28px',
-                        height: '28px',
-                        background: 'rgba(0,0,0,0.6)',
-                        border: 'none',
-                        borderRadius: '50%',
-                        color: 'white',
-                        cursor: 'pointer',
-                        fontSize: '16px',
-                        transition: 'background-color 0.2s',
-                    }}
-                    onClick={() => setModalContent(null)}
-                >
-                    <div className="flex_center text-white">
-                        <FontAwesomeIcon icon={faXmark} />
-                    </div>
-                </button>
-
-                <div
-                    className="room-main-content"
-                    style={{cursor: 'pointer'}}
-                >
-                    <div
-                        style={{
-                            height: '200px',
-                            width: '100%',
-                            background: '#f5f5f5',
-                            position: 'relative',
-                            overflow: 'hidden',
-                            borderRadius: '12px',
-                        }}
-                    >
-                        <div dangerouslySetInnerHTML={{__html: generateImageHTML(room)}}/>
-                    </div>
-
-                    <div className="p-4">
-                        <h3
-                            style={{
-                                margin: '0 0 8px 0',
-                                fontSize: '18px',
-                                fontWeight: 600,
-                                color: '#1a1a1a',
-                                lineHeight: 1.3,
-                                display: '-webkit-box',
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: 'vertical',
-                                overflow: 'hidden',
-                            }}
-                        >
-                            {room.title || '제목 없음'}
-                        </h3>
-                        <p
-                            style={{
-                                margin: '0 0 12px 0',
-                                fontSize: '14px',
-                                color: '#666',
-                                display: '-webkit-box',
-                                WebkitLineClamp: 1,
-                                WebkitBoxOrient: 'vertical',
-                                overflow: 'hidden',
-                            }}
-                        >
-                            {room.address || '주소 정보 없음'}
-                        </p>
-
-                        <div
-                            style={{
-                                height: '1px',
-                                background: '#e5e5e5',
-                                margin: '12px 0',
-                            }}
-                        />
-
-                        <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <span style={{fontSize: '14px', color: '#666'}}>주간 가격</span>
-                                <span style={{fontSize: '18px', fontWeight: 700, color: '#1a1a1a'}}>
-                                    ₩{Number(room.week_price || 0).toLocaleString()}
-                                </span>
-                            </div>
-
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <span style={{fontSize: '13px', color: '#888'}}>보증금</span>
-                                <span style={{fontSize: '13px', color: '#333'}}>{room.deposit || '정보 없음'}</span>
-                            </div>
-
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <span style={{fontSize: '13px', color: '#888'}}>관리비</span>
-                                <span style={{fontSize: '13px', color: '#333'}}>{room.maintenance_fee || '정보 없음'}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
     const setupInfoWindowEventListeners = () => {
         // 커스텀 닫기 버튼
         const customCloseBtn = document.querySelector('.custom-close-btn') as HTMLElement;
@@ -767,17 +663,14 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
             });
         }
     };
-
     const handleRoomMarker = (roomId: number): void => {
         const locale = i18n.language;
         window.open(`/detail/${roomId}/${locale}`, '_blank');
     };
 
     useEffect(() => {
-
         const initMap = async (): Promise<void> => {
             if (!window.google || !window.google.maps) return;
-
             const mapOptions: google.maps.MapOptions = {
                 center: new window.google.maps.LatLng(37.554722, 126.970833), // 서울시청
                 zoom: 12,
@@ -793,7 +686,7 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
                     {
                         featureType: "poi",
                         elementType: "labels",
-                        stylers: [{visibility: "off"}]
+                        stylers: [{ visibility: "off" }]
                     }
                 ]
             };
@@ -803,16 +696,6 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
                 mapOptions
             );
             mapRef.current = map;
-
-            // 맵 초기화가 완료된 시점에 한 번만 클러스터러 객체를 생성
-            markerCluster.current = new MarkerClusterer({
-                map,                  // 구글맵 인스턴스
-                markers: [],          // 초기에는 빈 배열
-                algorithm: new SuperClusterAlgorithm({
-                    radius: 60         // 클러스터링 반경(px), 필요에 따라 조절
-                }),
-                renderer: clusterRenderer  // import 해온 ClusterRenderer 타입
-            });
 
             // 지도가 완전히 로드될 때까지 기다림
             const waitForMapLoad = (): Promise<void> => {
@@ -843,14 +726,13 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
                 debouncedLoadRooms(map);
             });
 
-            // 1) 컴포넌트 최초 생성 시
+            // 컴포넌트 최초 생성 시
             infoWindow.current = new window.google.maps.InfoWindow({
                 disableAutoPan: false,
                 pixelOffset: new window.google.maps.Size(0, -10),
             });
         };
 
-        // 스크립트 로드 로직
         const loadGoogleMapsScript = (): Promise<void> => {
             return new Promise<void>((resolve, reject) => {
                 if (window.google && window.google.maps) {
@@ -873,21 +755,21 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
                 document.head.appendChild(script);
 
                 // MarkerClusterer 라이브러리 로드 - 최신 버전 사용
-                // const clusterScript = document.createElement('script');
-                // clusterScript.src = 'https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js';
-                // clusterScript.onload = () => {
-                //     console.log('MarkerClusterer library loaded successfully');
-                //     // 전역 객체에서 MarkerClusterer와 GridAlgorithm 추출
-                //     if ((window as any).markerClusterer) {
-                //         window.MarkerClusterer = (window as any).markerClusterer.MarkerClusterer;
-                //         window.GridAlgorithm = (window as any).markerClusterer.GridAlgorithm;
-                //         console.log('MarkerClusterer and GridAlgorithm are now available');
-                //     }
-                // };
-                // clusterScript.onerror = (error) => {
-                //     console.warn('MarkerClusterer library failed to load:', error);
-                // };
-                // document.head.appendChild(clusterScript);
+                const clusterScript = document.createElement('script');
+                clusterScript.src = 'https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js';
+                clusterScript.onload = () => {
+                    console.log('MarkerClusterer library loaded successfully');
+                    // 전역 객체에서 MarkerClusterer와 GridAlgorithm 추출
+                    if ((window as any).markerClusterer) {
+                        window.MarkerClusterer = (window as any).markerClusterer.MarkerClusterer;
+                        window.GridAlgorithm = (window as any).markerClusterer.GridAlgorithm;
+                        console.log('MarkerClusterer and GridAlgorithm are now available');
+                    }
+                };
+                clusterScript.onerror = (error) => {
+                    console.warn('MarkerClusterer library failed to load:', error);
+                };
+                document.head.appendChild(clusterScript);
             });
         };
 
@@ -901,26 +783,6 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
             clearMarkers();
         };
     }, [debouncedLoadRooms]);
-
-    // 클러스터러 커스터마이징
-    const clusterRenderer: Renderer = {
-        render: ({ count, position }) => {
-            // 구글 맵의 Marker에 label 기능을 활용
-            return new window.google.maps.Marker({
-                position,
-                icon: {
-                    url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
-                        <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
-                          <circle cx="20" cy="20" r="20" fill="#f47366" />
-                          <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-size="14" font-weight="bold">${count}</text>
-                        </svg>
-                    `),
-                    scaledSize: new google.maps.Size(40, 40),
-                },
-            });
-        }
-    };
-
 
     useEffect(() => {
         // InfoWindow 전역 클릭 이벤트 방지
@@ -951,14 +813,9 @@ const GoogleMap22: React.FC<GoogleMapViewProps> = ({ onRoomsUpdate }) => {
     }, []);
 
     return (
-        <>
-            <div style={styles.mapContainer}>
-                <div id="map" style={styles.map}/>
-            </div>
-            <div id="marker-modal">
-                {modalContent}
-            </div>
-        </>
+        <div style={styles.mapContainer}>
+            <div id="map" style={styles.map}/>
+        </div>
     );
 };
 

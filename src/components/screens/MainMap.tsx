@@ -4,8 +4,6 @@ import 'src/css/MainHome.css';
 import HomeScreen from "src/components/screens/HomeScreen";
 import {useTranslation} from "react-i18next";
 import GoogleMap from "../map/GoogleMap";
-import AccodionItem from "../util/AccodionItem";
-import GoogleMap22 from "../map/GoogleMap22";
 
 export default function MainMap({isMobile}: { isMobile: boolean; }) {
     const [rooms, setRooms] = useState<RoomData[]>([]);
@@ -33,7 +31,7 @@ export default function MainMap({isMobile}: { isMobile: boolean; }) {
                         <div
                             className={`absolute inset-0 mb-[2.5rem] transition-transform duration-300 ${mobileRoomListOpen ? 'translate-y-full' : 'translate-y-0'}`}
                         >
-                            <GoogleMap22 onRoomsUpdate={handleRoomsUpdate}/>
+                            <GoogleMap onRoomsUpdate={handleRoomsUpdate}/>
                         </div>
 
                         {/* 리스트 영역 */}
@@ -64,7 +62,7 @@ export default function MainMap({isMobile}: { isMobile: boolean; }) {
                 <div className="flex !h-[calc(100vh-5rem)] w-full"> {/* 브라우저 */}
                     {/* 왼쪽 지도 영역 - 70% */}
                     <div className="w-[70%] h-full relative">
-                        <GoogleMap22 onRoomsUpdate={handleRoomsUpdate}/>
+                        <GoogleMap onRoomsUpdate={handleRoomsUpdate}/>
                     </div>
                     {/* 오른쪽 리스트 영역 - 30% */}
                     <div className="w-[30%] h-full border-l border-gray-200 overflow-y-auto pb-4 scrollbar-hidden">

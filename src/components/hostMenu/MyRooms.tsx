@@ -2,7 +2,13 @@ import React, {useEffect, useState, useRef} from 'react';
 import {myRoomList} from "src/api/api";
 import { RoomData } from "src/types/rooms";
 import {useNavigate} from "react-router-dom";
-import { Search, ChevronDown } from 'lucide-react'; // Modern icon library instead of FontAwesome
+import { Search, ChevronDown } from 'lucide-react';
+import CommonModal from "../util/CommonModal";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCopy, faSquarePlus} from "@fortawesome/free-regular-svg-icons";
+import {PlusCircle, Copy} from "@phosphor-icons/react";
+import RoomInsertBtn from "./myRooms/RoomInsertBtn";
+import roomInsertBtn from "./myRooms/RoomInsertBtn";
 
 const MyRooms = () => {
     const navigate = useNavigate();
@@ -12,6 +18,9 @@ const MyRooms = () => {
     const [roomCondition, setRoomCondition] = useState(""); // ✅ 방 상태 필터
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const [roomInsertModal, setRoomInsertModal] = useState(false);
+    const [isRoomCopy, setIsRoomCopy] = useState(false);
 
     // 드롭다운 옵션 정의
     const conditions = [
@@ -107,6 +116,17 @@ const MyRooms = () => {
 
     return (
         <div className="min-h-screen">
+            {(roomInsertModal || isRoomCopy) && (
+                <RoomInsertBtn
+                    isOpen={roomInsertModal}
+                    onRequestClose={() => setRoomInsertModal(false)}
+                    handleInsertBtn={handleInsertBtn}
+                    isRoomCopy={isRoomCopy}
+                    roomCopyOpen={() => setIsRoomCopy(true)}
+                    roomCopyClose={() => setIsRoomCopy(false)}
+                    rooms={data}
+                />
+            )}
             {/* 고정 헤더 */}
             <div className="bg-white py-3.5 sticky top-0 md:static">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 sm:gap-4">
@@ -131,9 +151,9 @@ const MyRooms = () => {
                                             <div
                                                 key={condition.value || 'empty'}
                                                 className={`px-4 py-2 text-sm cursor-pointer transition-colors
-                                              ${roomCondition === condition.value
-                                                    ? 'bg-roomi-0 text-roomi font-medium'
-                                                    : 'hover:bg-gray-50 text-gray-700'
+                                                  ${roomCondition === condition.value
+                                                        ? 'bg-roomi-0 text-roomi font-medium'
+                                                        : 'hover:bg-gray-50 text-gray-700'
                                                 }`}
                                                 onClick={() => {
                                                     setRoomCondition(condition.value);
@@ -167,9 +187,11 @@ const MyRooms = () => {
                             <button
                                 type="button"
                                 className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold text-white bg-roomi rounded-xl shadow-sm hover:bg-roomi-1 transition-colors"
-                                onClick={handleInsertBtn}
+                                // onClick={handleInsertBtn}
+                                onClick={() => setRoomInsertModal(true)}
                             >
-                                <span className="mr-1">+</span> 방 등록하기
+                                <span className="mr-2">+</span>
+                                방 등록하기
                             </button>
                         </div>
                     </div>
