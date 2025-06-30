@@ -149,7 +149,11 @@
         buyerAddr: urlParams.get('buyerAddr') || "서울특별시 강남구",
         redirectUrl: urlParams.get('redirectUrl') || "com.myno1214.roomi://result",
         channelKey: urlParams.get('channelKey') || "channel-key-14a7fa72-0d06-4bb5-9502-f721b189eb86",
-        storeId: urlParams.get('storeId') || "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85"
+        storeId: urlParams.get('storeId') || "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85",
+
+        orderName: urlParams.get('orderName') || "테스트 결제 상품",
+
+
     };
 
     window.onload = function () {
@@ -164,7 +168,7 @@
             paymentId: params.orderId,
             channelKey: params.channelKey,
             payMethod: 'CARD',
-            orderName: "테스트 결제 상품",
+            orderName: params.orderName,
             totalAmount: params.amount,
             currency: "KRW",
             customer: {
