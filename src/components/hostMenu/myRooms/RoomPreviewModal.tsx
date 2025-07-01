@@ -24,12 +24,13 @@ import {
     faUtensils,
     faX
 } from "@fortawesome/free-solid-svg-icons";
-import {ImageItem, RoomFormData} from "../../types/rooms";
-import ImgCarousel from "../util/ImgCarousel";
+import {ImageItem, RoomFormData} from "../../../types/rooms";
+import ImgCarousel from "../../util/ImgCarousel";
 import {faBell, faCopy} from "@fortawesome/free-regular-svg-icons";
-import {facilityIcons} from "../../types/facilityIcons";
+import {facilityIcons} from "../../../types/facilityIcons";
 import {useTranslation} from "react-i18next";
-import '../../css/RoomPreviewModal.css';
+import '../../../css/RoomPreviewModal.css';
+import CommonModal from "../../util/CommonModal";
 
 export default function RoomPreviewModal({visible, onClose, room}: Readonly<{
     visible: boolean,
@@ -50,24 +51,13 @@ export default function RoomPreviewModal({visible, onClose, room}: Readonly<{
     }, [room.detail_urls]);
 
     return (
-        <Modal
+        <CommonModal 
             isOpen={visible}
             onRequestClose={onClose}
-            overlayClassName="fullscreen-modal-overlay"
-            className="fullscreen-modal-content scrollbar-hidden"
-            ariaHideApp={false}
+            title="미리보기"
+            contentClassName="!w-full !m-0"
         >
             <div className="min-h-screen">
-                <div className="flex justify-end md:mb-10">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="modal-close-button"
-                    >
-                        <FontAwesomeIcon icon={faX} className="w-5 h-5"/>
-                    </button>
-                </div>
-
                 {/* 숙소 미리보기 */}
                 <div>
                     <div className="md:w-3/5 w-full mx-auto md:px-0">
@@ -545,6 +535,6 @@ export default function RoomPreviewModal({visible, onClose, room}: Readonly<{
                     </div>
                 </div>
             </div>
-        </Modal>
+        </CommonModal>
     );
 };

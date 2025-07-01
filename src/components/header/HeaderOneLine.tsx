@@ -17,6 +17,16 @@ import {useMapVisibility} from "../stores/MapStore";
 import CommonModal from "../util/CommonModal";
 import SearchBar from "./util/SearchBar";
 import {useSearchVisibility} from "../stores/MapSearchStore";
+import {SearchModal} from "./util/SearchModal";
+import {useDateStore} from "../stores/DateStore";
+import {useGuestsStore} from "../stores/GuestsStore";
+import {useLocationStore} from "../stores/LocationStore";
+
+type LocationOption = {
+    name: string;
+    country: string;
+};
+type ActiveCardType = 'location' | 'date' | 'guests' | null;
 
 export default function HeaderOneLine() {
     const {t} = useTranslation();
@@ -28,9 +38,15 @@ export default function HeaderOneLine() {
     const isMapVisible = useMapVisibility();
     const isSearchVisible = useSearchVisibility();
     const currentLang = i18n.language;
+    const {startDate, endDate,} = useDateStore();
+    const {guestCount} = useGuestsStore();
+    const {selectedLocation, setSelectedLocation} = useLocationStore();
 
     // 반응형 (테블릿, lg:, 1024px)
     const [isTeblet, setIsTeblet] = useState(window.innerWidth <= 1024);
+
+    const [activeCard, setActiveCard] = useState<ActiveCardType>('location');
+
     useEffect(() => {
         const handleResize = () => {
             setIsTeblet(window.innerWidth <= 1024);
@@ -83,6 +99,28 @@ export default function HeaderOneLine() {
         }
 
         setLanguageSetModal(true);
+    };
+
+    const toggleCard = (cardName: ActiveCardType) => {
+        if (activeCard === cardName) {
+            setActiveCard(null);
+        } else {
+            setActiveCard(cardName);
+        }
+    };
+
+    const performSearch = () => {
+        setSearchModalOpen(false);
+        console.log('Search performed with:', {
+            location: selectedLocation,
+            dates: {startDate, endDate},
+            guests: guestCount
+        });
+    };
+
+    const handleSelectLocation = (location: LocationOption) => {
+        setSelectedLocation(location.name);
+        toggleCard('date');
     };
 
     return (
@@ -150,6 +188,18 @@ export default function HeaderOneLine() {
                 >
                     <LanguageSet userLoggedIn={isUserLoggedIn}/>
                 </CommonModal>
+            )}
+
+            {/* 검색 모달 */}
+            {searchModalOpen && (
+                <SearchModal
+                    visible={searchModalOpen}
+                    onClose={() => setSearchModalOpen(false)}
+                    toggleCard={toggleCard}
+                    activeCard={activeCard}
+                    performSearch={performSearch}
+                    handleSelectLocation={handleSelectLocation}
+                />
             )}
 
             <AuthModal visible={authModalVisible} onClose={() => setAuthModalVisible(false)} type="login"/>

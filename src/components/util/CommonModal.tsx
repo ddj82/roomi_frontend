@@ -58,7 +58,7 @@ const CommonModal = ({
                 ${customClassName} ${widthClassName} ${heightClassName}
             `}
         >
-            <div className="sticky top-0 bg-transparent flex items-center justify-between p-4 md:py-6 bg-white mb-2">
+            <div className="sticky top-0 bg-transparent flex items-center justify-between p-4 md:py-6 bg-white mb-2 z-[10000]">
                 <div className="w-8"/>
                 {(title && title !== '') && (
                     <div className="w-full flex_center text-lg md:text-xl font-semibold">{t(title)}</div>

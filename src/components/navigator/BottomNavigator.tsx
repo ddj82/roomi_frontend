@@ -1,9 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 import {useHostTabNavigation} from "../stores/HostTabStore";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendar, faComments, faFileLines, } from "@fortawesome/free-regular-svg-icons";
-import {faHouseChimney} from "@fortawesome/free-solid-svg-icons";
 import {House, Calendar, ChatText,Article} from "@phosphor-icons/react";
 
 const tabIcons: Record<string, JSX.Element> = {

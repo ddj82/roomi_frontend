@@ -65,11 +65,11 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-            <div className="relative w-full max-w-sm md:max-w-md bg-white dark:bg-gray-800 rounded-xl md:rounded-lg shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 p-4">
+            <div className="relative w-full max-w-sm md:max-w-md bg-white rounded-xl md:rounded-lg shadow-2xl animate-in zoom-in-95 duration-200">
                 {/* 닫기 버튼 */}
                 <button
-                    className="absolute top-3 right-3 md:top-4 md:right-4 text-roomi-0 dark:text-roomi-0 bg-transparent hover:bg-roomi-light dark:hover:bg-gray-700 hover:text-roomi dark:hover:text-roomi rounded-full text-sm p-2 transition duration-200 touch-manipulation"
+                    className="absolute top-3 right-3 md:top-4 md:right-4 text-roomi bg-transparent hover:bg-roomi-light hover:text-roomi rounded-full text-sm p-2 transition duration-200 touch-manipulation"
                     onClick={onClose}
                 >
                     <svg className="w-4 h-4 md:w-5 md:h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -81,11 +81,11 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 {/* 모달 내용 */}
                 <div className="p-5 md:p-6 text-center">
                     {renderIcon()}
-                    <h3 className="mb-3 md:mb-4 text-lg md:text-xl font-semibold md:font-medium text-roomi dark:text-roomi leading-tight">
+                    <h3 className="mb-3 md:mb-4 text-lg md:text-xl font-semibold md:font-medium text-roomi leading-tight">
                         {title}
                     </h3>
                     {message && (
-                        <p className="mb-5 md:mb-6 text-sm md:text-base text-roomi-0 dark:text-roomi-0 leading-relaxed">
+                        <p className="mb-5 md:mb-6 text-sm md:text-base text-roomi leading-relaxed">
                             {message}
                         </p>
                     )}
@@ -94,7 +94,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                     <div className="flex gap-3 w-full">
                         {cancelText && (
                             <button
-                                className="flex-1 text-roomi-0 dark:text-roomi-0 bg-white dark:bg-gray-600 hover:bg-roomi-light dark:hover:bg-gray-500 border border-roomi-0 dark:border-roomi-0 focus:ring-4 focus:outline-none focus:ring-roomi-light dark:focus:ring-roomi-light font-medium rounded-lg text-base px-6 py-3.5 md:py-4 transition duration-300 ease-in-out touch-manipulation"
+                                className="flex-1 text-roomi bg-white hover:bg-roomi-light border border-roomi focus:ring-4 focus:outline-none focus:ring-roomi-light font-medium rounded-lg text-base px-6 py-3.5 md:py-4 transition duration-300 ease-in-out touch-manipulation"
                                 onClick={onClose}
                             >
                                 {cancelText}

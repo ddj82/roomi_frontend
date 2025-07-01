@@ -30,7 +30,7 @@ import {
 import { facilityIcons } from "src/types/facilityIcons";
 import Modal from "react-modal";
 import DaumPostcode from "react-daum-postcode";
-import RoomPreviewModal from "../../modals/RoomPreviewModal";
+import RoomPreviewModal from "./RoomPreviewModal";
 import ConfirmationModal from "../../modals/ComfirmationModal";
 import CommonAlert from "../../util/CommonAlert";
 

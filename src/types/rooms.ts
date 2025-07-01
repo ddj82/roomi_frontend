@@ -1,5 +1,4 @@
 // src/types/room.ts
-import {IconProp} from "@fortawesome/fontawesome-svg-core";
 
 export interface ApiResponse {
     success: boolean;
