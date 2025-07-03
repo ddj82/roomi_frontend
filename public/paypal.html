@@ -145,7 +145,7 @@
     <!--    </div>-->
 
     <div class="portone-ui-container">
-        <div class="loading-text">🔄 PayPal 결제 UI를 로드하고 있습니다...</div>
+        <div class="loading-text"></div>
     </div>
 
     <div id="statusMessage" class="status-message"></div>
@@ -191,7 +191,7 @@
             storeId: "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85",
             paymentId: `roomi_${Date.now()}`,
             orderName: "Roomi 결제 테스트",
-            totalAmount: 100, // $1.00 (센트 단위)
+            totalAmount: 10000, // $1.00 (센트 단위)
             currency: "USD",
             channelKey: "channel-key-32257656-6637-40bf-b343-795dbb0b1beb",
             containerId: "portone-ui-container", // 클래스명으로 지정 (점 없이)
@@ -200,18 +200,33 @@
                 fullName: "Yujin",
                 email: "test@example.com"
             },
-            redirectUrl: "https://roomi.co.kr/payment/complete",
-            lang : "en"
+            redirectUrl: "com.myno1214.roomi://result",
+            m_redirect_url: "com.myno1214.roomi://result",
+            lang : "EN"
         };
 
         const callbacks = {
             onPaymentSuccess: (response) => {
                 console.log("✅ 결제 성공", response);
-                showStatus('결제가 성공적으로 완료되었습니다! 🎉', 'success');
+                // showStatus('결제가 성공적으로 완료되었습니다! 🎉', 'success');
+
+                // 앱으로 리다이렉트 (성공)
+                setTimeout(() => {
+                    const successUrl = `com.myno1214.roomi://result?status=success&paymentId=${response.paymentId || ''}&transactionId=${response.transactionId || ''}`;
+                    console.log('앱으로 리다이렉트:', successUrl);
+                    window.location.href = successUrl;
+                }, 500); // 2초 후 리다이렉트
             },
             onPaymentFail: (error) => {
                 console.error("❌ 결제 실패", error);
-                showStatus('결제가 실패하거나 취소되었습니다. 😔', 'error');
+                // showStatus('결제가 실패하거나 취소되었습니다. 😔', 'error');
+
+                // 앱으로 리다이렉트 (실패)
+                setTimeout(() => {
+                    const failUrl = `com.myno1214.roomi://result?status=fail&error=${encodeURIComponent(error.message || 'Unknown error')}`;
+                    console.log('앱으로 리다이렉트:', failUrl);
+                    window.location.href = failUrl;
+                }, 500); // 2초 후 리다이렉트
             }
         };
 
