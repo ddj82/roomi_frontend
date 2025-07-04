@@ -243,16 +243,16 @@
                     console.log('성공 페이지로 리다이렉트:', successUrl);
                     window.location.href = successUrl;
                 },
-                onPaymentFail: (error) => {
-                    console.error("❌ 결제 실패", error);
-
-                    // 실패 URL로 리다이렉트
-                    const failUrl = urlParams.failUrl ||
-                        `com.myno1214.roomi://result?status=fail&error=${encodeURIComponent(error.message || 'Unknown error')}`;
-
-                    console.log('실패 페이지로 리다이렉트:', failUrl);
-                    window.location.href = failUrl;
-                }
+                // onPaymentFail: (error) => {
+                //     console.error("❌ 결제 실패", error);
+                //
+                //     // 실패 URL로 리다이렉트
+                //     const failUrl = urlParams.failUrl ||
+                //         `com.myno1214.roomi://result?status=fail&error=${encodeURIComponent(error.message || 'Unknown error')}`;
+                //
+                //     console.log('실패 페이지로 리다이렉트:', failUrl);
+                //     window.location.href = failUrl;
+                // }
             };
 
             // PortOne SDK 확인 및 결제 시작
