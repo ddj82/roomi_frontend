@@ -209,7 +209,8 @@
                 storeId: "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85",
                 paymentId: urlParams.orderId,
                 orderName: urlParams.orderName,
-                totalAmount: Math.round(parseFloat(urlParams.amount) * 100), // 센트 단위로 변환
+                // totalAmount: Math.round(parseFloat(urlParams.amount) * 100), // 센트 단위로 변환
+                totalAmount: 100, // 1달러 = 100센트
                 currency: urlParams.currency || "USD",
                 channelKey: "channel-key-9c14b981-0f85-4a23-abb6-0f29fcf1f9f5",
                 containerId: "portone-ui-container",
