@@ -16,13 +16,12 @@
             background-color: #f5f5f5;
         }
 
-        .payment-container {
+        .container {
             background: transparent;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 800px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
             width: 90%;
-            margin: 0 auto;
         }
 
         .spinner {
@@ -102,21 +101,19 @@
     </style>
 </head>
 <body>
-<div>
-    <div class="payment-container">
-        <div class="spinner"></div>
+<div class="container">
+    <div class="spinner"></div>
 
-        <div class="portone-ui-container">
-            <!-- PayPal UI가 여기에 로드됩니다 -->
-        </div>
+    <div class="portone-ui-container">
+        <!-- PayPal UI가 여기에 로드됩니다 -->
+    </div>
 
-        <div id="statusMessage" class="status-message"></div>
+    <div id="statusMessage" class="status-message"></div>
 
-        <!-- 디버그 정보 (개발 시에만 표시) -->
-        <div id="debugInfo" class="debug-info" style="display: none;">
-            <h4>디버그 정보</h4>
-            <pre id="debugContent"></pre>
-        </div>
+    <!-- 디버그 정보 (개발 시에만 표시) -->
+    <div id="debugInfo" class="debug-info" style="display: none;">
+        <h4>디버그 정보</h4>
+        <pre id="debugContent"></pre>
     </div>
 </div>
 
@@ -212,7 +209,8 @@
                 // totalAmount: Math.round(parseFloat(urlParams.amount) * 100), // 센트 단위로 변환
                 totalAmount: 100, // 1달러 = 100센트
                 currency: urlParams.currency || "USD",
-                channelKey: "channel-key-9c14b981-0f85-4a23-abb6-0f29fcf1f9f5",
+                // channelKey: "channel-key-9c14b981-0f85-4a23-abb6-0f29fcf1f9f5",//라이브 키
+                channelKey: "channel-key-32257656-6637-40bf-b343-795dbb0b1beb",//테스트 키
                 containerId: "portone-ui-container",
                 customer: {
                     customerId: urlParams.customerKey || `roomi_user_${Date.now()}`,
