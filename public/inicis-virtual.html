@@ -83,8 +83,8 @@
     const urlParams = new URLSearchParams(window.location.search);
     const params = {
         orderId: urlParams.get('orderId') || `order_${Date.now()}`,
-        // amount: parseInt(urlParams.get('amount')) || 1000,
-        amount: 1000,
+        amount: parseInt(urlParams.get('amount')) || 1000,
+        // amount: 1000,
         buyerName: urlParams.get('buyerName') || "홍길동",
         buyerEmail: urlParams.get('buyerEmail') || "test@example.com",
         buyerTel: urlParams.get('buyerTel') || "01012345678",
