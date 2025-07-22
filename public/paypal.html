@@ -134,6 +134,41 @@
         return urlParams;
     }
 
+    // 통화별 금액 변환 함수
+    function convertAmountByCurrency(amount, currency) {
+        const amountFloat = parseFloat(amount);
+
+        // 소수점 없는 통화들 (최소 단위가 이미 정수인 통화)
+        const zeroDecimalCurrencies = [
+            'JPY', // 일본 엔
+            'KRW', // 한국 원
+            'VND', // 베트남 동
+            'CLP', // 칠레 페소
+            'ISK', // 아이슬란드 크로나
+            'HUF', // 헝가리 포린트
+            'TWD', // 대만 달러
+            'UGX', // 우간다 실링
+            'PYG', // 파라과이 과라니
+            'RWF', // 르완다 프랑
+            'BIF', // 부룬디 프랑
+            'DJF', // 지부티 프랑
+            'GNF', // 기니 프랑
+            'KMF', // 코모로 프랑
+            'MGA', // 마다가스카르 아리아리
+            'XAF', // 중앙아프리카 프랑
+            'XOF', // 서아프리카 프랑
+            'XPF'  // CFP 프랑
+        ];
+
+        if (zeroDecimalCurrencies.includes(currency?.toUpperCase())) {
+            // 소수점 없는 통화는 그대로 반환 (정수로 변환)
+            return Math.round(amountFloat);
+        } else {
+            // 소수점 있는 통화는 100을 곱해서 센트 단위로 변환
+            return Math.round(amountFloat * 100);
+        }
+    }
+
     // 결제 파라미터 설정
     let paymentParams = {};
 
@@ -160,7 +195,7 @@
             throw new Error(`필수 파라미터가 누락되었습니다: ${missing.join(', ')}`);
         }
 
-        // amount를 숫자로 변환 (센트 단위)
+        // amount를 숫자로 변환
         const amount = parseFloat(params.amount);
         if (isNaN(amount) || amount <= 0) {
             throw new Error('올바른 금액을 입력해주세요.');
@@ -170,14 +205,20 @@
     }
 
     // 디버그 정보 표시
-    function showDebugInfo(params) {
+    function showDebugInfo(params, convertedAmount) {
         const debugInfo = document.getElementById('debugInfo');
         const debugContent = document.getElementById('debugContent');
 
         // 개발 환경에서만 디버그 정보 표시
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             debugInfo.style.display = 'block';
-            debugContent.textContent = JSON.stringify(params, null, 2);
+            const debugData = {
+                ...params,
+                originalAmount: params.amount,
+                convertedAmount: convertedAmount,
+                currency: params.currency || 'USD'
+            };
+            debugContent.textContent = JSON.stringify(debugData, null, 2);
         }
     }
 
@@ -197,8 +238,15 @@
             // 파라미터 유효성 검사
             validateParameters(urlParams);
 
+            // 통화 설정 (기본값: USD)
+            const currency = urlParams.currency || "USD";
+
+            // 통화별 금액 변환
+            const convertedAmount = convertAmountByCurrency(urlParams.amount, currency);
+            console.log(`금액 변환: ${urlParams.amount} ${currency} → ${convertedAmount} (최소 단위)`);
+
             // 디버그 정보 표시
-            showDebugInfo(urlParams);
+            showDebugInfo(urlParams, convertedAmount);
 
             // 결제 파라미터 설정
             paymentParams = {
@@ -206,9 +254,8 @@
                 storeId: "store-7bb98274-0fb5-4b2e-8d60-d3bff2f3ca85",
                 paymentId: urlParams.orderId,
                 orderName: urlParams.orderName,
-                totalAmount: Math.round(parseFloat(urlParams.amount) * 100), // 센트 단위로 변환
-                // totalAmount: 100, // 1달러 = 100센트
-                currency: urlParams.currency || "USD",
+                totalAmount: convertedAmount,
+                currency: currency,
                 channelKey: "channel-key-9c14b981-0f85-4a23-abb6-0f29fcf1f9f5",//라이브 키
                 // channelKey: "channel-key-32257656-6637-40bf-b343-795dbb0b1beb",//테스트 키
                 containerId: "portone-ui-container",
